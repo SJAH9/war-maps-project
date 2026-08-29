@@ -1,0 +1,30 @@
+{
+  "projections": [
+    {
+      "projection_id": "iran-2026-backchannel-field",
+      "conflict_id": "ucdp-candidate-16905",
+      "branch_class": "alleged_backchannel",
+      "prompt": "What plausible backchannel negotiations, intermediaries, or celebrity diplomats operated before and during the 2026 conflict expansion?",
+      "branch_point": "The transition from the 2025 interstate conflict record to the candidate 2026 Iran-Israel-United States event field.",
+      "participants": ["decision makers not yet exposed", "formal intermediaries not yet exposed", "informal or celebrity diplomats not yet exposed"],
+      "outer_conditions": ["2025 war-level interstate conflict", "regional alliance and deterrence structures", "state conditions represented in V-Dem"],
+      "active_relation": "possible communication, bargaining, signaling, or failed mediation outside the public event chronology",
+      "enclosed_consequences": ["escalation timing", "target selection", "coalition participation", "possible ceasefire or settlement paths"],
+      "observable_traces": ["changes in public sequencing", "travel or intermediary contact", "convergent language", "delayed or altered military decisions"],
+      "frontier_questions": ["Which person or institution carried the first contact?", "What was exchanged or withheld?", "Which observable decision changed after contact?", "Which alternative path remained available at the same branch point?"]
+    },
+    {
+      "projection_id": "iran-2026-alternative-history",
+      "conflict_id": "ucdp-candidate-16905",
+      "branch_class": "plausible_alternative_history",
+      "prompt": "Which plausible decision path could have prevented or redirected the 2026 interstate expansion?",
+      "branch_point": "A decision point to be exposed between the 2025 conflict boundary and the first 2026 candidate event.",
+      "participants": ["Iranian decision makers", "Israeli decision makers", "United States decision makers", "intermediaries to be exposed"],
+      "outer_conditions": ["prior conflict intensity", "deterrence structure", "domestic state conditions", "regional partner relations"],
+      "active_relation": "an alternative sequence of decisions, signals, negotiations, or non-actions",
+      "enclosed_consequences": ["changed event sequence", "changed coalition relation", "changed territorial or economic consequence"],
+      "observable_traces": ["documents", "statements", "decision timing", "counterpart response", "subsequent event divergence"],
+      "frontier_questions": ["What exact decision is the branch point?", "Who had authority to choose otherwise?", "What enclosing condition constrained that choice?", "What later event would differ first?"]
+    }
+  ]
+}

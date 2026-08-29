@@ -1,0 +1,49 @@
+{
+  "claims": [
+    {
+      "claim_id": "wmp-iran-2025-war-intensity",
+      "conflict_id": "ucdp-14609",
+      "observed_at": "2025-12-31",
+      "claim": "The Iran-Israel interstate conflict reached UCDP war-level intensity in 2025.",
+      "source_type": "academic-conflict-dataset",
+      "source_id": "ucdp-prio-acd-26.1",
+      "source_locator": "conflict_id 14609, year 2025",
+      "enclosure": {
+        "outer": "UCDP state-based armed-conflict definitions, annual coding rules, and source review",
+        "active": "UCDP records conflict 14609 at intensity level 2 in 2025",
+        "inner": ["coded annual participation", "coded incompatibility", "battle-death intensity threshold"],
+        "frontier_questions": ["Which event records compose the annual intensity?", "Which casualty claims remain source-dependent?", "What claims concern motive or legality outside this row?"]
+      }
+    },
+    {
+      "claim_id": "wmp-iran-2026-parties",
+      "conflict_id": "ucdp-candidate-16905",
+      "observed_at": "2026-06-30",
+      "claim": "UCDP candidate coding identifies organized armed conflict in 2026 between the Government of Iran and the governments of Israel and the United States.",
+      "source_type": "candidate-academic-event-dataset",
+      "source_id": "ucdp-candidate-ged-2026-06",
+      "source_locator": "conflict_new_id 16905",
+      "enclosure": {
+        "outer": "UCDP candidate-event collection and provisional coding through June 2026",
+        "active": "candidate conflict 16905 relates Iran to Israel and the United States",
+        "inner": ["individual geolocated candidate events", "source-office records", "code-status qualifiers"],
+        "frontier_questions": ["Has candidate coding been reviewed or revised?", "What events occurred after June 2026?", "How does each party describe the same event?"]
+      }
+    },
+    {
+      "claim_id": "wmp-war-growth-motive",
+      "conflict_id": null,
+      "observed_at": "2026-08-28",
+      "claim": "Which states use war to pursue growth in land area or economic power, and through which decision chain?",
+      "source_type": "user-prompted-causal-projection",
+      "source_id": "war-maps-method",
+      "source_locator": "motive boundary",
+      "enclosure": {
+        "outer": "state conditions, conflict history, leadership decisions, and economic relations enclosing organized violence",
+        "active": "the prompt opens a projection toward territorial and economic purpose",
+        "inner": ["Uppsala territorial incompatibility", "annual party participation", "V-Dem state conditions", "decisions and consequences exposed at deeper nesting"],
+        "frontier_questions": ["Which decision maker activated the conflict path?", "Which outer condition projected that decision inward?", "What territorial or economic relation changed?", "Who acquired durable benefit and through which causal flow?"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+"""Generate the deployable War Maps web atlas."""
+
+from __future__ import annotations
+
+import json
+import shutil
+from pathlib import Path
+
+from src.build_atlas import ROOT, build
+
+SOURCE = ROOT / "web"
+OUTPUT = ROOT / "outputs/web"
+
+
+def generate() -> Path:
+    data = build()
+    OUTPUT.mkdir(parents=True, exist_ok=True)
+    for name in ("index.html", "styles.css", "app.js"):
+        shutil.copy2(SOURCE / name, OUTPUT / name)
+    payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    (OUTPUT / "data.js").write_text(f"window.WAR_MAPS_DATA={payload};\n", encoding="utf-8")
+    (ROOT / "index.html").write_text(
+        '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=outputs/web/">'
+        '<title>The War Maps Project</title><a href="outputs/web/">Open the atlas</a>\n',
+        encoding="utf-8",
+    )
+    return OUTPUT / "index.html"
+
+
+def main() -> int:
+    path = generate()
+    print(path)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

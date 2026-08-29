@@ -1,0 +1,1 @@
+"""War Maps Project generators."""

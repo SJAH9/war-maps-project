@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A recursively enclosed atlas of organized armed conflict from 1946 to the present.">
+  <title>The War Maps Project</title>
+  <script>
+    const hour=new Date().getHours();
+    document.documentElement.dataset.theme=(hour<7||hour>=19)?'dark':'light';
+  </script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation">
+      <a href="#explore">Explore</a><a href="#states">States</a><a href="#method">Enclosure method</a><a href="#sources">Sources</a>
+    </nav>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+
+  <main>
+    <section class="explorer" id="explore">
+      <div class="title-band">
+        <div>
+          <p class="eyebrow">Organized armed conflict · 1946-present</p>
+          <h1>War Maps</h1>
+        </div>
+        <p class="scope">Claims remain nested inside source, actor, time, place, and coding conditions. Map color indicates recorded conflict activity, never a truth verdict.</p>
+      </div>
+
+      <div class="controls" aria-label="Map controls">
+        <label class="search-control"><span>Find</span><input id="search" type="search" placeholder="Conflict, state, party, territory"></label>
+        <label><span>Year</span><input id="year" type="range" min="1946" max="2026" value="2026"><output id="year-output">2026</output></label>
+        <label><span>Conflict type</span><select id="type-filter"><option value="all">All types</option><option value="interstate">Interstate</option><option value="internal">Internal</option><option value="internationalized internal">Internationalized internal</option><option value="extrasystemic">Extrasystemic</option><option value="candidate state-based conflict">2026 candidate</option></select></label>
+        <label class="check-control"><input id="active-only" type="checkbox"><span>Active at source boundary</span></label>
+        <button id="reset" type="button">Reset</button>
+      </div>
+
+      <div class="map-workspace">
+        <div class="map-stage">
+          <div id="map" role="img" aria-label="World map of recorded conflict activity"></div>
+          <div class="map-legend"><span><i class="low"></i> fewer records</span><span><i class="high"></i> more records</span><span id="map-note">Select a state or conflict to open its enclosure.</span></div>
+        </div>
+        <aside class="results" aria-label="Conflict results">
+          <div class="results-head"><div><p class="eyebrow">Conflict register</p><h2 id="result-title">2026 observations</h2></div><strong id="result-count">0</strong></div>
+          <div id="conflict-list" class="conflict-list"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="detail-section" id="detail" hidden>
+      <div class="detail-heading">
+        <div><p class="eyebrow" id="detail-kicker"></p><h2 id="detail-title"></h2></div>
+        <button class="icon-button" id="close-detail" type="button" aria-label="Close conflict detail" title="Close conflict detail">×</button>
+      </div>
+      <div class="detail-meta" id="detail-meta"></div>
+      <div class="detail-grid">
+        <div>
+          <h3>Conflict timeline</h3>
+          <div class="timeline" id="timeline"></div>
+          <div class="event-stream" id="event-stream"></div>
+        </div>
+        <aside class="enclosure-panel">
+          <h3>Enclosure address</h3>
+          <div id="enclosure"></div>
+          <h3>Claims at this address</h3>
+          <div id="claims"></div>
+          <h3>State conditions at this depth</h3>
+          <div id="state-conditions"></div>
+          <h3>Prompted causal projections</h3>
+          <div id="projections"></div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="states-section" id="states">
+      <div class="section-heading"><div><p class="eyebrow">Participation and projected purpose</p><h2>State conflict record</h2></div><p>Counts establish the outer participation field. A selected state can then be projected inward toward initiators, decisions, territorial or economic purpose, partners, and durable consequences.</p></div>
+      <div class="table-wrap"><table><thead><tr><th>State</th><th>Conflicts</th><th>Territorial incompatibility</th><th>Interstate</th><th>Active at 2025 boundary</th></tr></thead><tbody id="state-table"></tbody></table></div>
+    </section>
+
+    <section class="method-section" id="method">
+      <div class="section-heading"><div><p class="eyebrow">Nested Causal Modelling</p><h2>The question comes before the flag</h2></div></div>
+      <div class="method-grid">
+        <div class="formula"><span>E(outer enclosure)</span><b>[</b><span>D(specified departure)</span><b>|</b><span>E(inner enclosure)</span><b>]</b></div>
+        <div class="method-copy"><p>The first and third positions are always enclosure functions. The middle departure carries its address, repeatable measurements, and join keys. Following outer nesting reaches source conditions; following inner nesting reaches consequences and the information consumer without adding a separate classification system.</p><p>At a finite edge, an addressed E frontier records the next question. New observations open that function without erasing its prior address or assigning a truth flag.</p></div>
+      </div>
+    </section>
+
+    <section class="sources-section" id="sources">
+      <div class="section-heading"><div><p class="eyebrow">Reproducible provenance</p><h2>Data sources and boundaries</h2></div></div>
+      <div id="source-list" class="source-list"></div>
+    </section>
+  </main>
+
+  <footer><a href="https://github.com/SJAH9/war-maps-project">The War Maps Project</a><span>Open source · Source records retain their own licenses</span><span>Built from enclosed observations, not a trusted-source whitelist</span></footer>
+</body>
+</html>

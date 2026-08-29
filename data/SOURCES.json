@@ -1,0 +1,44 @@
+{
+  "sources": [
+    {
+      "id": "ucdp-prio-acd-26.1",
+      "title": "UCDP/PRIO Armed Conflict Dataset version 26.1",
+      "publisher": "Uppsala Conflict Data Program",
+      "coverage": "1946-2025 state-based armed conflict, conflict-year",
+      "url": "https://ucdp.uu.se/downloads/ucdpprio/ucdp-prio-acd-261-csv.zip",
+      "license": "CC BY 4.0",
+      "enclosure": "reviewed-academic-conflict-dataset",
+      "retrieved": "2026-08-28"
+    },
+    {
+      "id": "ucdp-candidate-ged-2026-06",
+      "title": "UCDP Candidate Events Dataset, January-June 2026",
+      "publisher": "Uppsala Conflict Data Program",
+      "coverage": "Provisional event observations through June 2026",
+      "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_01_26_06.csv",
+      "license": "CC BY 4.0",
+      "enclosure": "candidate-academic-event-dataset",
+      "retrieved": "2026-08-28"
+    },
+    {
+      "id": "vdem-core-v15-rtldi",
+      "title": "V-Dem Country-Year Core v15, RTLDI retained fields",
+      "publisher": "V-Dem Institute",
+      "coverage": "Country-year protection conditions used by the RTLDI Atlas pipeline",
+      "url": "https://v-dem.net/data/the-v-dem-dataset/",
+      "license": "V-Dem dataset terms",
+      "enclosure": "country-year state-condition dataset",
+      "retrieved": "2026-08-02"
+    },
+    {
+      "id": "natural-earth-110m-geometry",
+      "title": "Natural Earth Admin 0 Countries, 1:110m",
+      "publisher": "Natural Earth",
+      "coverage": "Cartographic geometry only; never used as conflict evidence",
+      "url": "https://www.naturalearthdata.com/",
+      "license": "Public domain",
+      "enclosure": "map geometry",
+      "retrieved": "2026-08-28"
+    }
+  ]
+}
