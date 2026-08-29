@@ -87,7 +87,7 @@ def frontier(address: str, questions: list[str] | None = None) -> dict:
 
 
 def leaf_enclosure(address: str, statement: str, *, join_keys: list[str] | None = None) -> dict:
-    """Represent a finite observation without turning its boundary into a truth flag."""
+    """Represent a finite observation with an explicit, addressable boundary."""
     return {
         "function": "E",
         "address": address,

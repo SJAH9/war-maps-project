@@ -133,7 +133,7 @@ def add_cover(pdf: WarPDF, conflict: dict, events: list[dict], size: str):
     pdf.cell(0, 6, latin(f"{len(conflict['years_active'])} conflict-years   {len(events)} candidate events   {conflict['type']}"))
     pdf.set_xy(16, 197)
     pdf.set_font("Times", "", 14)
-    pdf.multi_cell(178, 7, latin("A map of observations and causal enclosures. It does not require symmetry among parties and does not assign truth flags."))
+    pdf.multi_cell(178, 7, latin("A map of observations and causal enclosures with explicit sources, methods, and data boundaries."))
     pdf.set_xy(16, 240)
     pdf.set_font("Helvetica", "B", 7)
     pdf.set_text_color(180, 35, 47)

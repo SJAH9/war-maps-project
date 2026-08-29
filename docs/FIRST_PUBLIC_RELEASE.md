@@ -8,7 +8,7 @@
 
 The War Maps Project will produce navigable nested causal models of every organized conflict for which suitable peer-reviewed datasets are available. The atlas is designed to move from a reproducible observed field into recursively addressed causal depth without collapsing source records, claims, uncertainty, or plausible branches into a single authorized narrative.
 
-Peer review is an eligibility and provenance boundary for expansion, not a truth flag. Every imported dataset retains its version, publisher, methods, coverage, citation, license, identifiers, and known limitations. Every observation remains enclosed by those conditions.
+Peer-reviewed data availability defines the expansion field. Every imported dataset retains its version, publisher, methods, coverage, citation, license, identifiers, and known limitations. Every observation remains enclosed by those conditions, and every transformation is documented for reproduction.
 
 ## What this release establishes
 

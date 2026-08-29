@@ -4,7 +4,7 @@
 
 Revision 1 establishes a complete post-1945 conflict atlas and the recursive form needed to map the war behind the visible war. It is built to retain the tension, decisions, negotiations, economic relations, unrealized alternatives, and enclosed stories that leave the world armed.
 
-The project is not neutral by omission and does not require both-sideism. It takes the side of complete causal addressability. Every input is eligible to enter the same nesting grammar. No government, media institution, investigator, witness, leader, diplomat, or model receives an automatic truth flag or an automatic exclusion.
+The project is not neutral by omission and does not require both-sideism. It takes the side of complete causal addressability. Every input is eligible to enter the same nesting grammar with its source, method, and enclosure explicit. No government, media institution, investigator, witness, leader, diplomat, or model receives automatic priority or automatic exclusion.
 
 ## Canonical observed field
 
@@ -39,7 +39,7 @@ These are not treated as forbidden inferences. They are projected from outer con
 - `negotiation_path`: a sequence of possible exchanges, intermediaries, concessions, and consequences.
 - `unresolved_story`: a retained account whose proper nesting is not yet complete.
 
-These labels identify the branch's relation to the observed field; they are not truth values.
+These labels identify the branch's documented relation to the observed field.
 
 ## Required projection record
 

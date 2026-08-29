@@ -6,19 +6,19 @@ The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Co
 
 ## First public release
 
-The first public release establishes the reproducible observed field, the interactive world and nation explorers, configurable print volumes, and the ternary enclosure grammar. The project horizon is broader: **to produce navigable nested causal models of every organized conflict for which suitable peer-reviewed datasets are available**. Peer review establishes a dataset's documented scholarly provenance; it does not assign an automatic truth flag to every observation.
+The first public release establishes the reproducible observed field, the interactive world and nation explorers, configurable print volumes, and the ternary enclosure grammar. The project horizon is broader: **to produce navigable nested causal models of every organized conflict for which suitable peer-reviewed datasets are available**. The project identifies every data source, discloses its methods and transformations, and preserves the boundaries of each observation.
 
 The current release is therefore an operational foundation, not a claim that every conflict already has a complete causal model. Each conflict begins at its available source boundary and can deepen through recursively addressed decisions, actors, conditions, claims, economic relations, alternatives, and consequences without erasing uncertainty or source context. See [First Public Release](docs/FIRST_PUBLIC_RELEASE.md).
 
 ## Ternary enclosure
 
-The ternary enclosure function is not a three-valued truth system. It records:
+The ternary enclosure function is not a three-valued classification system. It records:
 
 ```text
 E = [ E(outer enclosure) | D(specified departure) | E(inner enclosure) ]
 ```
 
-The first and third positions are always enclosure functions. The departure has a stable address, repeatable measurements, and join keys. Outer recursion reaches source conditions; inner recursion reaches consequences and the information consumer. The resulting record is a recursively specified causal path rather than a detached correlation. A state statement, academic dataset, user-prompted projection, or propaganda artifact can therefore remain at its proper address without receiving a premature truth flag.
+The first and third positions are always enclosure functions. The departure has a stable address, repeatable measurements, and join keys. Outer recursion reaches source conditions; inner recursion reaches consequences and the information consumer. The resulting record is a recursively specified causal path rather than a detached correlation. A state statement, academic dataset, user-prompted projection, or propaganda artifact therefore remains at its proper address with its source and method visible.
 
 Revision 1 also maps the war behind the public war. Plausible alternative histories, alleged backchannels, informal and celebrity diplomacy, and unresolved stories remain navigable projection branches. They are not collapsed into the observed chronology, but neither are they excluded for being volatile or incomplete. See `docs/REV1_SPEC.md`.
 

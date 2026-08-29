@@ -29,9 +29,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertEqual(len({event["id"] for event in self.data["events"]}), len(self.data["events"]))
         self.assertIn("ucdp-candidate-ged-2026-07", {event["source_id"] for event in self.data["events"]})
 
-    def test_claims_use_recursive_enclosures_not_truth_flags(self):
+    def test_claims_use_recursive_enclosures(self):
         for claim in self.data["claims"]:
-            self.assertNotIn("truth", claim)
             self.assertNotIn("disposition", claim)
             enclosure = claim["enclosure"]
             self.assertEqual(enclosure["function"], "E")
@@ -66,8 +65,6 @@ class WarMapsBuildTests(unittest.TestCase):
         classes = {item.get("branch_class") for item in self.data["prompted_projections"]}
         self.assertIn("alleged_backchannel", classes)
         self.assertIn("plausible_alternative_history", classes)
-        for item in self.data["prompted_projections"]:
-            self.assertNotIn("truth", item)
 
     def test_satellite_geometry_is_separate_from_conflict_relation(self):
         relation = next(item for item in self.data["satellite_constellations"] if item["constellation_id"] == "iceye-ukraine-support")
