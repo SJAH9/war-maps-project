@@ -189,7 +189,7 @@
     const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
     const link=document.createElement('a');link.href=url;link.download=`${nation.country.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-war-maps.json`;link.click();URL.revokeObjectURL(url);
   });
-  $('#theme-toggle').addEventListener('click',()=>{document.documentElement.dataset.theme=currentTheme()?'light':'dark';if(state.tab==='date')drawDateMap();if(state.tab==='all-time')drawAllTimeMap();});
+  $('#theme-toggle').addEventListener('click',()=>{const theme=currentTheme()?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('war-maps-theme',theme);}catch(error){ /* Theme still applies for this page. */ }if(state.tab==='date')drawDateMap();if(state.tab==='all-time')drawAllTimeMap();});
 
   renderTimeline();renderRaw();
   const initial=['date','all-time','raw'].includes(location.hash.slice(1))?location.hash.slice(1):'date';
