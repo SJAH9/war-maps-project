@@ -1,0 +1,18 @@
+{
+  "constellations": [
+    {
+      "constellation_id": "iceye-ukraine-support",
+      "name": "ICEYE SAR constellation / Ukraine support",
+      "operator": "ICEYE",
+      "conflict_ids": ["ucdp-13243"],
+      "relation_class": "documented_constellation_support",
+      "relation": "ICEYE documents providing Ukraine's Ministry of Defence with expanded access to high-resolution SAR imagery for national-security decision support.",
+      "individual_asset_boundary": "The agreement concerns constellation access. It does not establish that every publicly catalogued ICEYE spacecraft contributed to a specific operation.",
+      "relation_source": "https://www.iceye.com/newsroom/press-releases/ukraine-expands-partnership-with-iceye",
+      "orbit_source": "https://celestrak.org/NORAD/elements/gp.php?GROUP=sar&FORMAT=JSON",
+      "orbit_snapshot": "2026-08-29",
+      "object_name_prefix": "ICEYE",
+      "display_color": "#34d6c7"
+    }
+  ]
+}

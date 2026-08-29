@@ -21,6 +21,16 @@
       "retrieved": "2026-08-28"
     },
     {
+      "id": "ucdp-candidate-ged-2026-07",
+      "title": "UCDP Candidate Events Dataset, July 2026",
+      "publisher": "Uppsala Conflict Data Program",
+      "coverage": "Provisional global event observations for July 2026, reconciled over the January-June release by event ID",
+      "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_7.csv",
+      "license": "CC BY 4.0",
+      "enclosure": "candidate-academic-event-dataset",
+      "retrieved": "2026-08-29"
+    },
+    {
       "id": "vdem-core-v15-rtldi",
       "title": "V-Dem Country-Year Core v15, RTLDI retained fields",
       "publisher": "V-Dem Institute",
@@ -31,6 +41,16 @@
       "retrieved": "2026-08-02"
     },
     {
+      "id": "vdem-regimes-of-the-world-v15",
+      "title": "V-Dem Country-Year v15, Regimes of the World",
+      "publisher": "V-Dem Institute",
+      "coverage": "Country-year v2x_regime and v2x_regime_amb classifications retained from the local official v15 archive",
+      "url": "https://www.v-dem.net/data/dataset-archive/",
+      "license": "CC BY-SA 4.0",
+      "enclosure": "country-year regime classification",
+      "retrieved": "2026-08-29"
+    },
+    {
       "id": "natural-earth-110m-geometry",
       "title": "Natural Earth Admin 0 Countries, 1:110m",
       "publisher": "Natural Earth",
@@ -39,6 +59,26 @@
       "license": "Public domain",
       "enclosure": "map geometry",
       "retrieved": "2026-08-28"
+    },
+    {
+      "id": "celestrak-iceye-sar-2026-08-29",
+      "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
+      "publisher": "CelesTrak",
+      "coverage": "Frozen 2026-08-29 orbital-element snapshot for 49 publicly catalogued ICEYE objects",
+      "url": "https://celestrak.org/NORAD/documentation/gp-data-formats.php",
+      "license": "Public orbital data; CelesTrak usage and attribution terms apply",
+      "enclosure": "public orbit geometry; not evidence of conflict participation",
+      "retrieved": "2026-08-29"
+    },
+    {
+      "id": "iceye-ukraine-support-2026",
+      "title": "Ukraine expands partnership with ICEYE",
+      "publisher": "ICEYE",
+      "coverage": "Operator statement documenting constellation-level SAR imagery support to Ukraine's Ministry of Defence",
+      "url": "https://www.iceye.com/newsroom/press-releases/ukraine-expands-partnership-with-iceye",
+      "license": "Source statement; linked for attribution",
+      "enclosure": "documented constellation relation; not individual satellite attribution",
+      "retrieved": "2026-08-29"
     }
   ]
 }

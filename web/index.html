@@ -9,10 +9,11 @@
     const hour=new Date().getHours();
     document.documentElement.dataset.theme=(hour<7||hour>=19)?'dark':'light';
   </script>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=2026-07-31-r1">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
-  <script src="data.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
+  <script src="data.js?v=2026-07-31-r1" defer></script>
+  <script src="app.js?v=2026-07-31-r1" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -20,6 +21,7 @@
     <nav aria-label="Primary navigation">
       <a href="#explore">Explore</a><a href="#states">States</a><a href="#method">Enclosure method</a><a href="#sources">Sources</a>
     </nav>
+    <button class="header-command" id="war-dialog-open" type="button">Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
 
@@ -35,14 +37,22 @@
 
       <div class="controls" aria-label="Map controls">
         <label class="search-control"><span>Find</span><input id="search" type="search" placeholder="Conflict, state, party, territory"></label>
-        <label><span>Year</span><input id="year" type="range" min="1946" max="2026" value="2026"><output id="year-output">2026</output></label>
-        <label><span>Conflict type</span><select id="type-filter"><option value="all">All types</option><option value="interstate">Interstate</option><option value="internal">Internal</option><option value="internationalized internal">Internationalized internal</option><option value="extrasystemic">Extrasystemic</option><option value="candidate state-based conflict">2026 candidate</option></select></label>
+        <label><span>From</span><input id="year-start" type="range" min="1946" max="2026" value="2026"><output id="year-start-output">2026</output></label>
+        <label><span>Through</span><input id="year-end" type="range" min="1946" max="2026" value="2026"><output id="year-end-output">2026</output></label>
+        <label><span>Window</span><select id="window-size"><option value="">Custom range</option><option value="1" selected>1 year</option><option value="10">10 years</option><option value="25">25 years</option><option value="50">50 years</option><option value="100">All time · 100 years</option></select></label>
+        <label><span>Conflict type</span><select id="type-filter"><option value="all">All types</option><option value="interstate">Interstate</option><option value="internal">Internal</option><option value="internationalized internal">Internationalized internal</option><option value="extrasystemic">Extrasystemic</option><option value="candidate state-based conflict">Candidate state-based</option><option value="candidate non-state conflict">Candidate non-state</option><option value="candidate one-sided violence">Candidate one-sided</option></select></label>
+        <label><span>Government type</span><select id="regime-filter"><option value="all">All V-Dem types</option><option value="0">Closed autocracy</option><option value="1">Electoral autocracy</option><option value="2">Electoral democracy</option><option value="3">Liberal democracy</option></select></label>
         <label class="check-control"><input id="active-only" type="checkbox"><span>Active at source boundary</span></label>
         <button id="reset" type="button">Reset</button>
       </div>
 
       <div class="map-workspace">
         <div class="map-stage">
+          <div class="satellite-toolbar">
+            <label><input id="satellite-toggle" type="checkbox"><span>Satellite paths</span></label>
+            <select id="satellite-constellation" aria-label="Satellite constellation"><option value="iceye-ukraine-support">ICEYE SAR · Ukraine support</option></select>
+            <span id="satellite-note">Frozen public orbit snapshot · constellation relation</span>
+          </div>
           <div id="map" role="img" aria-label="World map of recorded conflict activity"></div>
           <div class="map-legend"><span><i class="low"></i> fewer records</span><span><i class="high"></i> more records</span><span id="map-note">Select a state or conflict to open its enclosure.</span></div>
         </div>
@@ -51,6 +61,10 @@
           <div id="conflict-list" class="conflict-list"></div>
         </aside>
       </div>
+      <section class="related-panel" aria-labelledby="related-title">
+        <div><p class="eyebrow">Related data · selected window</p><h2 id="related-title">World conflict field</h2><p id="related-note">Statistics describe nations and conflicts visible in the current map enclosure.</p></div>
+        <div class="stat-grid" id="related-stats"></div>
+      </section>
     </section>
 
     <section class="detail-section" id="detail" hidden>
@@ -59,6 +73,7 @@
         <button class="icon-button" id="close-detail" type="button" aria-label="Close conflict detail" title="Close conflict detail">×</button>
       </div>
       <div class="detail-meta" id="detail-meta"></div>
+      <div class="nation-chips" id="nation-chips"></div>
       <div class="detail-grid">
         <div>
           <h3>Conflict timeline</h3>
@@ -96,6 +111,16 @@
       <div id="source-list" class="source-list"></div>
     </section>
   </main>
+
+  <dialog class="war-dialog" id="war-dialog" aria-labelledby="war-dialog-title">
+    <form method="dialog" class="dialog-heading"><div><p class="eyebrow">Complete conflict register</p><h2 id="war-dialog-title">Select war</h2></div><button class="icon-button" value="cancel" aria-label="Close war selector" title="Close war selector">×</button></form>
+    <div class="dialog-controls">
+      <label><span>Find war</span><input id="war-dialog-search" type="search" placeholder="Conflict, territory, state, or party" autocomplete="off"></label>
+      <label><span>Region</span><select id="war-dialog-region"><option value="all">All regions</option><option>Europe</option><option>Middle East</option><option>Asia</option><option>Africa</option><option>Americas</option><option>Other</option></select></label>
+    </div>
+    <div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946–July 2026 source boundary</span></div>
+    <div class="war-dialog-list" id="war-dialog-list"></div>
+  </dialog>
 
   <footer><a href="https://github.com/SJAH9/war-maps-project">The War Maps Project</a><span>Open source · Source records retain their own licenses</span><span>Built from enclosed observations, not a trusted-source whitelist</span></footer>
 </body>

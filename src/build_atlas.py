@@ -11,8 +11,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HISTORICAL = ROOT / "data/raw/UcdpPrioConflict_v26_1.csv"
-CURRENT = ROOT / "data/raw/GEDEvent_v26_01_26_06.csv"
+CURRENT_SOURCES = (
+    (ROOT / "data/raw/GEDEvent_v26_01_26_06.csv", "ucdp-candidate-ged-2026-06"),
+    (ROOT / "data/raw/GEDEvent_v26_0_7.csv", "ucdp-candidate-ged-2026-07"),
+)
 VDEM = ROOT / "data/raw/V-Dem-CY-Core-v15.csv"
+VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v15.csv"
+GEOMETRY = ROOT / "data/raw/ne_110m_admin_0_countries.geojson"
+SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-08-29.json"
+SATELLITE_RELATIONS = ROOT / "data/curated/satellite_relations.json"
 CLAIMS = ROOT / "data/curated/claims.json"
 PROJECTIONS = ROOT / "data/curated/projections.json"
 SOURCES = ROOT / "data/SOURCES.json"
@@ -26,6 +33,12 @@ TYPE_NAMES = {
 }
 INCOMPATIBILITY_NAMES = {1: "territory", 2: "government"}
 REGION_NAMES = {1: "Europe", 2: "Middle East", 3: "Asia", 4: "Africa", 5: "Americas"}
+REGIME_NAMES = {
+    0: "Closed autocracy",
+    1: "Electoral autocracy",
+    2: "Electoral democracy",
+    3: "Liberal democracy",
+}
 
 LOCATION_ALIASES = {
     "Bosnia-Herzegovina": "Bosnia and Herzegovina",
@@ -148,6 +161,10 @@ def government_names(value: str | None) -> list[str]:
     return names
 
 
+def mapped_names(names: set[str] | list[str]) -> list[str]:
+    return sorted({LOCATION_ALIASES.get(name, name) for name in names})
+
+
 def conflict_title(latest: dict[str, str]) -> str:
     territory = latest.get("territory_name", "").strip()
     location = latest.get("location", "").strip()
@@ -233,6 +250,9 @@ def historical_records() -> tuple[list[dict], list[dict], list[dict]]:
                 "intensity": as_int(row["intensity_level"]),
                 "episode_end": bool(as_int(row.get("ep_end"))),
                 "locations": split_csv_names(row["location"]),
+                "plot_locations": plot_locations(row["location"]),
+                "side_a_states": mapped_names(set(government_names(row.get("side_a"))) | set(government_names(row.get("side_a_2nd")))),
+                "side_b_states": mapped_names(set(government_names(row.get("side_b"))) | set(government_names(row.get("side_b_2nd")))),
             }
             years.append(year_record)
             states = set()
@@ -266,6 +286,15 @@ def historical_records() -> tuple[list[dict], list[dict], list[dict]]:
 
 def vdem_state_conditions() -> list[dict]:
     """Retain V-Dem observations as conditions, without converting them to a war score."""
+    regimes = {}
+    with VDEM_REGIMES.open(encoding="utf-8-sig", newline="") as handle:
+        for row in csv.DictReader(handle):
+            code = as_float(row.get("v2x_regime"))
+            regimes[(row["country_text_id"], as_int(row["year"]))] = {
+                "code": int(code) if code is not None else None,
+                "name": REGIME_NAMES.get(int(code)) if code is not None else None,
+                "ambiguity_code": as_float(row.get("v2x_regime_amb")),
+            }
     records = []
     with VDEM.open(encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
@@ -282,6 +311,7 @@ def vdem_state_conditions() -> list[dict]:
                 "country_id": row["country_text_id"],
                 "year": year,
                 "conditions": {field: as_float(row[field]) for field in VDEM_FIELDS},
+                "regime": regimes.get((row["country_text_id"], year), {"code": None, "name": None, "ambiguity_code": None}),
                 "source_id": "vdem-core-v15-rtldi",
                 "enclosure": {
                     "outer": "V-Dem country-year measurement and coding model",
@@ -293,91 +323,265 @@ def vdem_state_conditions() -> list[dict]:
     return records
 
 
-def current_events() -> tuple[list[dict], dict | None]:
-    if not CURRENT.exists():
-        return [], None
-    events = []
-    focal_rows = []
-    with CURRENT.open(encoding="utf-8-sig", newline="") as handle:
-        for row in csv.DictReader(handle):
-            conflict_id = row.get("conflict_new_id", "").strip()
-            record = {
-                "id": row.get("id", ""),
-                "conflict_id": f"ucdp-candidate-{conflict_id}" if conflict_id else None,
-                "conflict_name": row.get("conflict_name", ""),
-                "date_start": row.get("date_start", "")[:10],
-                "date_end": row.get("date_end", "")[:10],
-                "country": row.get("country", ""),
-                "place": row.get("where_coordinates", ""),
-                "description": row.get("where_description", ""),
-                "latitude": float(row["latitude"]) if row.get("latitude") else None,
-                "longitude": float(row["longitude"]) if row.get("longitude") else None,
-                "side_a": row.get("side_a", ""),
-                "side_b": row.get("side_b", ""),
-                "code_status": row.get("code_status", ""),
-                "event_clarity": as_int(row.get("event_clarity")),
-                "source_count": as_int(row.get("number_of_sources")),
-                "source_office": row.get("source_office", ""),
-                "source_date": row.get("source_date", ""),
-                "fatalities": {
-                    "low": as_int(row.get("low")),
-                    "best": as_int(row.get("best")),
-                    "high": as_int(row.get("high")),
-                    "side_a": as_int(row.get("deaths_a")),
-                    "side_b": as_int(row.get("deaths_b")),
-                    "civilians": as_int(row.get("deaths_civilians")),
-                    "unknown": as_int(row.get("deaths_unknown")),
-                },
-                "source_id": "ucdp-candidate-ged-2026-06",
-            }
-            events.append(record)
-            if conflict_id == "16905":
-                focal_rows.append(record)
+def current_events() -> tuple[list[dict], list[dict]]:
+    source_rows: dict[str, tuple[dict[str, str], str]] = {}
+    for source_path, source_id in CURRENT_SOURCES:
+        if not source_path.exists():
+            continue
+        with source_path.open(encoding="utf-8-sig", newline="") as handle:
+            for row in csv.DictReader(handle):
+                source_rows[row.get("id", "")] = (row, source_id)
 
-    focal = None
-    if focal_rows:
-        countries = sorted({row["country"] for row in focal_rows if row["country"]})
-        focal = {
-            "id": "ucdp-candidate-16905",
-            "source_conflict_id": 16905,
-            "historical_link": "ucdp-14609",
-            "title": "Iran - Israel and United States, 2026 candidate-event layer",
+    events = []
+    grouped: dict[str, list[dict]] = defaultdict(list)
+    for row, source_id in source_rows.values():
+        conflict_id = row.get("conflict_new_id", "").strip()
+        record = {
+            "id": row.get("id", ""),
+            "conflict_id": f"ucdp-candidate-{conflict_id}" if conflict_id else None,
+            "conflict_name": row.get("conflict_name", ""),
+            "date_start": row.get("date_start", "")[:10],
+            "date_end": row.get("date_end", "")[:10],
+            "country": row.get("country", ""),
+            "region": row.get("region", "Other"),
+            "place": row.get("where_coordinates", ""),
+            "description": row.get("where_description", ""),
+            "latitude": float(row["latitude"]) if row.get("latitude") else None,
+            "longitude": float(row["longitude"]) if row.get("longitude") else None,
+            "side_a": row.get("side_a", ""),
+            "side_b": row.get("side_b", ""),
+            "side_a_states": mapped_names(government_names(row.get("side_a"))),
+            "side_b_states": mapped_names(government_names(row.get("side_b"))),
+            "type_of_violence": as_int(row.get("type_of_violence")),
+            "dyad_id": row.get("dyad_new_id", ""),
+            "dyad_name": row.get("dyad_name", ""),
+            "code_status": row.get("code_status", ""),
+            "event_clarity": as_int(row.get("event_clarity")),
+            "date_precision": as_int(row.get("date_prec")),
+            "location_precision": as_int(row.get("where_prec")),
+            "source_count": as_int(row.get("number_of_sources")),
+            "source_office": row.get("source_office", ""),
+            "source_date": row.get("source_date", ""),
+            "source_headline": row.get("source_headline", ""),
+            "source_original": row.get("source_original", ""),
+            "fatalities": {
+                "low": as_int(row.get("low")),
+                "best": as_int(row.get("best")),
+                "high": as_int(row.get("high")),
+                "side_a": as_int(row.get("deaths_a")),
+                "side_b": as_int(row.get("deaths_b")),
+                "civilians": as_int(row.get("deaths_civilians")),
+                "unknown": as_int(row.get("deaths_unknown")),
+            },
+            "source_id": source_id,
+        }
+        events.append(record)
+        if conflict_id:
+                grouped[conflict_id].append(record)
+
+    violence_types = {1: "candidate state-based conflict", 2: "candidate non-state conflict", 3: "candidate one-sided violence"}
+    conflicts = []
+    for conflict_id, conflict_rows in grouped.items():
+        countries = sorted({row["country"] for row in conflict_rows if row["country"]})
+        type_codes = {row["type_of_violence"] for row in conflict_rows}
+        type_code = next(iter(type_codes)) if len(type_codes) == 1 else 0
+        titles = sorted({row["conflict_name"] for row in conflict_rows if row["conflict_name"]})
+        source_ids = sorted({row["source_id"] for row in conflict_rows})
+        record = {
+            "id": f"ucdp-candidate-{conflict_id}",
+            "source_conflict_id": as_int(conflict_id),
+            "title": titles[0] if titles else f"UCDP candidate conflict {conflict_id}",
             "locations": countries,
             "plot_locations": [LOCATION_ALIASES.get(name, name) for name in countries],
-            "region": "Middle East",
-            "start_date": min(row["date_start"] for row in focal_rows if row["date_start"]),
+            "region": next((row["region"] for row in conflict_rows if row["region"]), "Other"),
+            "start_date": min(row["date_start"] for row in conflict_rows if row["date_start"]),
             "first_active_year": 2026,
             "last_active_year": 2026,
             "years_active": [2026],
-            "active_at_source_boundary": True,
-            "type": "candidate state-based conflict",
-            "type_code": 2,
+            "active_at_source_boundary": "ucdp-candidate-ged-2026-07" in source_ids,
+            "type": violence_types.get(type_code, "candidate organized violence"),
+            "type_code": type_code,
             "incompatibility": "candidate coding",
             "territory_name": "",
             "peak_intensity": None,
             "latest_intensity": None,
-            "parties_a": sorted({row["side_a"] for row in focal_rows if row["side_a"]}),
-            "parties_b": sorted({row["side_b"] for row in focal_rows if row["side_b"]}),
+            "parties_a": sorted({row["side_a"] for row in conflict_rows if row["side_a"]}),
+            "parties_b": sorted({row["side_b"] for row in conflict_rows if row["side_b"]}),
             "secondary_parties": [],
-            "event_count": len(focal_rows),
-            "source_id": "ucdp-candidate-ged-2026-06",
+            "event_count": len(conflict_rows),
+            "source_id": source_ids[-1],
+            "source_ids": source_ids,
             "enclosure": {
-                "outer": "UCDP candidate-event collection through June 2026",
-                "active": "provisional event cluster coded as conflict 16905",
+                "outer": "UCDP candidate-event collection through July 2026",
+                "active": f"provisional event cluster coded as conflict {conflict_id}",
                 "inner": ["geolocated events", "source offices", "fatality ranges", "code-status qualifiers"],
-                "frontier_questions": ["What changed after June 2026?", "Which candidate records were revised?", "How do belligerent claims nest around each event?"]
+                "frontier_questions": ["What changed after July 2026?", "Which candidate records were revised?", "How do actor claims nest around each event?"]
             },
         }
+        if conflict_id == "16905":
+            record["historical_link"] = "ucdp-14609"
+            record["title"] = "Iran - Israel and United States, 2026 candidate-event layer"
+        conflicts.append(record)
     events.sort(key=lambda item: (item["date_start"], item["id"]))
-    return events, focal
+    conflicts.sort(key=lambda item: (item["title"], item["id"]))
+    return events, conflicts
+
+
+MAP_NAME_ALIASES = {
+    "Burma/Myanmar": "Myanmar",
+    "Cape Verde": "Cabo Verde",
+    "Congo": "Republic of the Congo",
+    "Ivory Coast": "Cote d'Ivoire",
+    "Palestine/West Bank": "Palestine",
+    "Republic of Vietnam": "Vietnam",
+    "South Yemen": "Yemen",
+    "The Gambia": "Gambia",
+    "United States": "United States of America",
+}
+
+
+def regime_periods(rows: list[dict]) -> list[dict]:
+    periods = []
+    for row in sorted(rows, key=lambda item: item["year"]):
+        code = row["regime"]["code"]
+        if code is None:
+            continue
+        if periods and periods[-1]["code"] == code and periods[-1]["end_year"] + 1 == row["year"]:
+            periods[-1]["end_year"] = row["year"]
+        else:
+            periods.append({"code": code, "name": REGIME_NAMES[code], "start_year": row["year"], "end_year": row["year"]})
+    return periods
+
+
+def nation_profiles(conflicts: list[dict], years: list[dict], states: list[dict],
+                    conditions: list[dict], events: list[dict]) -> list[dict]:
+    """Build nation-centred UCDP relations without relabeling them as permanent alliances."""
+    geometry = json.loads(GEOMETRY.read_text(encoding="utf-8"))
+    map_records = {}
+    for feature in geometry["features"]:
+        props = feature["properties"]
+        record = {
+            "map_name": props["ADMIN"],
+            "country_id": props.get("ISO_A3") if props.get("ISO_A3") != "-99" else None,
+            "centroid": [props.get("LABEL_X"), props.get("LABEL_Y")],
+        }
+        for key in ("ADMIN", "NAME", "NAME_LONG", "NAME_EN", "SOVEREIGNT"):
+            if props.get(key):
+                if key == "SOVEREIGNT":
+                    map_records.setdefault(props[key], record)
+                else:
+                    map_records[props[key]] = record
+
+    condition_rows: dict[str, list[dict]] = defaultdict(list)
+    country_ids = {}
+    for row in conditions:
+        condition_rows[row["country"]].append(row)
+        country_ids[row["country"]] = row["country_id"]
+
+    conflicts_by_nation: dict[str, set[str]] = defaultdict(set)
+    years_by_nation: dict[str, set[int]] = defaultdict(set)
+    same_side: dict[str, dict[str, dict[str, set]]] = defaultdict(lambda: defaultdict(lambda: {"years": set(), "conflicts": set()}))
+    opposing: dict[str, dict[str, dict[str, set]]] = defaultdict(lambda: defaultdict(lambda: {"years": set(), "conflicts": set()}))
+
+    def add_relation(store: dict, left: str, right: str, year: int, conflict_id: str):
+        if left == right:
+            return
+        store[left][right]["years"].add(year)
+        store[left][right]["conflicts"].add(conflict_id)
+
+    def add_year(left_states: list[str], right_states: list[str], locations: list[str], year: int, conflict_id: str):
+        left, right = set(left_states), set(right_states)
+        for nation in left | right | set(locations):
+            conflicts_by_nation[nation].add(conflict_id)
+            years_by_nation[nation].add(year)
+        for group in (left, right):
+            for nation in group:
+                for partner in group:
+                    add_relation(same_side, nation, partner, year, conflict_id)
+        for nation in left:
+            for adversary in right:
+                add_relation(opposing, nation, adversary, year, conflict_id)
+                add_relation(opposing, adversary, nation, year, conflict_id)
+
+    for row in years:
+        add_year(row["side_a_states"], row["side_b_states"], row["plot_locations"], row["year"], row["conflict_id"])
+    for event in events:
+        if not event["conflict_id"]:
+            continue
+        add_year(event["side_a_states"], event["side_b_states"], [LOCATION_ALIASES.get(event["country"], event["country"])],
+                 as_int(event["date_start"][:4]), event["conflict_id"])
+
+    state_stats = {row["state"]: row for row in states}
+    fatality_totals: dict[str, dict[str, int]] = defaultdict(lambda: {"low": 0, "best": 0, "high": 0, "events": 0})
+    for event in events:
+        country = LOCATION_ALIASES.get(event["country"], event["country"])
+        fatality_totals[country]["events"] += 1
+        for field in ("low", "best", "high"):
+            fatality_totals[country][field] += event["fatalities"][field]
+
+    names = set(condition_rows) | set(state_stats) | set(conflicts_by_nation)
+    names.update(record["map_name"] for record in map_records.values())
+    profiles = []
+    for country in sorted(names):
+        map_record = map_records.get(MAP_NAME_ALIASES.get(country, country), {})
+        stats = state_stats.get(country, {})
+
+        def relations(store: dict) -> list[dict]:
+            return sorted(({
+                "country": other,
+                "map_name": MAP_NAME_ALIASES.get(other, other),
+                "duration_years": len(values["years"]),
+                "first_year": min(values["years"]),
+                "last_year": max(values["years"]),
+                "conflict_ids": sorted(values["conflicts"]),
+            } for other, values in store.get(country, {}).items()), key=lambda item: (-item["duration_years"], item["country"]))
+
+        profiles.append({
+            "country": country,
+            "country_id": country_ids.get(country) or map_record.get("country_id"),
+            "map_name": map_record.get("map_name", MAP_NAME_ALIASES.get(country, country)),
+            "centroid": map_record.get("centroid"),
+            "conflict_ids": sorted(conflicts_by_nation.get(country, set())),
+            "years_active": sorted(years_by_nation.get(country, set())),
+            "same_side_partners": relations(same_side),
+            "opposing_states": relations(opposing),
+            "regime_periods": regime_periods(condition_rows.get(country, [])),
+            "candidate_event_fatalities_in_territory": fatality_totals[country],
+            "conflict_count": len(conflicts_by_nation.get(country, set())),
+            "territorial_conflict_count": stats.get("territorial_conflict_count", 0),
+            "interstate_conflict_count": stats.get("interstate_conflict_count", 0),
+        })
+    return profiles
+
+
+def satellite_constellations() -> list[dict]:
+    """Join public orbit geometry to separately sourced constellation-level conflict relations."""
+    objects = json.loads(SATELLITE_ORBITS.read_text(encoding="utf-8"))
+    relations = json.loads(SATELLITE_RELATIONS.read_text(encoding="utf-8"))["constellations"]
+    fields = (
+        "OBJECT_NAME", "OBJECT_ID", "NORAD_CAT_ID", "EPOCH", "MEAN_MOTION",
+        "ECCENTRICITY", "INCLINATION", "RA_OF_ASC_NODE", "ARG_OF_PERICENTER",
+        "MEAN_ANOMALY", "EPHEMERIS_TYPE", "CLASSIFICATION_TYPE", "ELEMENT_SET_NO",
+        "REV_AT_EPOCH", "BSTAR", "MEAN_MOTION_DOT", "MEAN_MOTION_DDOT",
+    )
+    for relation in relations:
+        prefix = relation.pop("object_name_prefix")
+        relation["objects"] = [
+            {field: item.get(field) for field in fields}
+            for item in objects if item.get("OBJECT_NAME", "").startswith(prefix)
+        ]
+        relation["object_count"] = len(relation["objects"])
+    return relations
 
 
 def build() -> dict:
     conflicts, years, states = historical_records()
+    historical_conflict_count = len(conflicts)
     state_conditions = vdem_state_conditions()
-    events, focal = current_events()
-    if focal:
-        conflicts.append(focal)
+    events, candidate_conflicts = current_events()
+    conflicts.extend(candidate_conflicts)
+    nations = nation_profiles(conflicts, years, states, state_conditions, events)
+    constellations = satellite_constellations()
     claims = json.loads(CLAIMS.read_text(encoding="utf-8"))["claims"]
     projections = json.loads(PROJECTIONS.read_text(encoding="utf-8"))["projections"]
     sources = json.loads(SOURCES.read_text(encoding="utf-8"))["sources"]
@@ -390,7 +594,7 @@ def build() -> dict:
     for condition in state_conditions:
         condition["enclosure"] = canonical_enclosure(
             condition["enclosure"], f"state-condition.{condition['country_id']}.{condition['year']}",
-            measurements=list(condition["conditions"]), join_keys=["country_id", "year"],
+            measurements=[*condition["conditions"], "v2x_regime", "v2x_regime_amb"], join_keys=["country_id", "year"],
         )
     for claim in claims:
         claim["enclosure"] = canonical_enclosure(
@@ -403,20 +607,26 @@ def build() -> dict:
         "project": "The War Maps Project",
         "revision": 1,
         "generated_from": [source["id"] for source in sources],
-        "coverage": {"start_year": 1946, "reviewed_through": 2025, "candidate_through": "2026-06-30"},
+        "coverage": {"start_year": 1946, "reviewed_through": 2025, "candidate_through": "2026-07-31"},
         "summary": {
             "conflicts": len(conflicts),
-            "historical_conflicts": len(conflicts) - (1 if focal else 0),
+            "historical_conflicts": historical_conflict_count,
+            "candidate_conflicts": len(candidate_conflicts),
             "conflict_years": len(years),
             "states": len(states),
+            "nation_profiles": len(nations),
             "candidate_events_2026": len(events),
             "focal_iran_events": sum(event["conflict_id"] == "ucdp-candidate-16905" for event in events),
             "vdem_state_years": len(state_conditions),
             "prompted_projection_branches": len(projections) + sum(claim["source_type"] == "user-prompted-causal-projection" for claim in claims),
+            "public_satellite_orbits": sum(item["object_count"] for item in constellations),
         },
         "conflicts": conflicts,
         "conflict_years": years,
         "states": states,
+        "nations": nations,
+        "regime_types": [{"code": code, "name": name} for code, name in REGIME_NAMES.items()],
+        "satellite_constellations": constellations,
         "state_conditions": state_conditions,
         "events": events,
         "claims": claims,

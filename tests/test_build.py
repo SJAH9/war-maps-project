@@ -20,6 +20,15 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertGreater(focal["event_count"], 0)
         self.assertIn("Government of Iran", focal["parties_a"])
 
+    def test_all_current_events_and_conflicts_are_available(self):
+        self.assertEqual(self.data["coverage"]["candidate_through"], "2026-07-31")
+        self.assertEqual(self.data["summary"]["candidate_events_2026"], 11867)
+        self.assertEqual(self.data["summary"]["candidate_conflicts"], 485)
+        conflict_ids = {item["id"] for item in self.data["conflicts"]}
+        self.assertTrue(all(event["conflict_id"] in conflict_ids for event in self.data["events"]))
+        self.assertEqual(len({event["id"] for event in self.data["events"]}), len(self.data["events"]))
+        self.assertIn("ucdp-candidate-ged-2026-07", {event["source_id"] for event in self.data["events"]})
+
     def test_claims_use_recursive_enclosures_not_truth_flags(self):
         for claim in self.data["claims"]:
             self.assertNotIn("truth", claim)
@@ -36,6 +45,22 @@ class WarMapsBuildTests(unittest.TestCase):
         sample = self.data["state_conditions"][0]
         self.assertIn("conditions", sample)
         self.assertNotIn("score", sample)
+        self.assertIn(sample["regime"]["code"], {0, 1, 2, 3, None})
+
+    def test_nation_profiles_join_time_relations_and_regimes(self):
+        iran = next(item for item in self.data["nations"] if item["country"] == "Iran")
+        israel = next(item for item in self.data["nations"] if item["country"] == "Israel")
+        self.assertIn("Israel", {item["country"] for item in iran["opposing_states"]})
+        self.assertIn("Iran", {item["country"] for item in israel["opposing_states"]})
+        self.assertTrue(iran["regime_periods"])
+        self.assertEqual(len(iran["centroid"]), 2)
+        self.assertIn("best", iran["candidate_event_fatalities_in_territory"])
+
+    def test_united_states_uses_continental_map_record(self):
+        nation = next(item for item in self.data["nations"] if item["country"] == "United States of America")
+        self.assertEqual(nation["map_name"], "United States of America")
+        self.assertLess(nation["centroid"][0], -90)
+        self.assertGreater(nation["centroid"][1], 30)
 
     def test_revision_one_projection_branches(self):
         classes = {item.get("branch_class") for item in self.data["prompted_projections"]}
@@ -43,6 +68,14 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("plausible_alternative_history", classes)
         for item in self.data["prompted_projections"]:
             self.assertNotIn("truth", item)
+
+    def test_satellite_geometry_is_separate_from_conflict_relation(self):
+        relation = next(item for item in self.data["satellite_constellations"] if item["constellation_id"] == "iceye-ukraine-support")
+        self.assertGreaterEqual(relation["object_count"], 40)
+        self.assertEqual(relation["relation_class"], "documented_constellation_support")
+        self.assertIn("does not establish", relation["individual_asset_boundary"])
+        self.assertTrue(all("conflict_ids" not in item for item in relation["objects"]))
+        self.assertTrue(all(item["NORAD_CAT_ID"] for item in relation["objects"]))
 
     def test_output_is_machine_readable(self):
         loaded = json.loads(OUTPUT.read_text(encoding="utf-8"))

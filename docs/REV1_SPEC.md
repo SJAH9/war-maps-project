@@ -9,7 +9,7 @@ The project is not neutral by omission and does not require both-sideism. It tak
 ## Canonical observed field
 
 1. Every UCDP/PRIO state-based armed conflict from 1946 through 2025.
-2. UCDP candidate events through June 2026, with source coding retained.
+2. UCDP candidate events through July 2026, with source coding retained and overlapping releases reconciled by event ID.
 3. V-Dem state conditions nested around conflict-years.
 4. The Iran-Israel-United States conflict as the first current focal centre.
 
