@@ -115,7 +115,7 @@
       traceForCountries(adversaries.map(item=>item.map_name),adversaries.map(item=>item.duration_years),[[0,'#e1d7e7'],[1,'#56246f']],'Opposing years')
     ].filter(trace => trace.locations.length);
     const centroid = nation.centroid || [0,20];
-    const geo = baseGeo({type:'orthographic',rotation:{lon:centroid[0],lat:centroid[1]}});
+    const geo = baseGeo({type:'orthographic',rotation:{lon:centroid[0],lat:centroid[1]},scale:.72});
     Plotly.react('nation-all-map',traces,mapLayout(geo),{responsive:true,displayModeBar:false,scrollZoom:true});
     attachMapLinks('nation-all-map');
   }

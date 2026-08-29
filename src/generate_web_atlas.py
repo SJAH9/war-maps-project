@@ -18,6 +18,7 @@ def generate() -> Path:
     OUTPUT.mkdir(parents=True, exist_ok=True)
     for name in ("index.html", "styles.css", "app.js", "nation.html", "nation.js"):
         shutil.copy2(SOURCE / name, OUTPUT / name)
+    shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     (OUTPUT / "data.js").write_text(f"window.WAR_MAPS_DATA={payload};\n", encoding="utf-8")
     (ROOT / "index.html").write_text(
