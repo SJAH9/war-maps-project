@@ -4,6 +4,12 @@ The War Maps Project is an open, reproducible atlas of organized armed conflict 
 
 The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Conflict Dataset 26.1 (1946-2025), adds a current-event layer from the UCDP Candidate Events Dataset through July 2026, and nests those conflict-years inside the state conditions observed in V-Dem. The first current focal centre is the Iran-Israel-United States war recorded by UCDP as conflict `16905` in its candidate data.
 
+## First public release
+
+The first public release establishes the reproducible observed field, the interactive world and nation explorers, configurable print volumes, and the ternary enclosure grammar. The project horizon is broader: **to produce navigable nested causal models of every organized conflict for which suitable peer-reviewed datasets are available**. Peer review establishes a dataset's documented scholarly provenance; it does not assign an automatic truth flag to every observation.
+
+The current release is therefore an operational foundation, not a claim that every conflict already has a complete causal model. Each conflict begins at its available source boundary and can deepen through recursively addressed decisions, actors, conditions, claims, economic relations, alternatives, and consequences without erasing uncertainty or source context. See [First Public Release](docs/FIRST_PUBLIC_RELEASE.md).
+
 ## Ternary enclosure
 
 The ternary enclosure function is not a three-valued truth system. It records:
