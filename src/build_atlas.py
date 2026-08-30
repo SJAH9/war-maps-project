@@ -209,6 +209,7 @@ def historical_records() -> tuple[list[dict], list[dict], list[dict]]:
         type_code = as_int(latest["type_of_conflict"])
         incompatibility_code = as_int(latest["incompatibility"])
         active = dataset_year in years_active and as_int(latest.get("ep_end")) == 0
+        episode_end_dates = [row["ep_end_date"] for row in conflict_rows if row.get("ep_end_date")]
         record_id = f"ucdp-{conflict_id}"
         conflicts.append({
             "id": record_id,
@@ -218,6 +219,7 @@ def historical_records() -> tuple[list[dict], list[dict], list[dict]]:
             "plot_locations": mapped_locations,
             "region": REGION_NAMES.get(as_int(latest["region"]), "Other"),
             "start_date": min(row["start_date"] for row in conflict_rows if row["start_date"]),
+            "end_date": None if active else (max(episode_end_dates) if episode_end_dates else f"{max(years_active)}-12-31"),
             "first_active_year": min(years_active),
             "last_active_year": max(years_active),
             "years_active": years_active,
@@ -387,6 +389,7 @@ def current_events() -> tuple[list[dict], list[dict]]:
         type_code = next(iter(type_codes)) if len(type_codes) == 1 else 0
         titles = sorted({row["conflict_name"] for row in conflict_rows if row["conflict_name"]})
         source_ids = sorted({row["source_id"] for row in conflict_rows})
+        active = "ucdp-candidate-ged-2026-07" in source_ids
         record = {
             "id": f"ucdp-candidate-{conflict_id}",
             "source_conflict_id": as_int(conflict_id),
@@ -395,10 +398,11 @@ def current_events() -> tuple[list[dict], list[dict]]:
             "plot_locations": [LOCATION_ALIASES.get(name, name) for name in countries],
             "region": next((row["region"] for row in conflict_rows if row["region"]), "Other"),
             "start_date": min(row["date_start"] for row in conflict_rows if row["date_start"]),
+            "end_date": None if active else max((row["date_end"] or row["date_start"]) for row in conflict_rows),
             "first_active_year": 2026,
             "last_active_year": 2026,
             "years_active": [2026],
-            "active_at_source_boundary": "ucdp-candidate-ged-2026-07" in source_ids,
+            "active_at_source_boundary": active,
             "type": violence_types.get(type_code, "candidate organized violence"),
             "type_code": type_code,
             "incompatibility": "candidate coding",

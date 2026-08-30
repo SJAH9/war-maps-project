@@ -9,17 +9,17 @@
     try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}
     catch(error){document.documentElement.dataset.theme='dark';}
   </script>
-  <link rel="stylesheet" href="styles.css?v=2026-07-31-r5">
+  <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
-  <script src="data.js?v=2026-07-31-r5" defer></script>
-  <script src="app.js?v=2026-07-31-r5" defer></script>
+  <script src="data.js?v=2026-08-29-r8" defer></script>
+  <script src="app.js?v=2026-08-29-r8" defer></script>
 </head>
 <body>
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
     <nav aria-label="Primary navigation">
-      <a href="#explore">Explore</a><a href="#states">States</a><a href="#method">Enclosure method</a><a href="#sources">Sources</a>
+      <a href="#explore">Explore</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="#states">States</a><a href="#method">Method</a><a href="#sources">Sources</a>
     </nav>
     <button class="header-command" id="war-dialog-open" type="button">Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
@@ -70,7 +70,7 @@
     <section class="detail-section" id="detail" hidden>
       <div class="detail-heading">
         <div><p class="eyebrow" id="detail-kicker"></p><h2 id="detail-title"></h2></div>
-        <button class="icon-button" id="close-detail" type="button" aria-label="Close conflict detail" title="Close conflict detail">×</button>
+        <div class="detail-actions"><a class="header-command" id="detail-network-link" href="network.html">Open network</a><button class="icon-button" id="close-detail" type="button" aria-label="Close conflict detail" title="Close conflict detail">×</button></div>
       </div>
       <div class="detail-meta" id="detail-meta"></div>
       <div class="nation-chips" id="nation-chips"></div>

@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from src.build_atlas import OUTPUT, build
+from src.build_atlas import OUTPUT, ROOT, build
 
 
 class WarMapsBuildTests(unittest.TestCase):
@@ -28,6 +28,50 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertTrue(all(event["conflict_id"] in conflict_ids for event in self.data["events"]))
         self.assertEqual(len({event["id"] for event in self.data["events"]}), len(self.data["events"]))
         self.assertIn("ucdp-candidate-ged-2026-07", {event["source_id"] for event in self.data["events"]})
+
+    def test_conflict_temporal_bounds_support_network_models(self):
+        current = next(item for item in self.data["conflicts"] if item["id"] == "ucdp-candidate-16905")
+        closed = next(item for item in self.data["conflicts"] if not item["active_at_source_boundary"])
+        self.assertEqual(current["start_date"], "2026-02-28")
+        self.assertIsNone(current["end_date"])
+        self.assertIsNotNone(closed["end_date"])
+        self.assertGreaterEqual(closed["end_date"], closed["start_date"])
+
+    def test_network_inputs_retain_sides_locations_and_observations(self):
+        focal_id = "ucdp-candidate-16905"
+        events = [item for item in self.data["events"] if item["conflict_id"] == focal_id]
+        self.assertTrue(events)
+        self.assertTrue(all(item["country"] for item in events))
+        self.assertTrue(any(item["side_a_states"] and item["side_b_states"] for item in events))
+        self.assertTrue(ROOT.joinpath("web/network.html").exists())
+        self.assertTrue(ROOT.joinpath("web/network.js").exists())
+        network_source = ROOT.joinpath("web/network.js").read_text(encoding="utf-8")
+        self.assertIn("ForceGraph3D", network_source)
+        self.assertIn("onNodeDragEnd", network_source)
+        self.assertIn("selectGraphNode", network_source)
+        self.assertIn("renderSVG3D", network_source)
+        self.assertIn("network-label-layer", network_source)
+        self.assertIn("graph2ScreenCoords", network_source)
+        self.assertIn("AUTO_ROTATE_IDLE_MS", network_source)
+        self.assertIn("autoRotate", network_source)
+
+    def test_life_and_death_map_uses_event_fatalities_and_geometry(self):
+        page = ROOT.joinpath("web/life-death.html")
+        source = ROOT.joinpath("web/life-death.js")
+        self.assertTrue(page.exists())
+        self.assertTrue(source.exists())
+        self.assertTrue(ROOT.joinpath("data/raw/ne_110m_admin_0_countries.geojson").exists())
+        map_source = source.read_text(encoding="utf-8")
+        self.assertIn("THREE.ShapeGeometry", map_source)
+        self.assertIn("candidate-event", page.read_text(encoding="utf-8"))
+        self.assertIn("event.fatalities", map_source)
+        self.assertIn("scaledHeight", map_source)
+        totals = {}
+        for event in self.data["events"]:
+            country = event["country"]
+            totals[country] = totals.get(country, 0) + event["fatalities"]["best"]
+        self.assertTrue(totals)
+        self.assertGreater(max(totals.values()), 0)
 
     def test_claims_use_recursive_enclosures(self):
         for claim in self.data["claims"]:

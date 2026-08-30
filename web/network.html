@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
+  <title>Conflict Network · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
+  <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
+  <script src="data.js?v=2026-08-29-r11" defer></script>
+  <script src="network.js?v=2026-08-29-r13" defer></script>
+</head>
+<body class="network-page">
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"><a href="./#explore">Explore</a><a href="network.html" aria-current="page">Network</a><a href="life-death.html">Life and Death</a><a href="./#states">States</a><a href="./#method">Method</a><a href="./#sources">Sources</a></nav>
+    <button class="header-command" id="war-dialog-open" type="button">Select war</button>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+
+  <main>
+    <section class="network-section" id="network">
+      <div class="network-title">
+        <div><p class="eyebrow">Interactive network model</p><h1 id="network-title">Conflict network</h1></div>
+        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a></div>
+      </div>
+
+      <div class="network-controls" aria-label="Network controls">
+        <button class="network-select" id="network-war-select" type="button">Select war</button>
+        <label><span>From</span><input id="network-start" type="date"></label>
+        <label><span>Through</span><input id="network-end" type="date"></label>
+        <label><span>Find node</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
+        <label><span>Node class</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
+        <button id="network-fit" type="button">Fit network</button>
+      </div>
+
+      <div class="network-workspace">
+        <div class="network-stage">
+          <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
+          <div class="network-legend" aria-label="Network node legend">
+            <span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span>
+          </div>
+        </div>
+        <aside class="network-inspector" aria-live="polite">
+          <div class="network-inspector-head"><p class="eyebrow" id="node-type">Network extent</p><h2 id="node-title">Selected conflict</h2></div>
+          <div class="network-node-meta" id="node-meta"></div>
+          <div id="node-content"></div>
+        </aside>
+      </div>
+
+      <div class="network-summary" id="network-summary"></div>
+    </section>
+  </main>
+
+  <dialog class="war-dialog" id="war-dialog" aria-labelledby="war-dialog-title">
+    <form method="dialog" class="dialog-heading"><div><p class="eyebrow">Complete conflict register</p><h2 id="war-dialog-title">Select war</h2></div><button class="icon-button" value="cancel" aria-label="Close war selector" title="Close war selector">×</button></form>
+    <div class="dialog-controls">
+      <label><span>Find war</span><input id="war-dialog-search" type="search" placeholder="Conflict, territory, state, or party" autocomplete="off"></label>
+      <label><span>Region</span><select id="war-dialog-region"><option value="all">All regions</option><option>Europe</option><option>Middle East</option><option>Asia</option><option>Africa</option><option>Americas</option><option>Other</option></select></label>
+    </div>
+    <div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946-July 2026 source boundary</span></div>
+    <div class="war-dialog-list" id="war-dialog-list"></div>
+  </dialog>
+
+  <footer><a href="https://github.com/SJAH9/war-maps-project">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><span>Source boundaries and transformations remain explicit</span></footer>
+</body>
+</html>

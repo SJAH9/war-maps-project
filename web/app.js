@@ -158,6 +158,7 @@
     const conflict = conflictsById.get(id);
     if (!conflict) return;
     state.selected=id; $('#detail').hidden=false;
+    $('#detail-network-link').href=`network.html?conflict=${encodeURIComponent(id)}`;
     $('#detail-kicker').textContent=`${conflict.region} · ${conflict.type}`;
     $('#detail-title').textContent=conflict.title;
     $('#detail-meta').innerHTML=[`${conflict.first_active_year}-${conflict.last_active_year}`,conflict.incompatibility,`${conflict.years_active.length} conflict-year${conflict.years_active.length===1?'':'s'}`,conflict.source_id,conflict.active_at_source_boundary?'active at source boundary':'closed before source boundary'].map(item=>`<span>${esc(item)}</span>`).join('');

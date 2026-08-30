@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="An isometric map of fatalities recorded in the loaded UCDP candidate-event boundary.">
+  <title>Life and Death · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+  <script src="data.js?v=2026-08-29-r11" defer></script>
+  <script src="life-death.js?v=2026-08-29-r4" defer></script>
+</head>
+<body class="life-death-page">
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"><a href="./#explore">Explore</a><a href="network.html">Network</a><a href="life-death.html" aria-current="page">Life and Death</a><a href="./#states">States</a><a href="./#method">Method</a><a href="./#sources">Sources</a></nav>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+
+  <main>
+    <section class="mortality-section">
+      <div class="mortality-title">
+        <div><p class="eyebrow">Territory-level event observations</p><h1>Life and Death</h1></div>
+        <p>Vertical height represents fatalities recorded in the selected UCDP candidate-event boundary. The map locates deaths by event territory; it does not assign nationality, responsibility, or the complete human cost of postwar conflict.</p>
+      </div>
+
+      <div class="mortality-controls" aria-label="Life and Death map controls">
+        <label><span>Find state</span><input id="mortality-search" type="search" placeholder="State or territory" autocomplete="off"></label>
+        <label><span>From</span><input id="mortality-start" type="date"></label>
+        <label><span>Through</span><input id="mortality-end" type="date"></label>
+        <fieldset><legend>Fatality estimate</legend><div class="segmented-control"><button type="button" data-estimate="low">Low</button><button type="button" data-estimate="best" aria-pressed="true">Best</button><button type="button" data-estimate="high">High</button></div></fieldset>
+        <label><span>Height scale</span><select id="mortality-scale"><option value="sqrt">Square root</option><option value="linear">Linear</option><option value="log">Logarithmic</option></select></label>
+        <button id="mortality-reset" type="button">Reset view</button>
+      </div>
+
+      <div class="mortality-workspace">
+        <div class="mortality-stage">
+          <div id="mortality-map" role="img" aria-label="Isometric world map with vertical stacks representing recorded fatalities"></div>
+          <div class="mortality-scale" aria-hidden="true"><span id="scale-maximum"></span><i></i><span>0</span></div>
+          <div class="mortality-tooltip" id="mortality-tooltip" hidden></div>
+          <div class="mortality-legend"><span><i class="mortality-low"></i> lower recorded total</span><span><i class="mortality-high"></i> higher recorded total</span><span>Drag to rotate · scroll to zoom</span></div>
+        </div>
+        <aside class="mortality-inspector" aria-live="polite">
+          <div class="mortality-inspector-head"><p class="eyebrow" id="mortality-kicker">Selected boundary</p><h2 id="mortality-selection">Global event field</h2></div>
+          <div class="mortality-metrics" id="mortality-metrics"></div>
+          <div class="mortality-ranking"><h3>Highest recorded totals</h3><div id="mortality-ranking"></div></div>
+          <div class="mortality-disclosure"><h3>Measurement boundary</h3><p id="mortality-boundary"></p><a href="./#sources">Open source disclosures</a></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer><a href="https://github.com/SJAH9/war-maps-project">The War Maps Project</a><span>UCDP candidate-event fatality estimates</span><span>Natural Earth reference geometry</span></footer>
+</body>
+</html>

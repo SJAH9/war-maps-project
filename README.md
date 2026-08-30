@@ -30,6 +30,14 @@ The world map accepts a movable 1, 10, 25, 50, or all-time window. Its governmen
 
 An optional satellite layer plots approximate ground tracks from a frozen CelesTrak public GP snapshot. The initial layer joins the public ICEYE catalog to ICEYE's documented constellation-level imagery support for Ukraine. That relationship does not establish that every catalogued spacecraft participated in a particular operation. Orbit geometry and conflict relationship remain separate records in the generated data.
 
+## Conflict network exploration
+
+The top-level **Network** view starts from any conflict in the shared Select War register. It connects the selected conflict to Side A and Side B, their recorded actors and state participants, conflict locations, and the UCDP conflict-year or candidate-event observations joined to each location. The Three.js scene uses persistent semantic-node labels and slowly rotates on first draw, pauses on interaction, and resumes after eight idle seconds. Nodes can be dragged to fixed positions, searched, emphasized by class, and clicked to highlight their immediate connections without detaching an observation from its source identifiers or coding fields. Browsers that cannot paint the WebGL scene reliably receive a projected SVG 3D view with the same labels, idle rotation, drag, zoom, selection, and filtering behavior. A two-dimensional renderer remains the final compatibility path.
+
+The top-level **Life and Death** view projects Natural Earth country geometry onto an interactive isometric plane and stacks UCDP candidate-event fatality estimates vertically at each event territory. Date, low/best/high estimate, and linear/square-root/logarithmic display-scale controls preserve the underlying totals while changing the visible enclosure. This view covers the loaded 2026 candidate-event boundary; it does not infer victim nationality, responsibility, or historical fatalities from conflict participation records.
+
+The network opens at the conflict's earliest recorded date. A closed conflict ends at its generated episode end date; a conflict active at the loaded source boundary extends to the present while separately disclosing the latest observed source date. The visible date controls can narrow that automatically established temporal enclosure.
+
 ## Build
 
 Python 3.10 or newer builds the data and web atlas. Print generation additionally uses `fpdf2`.

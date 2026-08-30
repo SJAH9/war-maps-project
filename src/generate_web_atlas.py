@@ -7,7 +7,7 @@ import json
 import shutil
 from pathlib import Path
 
-from src.build_atlas import ROOT, build
+from src.build_atlas import GEOMETRY, ROOT, build
 
 SOURCE = ROOT / "web"
 OUTPUT = ROOT / "outputs/web"
@@ -16,9 +16,10 @@ OUTPUT = ROOT / "outputs/web"
 def generate() -> Path:
     data = build()
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    for name in ("index.html", "styles.css", "app.js", "nation.html", "nation.js"):
+    for name in ("index.html", "styles.css", "app.js", "nation.html", "nation.js", "network.html", "network.js", "life-death.html", "life-death.js"):
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
+    shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     (OUTPUT / "data.js").write_text(f"window.WAR_MAPS_DATA={payload};\n", encoding="utf-8")
     (ROOT / "index.html").write_text(
