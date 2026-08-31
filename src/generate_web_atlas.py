@@ -16,7 +16,7 @@ OUTPUT = ROOT / "outputs/web"
 def generate() -> Path:
     data = build()
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    for name in ("index.html", "styles.css", "app.js", "nation.html", "nation.js", "network.html", "network.js", "life-death.html", "life-death.js"):
+    for name in ("index.html", "styles.css", "app.js", "nation.html", "nation.js", "network.html", "network.js", "life-death.html", "life-death.js", "life-death-data.js"):
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")

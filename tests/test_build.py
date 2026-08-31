@@ -58,6 +58,7 @@ class WarMapsBuildTests(unittest.TestCase):
     def test_life_and_death_map_uses_event_fatalities_and_geometry(self):
         page = ROOT.joinpath("web/life-death.html")
         source = ROOT.joinpath("web/life-death.js")
+        health = ROOT.joinpath("web/life-death-data.js")
         self.assertTrue(page.exists())
         self.assertTrue(source.exists())
         self.assertTrue(ROOT.joinpath("data/raw/ne_110m_admin_0_countries.geojson").exists())
@@ -65,7 +66,16 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("THREE.ShapeGeometry", map_source)
         self.assertIn("candidate-event", page.read_text(encoding="utf-8"))
         self.assertIn("event.fatalities", map_source)
-        self.assertIn("scaledHeight", map_source)
+        self.assertIn("blockCount", map_source)
+        self.assertTrue(health.exists())
+        self.assertIn("window.LIFE_DEATH_METRICS", health.read_text(encoding="utf-8"))
+        self.assertIn("data-metric=\"mortality\"", page.read_text(encoding="utf-8"))
+        self.assertIn("data-metric=\"fertility\"", page.read_text(encoding="utf-8"))
+        self.assertIn("data-metric=\"conflict\"", page.read_text(encoding="utf-8"))
+        self.assertIn("blockHeight", map_source)
+        self.assertIn("addIVMField", map_source)
+        self.assertIn("addCompassRose", map_source)
+        self.assertNotIn('id="mortality-scale"', page.read_text(encoding="utf-8"))
         totals = {}
         for event in self.data["events"]:
             country = event["country"]

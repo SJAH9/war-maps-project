@@ -61,6 +61,26 @@
       "retrieved": "2026-08-28"
     },
     {
+      "id": "ihme-gbd-2023-all-cause-mortality",
+      "title": "Global Burden of Disease Study 2023 Results, all-cause mortality",
+      "publisher": "Institute for Health Metrics and Evaluation",
+      "coverage": "1980-2023 age-standardized all-cause death rates, both sexes",
+      "url": "https://vizhub.healthdata.org/gbd-results/",
+      "license": "IHME GBD Results terms",
+      "enclosure": "modeled country-year population health rate; not a conflict fatality count",
+      "retrieved": "2026-08-30"
+    },
+    {
+      "id": "ihme-gbd-2023-derived-total-fertility",
+      "title": "Global Burden of Disease Study 2023 Results, age-specific fertility rates",
+      "publisher": "Institute for Health Metrics and Evaluation",
+      "coverage": "1980-2023 female age-specific fertility rates, integrated across ages 10-49",
+      "url": "https://vizhub.healthdata.org/gbd-results/",
+      "license": "IHME GBD Results terms",
+      "enclosure": "derived period total fertility rate; not a birth count",
+      "retrieved": "2026-08-30"
+    },
+    {
       "id": "celestrak-iceye-sar-2026-08-29",
       "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
       "publisher": "CelesTrak",

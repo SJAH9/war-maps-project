@@ -34,7 +34,7 @@ An optional satellite layer plots approximate ground tracks from a frozen CelesT
 
 The top-level **Network** view starts from any conflict in the shared Select War register. It connects the selected conflict to Side A and Side B, their recorded actors and state participants, conflict locations, and the UCDP conflict-year or candidate-event observations joined to each location. The Three.js scene uses persistent semantic-node labels and slowly rotates on first draw, pauses on interaction, and resumes after eight idle seconds. Nodes can be dragged to fixed positions, searched, emphasized by class, and clicked to highlight their immediate connections without detaching an observation from its source identifiers or coding fields. Browsers that cannot paint the WebGL scene reliably receive a projected SVG 3D view with the same labels, idle rotation, drag, zoom, selection, and filtering behavior. A two-dimensional renderer remains the final compatibility path.
 
-The top-level **Life and Death** view projects Natural Earth country geometry onto an interactive isometric plane and stacks UCDP candidate-event fatality estimates vertically at each event territory. Date, low/best/high estimate, and linear/square-root/logarithmic display-scale controls preserve the underlying totals while changing the visible enclosure. This view covers the loaded 2026 candidate-event boundary; it does not infer victim nationality, responsibility, or historical fatalities from conflict participation records.
+The top-level **Life and Death** view floats Natural Earth country geometry above a thin golden isotropic-vector-matrix lattice and places independently toggled stacks at each state: UCDP candidate-event fatalities, IHME GBD 2023 age-standardized all-cause mortality, and a period total fertility rate derived from IHME age-specific fertility rates. Conflict is encoded from black to red, mortality in navy blue, and fertility in deep violet. A single fixed phi-accelerated block form keeps low observations near the map while separating the upper tail: block frequency follows a phi-power response and block height rises from 1 scene unit to φ at the eighteenth level. The southeast Atlantic compass rose uses a Metatron's-cube construction. Each metric remains independently normalized because fatalities are counts while mortality and fertility are rates; actual values and units remain in the inspector. Conflict dates and the 1980-2023 health year are controlled separately so the interface does not imply that the current 2026 event layer is contemporaneous with the latest 2023 health estimates.
 
 The network opens at the conflict's earliest recorded date. A closed conflict ends at its generated episode end date; a conflict active at the loaded source boundary extends to the present while separately disclosing the latest observed source date. The visible date controls can narrow that automatically established temporal enclosure.
 
@@ -44,6 +44,9 @@ Python 3.10 or newer builds the data and web atlas. Print generation additionall
 
 ```bash
 python3 -m src.build_atlas
+python3 -m src.generate_life_death_metrics \
+  --mortality /path/to/IHME-GBD_2023_all_cause.zip \
+  --fertility /path/to/IHME-GBD_2023_fertility.zip
 python3 -m src.generate_web_atlas
 python3 -m src.generate_print_atlas --conflict ucdp-candidate-16905 --size standard
 python3 -m unittest discover -s tests
