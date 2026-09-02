@@ -36,17 +36,17 @@
     type:'choropleth', locationmode:'country names', locations:countries, z:values, text:countries, name,
     hovertemplate:`<b>%{location}</b><br>%{z} coded year%{z}<extra>${name}</extra>`,
     colorscale, zmin:0, zmax:Math.max(1,...values), showscale,
-    marker:{line:{color:currentTheme()?'#343934':'#f4f3ed',width:.55}}
+    marker:{line:{color:currentTheme()?'#454637':'#d8c99a',width:.55}}
   });
   const baseGeo = projection => ({
     projection, bgcolor:'rgba(0,0,0,0)', showframe:false, showcoastlines:true,
-    coastlinecolor:currentTheme()?'#6d8b91':'#234f5b', coastlinewidth:.75, showcountries:true,
-    countrycolor:currentTheme()?'#809397':'#ffffff', countrywidth:.6, showland:true,
-    landcolor:currentTheme()?'#222b2b':'#e7ece4', showocean:true,
-    oceancolor:currentTheme()?'#071a24':'#79b4c1', showlakes:true,
-    lakecolor:currentTheme()?'#0c2732':'#65a5b3',
-    lonaxis:{showgrid:true,gridcolor:currentTheme()?'#173944':'#55929f',gridwidth:.4},
-    lataxis:{showgrid:true,gridcolor:currentTheme()?'#173944':'#55929f',gridwidth:.4}
+    coastlinecolor:currentTheme()?'#7b8067':'#555b2f', coastlinewidth:.75, showcountries:true,
+    countrycolor:currentTheme()?'#aaa071':'#e6d9b0', countrywidth:.6, showland:true,
+    landcolor:currentTheme()?'#2b3025':'#aaa071', showocean:true,
+    oceancolor:currentTheme()?'#1b2019':'#8e9271', showlakes:true,
+    lakecolor:currentTheme()?'#242a21':'#9da080',
+    lonaxis:{showgrid:true,gridcolor:currentTheme()?'#343a2d':'#74785d',gridwidth:.4},
+    lataxis:{showgrid:true,gridcolor:currentTheme()?'#343a2d':'#74785d',gridwidth:.4}
   });
   const mapLayout = geo => ({margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',geo,legend:{orientation:'h'}});
 
@@ -90,13 +90,13 @@
     if (!window.Plotly) return;
     const roles = rolesForYear(state.year);
     const traces = [
-      traceForCountries([nation.map_name],[1],[[0,'#e7a33d'],[1,'#e7a33d']],'Selected nation'),
-      traceForCountries(roles.allies,roles.allies.map(()=>1),[[0,'#9da7ad'],[1,'#65717b']],'Same-side'),
-      traceForCountries(roles.adversaries,roles.adversaries.map(()=>1),[[0,'#b8a0c6'],[1,'#6f3d89']],'Opposing state'),
-      traceForCountries(roles.locations.filter(name=>name!==nation.map_name),roles.locations.filter(name=>name!==nation.map_name).map(()=>1),[[0,'#d88773'],[1,'#c95442']],'Conflict location')
+      traceForCountries([nation.map_name],[1],[[0,'#f07800'],[1,'#f07800']],'Selected nation'),
+      traceForCountries(roles.allies,roles.allies.map(()=>1),[[0,'#aaa071'],[1,'#657078']],'Same-side'),
+      traceForCountries(roles.adversaries,roles.adversaries.map(()=>1),[[0,'#9a5a43'],[1,'#722b20']],'Opposing state'),
+      traceForCountries(roles.locations.filter(name=>name!==nation.map_name),roles.locations.filter(name=>name!==nation.map_name).map(()=>1),[[0,'#d8c58f'],[1,'#b95235']],'Conflict location')
     ].filter(trace => trace.locations.length);
     const points = roles.events.filter(event => event.latitude !== null && event.longitude !== null);
-    if (points.length) traces.push({type:'scattergeo',mode:'markers',lat:points.map(e=>e.latitude),lon:points.map(e=>e.longitude),text:points.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#ef7458',opacity:.82,line:{color:'#f8d35e',width:.6}}});
+    if (points.length) traces.push({type:'scattergeo',mode:'markers',lat:points.map(e=>e.latitude),lon:points.map(e=>e.longitude),text:points.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
     const centroid = nation.centroid || [0,20];
     const geo = baseGeo({type:'natural earth',scale:3.1});
     geo.center = {lon:centroid[0],lat:centroid[1]};
@@ -110,9 +110,9 @@
     const allies = nation.same_side_partners;
     const adversaries = nation.opposing_states;
     const traces = [
-      traceForCountries([nation.map_name],[1],[[0,'#e7a33d'],[1,'#e7a33d']],'Selected nation'),
-      traceForCountries(allies.map(item=>item.map_name),allies.map(item=>item.duration_years),[[0,'#d7dce0'],[1,'#4f5b66']],'Same-side years'),
-      traceForCountries(adversaries.map(item=>item.map_name),adversaries.map(item=>item.duration_years),[[0,'#e1d7e7'],[1,'#56246f']],'Opposing years')
+      traceForCountries([nation.map_name],[1],[[0,'#f07800'],[1,'#f07800']],'Selected nation'),
+      traceForCountries(allies.map(item=>item.map_name),allies.map(item=>item.duration_years),[[0,'#aaa071'],[1,'#4d5b51']],'Same-side years'),
+      traceForCountries(adversaries.map(item=>item.map_name),adversaries.map(item=>item.duration_years),[[0,'#9a5a43'],[1,'#3e1e18']],'Opposing years')
     ].filter(trace => trace.locations.length);
     const centroid = nation.centroid || [0,20];
     const geo = baseGeo({type:'orthographic',rotation:{lon:centroid[0],lat:centroid[1]},scale:.72});

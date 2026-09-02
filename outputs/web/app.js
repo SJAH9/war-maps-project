@@ -1,5 +1,6 @@
 (() => {
   const data = window.WAR_MAPS_DATA;
+  const health = window.LIFE_DEATH_METRICS;
   if (!data) return;
 
   const $ = selector => document.querySelector(selector);
@@ -22,7 +23,9 @@
     eventsByConflict.get(event.conflict_id).push(event);
   });
 
-  const state = {start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,satelliteConstellation:'iceye-ukraine-support'};
+  const healthAliases = {'Bolivia (Plurinational State of)':'Bolivia','Cabo Verde':'Cape Verde',"Côte d'Ivoire":"Cote d'Ivoire",'Democratic Republic of the Congo':'Democratic Republic of the Congo','Iran (Islamic Republic of)':'Iran','Lao People\'s Democratic Republic':'Laos','Micronesia (Federated States of)':'Micronesia','Republic of Korea':'South Korea','Republic of Moldova':'Moldova','Russian Federation':'Russia','Syrian Arab Republic':'Syria','Türkiye':'Turkey','United Republic of Tanzania':'Tanzania','United States of America':'United States','Venezuela (Bolivarian Republic of)':'Venezuela','Viet Nam':'Vietnam'};
+  const healthByMap = new Map((health?.locations||[]).map(location=>[healthAliases[location.name]||location.name,{...location,mortality:new Map(location.mortality.map(row=>[row[0],row[1]])),fertility:new Map(location.fertility.map(row=>[row[0],row[1]]))}]));
+  const state = {start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,satelliteConstellation:'iceye-ukraine-support',healthLayer:'none',healthYear:2023,transitions:false};
   const satellitePathCache = new Map();
   const currentTheme = () => document.documentElement.dataset.theme === 'dark';
   const nationUrl = country => `nation.html?country=${encodeURIComponent(country)}`;
@@ -56,9 +59,15 @@
   }
 
   function highlightedNations(conflicts) {
-    if (state.regime !== 'all') return data.nations.filter(regimeInWindow);
+    if (state.regime !== 'all') return data.nations.filter(nation=>state.healthLayer!=='none'?String(regimeAtYear(nation,state.healthYear)?.code)===state.regime:regimeInWindow(nation));
     const names = new Set(conflicts.flatMap(conflict => conflict.plot_locations));
     return data.nations.filter(nation => names.has(nation.map_name));
+  }
+
+  const regimeAtYear = (nation,year) => nation?.regime_periods.find(period=>period.start_year<=year&&period.end_year>=year) || null;
+  const transitionsInWindow = nation => nation.regime_periods.some((period,index)=>index>0&&period.start_year>=state.start&&period.start_year<=Math.min(state.end,vdemBoundaryYear));
+  function healthRows() {
+    return [...healthByMap].map(([country,record])=>({country,record,nation:nationsByMapName.get(country)||nationsByName.get(country),value:record[state.healthLayer]?.get(state.healthYear)})).filter(item=>Number.isFinite(item.value));
   }
 
   function satelliteTraces() {
@@ -101,35 +110,41 @@
     }
     const packet = mapPacket(conflicts);
     const regimeMode = state.regime !== 'all';
-    const regimeColors = {'0':'#7c3f93','1':'#ef6a5b','2':'#16a6a0','3':'#36a269'};
-    const regimeColor = regimeColors[state.regime] || '#e7a33d';
-    const regimeSet = new Set(regimeMode ? data.nations.filter(regimeInWindow).map(item => item.map_name) : []);
-    const values = regimeMode ? packet.locations.map(name => regimeSet.has(name) ? 1 : 0) : packet.counts;
+    const healthMode = state.healthLayer !== 'none' && health;
+    const regimeColors = {'0':'#3e1e18','1':'#9a5a43','2':'#6d7442','3':'#657078'};
+    const regimeColor = regimeColors[state.regime] || '#f07800';
+    const regimeSet = new Set(regimeMode ? data.nations.filter(nation=>healthMode?String(regimeAtYear(nation,state.healthYear)?.code)===state.regime:regimeInWindow(nation)).map(item => item.map_name) : []);
+    const rows = healthMode ? healthRows() : [];
+    const locations = healthMode ? rows.map(item=>item.country) : packet.locations;
+    const values = healthMode ? rows.map(item=>item.value) : packet.counts;
+    const healthLabel = state.healthLayer==='mortality'?'deaths per 100,000':'births per woman';
     const traces = [{
-      type:'choropleth', locationmode:'country names', locations:packet.locations, z:values,
-      text:packet.locations,
-      hovertemplate: regimeMode ? '<b>%{location}</b><br>V-Dem regime present in window<extra></extra>' : '<b>%{location}</b><br>%{z} recorded conflicts in window<extra></extra>',
-      colorscale: regimeMode ? [[0,'#e8eee7'],[.01,'#e8eee7'],[1,regimeColor]] : [[0,'#e8eee7'],[.18,'#65c5b9'],[.42,'#f1c453'],[.68,'#ef7458'],[1,'#6b2a88']],
-      zmin:0, zmax:regimeMode ? 1 : Math.max(1,...values), marker:{line:{color:currentTheme()?'#343934':'#f4f3ed',width:.45}}, colorbar:{title:regimeMode?'match':'conflicts',thickness:9,len:.55}
+      type:'choropleth', locationmode:'country names', locations, z:values,
+      text:locations,
+      hovertemplate:healthMode?`<b>%{location}</b><br>%{z:.2f} ${healthLabel}<extra>${state.healthYear}</extra>`:'<b>%{location}</b><br>%{z} recorded conflicts in window<extra></extra>',
+      colorscale:healthMode?(state.healthLayer==='mortality'?[[0,'#d8c58f'],[.45,'#6f7568'],[1,'#273849']]:[[0,'#d8c58f'],[.5,'#9a5a43'],[1,'#4b3045']]):[[0,'#d8c58f'],[.2,'#aaa071'],[.48,'#9a5a43'],[.72,'#b95235'],[1,'#3e1e18']],
+      zmin:Math.min(0,...values),zmax:Math.max(1,...values), marker:{line:{color:currentTheme()?'#454637':'#d8c99a',width:.55}}, colorbar:{title:healthMode?healthLabel:'conflicts',thickness:9,len:.55}
     }];
+    if(regimeMode){const matched=[...regimeSet].filter(name=>healthMode?healthByMap.has(name):true);traces.push({type:'scattergeo',mode:'markers',locationmode:'country names',locations:matched,text:matched,hovertemplate:`<b>%{location}</b><br>V-Dem ${data.regime_types.find(item=>String(item.code)===state.regime)?.name||'regime'}<extra></extra>`,marker:{size:9,color:regimeColor,symbol:'square-open',line:{color:regimeColor,width:2.4}}});}
+    if(state.transitions){const changed=data.nations.filter(transitionsInWindow).map(item=>item.map_name);traces.push({type:'scattergeo',mode:'markers',locationmode:'country names',locations:changed,text:changed,hovertemplate:'<b>%{location}</b><br>V-Dem category transition in selected window<extra></extra>',marker:{size:11,color:'#7dff36',symbol:'circle-open',line:{color:'#7dff36',width:2.6}}});}
     if (state.start <= 2026 && state.end >= 2026) {
       const visibleIds = new Set(conflicts.map(item => item.id));
       const events = data.events.filter(event => visibleIds.has(event.conflict_id) && event.latitude !== null && event.longitude !== null);
-      if (events.length) traces.push({type:'scattergeo',mode:'markers',lat:events.map(e=>e.latitude),lon:events.map(e=>e.longitude),text:events.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#ef7458',opacity:.82,line:{color:'#f8d35e',width:.6}}});
+      if (events.length) traces.push({type:'scattergeo',mode:'markers',lat:events.map(e=>e.latitude),lon:events.map(e=>e.longitude),text:events.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
     }
     traces.push(...satelliteTraces());
     const dark=currentTheme();
-    const layout = {margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,geo:{projection:{type:'natural earth'},bgcolor:'rgba(0,0,0,0)',showframe:false,showcoastlines:true,coastlinecolor:dark?'#6d8b91':'#234f5b',coastlinewidth:.75,showcountries:true,countrycolor:dark?'#809397':'#ffffff',countrywidth:.6,showocean:true,oceancolor:dark?'#071a24':'#79b4c1',showlakes:true,lakecolor:dark?'#0c2732':'#65a5b3',lonaxis:{showgrid:true,gridcolor:dark?'#173944':'#55929f',gridwidth:.4},lataxis:{showgrid:true,gridcolor:dark?'#173944':'#55929f',gridwidth:.4}}};
+    const layout = {margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,geo:{projection:{type:'natural earth'},bgcolor:'rgba(0,0,0,0)',showframe:false,showcoastlines:true,coastlinecolor:dark?'#7b8067':'#555b2f',coastlinewidth:.75,showcountries:true,countrycolor:dark?'#aaa071':'#e6d9b0',countrywidth:.6,showocean:true,oceancolor:dark?'#1b2019':'#8e9271',showlakes:true,lakecolor:dark?'#242a21':'#9da080',lonaxis:{showgrid:true,gridcolor:dark?'#343a2d':'#74785d',gridwidth:.4},lataxis:{showgrid:true,gridcolor:dark?'#343a2d':'#74785d',gridwidth:.4}}};
     Plotly.react('map', traces, layout, {responsive:true,displayModeBar:false,scrollZoom:true});
     const map = $('#map');
     map.removeAllListeners?.('plotly_click');
     map.on('plotly_click', event => {
       const point = event.points?.[0];
-      if (!point || point.data.type !== 'choropleth') return;
+      if (!point || !point.location) return;
       const nation = nationsByMapName.get(point.location) || nationsByName.get(point.location);
       if (nation) openNation(nation.country);
     });
-    $('#map-note').textContent = regimeMode ? 'Select an illuminated nation to open its nation record.' : 'Select any nation to open its map, timeline, relations, and raw records.';
+    $('#map-note').textContent = healthMode ? `${health.metrics[state.healthLayer].label}, ${state.healthYear}; conflict events remain overlaid where the selected window supports them.` : 'Select any nation to open its map, timeline, relations, and raw records.';
   }
 
   function renderList(conflicts) {
@@ -189,11 +204,33 @@
     const fatalities=data.events.filter(event=>state.start<=2026&&state.end>=2026&&territoryNames.has(event.country)).reduce((sum,event)=>{sum.low+=event.fatalities.low;sum.best+=event.fatalities.best;sum.high+=event.fatalities.high;sum.events++;return sum},{low:0,best:0,high:0,events:0});
     const regime=data.regime_types.find(item=>String(item.code)===state.regime);
     $('#related-title').textContent=regime?regime.name:'World conflict field';
-    const regimeWindow=state.start>vdemBoundaryYear?`latest available classification (${vdemBoundaryYear}), carried to the map boundary`:`at least once in ${state.start}-${Math.min(state.end,vdemBoundaryYear)}`;
+    const regimeWindow=state.healthLayer!=='none'?`health observation year ${state.healthYear}`:state.start>vdemBoundaryYear?`latest available classification (${vdemBoundaryYear}), carried to the map boundary`:`at least once in ${state.start}-${Math.min(state.end,vdemBoundaryYear)}`;
     $('#related-note').textContent=regime?`Nations classified by V-Dem as ${regime.name.toLowerCase()} using the ${regimeWindow}.`:'Statistics describe nations and conflict records visible in the current map enclosure.';
     const satelliteRelation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);
     const stats=[['Highlighted nations',nations.length],['Unique conflicts',conflictIds.size],['Interstate conflicts',relevant.filter(item=>item.type==='interstate').length],['Territorial incompatibilities',relevant.filter(item=>item.incompatibility==='territory').length],['Candidate event fatalities',fatalities.events?`${fatalities.low.toLocaleString()} / ${fatalities.best.toLocaleString()} / ${fatalities.high.toLocaleString()}`:'Not available'],['Public satellite paths',state.satellites&&satelliteRelation?`${satelliteRelation.object_count} approximate tracks`:'Layer off'],['Military spending','Not available in UCDP/V-Dem']];
     $('#related-stats').innerHTML=stats.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
+    renderRegimeHealth();
+  }
+
+  function renderRegimeHealth(){
+    if(!health){$('#regime-health-comparison').innerHTML='<p class="boundary-note">Population-health data are unavailable in this build.</p>';return;}
+    const groups=new Map(data.regime_types.map(item=>[String(item.code),{name:item.name,mortality:[],fertility:[]}]))
+    healthByMap.forEach((record,country)=>{
+      const nation=nationsByMapName.get(country)||nationsByName.get(country),period=regimeAtYear(nation,state.healthYear),group=period&&groups.get(String(period.code));
+      if(!group)return;
+      const mortality=record.mortality.get(state.healthYear),fertility=record.fertility.get(state.healthYear);
+      if(Number.isFinite(mortality))group.mortality.push(mortality);if(Number.isFinite(fertility))group.fertility.push(fertility);
+    });
+    const mean=values=>values.length?values.reduce((sum,value)=>sum+value,0)/values.length:null;
+    $('#regime-health-comparison').innerHTML=`<div class="comparison-table"><div class="comparison-head"><b>V-Dem class</b><b>Mortality</b><b>Fertility</b><b>n</b></div>${[...groups.values()].map(group=>`<div><span>${esc(group.name)}</span><span>${mean(group.mortality)?.toFixed(1)??'NA'}</span><span>${mean(group.fertility)?.toFixed(2)??'NA'}</span><span>${Math.max(group.mortality.length,group.fertility.length)}</span></div>`).join('')}</div><p class="boundary-note">${state.healthYear} descriptive means: mortality deaths per 100,000; fertility births per woman. Association is not a causal estimate.</p>`;
+    const transitions=[];
+    data.nations.forEach(nation=>nation.regime_periods.forEach((period,index)=>{
+      if(!index||period.start_year<1980||period.start_year>2023||period.start_year<state.start||period.start_year>state.end)return;
+      const record=healthByMap.get(nation.map_name),prior=nation.regime_periods[index-1];if(!record)return;
+      const beforeF=record.fertility.get(period.start_year-1),afterF=record.fertility.get(period.start_year),beforeM=record.mortality.get(period.start_year-1),afterM=record.mortality.get(period.start_year);
+      transitions.push({nation:nation.country,year:period.start_year,from:prior.name,to:period.name,fertility:Number.isFinite(beforeF)&&Number.isFinite(afterF)?afterF-beforeF:null,mortality:Number.isFinite(beforeM)&&Number.isFinite(afterM)?afterM-beforeM:null});
+    }));
+    $('#transition-health-list').innerHTML=state.transitions?(transitions.length?`<h3>Transitions in ${state.start}-${state.end}</h3>${transitions.slice(0,18).map(item=>`<article><b>${esc(item.nation)} · ${item.year}</b><span>${esc(item.from)} → ${esc(item.to)}</span><small>one-year change: mortality ${item.mortality===null?'NA':item.mortality.toFixed(1)} · fertility ${item.fertility===null?'NA':item.fertility.toFixed(2)}</small></article>`).join('')}`:`<p class="boundary-note">No overlapping regime transition and health observation occupies the selected window.</p>`):'<p class="boundary-note">Enable regime transitions to map category changes and inspect adjacent-year health observations.</p>';
   }
 
   function renderStates() {
@@ -215,7 +252,7 @@
     document.querySelectorAll('[data-war-id]').forEach(button=>button.addEventListener('click',()=>{$('#war-dialog').close();openConflict(button.dataset.warId);}));
   }
   function renderSources(){ $('#source-list').innerHTML=data.sources.map(source=>`<article class="source-item"><h3>${esc(source.title)}</h3><p>${esc(source.coverage)}</p><p><b>${esc(source.enclosure)}</b><br>${esc(source.publisher)} · ${esc(source.license)} · retrieved ${esc(source.retrieved)}</p><a href="${esc(source.url)}">Source and download</a></article>`).join(''); }
-  function updateWindowLabels(){ $('#year-start-output').value=state.start;$('#year-end-output').value=state.end; }
+  function updateWindowLabels(){ $('#year-start-output').value=state.start;$('#year-end-output').value=state.end;$('#health-map-year-output').value=state.healthYear; }
   function render(){ const conflicts=filteredConflicts();renderList(conflicts);drawMap(conflicts);renderRelated(conflicts);updateWindowLabels(); }
 
   $('#year-start').addEventListener('input',event=>{state.start=Math.min(Number(event.target.value),state.end);event.target.value=state.start;state.windowSize=null;$('#window-size').value='';render();});
@@ -224,10 +261,13 @@
   $('#search').addEventListener('input',event=>{state.search=event.target.value;render();});
   $('#type-filter').addEventListener('change',event=>{state.type=event.target.value;render();});
   $('#regime-filter').addEventListener('change',event=>{state.regime=event.target.value;render();});
+  $('#health-layer').addEventListener('change',event=>{state.healthLayer=event.target.value;render();});
+  $('#health-map-year').addEventListener('input',event=>{state.healthYear=Number(event.target.value);render();});
+  $('#transition-toggle').addEventListener('change',event=>{state.transitions=event.target.checked;render();});
   $('#active-only').addEventListener('change',event=>{state.activeOnly=event.target.checked;render();});
   $('#satellite-toggle').addEventListener('change',event=>{state.satellites=event.target.checked;if(state.satellites&&!window.satellite){state.satellites=false;event.target.checked=false;$('#satellite-note').textContent='Orbit library unavailable · layer remains off';}else{const relation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);$('#satellite-note').textContent=state.satellites?`${relation?.object_count||0} approximate tracks · frozen public snapshot`:'Frozen public orbit snapshot · constellation relation';}render();});
   $('#satellite-constellation').addEventListener('change',event=>{state.satelliteConstellation=event.target.value;satellitePathCache.clear();render();});
-  $('#reset').addEventListener('click',()=>{Object.assign(state,{start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false});$('#year-start').value=2026;$('#year-end').value=2026;$('#window-size').value='1';$('#search').value='';$('#type-filter').value='all';$('#regime-filter').value='all';$('#active-only').checked=false;$('#satellite-toggle').checked=false;$('#satellite-note').textContent='Frozen public orbit snapshot · constellation relation';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
+  $('#reset').addEventListener('click',()=>{Object.assign(state,{start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,healthLayer:'none',healthYear:2023,transitions:false});$('#year-start').value=2026;$('#year-end').value=2026;$('#window-size').value='1';$('#search').value='';$('#type-filter').value='all';$('#regime-filter').value='all';$('#health-layer').value='none';$('#health-map-year').value=2023;$('#transition-toggle').checked=false;$('#active-only').checked=false;$('#satellite-toggle').checked=false;$('#satellite-note').textContent='Frozen public orbit snapshot · constellation relation';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
   $('#close-detail').addEventListener('click',()=>{state.selected='';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
   $('#theme-toggle').addEventListener('click',()=>{const theme=currentTheme()?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('war-maps-theme',theme);}catch(error){ /* Theme still applies for this page. */ }render();});
   $('#war-dialog-open').addEventListener('click',()=>{$('#war-dialog-search').value='';$('#war-dialog-region').value='all';renderWarDialog();$('#war-dialog').showModal();requestAnimationFrame(()=>$('#war-dialog-search').focus());});

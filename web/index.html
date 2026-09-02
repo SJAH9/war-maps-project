@@ -13,13 +13,14 @@
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
   <script src="data.js?v=2026-08-29-r8" defer></script>
-  <script src="app.js?v=2026-08-29-r8" defer></script>
+  <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
+  <script src="app.js?v=2026-09-01-r1" defer></script>
 </head>
 <body>
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
     <nav aria-label="Primary navigation">
-      <a href="#explore">Explore</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="#states">States</a><a href="#method">Method</a><a href="#sources">Sources</a>
+      <a href="#explore" aria-current="page">Explore</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a>
     </nav>
     <button class="header-command" id="war-dialog-open" type="button">Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
@@ -42,6 +43,9 @@
         <label><span>Window</span><select id="window-size"><option value="">Custom range</option><option value="1" selected>1 year</option><option value="10">10 years</option><option value="25">25 years</option><option value="50">50 years</option><option value="100">All time · 100 years</option></select></label>
         <label><span>Conflict type</span><select id="type-filter"><option value="all">All types</option><option value="interstate">Interstate</option><option value="internal">Internal</option><option value="internationalized internal">Internationalized internal</option><option value="extrasystemic">Extrasystemic</option><option value="candidate state-based conflict">Candidate state-based</option><option value="candidate non-state conflict">Candidate non-state</option><option value="candidate one-sided violence">Candidate one-sided</option></select></label>
         <label><span>Government type</span><select id="regime-filter"><option value="all">All V-Dem types</option><option value="0">Closed autocracy</option><option value="1">Electoral autocracy</option><option value="2">Electoral democracy</option><option value="3">Liberal democracy</option></select></label>
+        <label><span>Health layer</span><select id="health-layer"><option value="none">Conflict activity</option><option value="mortality">All-cause mortality</option><option value="fertility">Fertility</option></select></label>
+        <label><span>Health year</span><input id="health-map-year" type="range" min="1980" max="2023" value="2023"><output id="health-map-year-output">2023</output></label>
+        <label class="check-control"><input id="transition-toggle" type="checkbox"><span>Show regime transitions</span></label>
         <label class="check-control"><input id="active-only" type="checkbox"><span>Active at source boundary</span></label>
         <button id="reset" type="button">Reset</button>
       </div>
@@ -64,6 +68,7 @@
       <section class="related-panel" aria-labelledby="related-title">
         <div><p class="eyebrow">Related data · selected window</p><h2 id="related-title">World conflict field</h2><p id="related-note">Statistics describe nations and conflicts visible in the current map enclosure.</p></div>
         <div class="stat-grid" id="related-stats"></div>
+        <div class="regime-health-panel"><h3>Population health by V-Dem regime</h3><div id="regime-health-comparison"></div><div id="transition-health-list"></div></div>
       </section>
     </section>
 
@@ -122,6 +127,6 @@
     <div class="war-dialog-list" id="war-dialog-list"></div>
   </dialog>
 
-  <footer><a href="https://github.com/SJAH9/war-maps-project">The War Maps Project</a><span>Open source · Source records retain their own licenses</span><span>Built from enclosed observations, not a trusted-source whitelist</span></footer>
+  <footer><a href="about.html">The War Maps Project</a><span>Open source · Source records retain their own licenses</span><a href="sources.html">Citations and data boundaries</a></footer>
 </body>
 </html>

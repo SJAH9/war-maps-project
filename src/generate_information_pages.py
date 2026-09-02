@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""Generate the static information section for the War Maps web atlas."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+WEB = ROOT / "web"
+
+PAGES = {
+    "information.html": ("Information", "Project guide", "How to read, verify, and reuse War Maps", """
+      <p class="info-lede">War Maps joins conflict, governance, and population-health observations without hiding their different units, dates, or evidentiary boundaries. These pages document every displayed layer and the decisions that connect them.</p>
+      <div class="info-card-grid">
+        <a href="about.html"><b>About the project</b><span>Origins, authorship, license, citation, and project governance.</span></a>
+        <a href="method.html"><b>Map formulation</b><span>Nested enclosures, joins, transformations, and interpretation.</span></a>
+        <a href="data-conflict.html"><b>Conflict data</b><span>UCDP conflict-year and candidate-event records.</span></a>
+        <a href="data-governance.html"><b>Governance data</b><span>V-Dem regime categories and transitions.</span></a>
+        <a href="data-health.html"><b>Population health</b><span>IHME all-cause mortality and fertility observations.</span></a>
+        <a href="coverage.html"><b>Coverage and limits</b><span>Temporal boundaries, missingness, and excluded claims.</span></a>
+        <a href="sources.html"><b>Citations</b><span>Canonical source links, versions, and reuse notes.</span></a>
+        <a href="color-legend.html"><b>Color legend</b><span>The shared semantic palette used by every visualization.</span></a>
+      </div>"""),
+    "about.html": ("About", "The War Maps Project", "An open atlas of organized armed conflict", """
+      <p class="info-lede">The War Maps Project is an open, reproducible atlas for navigating organized armed conflict from 1946 to the present source boundary. It keeps observations attached to source, actor, time, place, coding method, and unresolved questions.</p>
+      <h2>Origins and purpose</h2>
+      <p>The project originates in the causal framework developed in <cite>Causality and Attraction, Volume I</cite> and <cite>Nested Causal Modelling</cite>. War Maps applies nested causal modelling to the documented structure surrounding armed conflict. It is intended to develop into navigable nested causal models of every organized conflict for which peer-reviewed or institutionally maintained data are available.</p>
+      <p>The atlas does not appoint itself responsible for truth. It makes data sources, transformations, coverage, and methods explicit so a reader can inspect what a map supports, what it does not support, and which question remains open.</p>
+      <div class="link-list"><a href="https://doi.org/10.5281/zenodo.19468550">Causality and Attraction research record</a><a href="https://www.amazon.com/dp/B0H8K4C3S6">Nested Causal Modelling on Amazon</a><a href="https://elevenreader.io/audiobooks/nested-causal-modelling-audiobook/8Mj5lsaUYs3WwjKAn1Xu">Nested Causal Modelling on ElevenReader</a><a href="https://github.com/SJAH9/war-maps-project">Source code and data on GitHub</a></div>
+      <h2>Principal Investigator</h2>
+      <p>Sid J.A. Hubbard is the Principal Investigator of the War Maps Project. At this stage, the entirety of the atlas is written, directed, and engineered by its Principal Investigator with the assistance of AI and data-science tools. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator.</p>
+      <div class="link-list"><a href="https://sidhubbard.com/">Sid J.A. Hubbard</a><a href="https://sidhubbard.com/#interventions">Research and interventions</a><a href="https://www.linkedin.com/in/sid-hubbard/">LinkedIn</a></div>
+      <h2>Open source and citation</h2>
+      <p>War Maps software and original project documentation are published under the MIT License. Upstream datasets retain their own licenses and citation requirements. Books and other authored publications linked above are not relicensed by the repository license.</p>
+      <pre class="citation">War Maps Project. (2026). War Maps: An Atlas of Organized Armed Conflict [Data set, software, and interactive atlas]. Sid J.A. Hubbard, Principal Investigator. https://github.com/SJAH9/war-maps-project</pre>"""),
+    "method.html": ("Method", "Map formulation", "Enclosures before conclusions", """
+      <p class="info-lede">Every map is a projection of addressed observations, not an assertion that proximity, color, or correlation establishes cause.</p>
+      <div class="formula info-formula"><span>E(outer enclosure)</span><b>[</b><span>D(specified departure)</span><b>|</b><span>E(inner enclosure)</span><b>]</b></div>
+      <h2>Processing sequence</h2><ol><li>Preserve the source row and its versioned dataset boundary.</li><li>Normalize names only to join a row to reference geometry; retain the source name in raw records.</li><li>Join conflict-year, candidate-event, regime, mortality, and fertility records by disclosed country and time keys.</li><li>Render each measurement in its native unit. Visual height or color is a comparison aid, never a replacement value.</li><li>Keep missing values missing. No pre-source history, current-year health value, motive, or responsibility is synthesized.</li></ol>
+      <h2>Prompted causal exploration</h2><p>Users can move from an outer conflict record toward participants, locations, decisions, observed departures, and consequences. Plausible projections remain questions or explicitly labelled projections until a source-bearing enclosure is available. Nesting preserves disagreement and provenance instead of collapsing competing records into one premature flag.</p>
+      <h2>Geometry</h2><p>Natural Earth geometry supplies geographic reference only. Boundary display does not express a position on sovereignty, recognition, or territorial claims. Country aliases are used solely to align source naming systems with map features.</p>"""),
+    "data-conflict.html": ("Conflict data", "Organized conflict", "UCDP observations and event records", """
+      <p class="info-lede">Conflict layers use Uppsala Conflict Data Program records. The global register is built from conflict-year observations; candidate-event records provide dated places and fatality estimates where loaded.</p>
+      <table class="info-table"><thead><tr><th>Layer</th><th>Unit</th><th>Loaded coverage</th><th>Use</th></tr></thead><tbody><tr><td>UCDP/PRIO Armed Conflict Dataset</td><td>Conflict-year</td><td>1946-2025</td><td>Conflict identity, type, incompatibility, sides, location, intensity</td></tr><tr><td>UCDP Candidate Events</td><td>Dated event</td><td>2025-July 2026 snapshot</td><td>Current events, place, actors, low/best/high fatalities</td></tr></tbody></table>
+      <h2>What map counts mean</h2><p>Conflict-map color counts distinct loaded conflict records intersecting the selected window and state. It is not territorial control, military effectiveness, force size, spending, or a fatality rate. Candidate-event markers are provisional records at the source boundary.</p>
+      <h2>Parties and relationships</h2><p>Side A and Side B reproduce source-side coding within a conflict. Same-side links are conflict-specific observed relationships, not permanent alliances. Opposing-side links do not imply an enduring diplomatic category. The network preserves this distinction.</p>"""),
+    "data-governance.html": ("Governance data", "Government forms", "V-Dem regimes, conditions, and transitions", """
+      <p class="info-lede">Governance layers use V-Dem country-year observations. The map’s four-category selector follows the Regimes of the World coding used in the loaded V-Dem extract.</p>
+      <div class="regime-key"><div data-regime="0"><b>Closed autocracy</b><span>V-Dem code 0</span></div><div data-regime="1"><b>Electoral autocracy</b><span>V-Dem code 1</span></div><div data-regime="2"><b>Electoral democracy</b><span>V-Dem code 2</span></div><div data-regime="3"><b>Liberal democracy</b><span>V-Dem code 3</span></div></div>
+      <p>“Totalitarian dictatorship” is not a separate category in this four-class variable. Questions framed that way can inspect the available closed-autocracy class, but the atlas does not silently rename it or claim equivalence.</p>
+      <h2>Transitions</h2><p>A transition marker appears when a country’s regime code changes between adjacent loaded country-years. The health comparison groups mortality and fertility observations by the regime code for the same country-year. These are descriptive associations. They do not establish that regime type caused a health outcome.</p>
+      <h2>Conditions</h2><p>Nation records may expose additional loaded V-Dem indicators as state conditions. Their values remain bounded by the V-Dem methodology, uncertainty, coverage, and version used by the build.</p>"""),
+    "data-health.html": ("Population health", "Mortality and fertility", "IHME GBD 2023 observations", """
+      <p class="info-lede">Population-health layers use the Institute for Health Metrics and Evaluation’s Global Burden of Disease 2023 results downloaded for this project.</p>
+      <table class="info-table"><thead><tr><th>Metric</th><th>Displayed measure</th><th>Coverage</th></tr></thead><tbody><tr><td>All-cause mortality</td><td>Age-standardized deaths per 100,000 population</td><td>1980-2023, loaded locations</td></tr><tr><td>Fertility</td><td>Live births per woman</td><td>1980-2023, loaded locations</td></tr></tbody></table>
+      <h2>Reading health with conflict</h2><p>The world explorer can draw one health choropleth beneath conflict events while retaining the selected conflict window. A separate health year selects the IHME observation. The Life and Death scene compares conflict fatalities, mortality, and fertility using separate stacks; the inspector always reports native values and units.</p>
+      <h2>Reading health with government forms</h2><p>When a regime category is selected, matching country-year locations are outlined over the health field. The related-data panel reports descriptive group means and transitions supported by overlapping V-Dem and IHME years. Unequal coverage, confounding, lag, and measurement differences remain visible limitations.</p>"""),
+    "coverage.html": ("Coverage", "Coverage and limits", "Where the atlas begins, ends, and remains silent", """
+      <p class="info-lede">The interface can frame historical questions more broadly than the loaded evidence. It does not backfill unsupported centuries or carry population-health estimates beyond their source boundary.</p>
+      <table class="info-table"><thead><tr><th>Domain</th><th>Observed range</th><th>Outside the range</th></tr></thead><tbody><tr><td>Organized conflict</td><td>1946-2025 annual; candidate events through July 2026</td><td>No atlas observation before 1946</td></tr><tr><td>V-Dem governance</td><td>Country-years in the loaded release through its source boundary</td><td>No automatic forecast</td></tr><tr><td>Mortality and fertility</td><td>1980-2023</td><td>Shown as unavailable, never interpolated to 1945/1045 or the present</td></tr></tbody></table>
+      <h2>Known interpretive limits</h2><ul><li>Absence from a loaded dataset is not evidence that an event did not occur.</li><li>Fatality estimates retain low, best, and high source values where available.</li><li>Country joins can conceal historical boundary changes; source names remain available in raw records.</li><li>Map geometry is reference geometry, not a territorial adjudication.</li><li>Associations among conflict, regime, fertility, and mortality are descriptive until a causal enclosure is specified and supported.</li></ul>
+      <h2>Corrections</h2><p>Corrections should identify the page, source row or identifier, proposed change, and supporting source. Open an issue in the public repository so the review and resulting change remain inspectable.</p>"""),
+    "sources.html": ("Citations", "Sources and citations", "Data provenance for every map layer", """
+      <p class="info-lede">Cite the atlas for project transformations and each upstream producer for the observations reused in analysis.</p>
+      <div class="source-citations"><article><h2>Uppsala Conflict Data Program</h2><p>UCDP/PRIO Armed Conflict Dataset and UCDP Candidate Events Dataset. Cite the exact version disclosed in the repository build and follow UCDP terms.</p><a href="https://ucdp.uu.se/downloads/">UCDP downloads and documentation</a></article><article><h2>V-Dem Institute</h2><p>Varieties of Democracy country-year dataset. Cite the loaded release and the V-Dem codebook for regime and indicator definitions.</p><a href="https://www.v-dem.net/data/the-v-dem-dataset/">V-Dem dataset and documentation</a></article><article><h2>IHME</h2><p>Global Burden of Disease 2023 mortality and fertility results. Cite the GBD 2023 study and comply with IHME download terms.</p><a href="https://vizhub.healthdata.org/gbd-results/">GBD Results tool</a></article><article><h2>Natural Earth</h2><p>Public-domain reference geometry used to draw countries and coastlines.</p><a href="https://www.naturalearthdata.com/">Natural Earth</a></article></div>
+      <h2>Atlas citation</h2><pre class="citation">War Maps Project. (2026). War Maps: An Atlas of Organized Armed Conflict [Data set, software, and interactive atlas]. Sid J.A. Hubbard, Principal Investigator. https://github.com/SJAH9/war-maps-project</pre>
+      <p>Generated tables and transformed joins should attribute the War Maps Project. Source variables and observations remain attributable to UCDP, V-Dem, IHME, and Natural Earth as applicable.</p>"""),
+    "color-legend.html": ("Color legend", "The War Maps palette", "A consistent semantic system across every view", """
+      <p class="info-lede">Color identifies roles and measurement families. It does not label a side as morally good, legitimate, allied with the viewer, or responsible for a conflict.</p>
+      <div class="swatch-grid"><div><i style="--swatch:#657078"></i><b>Slate</b><span>Side A and same-side relationships</span></div><div><i style="--swatch:#6d7442"></i><b>Olive</b><span>Side A depth, electoral or democratic context</span></div><div><i style="--swatch:#722b20"></i><b>Oxblood</b><span>Side B and opposing relationships</span></div><div><i style="--swatch:#9a5a43"></i><b>Clay</b><span>Side B depth and elevated conflict activity</span></div><div><i style="--swatch:#d8c58f"></i><b>Manila</b><span>Basemap, low values, and documentary surfaces</span></div><div><i style="--swatch:#aaa071"></i><b>Khaki</b><span>Reference geography and neutral comparisons</span></div><div><i style="--swatch:#f07800"></i><b>Orange</b><span>Selected record or active command</span></div><div><i style="--swatch:#d52222"></i><b>Primary red</b><span>Conflict event or urgent exception</span></div><div><i style="--swatch:#ffd500"></i><b>Bright yellow</b><span>Current focus and high-visibility boundary</span></div><div><i style="--swatch:#7dff36"></i><b>Neon green</b><span>Regime transition or analytical join</span></div><div><i style="--swatch:#273849"></i><b>Slate navy</b><span>All-cause mortality</span></div><div><i style="--swatch:#4b3045"></i><b>Aubergine</b><span>Fertility</span></div></div>
+      <h2>Two-sided records</h2><p>Within a selected conflict, Side A is always slate/olive and Side B is always oxblood/clay. These colors follow source-side positions and remain stable in maps, legends, networks, and nation relationships. They do not encode nationality or a permanent bloc.</p>
+      <h2>Accessibility</h2><p>Every semantic color is paired with text, shape, position, pattern, or an inspectable value. The system deliberately avoids red-white-blue combinations and does not rely on hue alone to communicate source status.</p>"""),
+}
+
+INFO_NAV = (("information.html", "Overview"), ("about.html", "About"), ("method.html", "Method"), ("data-conflict.html", "Conflict data"), ("data-governance.html", "Governance"), ("data-health.html", "Population health"), ("coverage.html", "Coverage"), ("sources.html", "Citations"), ("color-legend.html", "Color legend"))
+
+
+def render(filename: str, title: str, eyebrow: str, heading: str, body: str) -> str:
+    subnav = "".join(f'<a href="{href}"{(" aria-current=\"page\"" if href == filename else "")}>{label}</a>' for href, label in INFO_NAV)
+    return f'''<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="War Maps Project documentation: {heading}."><title>{title} · The War Maps Project</title><script>try{{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}}catch(error){{document.documentElement.dataset.theme='dark';}}</script><link rel="stylesheet" href="styles.css?v=2026-09-01-r1"><script src="information.js?v=2026-09-01-r1" defer></script></head>
+<body class="information-page"><header class="site-header"><a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a><nav aria-label="Primary navigation"><a href="./#explore">Explore</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="information.html" aria-current="page">Information</a></nav><button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button></header>
+<nav class="information-nav" aria-label="Information pages">{subnav}</nav>
+<main class="information-main"><header class="information-title"><p class="eyebrow">{eyebrow}</p><h1>{heading}</h1></header><article class="information-content">{body}</article></main>
+<footer><a href="about.html">The War Maps Project</a><span>Methods and data boundaries are explicit</span><a href="https://github.com/SJAH9/war-maps-project">Source code and data</a></footer></body></html>'''
+
+
+def generate() -> None:
+    for filename, args in PAGES.items():
+        (WEB / filename).write_text(render(filename, *args), encoding="utf-8")
+
+
+if __name__ == "__main__":
+    generate()

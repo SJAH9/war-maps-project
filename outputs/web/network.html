@@ -15,7 +15,7 @@
 <body class="network-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./#explore">Explore</a><a href="network.html" aria-current="page">Network</a><a href="life-death.html">Life and Death</a><a href="./#states">States</a><a href="./#method">Method</a><a href="./#sources">Sources</a></nav>
+    <nav aria-label="Primary navigation"><a href="./#explore">Explore</a><a href="network.html" aria-current="page">Network</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a></nav>
     <button class="header-command" id="war-dialog-open" type="button">Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
@@ -38,6 +38,7 @@
 
       <div class="network-workspace">
         <div class="network-stage">
+          <div id="network-locale-map" class="network-locale-map" aria-hidden="true"></div>
           <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
           <div class="network-legend" aria-label="Network node legend">
             <span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span>
@@ -64,6 +65,6 @@
     <div class="war-dialog-list" id="war-dialog-list"></div>
   </dialog>
 
-  <footer><a href="https://github.com/SJAH9/war-maps-project">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><span>Source boundaries and transformations remain explicit</span></footer>
+  <footer><a href="about.html">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><a href="method.html">Method and source boundaries</a></footer>
 </body>
 </html>

@@ -83,6 +83,42 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertTrue(totals)
         self.assertGreater(max(totals.values()), 0)
 
+    def test_information_architecture_and_shared_map_semantics(self):
+        pages = {
+            "information.html", "about.html", "method.html", "data-conflict.html",
+            "data-governance.html", "data-health.html", "coverage.html", "sources.html",
+            "color-legend.html",
+        }
+        for name in pages:
+            page = ROOT / "web" / name
+            self.assertTrue(page.exists(), name)
+            markup = page.read_text(encoding="utf-8")
+            self.assertIn('href="information.html"', markup)
+            self.assertIn('href="about.html"', markup)
+        about = (ROOT / "web/about.html").read_text(encoding="utf-8")
+        self.assertIn("Sid J.A. Hubbard", about)
+        self.assertIn("MIT License", about)
+        self.assertIn("github.com/SJAH9/war-maps-project", about)
+        legend = (ROOT / "web/color-legend.html").read_text(encoding="utf-8")
+        self.assertIn("Side A", legend)
+        self.assertIn("Side B", legend)
+        self.assertIn("#657078", legend)
+        self.assertIn("#722b20", legend)
+
+    def test_world_map_joins_health_and_governance_without_extrapolation(self):
+        page = (ROOT / "web/index.html").read_text(encoding="utf-8")
+        source = (ROOT / "web/app.js").read_text(encoding="utf-8")
+        self.assertIn('id="health-layer"', page)
+        self.assertIn('min="1980" max="2023"', page)
+        self.assertIn('id="transition-toggle"', page)
+        self.assertIn("healthByMap", source)
+        self.assertIn("regimeAtYear", source)
+        self.assertIn("renderRegimeHealth", source)
+        network_page = (ROOT / "web/network.html").read_text(encoding="utf-8")
+        network_source = (ROOT / "web/network.js").read_text(encoding="utf-8")
+        self.assertIn('id="network-locale-map"', network_page)
+        self.assertIn("renderLocaleMap", network_source)
+
     def test_claims_use_recursive_enclosures(self):
         for claim in self.data["claims"]:
             self.assertNotIn("disposition", claim)

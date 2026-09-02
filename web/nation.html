@@ -14,7 +14,7 @@
 <body class="nation-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./">World map</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="#date" data-nav-tab="date">Date</a><a href="#all-time" data-nav-tab="all-time">All time</a><a href="#raw" data-nav-tab="raw">Raw data</a></nav>
+    <nav aria-label="Primary navigation"><a href="./">World map</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a></nav>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
   <main id="nation-main">
@@ -40,7 +40,7 @@
 
     <section class="nation-tab" id="all-time" role="tabpanel" hidden>
       <div class="nation-map globe" id="nation-all-map" aria-label="All-time same-side and opposing-state relationships"></div>
-      <div class="relation-legend"><span><i class="selected"></i> selected nation</span><span><i class="ally"></i> same-side war partners · darker means more years</span><span><i class="adversary"></i> opposing states · deeper violet means more years</span></div>
+      <div class="relation-legend"><span><i class="selected"></i> selected nation</span><span><i class="ally"></i> same-side war partners · deeper slate means more years</span><span><i class="adversary"></i> opposing states · deeper oxblood means more years</span></div>
       <div class="nation-data-grid relations"><section><h2>Same-side war partners</h2><p>Governments coded on the same UCDP side during at least one conflict-year.</p><div class="relation-list" id="ally-list"></div></section><section><h2>Opposing states</h2><p>Governments coded on opposing UCDP sides during at least one conflict-year.</p><div class="relation-list" id="adversary-list"></div></section></div>
     </section>
 
@@ -51,6 +51,6 @@
       <section><h3>UCDP candidate events in territory or coded participation</h3><div class="table-wrap raw-table"><table><thead><tr><th>Date</th><th>Conflict</th><th>Place</th><th>Sides</th><th>Fatalities low/best/high</th><th>Status</th></tr></thead><tbody id="raw-events"></tbody></table></div></section>
     </section>
   </main>
-  <footer><a href="./">The War Maps Project</a><span>Same-side and opposing-state colors represent UCDP coding, not permanent diplomatic status.</span><span>Spending is not available in the loaded UCDP or V-Dem sources.</span></footer>
+  <footer><a href="about.html">The War Maps Project</a><span>Same-side and opposing-state colors represent UCDP coding, not permanent diplomatic status.</span><a href="sources.html">Citations</a></footer>
 </body>
 </html>

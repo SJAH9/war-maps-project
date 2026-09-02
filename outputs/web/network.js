@@ -24,13 +24,13 @@
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
-    conflict:{background:'#e7a33d',border:'#ffcb70',highlight:{background:'#f2b94f',border:'#fff0c7'}},
-    sideA:{background:'#d94f70',border:'#ff87a2',highlight:{background:'#ed6685',border:'#ffd1dc'}},
-    sideB:{background:'#704399',border:'#aa78d1',highlight:{background:'#8657ae',border:'#e4c7f6'}},
-    nation:{background:'#65717b',border:'#aab5bc',highlight:{background:'#7e8b95',border:'#e8edef'}},
-    actor:{background:'#1f8e89',border:'#67d2c9',highlight:{background:'#2da8a1',border:'#c2fff8'}},
-    location:{background:'#147896',border:'#67c7df',highlight:{background:'#258fac',border:'#c8f4ff'}},
-    observation:{background:'#dad9d1',border:'#858780',highlight:{background:'#ffffff',border:'#e7a33d'}}
+    conflict:{background:'#f07800',border:'#ffd500',highlight:{background:'#ff9a18',border:'#fff0a6'}},
+    sideA:{background:'#657078',border:'#aaa071',highlight:{background:'#7b878b',border:'#d8c58f'}},
+    sideB:{background:'#722b20',border:'#b95235',highlight:{background:'#9a3a2b',border:'#d8c58f'}},
+    nation:{background:'#6d7442',border:'#aaa071',highlight:{background:'#858d54',border:'#d8c58f'}},
+    actor:{background:'#555b2f',border:'#aaa071',highlight:{background:'#747b42',border:'#d8c58f'}},
+    location:{background:'#9a5a43',border:'#d8c58f',highlight:{background:'#b96c4f',border:'#ffd500'}},
+    observation:{background:'#d8c58f',border:'#645f4d',highlight:{background:'#ffd500',border:'#f07800'}}
   };
   const aliases = {'Bosnia-Herzegovina':'Bosnia and Herzegovina','Cambodia (Kampuchea)':'Cambodia','DR Congo (Zaire)':'Democratic Republic of the Congo','Ivory Coast':"Cote d'Ivoire",'Myanmar (Burma)':'Myanmar','Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Vietnam':'Vietnam','Yemen (North Yemen)':'Yemen','Yemen (South Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe'};
 
@@ -281,10 +281,10 @@
     const graphLinks=state.graph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
     state.forceNodes=new Map(graphNodes.map(node=>[node.id,node]));
     const rect=container.getBoundingClientRect();
-    const graph=new ForceGraph3D(container,{controlType:'orbit',rendererConfig:{antialias:true,alpha:false}})
+    const graph=new ForceGraph3D(container,{controlType:'orbit',rendererConfig:{antialias:true,alpha:true}})
       .width(Math.max(320,Math.round(rect.width)))
       .height(Math.max(420,Math.round(rect.height)))
-      .backgroundColor(dark?'#0b100e':'#e7eeeb')
+      .backgroundColor('rgba(0,0,0,0)')
       .showNavInfo(false)
       .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)}</small>`)
       .nodeVal('val')
@@ -388,6 +388,7 @@
   function renderGraph() {
     const conflict = conflictsById.get(state.conflictId);
     if (!conflict) return;
+    renderLocaleMap(conflict);
     stopAutoRotation();
     state.graph = buildGraph(conflict);
     state.nodeMap = new Map(state.graph.nodes.map(node=>[node.id,node]));
@@ -397,6 +398,15 @@
     catch(error){state.renderMode='2d';try{renderPlot();}catch(plotError){$('#network-canvas').innerHTML='<p class="boundary-note network-error">The network renderer is unavailable. Conflict records remain available from the atlas.</p>';}}
     showSummary(conflict);
     renderNetworkStats(conflict);
+  }
+
+  function renderLocaleMap(conflict){
+    const container=$('#network-locale-map');if(!container||!window.Plotly)return;
+    const locations=[...new Set(conflict.plot_locations.map(displayLocation))];
+    const dark=currentTheme();
+    const trace={type:'choropleth',locationmode:'country names',locations,z:locations.map(()=>1),hoverinfo:'skip',showscale:false,colorscale:[[0,'#657078'],[1,'#9a5a43']],marker:{line:{color:dark?'#aaa071':'#555b2f',width:1.1}}};
+    const layout={margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',geo:{projection:{type:'natural earth'},fitbounds:locations.length?'locations':false,bgcolor:'rgba(0,0,0,0)',showframe:false,showland:true,landcolor:dark?'#2b3025':'#aaa071',showocean:true,oceancolor:dark?'#11150f':'#7f8467',showcoastlines:true,coastlinecolor:dark?'#777b62':'#555b2f',showcountries:true,countrycolor:dark?'#555946':'#d8c58f'}};
+    Plotly.react(container,[trace],layout,{staticPlot:true,responsive:true,displayModeBar:false});
   }
 
   function connectedNodes(id) {

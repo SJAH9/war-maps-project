@@ -5,7 +5,7 @@
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const dark=()=>document.documentElement.dataset.theme==='dark';
   const PHI=(1+Math.sqrt(5))/2,MAX_BLOCKS=18,BLOCK_GAP=.12,MAP_SCALE=.63,MAP_Y=9;
-  const palette={conflict:['#070708','#e43b32'],mortality:['#06112b','#183b7a'],fertility:['#160522','#57207d']};
+  const palette={conflict:['#090a08','#d52222'],mortality:['#111820','#273849'],fertility:['#21151e','#4b3045']};
   const aliases={
     'Bahamas':'The Bahamas','Bolivia (Plurinational State of)':'Bolivia','Brunei Darussalam':'Brunei',
     'Cabo Verde':'Cape Verde','Congo':'Republic of the Congo',"Côte d'Ivoire":'Ivory Coast',
@@ -42,7 +42,7 @@
   function blockHeight(index){return 1+(PHI-1)*(index/(MAX_BLOCKS-1));}
   function metricColor(metric,index,count,selected=false){const t=count<=1?0:index/(count-1),color=new THREE.Color(palette[metric][0]).lerp(new THREE.Color(palette[metric][1]),t);return selected?color.lerp(new THREE.Color('#f1ca6a'),.38):color;}
   function makeShape(rings){const outer=rings[0];if(!outer?.length)return null;const shape=new THREE.Shape();outer.forEach((point,index)=>{const [x,y]=project(point);index?shape.lineTo(x,y):shape.moveTo(x,y)});shape.closePath();rings.slice(1).forEach(ring=>{const hole=new THREE.Path();ring.forEach((point,index)=>{const [x,y]=project(point);index?hole.lineTo(x,y):hole.moveTo(x,y)});hole.closePath();shape.holes.push(hole)});return shape;}
-  function addCountry(feature){const country=feature.properties.ADMIN,polygons=feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.type==='MultiPolygon'?feature.geometry.coordinates:[];polygons.forEach(rings=>{const shape=makeShape(rings);if(!shape)return;const geometry=new THREE.ShapeGeometry(shape,1);geometry.rotateX(-Math.PI/2);const material=new THREE.MeshPhongMaterial({color:dark()?'#18362f':'#b8cdc5',side:THREE.DoubleSide,shininess:7,transparent:true,opacity:.98});const mesh=new THREE.Mesh(geometry,material);mesh.position.y=MAP_Y;mesh.userData={country,type:'country'};state.scene.add(mesh);state.countryMeshes.push(mesh);const outline=new THREE.LineSegments(new THREE.EdgesGeometry(geometry,8),new THREE.LineBasicMaterial({color:dark()?'#789087':'#667d74',transparent:true,opacity:.55}));outline.position.y=MAP_Y+.12;state.scene.add(outline)});}
+  function addCountry(feature){const country=feature.properties.ADMIN,polygons=feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.type==='MultiPolygon'?feature.geometry.coordinates:[];polygons.forEach(rings=>{const shape=makeShape(rings);if(!shape)return;const geometry=new THREE.ShapeGeometry(shape,1);geometry.rotateX(-Math.PI/2);const material=new THREE.MeshPhongMaterial({color:dark()?'#555b2f':'#aaa071',side:THREE.DoubleSide,shininess:7,transparent:true,opacity:.98});const mesh=new THREE.Mesh(geometry,material);mesh.position.y=MAP_Y;mesh.userData={country,type:'country'};state.scene.add(mesh);state.countryMeshes.push(mesh);const outline=new THREE.LineSegments(new THREE.EdgesGeometry(geometry,8),new THREE.LineBasicMaterial({color:dark()?'#aaa071':'#555b2f',transparent:true,opacity:.6}));outline.position.y=MAP_Y+.12;state.scene.add(outline)});}
 
   function addIVMField(scene){
     const vertices=[],spacing=34,h=spacing*Math.sqrt(3)/2,tetra=spacing*Math.sqrt(2/3),a=[spacing,0,0],b=[spacing/2,0,h],c=[spacing/2,tetra,h/3],origin=[0,-120,0];
@@ -65,12 +65,12 @@
     const pointer=new THREE.BufferGeometry();pointer.setAttribute('position',new THREE.Float32BufferAttribute([cx,y+.03,cz-7,cx-.8,y+.03,cz-5.6,cx,y+.03,cz-7,cx+.8,y+.03,cz-5.6],3));scene.add(new THREE.LineSegments(pointer,new THREE.LineBasicMaterial({color:'#fff0a8',depthTest:true,depthWrite:false,fog:false})));
   }
   function buildScene(){
-    const container=$('#mortality-map'),scene=new THREE.Scene(),background=dark()?'#03070b':'#48616c';scene.background=new THREE.Color(background);scene.fog=new THREE.FogExp2(background,.0018);state.scene=scene;
+    const container=$('#mortality-map'),scene=new THREE.Scene(),background=dark()?'#090b08':'#6f745b';scene.background=new THREE.Color(background);scene.fog=new THREE.FogExp2(background,.0018);state.scene=scene;
     const camera=new THREE.PerspectiveCamera(34,1,.1,1400);camera.position.set(185,190,285);state.camera=camera;
     const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputEncoding=THREE.sRGBEncoding;container.replaceChildren(renderer.domElement);state.renderer=renderer;
     const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.target.set(0,MAP_Y+8,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=95;controls.maxDistance=650;controls.minPolarAngle=.18;controls.maxPolarAngle=1.72;controls.update();state.controls=controls;
     scene.add(new THREE.HemisphereLight(dark()?'#c5ddd9':'#ffffff',dark()?'#0b1518':'#25383c',1.25));const key=new THREE.DirectionalLight('#ffe0a1',1.35);key.position.set(-90,180,80);scene.add(key);addIVMField(scene);
-    const ocean=new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#082838':'#3f899a',shininess:12,transparent:true,opacity:.97}));ocean.position.y=MAP_Y-.82;scene.add(ocean);state.geometry.features.forEach(addCountry);addCompassRose(scene);
+    const ocean=new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#181d16':'#858a6b',shininess:12,transparent:true,opacity:.97}));ocean.position.y=MAP_Y-.82;scene.add(ocean);state.geometry.features.forEach(addCountry);addCompassRose(scene);
     state.barGroup=new THREE.Group();scene.add(state.barGroup);
     const resize=()=>{const box=container.getBoundingClientRect(),width=Math.max(320,box.width),height=Math.max(460,box.height);renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(container);resize();renderer.domElement.addEventListener('pointermove',handlePointerMove);renderer.domElement.addEventListener('pointerleave',()=>{$('#mortality-tooltip').hidden=true});renderer.domElement.addEventListener('click',handleClick);const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)};animate();
   }
@@ -81,7 +81,7 @@
   }
   function updateColumns(){
     aggregate();state.barGroup.children.forEach(child=>child.traverse(object=>object.material?.dispose?.()));state.barGroup.clear();state.blocks=[];const max=maxima(),metrics=activeMetrics();
-    state.countryMeshes.forEach(mesh=>{const item=state.observations.get(mesh.userData.country),active=metrics.some(metric=>valueFor(item,metric)>0);mesh.material.color.set(active?(dark()?'#31574d':'#9fc6bd'):(dark()?'#18362f':'#b8cdc5'))});
+    state.countryMeshes.forEach(mesh=>{const item=state.observations.get(mesh.userData.country),active=metrics.some(metric=>valueFor(item,metric)>0);mesh.material.color.set(active?(dark()?'#6d7442':'#b9ad7d'):(dark()?'#555b2f':'#aaa071'))});
     for(const feature of state.geometry.features){const country=feature.properties.ADMIN,item=state.observations.get(country);if(!item)continue;const longitude=Number(feature.properties.LABEL_X),latitude=Number(feature.properties.LABEL_Y);if(!Number.isFinite(longitude)||!Number.isFinite(latitude))continue;const [x,zSource]=project([longitude,latitude]);metrics.forEach((metric,index)=>{const value=valueFor(item,metric);if(!value)return;const offset=(index-(metrics.length-1)/2)*2.9;addStack(country,metric,value,max[metric],x,-zSource,offset);});}
     renderInspector(state.selected);
   }
