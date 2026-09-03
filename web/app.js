@@ -25,7 +25,8 @@
 
   const healthAliases = {'Bolivia (Plurinational State of)':'Bolivia','Cabo Verde':'Cape Verde',"Côte d'Ivoire":"Cote d'Ivoire",'Democratic Republic of the Congo':'Democratic Republic of the Congo','Iran (Islamic Republic of)':'Iran','Lao People\'s Democratic Republic':'Laos','Micronesia (Federated States of)':'Micronesia','Republic of Korea':'South Korea','Republic of Moldova':'Moldova','Russian Federation':'Russia','Syrian Arab Republic':'Syria','Türkiye':'Turkey','United Republic of Tanzania':'Tanzania','United States of America':'United States','Venezuela (Bolivarian Republic of)':'Venezuela','Viet Nam':'Vietnam'};
   const healthByMap = new Map((health?.locations||[]).map(location=>[healthAliases[location.name]||location.name,{...location,mortality:new Map(location.mortality.map(row=>[row[0],row[1]])),fertility:new Map(location.fertility.map(row=>[row[0],row[1]]))}]));
-  const state = {start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,satelliteConstellation:'iceye-ukraine-support',healthLayer:'none',healthYear:2023,transitions:false};
+  const state = {start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,satelliteConstellation:'iceye-ukraine-support',healthLayer:'none',healthYear:2023,transitions:false,playing:false,playSpeed:800,audioMuted:false,audioLevel:0.7};
+  let playTimer = null;
   const satellitePathCache = new Map();
   const currentTheme = () => document.documentElement.dataset.theme === 'dark';
   const nationUrl = country => `nation.html?country=${encodeURIComponent(country)}`;
@@ -252,7 +253,55 @@
     document.querySelectorAll('[data-war-id]').forEach(button=>button.addEventListener('click',()=>{$('#war-dialog').close();openConflict(button.dataset.warId);}));
   }
   function renderSources(){ $('#source-list').innerHTML=data.sources.map(source=>`<article class="source-item"><h3>${esc(source.title)}</h3><p>${esc(source.coverage)}</p><p><b>${esc(source.enclosure)}</b><br>${esc(source.publisher)} · ${esc(source.license)} · retrieved ${esc(source.retrieved)}</p><a href="${esc(source.url)}">Source and download</a></article>`).join(''); }
-  function updateWindowLabels(){ $('#year-start-output').value=state.start;$('#year-end-output').value=state.end;$('#health-map-year-output').value=state.healthYear; }
+  function updateWindowLabels(){ $('#year-start-output').value=state.start;$('#year-end-output').value=state.end;$('#health-map-year-output').value=state.healthYear; $('#play-year').value=state.end; }
+  function speakYear(conflicts){
+    if(state.audioMuted || state.audioLevel<=0 || !window.speechSynthesis) return;
+    const count = conflicts.length;
+    const text = state.start===state.end
+      ? `${state.end}. ${count} observation${count===1?'':'s'}.`
+      : `${state.start} to ${state.end}. ${count} observation${count===1?'':'s'}.`;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.volume = state.audioLevel;
+    utterance.rate = 1.05;
+    window.speechSynthesis.speak(utterance);
+  }
+  function stopPlayback(){
+    state.playing=false;
+    if(playTimer){clearInterval(playTimer);playTimer=null;}
+    const button=$('#play-toggle');
+    if(button){button.textContent='Play';button.setAttribute('aria-pressed','false');}
+  }
+  function advancePlayback(){
+    const span = state.windowSize || Math.max(1, state.end-state.start+1);
+    if(state.end>=2026){
+      stopPlayback();
+      return;
+    }
+    state.end = Math.min(2026, state.end+1);
+    state.start = span>=100 ? 1946 : Math.max(1946, state.end-span+1);
+    $('#year-start').value=state.start;
+    $('#year-end').value=state.end;
+    const conflicts=filteredConflicts();
+    renderList(conflicts);drawMap(conflicts);renderRelated(conflicts);updateWindowLabels();
+    speakYear(conflicts);
+  }
+  function startPlayback(){
+    if(state.end>=2026){
+      const span = state.windowSize || 1;
+      state.start = 1946;
+      state.end = span>=100 ? 2026 : Math.min(2026, 1946+span-1);
+      $('#year-start').value=state.start;
+      $('#year-end').value=state.end;
+    }
+    state.playing=true;
+    const button=$('#play-toggle');
+    button.textContent='Pause';
+    button.setAttribute('aria-pressed','true');
+    render();
+    speakYear(filteredConflicts());
+    playTimer=setInterval(advancePlayback, state.playSpeed);
+  }
   function render(){ const conflicts=filteredConflicts();renderList(conflicts);drawMap(conflicts);renderRelated(conflicts);updateWindowLabels(); }
 
   $('#year-start').addEventListener('input',event=>{state.start=Math.min(Number(event.target.value),state.end);event.target.value=state.start;state.windowSize=null;$('#window-size').value='';render();});
@@ -267,7 +316,22 @@
   $('#active-only').addEventListener('change',event=>{state.activeOnly=event.target.checked;render();});
   $('#satellite-toggle').addEventListener('change',event=>{state.satellites=event.target.checked;if(state.satellites&&!window.satellite){state.satellites=false;event.target.checked=false;$('#satellite-note').textContent='Orbit library unavailable · layer remains off';}else{const relation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);$('#satellite-note').textContent=state.satellites?`${relation?.object_count||0} approximate tracks · frozen public snapshot`:'Frozen public orbit snapshot · constellation relation';}render();});
   $('#satellite-constellation').addEventListener('change',event=>{state.satelliteConstellation=event.target.value;satellitePathCache.clear();render();});
-  $('#reset').addEventListener('click',()=>{Object.assign(state,{start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,healthLayer:'none',healthYear:2023,transitions:false});$('#year-start').value=2026;$('#year-end').value=2026;$('#window-size').value='1';$('#search').value='';$('#type-filter').value='all';$('#regime-filter').value='all';$('#health-layer').value='none';$('#health-map-year').value=2023;$('#transition-toggle').checked=false;$('#active-only').checked=false;$('#satellite-toggle').checked=false;$('#satellite-note').textContent='Frozen public orbit snapshot · constellation relation';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
+  $('#play-toggle').addEventListener('click',()=>{ if(state.playing) stopPlayback(); else startPlayback(); });
+  $('#play-speed').addEventListener('change',event=>{
+    state.playSpeed=Number(event.target.value)||800;
+    if(state.playing){ clearInterval(playTimer); playTimer=setInterval(advancePlayback, state.playSpeed); }
+  });
+  $('#audio-mute').addEventListener('click',()=>{
+    state.audioMuted=!state.audioMuted;
+    $('#audio-mute').textContent=state.audioMuted?'Unmute':'Mute';
+    $('#audio-mute').setAttribute('aria-pressed', String(state.audioMuted));
+    if(state.audioMuted && window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+  $('#audio-level').addEventListener('input',event=>{
+    state.audioLevel=Number(event.target.value)/100;
+    if(state.audioLevel<=0 && window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+  $('#reset').addEventListener('click',()=>{stopPlayback();if(window.speechSynthesis)window.speechSynthesis.cancel();Object.assign(state,{start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,healthLayer:'none',healthYear:2023,transitions:false,playing:false});$('#year-start').value=2026;$('#year-end').value=2026;$('#window-size').value='1';$('#search').value='';$('#type-filter').value='all';$('#regime-filter').value='all';$('#health-layer').value='none';$('#health-map-year').value=2023;$('#transition-toggle').checked=false;$('#active-only').checked=false;$('#satellite-toggle').checked=false;$('#satellite-note').textContent='Frozen public orbit snapshot · constellation relation';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
   $('#close-detail').addEventListener('click',()=>{state.selected='';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
   $('#theme-toggle').addEventListener('click',()=>{const theme=currentTheme()?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('war-maps-theme',theme);}catch(error){ /* Theme still applies for this page. */ }render();});
   $('#war-dialog-open').addEventListener('click',()=>{$('#war-dialog-search').value='';$('#war-dialog-region').value='all';renderWarDialog();$('#war-dialog').showModal();requestAnimationFrame(()=>$('#war-dialog-search').focus());});

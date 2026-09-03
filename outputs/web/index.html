@@ -9,12 +9,12 @@
     try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}
     catch(error){document.documentElement.dataset.theme='dark';}
   </script>
-  <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
+  <link rel="stylesheet" href="styles.css?v=2026-09-03-play-audio">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
   <script src="data.js?v=2026-08-29-r8" defer></script>
   <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
-  <script src="app.js?v=2026-09-01-r1" defer></script>
+  <script src="app.js?v=2026-09-03-play-audio" defer></script>
 </head>
 <body>
   <header class="site-header">
@@ -48,6 +48,28 @@
         <label class="check-control"><input id="transition-toggle" type="checkbox"><span>Show regime transitions</span></label>
         <label class="check-control"><input id="active-only" type="checkbox"><span>Active at source boundary</span></label>
         <button id="reset" type="button">Reset</button>
+      </div>
+      <div class="transport-row" aria-label="Playback and audio">
+        <fieldset class="transport-panel play-panel">
+          <legend>Play</legend>
+          <button id="play-toggle" type="button" aria-pressed="false">Play</button>
+          <label><span>Speed</span>
+            <select id="play-speed" aria-label="Playback speed">
+              <option value="1600">Slow</option>
+              <option value="800" selected>Year / 0.8s</option>
+              <option value="350">Fast</option>
+            </select>
+          </label>
+          <output id="play-year" for="play-toggle">2026</output>
+        </fieldset>
+        <fieldset class="transport-panel audio-panel">
+          <legend>Audio</legend>
+          <button id="audio-mute" type="button" aria-pressed="false">Mute</button>
+          <label class="vol-control"><span>Level</span>
+            <input id="audio-level" type="range" min="0" max="100" value="70" aria-label="Audio level">
+          </label>
+          <span class="audio-note" id="audio-note">Speaks the year and observation count while playing</span>
+        </fieldset>
       </div>
 
       <div class="map-workspace">
