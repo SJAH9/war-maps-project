@@ -20,7 +20,7 @@
     'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Republic of Serbia',
     'Yemen (North Yemen)':'Yemen','Yemen (South Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe'
   };
-  const state={active:new Set(['conflict','population','mortality','fertility','birth']),estimate:'best',healthYear:2023,start:'',end:'',geometry:null,birthByMap:new Map(),populationByMap:new Map(),globalPopulation:new Map(population.global||[]),observations:new Map(),selected:'',countryMeshes:[],blocks:[],barGroup:null,metricRailGroup:null,scene:null,camera:null,renderer:null,controls:null,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2()};
+  const state={active:new Set(['conflict','population','mortality','fertility','birth']),estimate:'best',healthYear:2023,start:'',end:'',geometry:null,birthByMap:new Map(),populationByMap:new Map(),globalPopulation:new Map(population.global||[]),observations:new Map(),selected:'',countryMeshes:[],blocks:[],barGroup:null,metricRailGroup:null,metricRailEpoch:0,scene:null,camera:null,renderer:null,controls:null,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2()};
   const blockGeometries=Array.from({length:MAX_BLOCKS},(_,index)=>new THREE.BoxGeometry(2.5,blockHeight(index),2.5));
   const healthByMap=new Map(health.locations.map(location=>[aliases[location.name]||location.name,{...location,mortality:new Map(location.mortality.map(row=>[row[0],row.slice(1)])),fertility:new Map(location.fertility.map(row=>[row[0],row.slice(1)]))}]));
   const mapName=value=>aliases[value]||war.nations.find(nation=>nation.country===value||nation.map_name===value)?.map_name||value;
@@ -88,12 +88,18 @@
     context.lineWidth=0;for(let x=start;x<end;x+=22){context.beginPath();context.arc(x,68,4.2,0,Math.PI*2);context.fill();}
     const texture=new THREE.CanvasTexture(canvas);texture.anisotropy=Math.min(8,state.renderer.capabilities.getMaxAnisotropy());texture.encoding=THREE.sRGBEncoding;
     const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false,fog:false});
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(220,12.5),material);plane.rotation.x=-Math.PI/2;plane.position.set(0,MAP_Y+.42,-84-index*12.75);return plane;
+    const plane=new THREE.Mesh(new THREE.PlaneGeometry(220,12.5),material);plane.rotation.x=-Math.PI/2;plane.position.set(0,0,-index*12.75);return plane;
+  }
+  function easeMetricRail(epoch){
+    const started=performance.now(),duration=1100;
+    const frame=now=>{if(epoch!==state.metricRailEpoch)return;const progress=Math.min(1,(now-started)/duration),eased=1-Math.pow(1-progress,3);state.metricRailGroup.rotation.x=eased*Math.PI/2;if(progress<1)requestAnimationFrame(frame);};
+    requestAnimationFrame(frame);
   }
   function renderMetricRail(){
     if(!state.metricRailGroup)return;
     state.metricRailGroup.children.forEach(child=>{child.geometry.dispose();child.material.map?.dispose();child.material.dispose();});state.metricRailGroup.clear();
-    metricRailRows().forEach((row,index)=>state.metricRailGroup.add(makeMetricRailPlane(row,index)));
+    const epoch=++state.metricRailEpoch;state.metricRailGroup.position.set(0,MAP_Y+7,-90);state.metricRailGroup.rotation.x=0;
+    metricRailRows().forEach((row,index)=>state.metricRailGroup.add(makeMetricRailPlane(row,index)));easeMetricRail(epoch);
   }
   function buildScene(){
     const container=$('#mortality-map'),scene=new THREE.Scene(),background=dark()?'#090b08':'#6f745b';scene.background=new THREE.Color(background);scene.fog=new THREE.FogExp2(background,.0018);state.scene=scene;
