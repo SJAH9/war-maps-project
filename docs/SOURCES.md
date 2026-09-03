@@ -34,6 +34,16 @@ The health series cover 1980-2023. They are not contemporaneous with the provisi
 
 Citation: Global Burden of Disease Collaborative Network. *Global Burden of Disease Study 2023 (GBD 2023) Results.* Seattle, United States: Institute for Health Metrics and Evaluation (IHME), 2024. Available from <https://vizhub.healthdata.org/gbd-results/>. IHME source terms apply; the raw exports are not committed to this repository.
 
+## World Bank / UN crude birth rate
+
+The Life and Death view also includes World Development Indicators series `SP.DYN.CBRT.IN`, distributed by the World Bank under CC BY 4.0. Its primary source is the United Nations Population Division's *World Population Prospects*, supplemented by national statistical offices, Eurostat, and the United Nations Statistics Division. The displayed crude birth rate is annual live births divided by mid-year population, multiplied by 1,000. Loaded country observations cover 1960-2024.
+
+Crude birth rate is not interchangeable with total fertility rate. The former is a population-wide annual rate per 1,000 people; the latter estimates births per woman across reproductive ages. They therefore receive separate controls, units, source disclosures, and independent visual normalization.
+
+Indicator and citation metadata: <https://data.worldbank.org/indicator/SP.DYN.CBRT.IN>
+
+Underlying UN demographic source: <https://population.un.org/wpp/>
+
 ## Public satellite geometry
 
 The optional satellite layer uses a frozen 2026-08-29 subset of CelesTrak's public SAR general-perturbations catalog. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.

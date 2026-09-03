@@ -81,6 +81,16 @@
       "retrieved": "2026-08-30"
     },
     {
+      "id": "world-bank-wdi-crude-birth-rate",
+      "title": "World Development Indicators: Birth rate, crude (per 1,000 people)",
+      "publisher": "World Bank",
+      "coverage": "1960-2024 country-year observations distributed through WDI; primarily sourced from UN World Population Prospects",
+      "url": "https://data.worldbank.org/indicator/SP.DYN.CBRT.IN",
+      "license": "CC BY 4.0",
+      "enclosure": "annual demographic rate; distinct from total fertility rate and from a birth count",
+      "retrieved": "2026-09-03"
+    },
+    {
       "id": "celestrak-iceye-sar-2026-08-29",
       "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
       "publisher": "CelesTrak",

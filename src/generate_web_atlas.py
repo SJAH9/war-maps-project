@@ -17,7 +17,7 @@ def generate() -> Path:
     data = build()
     OUTPUT.mkdir(parents=True, exist_ok=True)
     pages = sorted(path.name for path in SOURCE.glob("*.html"))
-    for name in (*pages, "styles.css", "app.js", "nation.js", "network.js", "life-death.js", "life-death-data.js", "information.js"):
+    for name in (*pages, "styles.css", "app.js", "nation.js", "network.js", "life-death.js", "life-death-data.js", "crude-birth-rate-data.js", "information.js"):
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")

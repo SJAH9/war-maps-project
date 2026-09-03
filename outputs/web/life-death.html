@@ -3,15 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="An isometric comparison of conflict fatalities, all-cause mortality, and fertility.">
+  <meta name="description" content="An isometric comparison of conflict fatalities, all-cause mortality, total fertility, and crude birth rate.">
   <title>Life and Death · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
+  <link rel="stylesheet" href="styles.css?v=2026-09-03-r1">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="data.js?v=2026-08-29-r11" defer></script>
   <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
-  <script src="life-death.js?v=2026-08-30-r1" defer></script>
+  <script src="crude-birth-rate-data.js?v=2026-09-03-r1" defer></script>
+  <script src="life-death.js?v=2026-09-03-r1" defer></script>
 </head>
 <body class="life-death-page">
   <header class="site-header">
@@ -24,13 +25,13 @@
     <section class="mortality-section">
       <div class="mortality-title">
         <div><p class="eyebrow">Conflict and population health</p><h1>Life and Death</h1></div>
-        <p>Toggle UCDP candidate-event fatalities, age-standardized all-cause mortality, and total fertility within one phi-accelerated stack field. The inspector always reports actual values and units.</p>
+        <p>Toggle UCDP candidate-event fatalities, age-standardized all-cause mortality, total fertility, and crude birth rate within one phi-accelerated stack field. The inspector always reports actual values and units.</p>
       </div>
 
       <div class="mortality-controls" aria-label="Life and Death map controls">
         <label><span>Find state</span><input id="mortality-search" type="search" placeholder="State or territory" list="mortality-country-list" autocomplete="off"><datalist id="mortality-country-list"></datalist></label>
-        <fieldset class="metric-toggles"><legend>Visible metrics</legend><div><label><input type="checkbox" data-metric="conflict" checked><i class="metric-conflict"></i><span>Conflict</span></label><label><input type="checkbox" data-metric="mortality" checked><i class="metric-mortality"></i><span>Mortality</span></label><label><input type="checkbox" data-metric="fertility" checked><i class="metric-fertility"></i><span>Fertility</span></label></div></fieldset>
-        <label><span>Health year</span><input id="health-year" type="range" min="1980" max="2023" value="2023"><output id="health-year-output">2023</output></label>
+        <fieldset class="metric-toggles"><legend>Visible metrics</legend><div><label><input type="checkbox" data-metric="conflict" checked><i class="metric-conflict"></i><span>Conflict</span></label><label><input type="checkbox" data-metric="mortality" checked><i class="metric-mortality"></i><span>Mortality</span></label><label><input type="checkbox" data-metric="fertility" checked><i class="metric-fertility"></i><span>Fertility</span></label><label><input type="checkbox" data-metric="birth" checked><i class="metric-birth"></i><span>Birth rate</span></label></div></fieldset>
+        <label><span>Measure year</span><input id="health-year" type="range" min="1960" max="2024" value="2023"><output id="health-year-output">2023</output></label>
         <label><span>From</span><input id="mortality-start" type="date"></label>
         <label><span>Through</span><input id="mortality-end" type="date"></label>
         <fieldset><legend>Fatality estimate</legend><div class="segmented-control"><button type="button" data-estimate="low">Low</button><button type="button" data-estimate="best" aria-pressed="true">Best</button><button type="button" data-estimate="high">High</button></div></fieldset>
@@ -42,7 +43,7 @@
           <div id="mortality-map" role="img" aria-label="Isometric world map with vertical stacks representing recorded fatalities"></div>
           <div class="mortality-scale" aria-hidden="true"><span id="scale-maximum">18 × φ</span><i></i><span>1</span></div>
           <div class="mortality-tooltip" id="mortality-tooltip" hidden></div>
-          <div class="mortality-legend"><span><i class="metric-conflict"></i> conflict fatalities</span><span><i class="metric-mortality"></i> mortality rate</span><span><i class="metric-fertility"></i> fertility rate</span><span>Phi-accelerated blocks · drag to rotate · scroll to zoom</span></div>
+          <div class="mortality-legend"><span><i class="metric-conflict"></i> conflict fatalities</span><span><i class="metric-mortality"></i> mortality rate</span><span><i class="metric-fertility"></i> total fertility</span><span><i class="metric-birth"></i> crude birth rate</span><span>Phi-accelerated blocks · drag to rotate · scroll to zoom</span></div>
         </div>
         <aside class="mortality-inspector" aria-live="polite">
           <div class="mortality-inspector-head"><p class="eyebrow" id="mortality-kicker">Selected boundary</p><h2 id="mortality-selection">Global event field</h2></div>
@@ -54,6 +55,6 @@
     </section>
   </main>
 
-  <footer><a href="about.html">The War Maps Project</a><span>UCDP candidate-event fatalities · IHME GBD 2023 mortality and fertility</span><a href="sources.html">Citations</a></footer>
+  <footer><a href="about.html">The War Maps Project</a><span>UCDP conflict data · IHME health data · World Bank / UN birth-rate data</span><a href="sources.html">Citations</a></footer>
 </body>
 </html>
