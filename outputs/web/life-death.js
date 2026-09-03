@@ -6,6 +6,7 @@
   const dark=()=>document.documentElement.dataset.theme==='dark';
   const PHI=(1+Math.sqrt(5))/2,MAX_BLOCKS=18,BLOCK_GAP=.12,MAP_SCALE=.63,MAP_Y=9;
   const palette={conflict:['#090a08','#d52222'],population:['#776526','#ffd500'],mortality:['#111820','#273849'],fertility:['#21151e','#4b3045'],birth:['#27310f','#7dff36']};
+  const RAIL_METRICS=['population','fertility','conflict','mortality'];
   const aliases={
     'Bahamas':'The Bahamas','Bolivia (Plurinational State of)':'Bolivia','Brunei Darussalam':'Brunei',
     'Cabo Verde':'Cape Verde','Congo':'Republic of the Congo',"Côte d'Ivoire":'Ivory Coast',
@@ -20,7 +21,7 @@
     'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Republic of Serbia',
     'Yemen (North Yemen)':'Yemen','Yemen (South Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe'
   };
-  const state={active:new Set(['conflict','population','mortality','fertility','birth']),estimate:'best',healthYear:2023,start:'',end:'',geometry:null,birthByMap:new Map(),populationByMap:new Map(),globalPopulation:new Map(population.global||[]),observations:new Map(),selected:'',countryMeshes:[],blocks:[],barGroup:null,metricRailGroup:null,metricRailEpoch:0,scene:null,camera:null,renderer:null,controls:null,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2()};
+  const state={active:new Set(['conflict','population','mortality','fertility','birth']),estimate:'best',healthYear:2023,start:'',end:'',geometry:null,birthByMap:new Map(),populationByMap:new Map(),globalPopulation:new Map(population.global||[]),observations:new Map(),selected:'',countryMeshes:[],blocks:[],barGroup:null,metricRailGroup:null,metricRailEpoch:0,metricRailReady:false,metricRailOrder:[...RAIL_METRICS],scene:null,camera:null,renderer:null,controls:null,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2()};
   const blockGeometries=Array.from({length:MAX_BLOCKS},(_,index)=>new THREE.BoxGeometry(2.5,blockHeight(index),2.5));
   const healthByMap=new Map(health.locations.map(location=>[aliases[location.name]||location.name,{...location,mortality:new Map(location.mortality.map(row=>[row[0],row.slice(1)])),fertility:new Map(location.fertility.map(row=>[row[0],row.slice(1)]))}]));
   const mapName=value=>aliases[value]||war.nations.find(nation=>nation.country===value||nation.map_name===value)?.map_name||value;
@@ -70,14 +71,15 @@
     const observations=[...state.observations.values()];
     const mean=metric=>{const values=observations.map(item=>valueFor(item,metric)).filter(value=>value>0);return values.length?values.reduce((sum,value)=>sum+value,0)/values.length:0;};
     const mappedPopulation=observations.reduce((sum,item)=>sum+valueFor(item,'population'),0);
-    return [
+    const rows=new Map([
       {metric:'population',label:'POPULATION',value:format(state.globalPopulation.get(state.healthYear)||mappedPopulation)},
       {metric:'fertility',label:'FERTILITY',value:format(mean('fertility'),2)},
       {metric:'conflict',label:'CONFLICT',value:format(observations.reduce((sum,item)=>sum+valueFor(item,'conflict'),0))},
       {metric:'mortality',label:'MORTALITY',value:format(mean('mortality'),1)}
-    ].filter(row=>state.active.has(row.metric));
+    ].map(row=>[row.metric,row]));
+    return state.metricRailOrder.filter(metric=>state.active.has(metric)).map(metric=>rows.get(metric));
   }
-  function makeMetricRailPlane(row,index){
+  function makeMetricRailPlane(row,z){
     const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=128;
     const context=canvas.getContext('2d'),color=palette[row.metric][1];
     context.clearRect(0,0,canvas.width,canvas.height);context.font='900 76px Arial Black, Impact, sans-serif';context.textBaseline='middle';context.lineJoin='round';context.strokeStyle=dark()?'rgba(216,197,143,.72)':'rgba(23,21,15,.58)';context.lineWidth=5;context.fillStyle=color;
@@ -88,18 +90,25 @@
     context.lineWidth=0;for(let x=start;x<end;x+=22){context.beginPath();context.arc(x,68,4.2,0,Math.PI*2);context.fill();}
     const texture=new THREE.CanvasTexture(canvas);texture.anisotropy=Math.min(8,state.renderer.capabilities.getMaxAnisotropy());texture.encoding=THREE.sRGBEncoding;
     const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false,fog:false});
-    const plane=new THREE.Mesh(new THREE.PlaneGeometry(220,12.5),material);plane.rotation.x=-Math.PI/2;plane.position.set(0,0,-index*12.75);return plane;
+    const plane=new THREE.Mesh(new THREE.PlaneGeometry(220,12.5),material);plane.rotation.x=-Math.PI/2;plane.position.set(0,0,z);plane.userData.metric=row.metric;return plane;
   }
   function easeMetricRail(epoch){
     const started=performance.now(),duration=1100;
     const frame=now=>{if(epoch!==state.metricRailEpoch)return;const progress=Math.min(1,(now-started)/duration),eased=1-Math.pow(1-progress,3);state.metricRailGroup.rotation.x=eased*Math.PI/2;if(progress<1)requestAnimationFrame(frame);};
     requestAnimationFrame(frame);
   }
+  function slideMetricRail(epoch){
+    const started=performance.now(),duration=480,planes=[...state.metricRailGroup.children];
+    const frame=now=>{if(epoch!==state.metricRailEpoch)return;const progress=Math.min(1,(now-started)/duration),eased=1-Math.pow(1-progress,3);planes.forEach(plane=>plane.position.z=THREE.MathUtils.lerp(plane.userData.startZ,plane.userData.targetZ,eased));if(progress<1)requestAnimationFrame(frame);};
+    requestAnimationFrame(frame);
+  }
   function renderMetricRail(){
     if(!state.metricRailGroup)return;
+    const previous=new Map(state.metricRailGroup.children.map(child=>[child.userData.metric,child.position.z]));
     state.metricRailGroup.children.forEach(child=>{child.geometry.dispose();child.material.map?.dispose();child.material.dispose();});state.metricRailGroup.clear();
-    const epoch=++state.metricRailEpoch;state.metricRailGroup.position.set(0,MAP_Y+7,-90);state.metricRailGroup.rotation.x=0;
-    metricRailRows().forEach((row,index)=>state.metricRailGroup.add(makeMetricRailPlane(row,index)));easeMetricRail(epoch);
+    const epoch=++state.metricRailEpoch;state.metricRailGroup.position.set(0,MAP_Y+7,-90);
+    metricRailRows().forEach((row,index)=>{const targetZ=-index*12.75,startZ=previous.has(row.metric)?previous.get(row.metric):targetZ+12.75;const plane=makeMetricRailPlane(row,startZ);plane.userData.startZ=startZ;plane.userData.targetZ=targetZ;state.metricRailGroup.add(plane);});
+    if(!state.metricRailReady){state.metricRailReady=true;state.metricRailGroup.rotation.x=0;state.metricRailGroup.children.forEach(plane=>plane.position.z=plane.userData.targetZ);easeMetricRail(epoch);}else{state.metricRailGroup.rotation.x=Math.PI/2;slideMetricRail(epoch);}
   }
   function buildScene(){
     const container=$('#mortality-map'),scene=new THREE.Scene(),background=dark()?'#090b08':'#6f745b';scene.background=new THREE.Color(background);scene.fog=new THREE.FogExp2(background,.0018);state.scene=scene;
@@ -107,7 +116,7 @@
     const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputEncoding=THREE.sRGBEncoding;container.replaceChildren(renderer.domElement);state.renderer=renderer;
     const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.target.set(0,MAP_Y+8,-20);controls.enableDamping=true;controls.dampingFactor=.06;controls.enablePan=false;controls.minDistance=300;controls.maxDistance=560;controls.minPolarAngle=.52;controls.maxPolarAngle=1.22;controls.update();const azimuth=controls.getAzimuthalAngle();controls.minAzimuthAngle=azimuth-.52;controls.maxAzimuthAngle=azimuth+.52;state.controls=controls;
     scene.add(new THREE.HemisphereLight(dark()?'#c5ddd9':'#ffffff',dark()?'#0b1518':'#25383c',1.25));const key=new THREE.DirectionalLight('#ffe0a1',1.35);key.position.set(-90,180,80);scene.add(key);addIVMField(scene);
-    const ocean=new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#181d16':'#858a6b',shininess:12,transparent:true,opacity:.97}));ocean.position.y=MAP_Y-.82;scene.add(ocean);state.geometry.features.forEach(addCountry);addCompassRose(scene);state.metricRailGroup=new THREE.Group();scene.add(state.metricRailGroup);renderMetricRail();
+    const ocean=new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#181d16':'#858a6b',shininess:12,transparent:true,opacity:.97}));ocean.position.y=MAP_Y-.82;scene.add(ocean);state.geometry.features.forEach(addCountry);addCompassRose(scene);state.metricRailGroup=new THREE.Group();scene.add(state.metricRailGroup);
     state.barGroup=new THREE.Group();scene.add(state.barGroup);
     const resize=()=>{const box=container.getBoundingClientRect(),width=Math.max(320,box.width),height=Math.max(460,box.height);renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(container);resize();renderer.domElement.addEventListener('pointermove',handlePointerMove);renderer.domElement.addEventListener('pointerleave',()=>{$('#mortality-tooltip').hidden=true});renderer.domElement.addEventListener('click',handleClick);const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)};animate();
   }
@@ -161,7 +170,7 @@
   function resetView(){state.selected='';state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();renderInspector();}
   function bindControls(){
     const dates=war.events.flatMap(event=>[event.date_start,event.date_end||event.date_start]).filter(Boolean).sort();state.start=dates[0];state.end=dates.at(-1);$('#mortality-start').min=state.start;$('#mortality-start').max=state.end;$('#mortality-start').value=state.start;$('#mortality-end').min=state.start;$('#mortality-end').max=state.end;$('#mortality-end').value=state.end;document.querySelectorAll('[data-estimate]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.estimate===state.estimate)));
-    const metricInputs=[...document.querySelectorAll('[data-metric]')];state.active=new Set(metricInputs.filter(input=>input.checked).map(input=>input.dataset.metric));metricInputs.forEach(input=>input.addEventListener('change',()=>{input.checked?state.active.add(input.dataset.metric):state.active.delete(input.dataset.metric);updateColumns()}));const year=$('#health-year');state.healthYear=Number(year.value);$('#health-year-output').textContent=state.healthYear;let yearTimer;year.addEventListener('input',event=>{state.healthYear=Number(event.target.value);$('#health-year-output').textContent=state.healthYear;clearTimeout(yearTimer);yearTimer=setTimeout(updateColumns,120)});year.addEventListener('change',()=>{clearTimeout(yearTimer);updateColumns()});$('#mortality-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#mortality-end').value=state.end}updateColumns()});$('#mortality-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#mortality-start').value=state.start}updateColumns()});document.querySelectorAll('[data-estimate]').forEach(button=>button.addEventListener('click',()=>{state.estimate=button.dataset.estimate;document.querySelectorAll('[data-estimate]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));updateColumns()}));$('#mortality-reset').addEventListener('click',resetView);
+    const metricInputs=[...document.querySelectorAll('[data-metric]')];state.active=new Set(metricInputs.filter(input=>input.checked).map(input=>input.dataset.metric));state.metricRailOrder=RAIL_METRICS.filter(metric=>state.active.has(metric));metricInputs.forEach(input=>input.addEventListener('change',()=>{const metric=input.dataset.metric;if(input.checked){state.active.add(metric);if(RAIL_METRICS.includes(metric)&&!state.metricRailOrder.includes(metric))state.metricRailOrder.push(metric);}else{state.active.delete(metric);state.metricRailOrder=state.metricRailOrder.filter(item=>item!==metric);}updateColumns()}));const year=$('#health-year');state.healthYear=Number(year.value);$('#health-year-output').textContent=state.healthYear;let yearTimer;year.addEventListener('input',event=>{state.healthYear=Number(event.target.value);$('#health-year-output').textContent=state.healthYear;clearTimeout(yearTimer);yearTimer=setTimeout(updateColumns,120)});year.addEventListener('change',()=>{clearTimeout(yearTimer);updateColumns()});$('#mortality-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#mortality-end').value=state.end}updateColumns()});$('#mortality-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#mortality-start').value=state.start}updateColumns()});document.querySelectorAll('[data-estimate]').forEach(button=>button.addEventListener('click',()=>{state.estimate=button.dataset.estimate;document.querySelectorAll('[data-estimate]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));updateColumns()}));$('#mortality-reset').addEventListener('click',resetView);
     const names=[...new Set((state.geometry?.features||[]).map(feature=>feature.properties.ADMIN))];$('#mortality-search').addEventListener('change',event=>{const needle=event.target.value.trim().toLowerCase(),match=names.find(name=>name.toLowerCase()===needle)||names.find(name=>name.toLowerCase().startsWith(needle));if(match)selectCountry(match,true)});$('#mortality-search').addEventListener('search',event=>{if(!event.target.value)resetView()});$('#theme-toggle').addEventListener('click',()=>{const theme=dark()?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('war-maps-theme',theme)}catch(error){}location.reload()});
   }
   async function init(){try{const response=await fetch('assets/world.geojson');if(!response.ok)throw new Error(`geometry ${response.status}`);state.geometry=await response.json();const countryByCode=new Map();state.geometry.features.forEach(feature=>{const properties=feature.properties;[properties.WB_A3,properties.ISO_A3,properties.ADM0_A3,properties.GU_A3].filter(code=>code&&code!=='-99').forEach(code=>countryByCode.set(code,properties.ADMIN));});births.locations.forEach(location=>{const country=countryByCode.get(location.iso3);if(country)state.birthByMap.set(country,new Map(location.birth_rate));});population.locations.forEach(location=>{const country=countryByCode.get(location.iso3);if(country)state.populationByMap.set(country,new Map(location.population));});bindControls();$('#mortality-country-list').innerHTML=state.geometry.features.map(feature=>`<option value="${esc(feature.properties.ADMIN)}"></option>`).join('');buildScene();updateColumns()}catch(error){console.error(error);$('#mortality-map').innerHTML=`<p class="boundary-note mortality-error">The Life and Death field could not be rendered: ${esc(error.message||error)}</p>`;}}

@@ -110,11 +110,13 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("enablePan=false", map_source)
         self.assertIn("value:format(mean('fertility'),2)", map_source)
         self.assertNotIn("DISPLAYED MEAN", map_source)
-        self.assertIn("plane.position.set(0,0,-index*12.75)", map_source)
+        self.assertIn("state.metricRailOrder.push(metric)", map_source)
+        self.assertIn("state.metricRailOrder=state.metricRailOrder.filter(item=>item!==metric)", map_source)
         self.assertIn("easeMetricRail", map_source)
+        self.assertIn("slideMetricRail", map_source)
+        self.assertIn("THREE.MathUtils.lerp", map_source)
         self.assertIn("eased*Math.PI/2", map_source)
         self.assertIn("metricRailGroup.position.set(0,MAP_Y+7,-90)", map_source)
-        self.assertIn("filter(row=>state.active.has(row.metric))", map_source)
         self.assertNotIn('id="mortality-scale"', page.read_text(encoding="utf-8"))
         totals = {}
         for event in self.data["events"]:
