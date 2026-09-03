@@ -108,7 +108,10 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("minAzimuthAngle", map_source)
         self.assertIn("maxAzimuthAngle", map_source)
         self.assertIn("enablePan=false", map_source)
-        self.assertIn("DISPLAYED MEAN", map_source)
+        self.assertIn("value:format(mean('fertility'),2)", map_source)
+        self.assertNotIn("DISPLAYED MEAN", map_source)
+        self.assertIn("-84-index*12.75", map_source)
+        self.assertIn("filter(row=>state.active.has(row.metric))", map_source)
         self.assertNotIn('id="mortality-scale"', page.read_text(encoding="utf-8"))
         totals = {}
         for event in self.data["events"]:

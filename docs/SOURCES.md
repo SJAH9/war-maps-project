@@ -48,7 +48,7 @@ Underlying UN demographic source: <https://population.un.org/wpp/>
 
 The Life and Death view includes World Development Indicators series `SP.POP.TOTL`, distributed by the World Bank under CC BY 4.0 and primarily sourced from UN World Population Prospects. The measure is the de facto population at mid-year. Loaded observations cover 1960-2025 and remain separate from conflict-fatality counts and population-health rates.
 
-The north-side 3D metric rail uses the World Bank's `WLD` aggregate for the population total. Conflict is the sum of loaded candidate-event fatality estimates in the selected range. Mortality and fertility cannot be validly summed across country rates, so those rows report arithmetic means for displayed country observations and identify them as “DISPLAYED MEAN.”
+The north-side 3D metric rail uses the World Bank's `WLD` aggregate for the population total. Conflict is the sum of loaded candidate-event fatality estimates in the selected range. Mortality and fertility cannot be validly summed across country rates, so those rows report arithmetic means for displayed country observations. To keep the in-scene rail strictly typographic, it shows only metric names and numeric values; this methodology page supplies the aggregation context and units. Each row shares its metric toggle with the corresponding map stacks and disappears when that metric is disabled.
 
 Indicator and citation metadata: <https://data.worldbank.org/indicator/SP.POP.TOTL>
 
