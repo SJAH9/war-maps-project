@@ -92,6 +92,8 @@ class WarMapsBuildTests(unittest.TestCase):
         population_payload = json.loads(population.read_text(encoding="utf-8").removeprefix("window.POPULATION_DATA=").removesuffix(";\n"))
         self.assertNotIn("WLD", {item["iso3"] for item in birth_payload["locations"]})
         self.assertNotIn("AFE", {item["iso3"] for item in population_payload["locations"]})
+        self.assertTrue(population_payload["global"])
+        self.assertEqual(population_payload["global"][-1][0], 2025)
         self.assertIn("data-metric=\"mortality\"", page.read_text(encoding="utf-8"))
         self.assertIn("data-metric=\"fertility\"", page.read_text(encoding="utf-8"))
         self.assertIn("data-metric=\"birth\"", page.read_text(encoding="utf-8"))
@@ -101,6 +103,12 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("addIVMField", map_source)
         self.assertIn("addCompassRose", map_source)
         self.assertIn("birthByMap", map_source)
+        self.assertIn("metricRailRows", map_source)
+        self.assertIn("THREE.CanvasTexture", map_source)
+        self.assertIn("minAzimuthAngle", map_source)
+        self.assertIn("maxAzimuthAngle", map_source)
+        self.assertIn("enablePan=false", map_source)
+        self.assertIn("DISPLAYED MEAN", map_source)
         self.assertNotIn('id="mortality-scale"', page.read_text(encoding="utf-8"))
         totals = {}
         for event in self.data["events"]:

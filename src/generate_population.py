@@ -17,8 +17,9 @@ INDICATOR = "SP.POP.TOTL"
 
 def generate(indicator_json: Path, country_json: Path, output: Path) -> Path:
     valid_codes = country_codes(country_json)
+    rows = load_rows(indicator_json)
     series: dict[tuple[str, str], list[list[int]]] = defaultdict(list)
-    for row in load_rows(indicator_json):
+    for row in rows:
         code = row.get("countryiso3code", "")
         value = row.get("value")
         if code not in valid_codes or value is None:
@@ -29,6 +30,10 @@ def generate(indicator_json: Path, country_json: Path, output: Path) -> Path:
         for (code, name), values in sorted(series.items(), key=lambda item: item[0][1])
     ]
     years = [row[0] for item in locations for row in item["population"]]
+    global_population = sorted([
+        [int(row["date"]), round(float(row["value"]))]
+        for row in rows if row.get("countryiso3code") == "WLD" and row.get("value") is not None
+    ])
     payload = {
         "coverage": {"start_year": min(years), "end_year": max(years), "locations": len(locations)},
         "metric": {
@@ -51,6 +56,7 @@ def generate(indicator_json: Path, country_json: Path, output: Path) -> Path:
             "license": "CC BY 4.0",
             "retrieved": "2026-09-03",
         },
+        "global": global_population,
         "locations": locations,
     }
     output.parent.mkdir(parents=True, exist_ok=True)

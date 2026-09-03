@@ -20,12 +20,13 @@
     'Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Republic of Serbia',
     'Yemen (North Yemen)':'Yemen','Yemen (South Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe'
   };
-  const state={active:new Set(['conflict','population','mortality','fertility','birth']),estimate:'best',healthYear:2023,start:'',end:'',geometry:null,birthByMap:new Map(),populationByMap:new Map(),observations:new Map(),selected:'',countryMeshes:[],blocks:[],barGroup:null,scene:null,camera:null,renderer:null,controls:null,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2()};
+  const state={active:new Set(['conflict','population','mortality','fertility','birth']),estimate:'best',healthYear:2023,start:'',end:'',geometry:null,birthByMap:new Map(),populationByMap:new Map(),globalPopulation:new Map(population.global||[]),observations:new Map(),selected:'',countryMeshes:[],blocks:[],barGroup:null,metricRailGroup:null,scene:null,camera:null,renderer:null,controls:null,raycaster:new THREE.Raycaster(),pointer:new THREE.Vector2()};
   const blockGeometries=Array.from({length:MAX_BLOCKS},(_,index)=>new THREE.BoxGeometry(2.5,blockHeight(index),2.5));
   const healthByMap=new Map(health.locations.map(location=>[aliases[location.name]||location.name,{...location,mortality:new Map(location.mortality.map(row=>[row[0],row.slice(1)])),fertility:new Map(location.fertility.map(row=>[row[0],row.slice(1)]))}]));
   const mapName=value=>aliases[value]||war.nations.find(nation=>nation.country===value||nation.map_name===value)?.map_name||value;
   const project=([longitude,latitude])=>[longitude*MAP_SCALE,latitude*MAP_SCALE];
   const format=(value,digits=0)=>Number(value||0).toLocaleString(undefined,{maximumFractionDigits:digits,minimumFractionDigits:digits});
+  const compact=value=>{const number=Number(value||0);if(number>=1e9)return `${(number/1e9).toFixed(2)}B`;if(number>=1e6)return `${(number/1e6).toFixed(1)}M`;if(number>=1e3)return `${(number/1e3).toFixed(1)}K`;return format(number);};
   const inRange=event=>(event.date_end||event.date_start)>=state.start&&event.date_start<=state.end;
   const activeMetrics=()=>['conflict','population','mortality','fertility','birth'].filter(metric=>state.active.has(metric));
 
@@ -66,13 +67,42 @@
     const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(links,3));scene.add(new THREE.LineSegments(geometry,material));
     const pointer=new THREE.BufferGeometry();pointer.setAttribute('position',new THREE.Float32BufferAttribute([cx,y+.03,cz-7,cx-.8,y+.03,cz-5.6,cx,y+.03,cz-7,cx+.8,y+.03,cz-5.6],3));scene.add(new THREE.LineSegments(pointer,new THREE.LineBasicMaterial({color:'#fff0a8',depthTest:true,depthWrite:false,fog:false})));
   }
+  function metricRailRows(){
+    const observations=[...state.observations.values()];
+    const mean=metric=>{const values=observations.map(item=>valueFor(item,metric)).filter(value=>value>0);return values.length?values.reduce((sum,value)=>sum+value,0)/values.length:0;};
+    const mappedPopulation=observations.reduce((sum,item)=>sum+valueFor(item,'population'),0);
+    return [
+      {metric:'population',label:'POPULATION',value:`GLOBAL ${compact(state.globalPopulation.get(state.healthYear)||mappedPopulation)} PEOPLE`},
+      {metric:'fertility',label:'FERTILITY',value:`DISPLAYED MEAN ${format(mean('fertility'),2)} / WOMAN`},
+      {metric:'conflict',label:'CONFLICT',value:`GLOBAL ${compact(observations.reduce((sum,item)=>sum+valueFor(item,'conflict'),0))} FATALITIES`},
+      {metric:'mortality',label:'MORTALITY',value:`DISPLAYED MEAN ${format(mean('mortality'),1)} / 100K`}
+    ];
+  }
+  function makeMetricRailPlane(row,index){
+    const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=128;
+    const context=canvas.getContext('2d'),color=palette[row.metric][1];
+    context.clearRect(0,0,canvas.width,canvas.height);context.font='900 76px Arial Black, Impact, sans-serif';context.textBaseline='middle';context.lineJoin='round';context.strokeStyle=dark()?'rgba(216,197,143,.72)':'rgba(23,21,15,.58)';context.lineWidth=5;context.fillStyle=color;
+    context.strokeText(row.label,18,66);context.fillText(row.label,18,66);const labelWidth=context.measureText(row.label).width;
+    context.font='900 62px Arial Black, Impact, sans-serif';const valueWidth=context.measureText(row.value).width,valueX=canvas.width-18-valueWidth;
+    context.strokeText(row.value,valueX,66);context.fillText(row.value,valueX,66);
+    const start=42+labelWidth,end=valueX-28;
+    context.lineWidth=0;for(let x=start;x<end;x+=22){context.beginPath();context.arc(x,68,4.2,0,Math.PI*2);context.fill();}
+    const texture=new THREE.CanvasTexture(canvas);texture.anisotropy=Math.min(8,state.renderer.capabilities.getMaxAnisotropy());texture.encoding=THREE.sRGBEncoding;
+    const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false,fog:false});
+    const plane=new THREE.Mesh(new THREE.PlaneGeometry(220,13.75),material);plane.rotation.x=-Math.PI/2;plane.position.set(0,MAP_Y+.42,-69-index*14.5);return plane;
+  }
+  function renderMetricRail(){
+    if(!state.metricRailGroup)return;
+    state.metricRailGroup.children.forEach(child=>{child.geometry.dispose();child.material.map?.dispose();child.material.dispose();});state.metricRailGroup.clear();
+    metricRailRows().forEach((row,index)=>state.metricRailGroup.add(makeMetricRailPlane(row,index)));
+  }
   function buildScene(){
     const container=$('#mortality-map'),scene=new THREE.Scene(),background=dark()?'#090b08':'#6f745b';scene.background=new THREE.Color(background);scene.fog=new THREE.FogExp2(background,.0018);state.scene=scene;
     const camera=new THREE.PerspectiveCamera(34,1,.1,1400);camera.position.set(185,190,285);state.camera=camera;
     const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputEncoding=THREE.sRGBEncoding;container.replaceChildren(renderer.domElement);state.renderer=renderer;
-    const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.target.set(0,MAP_Y+8,0);controls.enableDamping=true;controls.dampingFactor=.06;controls.minDistance=95;controls.maxDistance=650;controls.minPolarAngle=.18;controls.maxPolarAngle=1.72;controls.update();state.controls=controls;
+    const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.target.set(0,MAP_Y+8,-20);controls.enableDamping=true;controls.dampingFactor=.06;controls.enablePan=false;controls.minDistance=300;controls.maxDistance=560;controls.minPolarAngle=.52;controls.maxPolarAngle=1.22;controls.update();const azimuth=controls.getAzimuthalAngle();controls.minAzimuthAngle=azimuth-.52;controls.maxAzimuthAngle=azimuth+.52;state.controls=controls;
     scene.add(new THREE.HemisphereLight(dark()?'#c5ddd9':'#ffffff',dark()?'#0b1518':'#25383c',1.25));const key=new THREE.DirectionalLight('#ffe0a1',1.35);key.position.set(-90,180,80);scene.add(key);addIVMField(scene);
-    const ocean=new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#181d16':'#858a6b',shininess:12,transparent:true,opacity:.97}));ocean.position.y=MAP_Y-.82;scene.add(ocean);state.geometry.features.forEach(addCountry);addCompassRose(scene);
+    const ocean=new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#181d16':'#858a6b',shininess:12,transparent:true,opacity:.97}));ocean.position.y=MAP_Y-.82;scene.add(ocean);state.geometry.features.forEach(addCountry);addCompassRose(scene);state.metricRailGroup=new THREE.Group();scene.add(state.metricRailGroup);renderMetricRail();
     state.barGroup=new THREE.Group();scene.add(state.barGroup);
     const resize=()=>{const box=container.getBoundingClientRect(),width=Math.max(320,box.width),height=Math.max(460,box.height);renderer.setSize(width,height,false);camera.aspect=width/height;camera.updateProjectionMatrix()};new ResizeObserver(resize).observe(container);resize();renderer.domElement.addEventListener('pointermove',handlePointerMove);renderer.domElement.addEventListener('pointerleave',()=>{$('#mortality-tooltip').hidden=true});renderer.domElement.addEventListener('click',handleClick);const animate=()=>{requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)};animate();
   }
@@ -85,7 +115,7 @@
     aggregate();state.barGroup.children.forEach(child=>child.traverse(object=>object.material?.dispose?.()));state.barGroup.clear();state.blocks=[];const max=maxima(),metrics=activeMetrics();
     state.countryMeshes.forEach(mesh=>{const item=state.observations.get(mesh.userData.country),active=metrics.some(metric=>valueFor(item,metric)>0);mesh.material.color.set(active?(dark()?'#6d7442':'#b9ad7d'):(dark()?'#555b2f':'#aaa071'))});
     for(const feature of state.geometry.features){const country=feature.properties.ADMIN,item=state.observations.get(country);if(!item)continue;const longitude=Number(feature.properties.LABEL_X),latitude=Number(feature.properties.LABEL_Y);if(!Number.isFinite(longitude)||!Number.isFinite(latitude))continue;const [x,zSource]=project([longitude,latitude]);metrics.forEach((metric,index)=>{const value=valueFor(item,metric);if(!value)return;const offset=(index-(metrics.length-1)/2)*2.9;addStack(country,metric,value,max[metric],x,-zSource,offset);});}
-    renderInspector(state.selected);
+    renderMetricRail();renderInspector(state.selected);
   }
   function ranked(){const enabled=activeMetrics(),max=maxima();if(!enabled.length)return[];return [...state.observations.values()].map(item=>{const score=enabled.reduce((sum,metric)=>sum+(max[metric]?valueFor(item,metric)/max[metric]:0),0)/enabled.length;return {...item,score}}).filter(item=>item.score>0).sort((a,b)=>b.score-a.score||a.country.localeCompare(b.country));}
   function valueLabel(item,metric){const value=valueFor(item,metric);if(metric==='conflict')return `${format(value)} ${state.estimate} fatalities`;if(metric==='population')return item?.population?`${format(value)} people`:'No observation';if(metric==='mortality')return item?.mortality?`${format(value,1)} deaths per 100,000`:'No observation';if(metric==='fertility')return item?.fertility?`${format(value,2)} births per woman`:'No observation';return item?.birth?`${format(value,1)} live births per 1,000`:'No observation';}
@@ -123,7 +153,7 @@
   function handlePointerMove(event){const object=intersect(event),country=object?.userData.country,tooltip=$('#mortality-tooltip');state.renderer.domElement.style.cursor=country?'pointer':'grab';if(!country){tooltip.hidden=true;return}const item=state.observations.get(country),metric=object.userData.metric;tooltip.innerHTML=`<strong>${esc(country)}</strong>${metric?`<span>${esc(valueLabel(item,metric))}</span>`:'<span>Select to inspect the territory</span>'}`;const rect=state.renderer.domElement.getBoundingClientRect();tooltip.style.left=`${event.clientX-rect.left+14}px`;tooltip.style.top=`${event.clientY-rect.top+14}px`;tooltip.hidden=false;}
   function handleClick(event){const object=intersect(event);if(object?.userData.country)selectCountry(object.userData.country,false);}
   function selectCountry(country,focus=false){state.selected=country;renderInspector(country);if(focus){const feature=state.geometry.features.find(item=>item.properties.ADMIN===country);if(!feature)return;const [x,zSource]=project([Number(feature.properties.LABEL_X),Number(feature.properties.LABEL_Y)]);state.controls.target.set(x,MAP_Y+7,-zSource);state.camera.position.set(x+60,MAP_Y+85,-zSource+95);state.controls.update();}}
-  function resetView(){state.selected='';state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,0);state.controls.update();renderInspector();}
+  function resetView(){state.selected='';state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();renderInspector();}
   function bindControls(){
     const dates=war.events.flatMap(event=>[event.date_start,event.date_end||event.date_start]).filter(Boolean).sort();state.start=dates[0];state.end=dates.at(-1);$('#mortality-start').min=state.start;$('#mortality-start').max=state.end;$('#mortality-start').value=state.start;$('#mortality-end').min=state.start;$('#mortality-end').max=state.end;$('#mortality-end').value=state.end;document.querySelectorAll('[data-estimate]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.estimate===state.estimate)));
     const metricInputs=[...document.querySelectorAll('[data-metric]')];state.active=new Set(metricInputs.filter(input=>input.checked).map(input=>input.dataset.metric));metricInputs.forEach(input=>input.addEventListener('change',()=>{input.checked?state.active.add(input.dataset.metric):state.active.delete(input.dataset.metric);updateColumns()}));const year=$('#health-year');state.healthYear=Number(year.value);$('#health-year-output').textContent=state.healthYear;let yearTimer;year.addEventListener('input',event=>{state.healthYear=Number(event.target.value);$('#health-year-output').textContent=state.healthYear;clearTimeout(yearTimer);yearTimer=setTimeout(updateColumns,120)});year.addEventListener('change',()=>{clearTimeout(yearTimer);updateColumns()});$('#mortality-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#mortality-end').value=state.end}updateColumns()});$('#mortality-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#mortality-start').value=state.start}updateColumns()});document.querySelectorAll('[data-estimate]').forEach(button=>button.addEventListener('click',()=>{state.estimate=button.dataset.estimate;document.querySelectorAll('[data-estimate]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));updateColumns()}));$('#mortality-reset').addEventListener('click',resetView);
