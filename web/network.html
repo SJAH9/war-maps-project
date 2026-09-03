@@ -10,8 +10,10 @@
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
   <script src="data.js?v=2026-08-29-r11" defer></script>
-  <script src="network.js?v=2026-09-03-r1" defer></script>
+  <script src="network.js?v=2026-09-03-r2" defer></script>
 </head>
 <body class="network-page">
   <header class="site-header">
@@ -42,7 +44,7 @@
           <div id="network-locale-map" class="network-locale-map" aria-hidden="true"></div>
           <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
           <div class="network-legend" aria-label="Network node legend">
-            <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="actor"></i> Actor</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span>
+            <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="actor"></i> Actor</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span><span>Node size = degree</span>
           </div>
         </div>
         <aside class="network-inspector" aria-live="polite">

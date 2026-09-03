@@ -91,6 +91,16 @@
       "retrieved": "2026-09-03"
     },
     {
+      "id": "world-bank-wdi-total-population",
+      "title": "World Development Indicators: Population, total",
+      "publisher": "World Bank",
+      "coverage": "1960-2025 country-year observations distributed through WDI; primarily sourced from UN World Population Prospects",
+      "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
+      "license": "CC BY 4.0",
+      "enclosure": "de facto mid-year population estimate; not a conflict exposure or casualty measure",
+      "retrieved": "2026-09-03"
+    },
+    {
       "id": "celestrak-iceye-sar-2026-08-29",
       "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
       "publisher": "CelesTrak",

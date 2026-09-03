@@ -27,7 +27,9 @@ def country_codes(path: Path) -> set[str]:
         raise ValueError("Unexpected World Bank country response")
     return {
         item["id"] for item in payload[1]
-        if item.get("region", {}).get("id") and len(item.get("id", "")) == 3
+        if item.get("region", {}).get("id") not in (None, "", "NA")
+        and item.get("region", {}).get("value") != "Aggregates"
+        and len(item.get("id", "")) == 3
     }
 
 

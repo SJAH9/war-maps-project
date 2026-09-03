@@ -44,6 +44,22 @@ Indicator and citation metadata: <https://data.worldbank.org/indicator/SP.DYN.CB
 
 Underlying UN demographic source: <https://population.un.org/wpp/>
 
+## World Bank / UN total population
+
+The Life and Death view includes World Development Indicators series `SP.POP.TOTL`, distributed by the World Bank under CC BY 4.0 and primarily sourced from UN World Population Prospects. The measure is the de facto population at mid-year. Loaded observations cover 1960-2025 and remain separate from conflict-fatality counts and population-health rates.
+
+Indicator and citation metadata: <https://data.worldbank.org/indicator/SP.POP.TOTL>
+
+## Network-science transformations
+
+The conflict network treats each currently displayed UCDP-derived relation as an undirected topological edge for structural analysis. Graphology computes connected components and normalized node betweenness; unique-neighbor degree, normalized degree centrality, density, and the observed degree distribution are calculated for the same selected conflict and date window. Node size increases sublinearly with degree.
+
+“Hub” is an interface role for nodes in the visible graph's top degree decile. “Bottleneck” identifies nodes in the top decile of positive normalized betweenness. These relative labels change with the selected conflict and period. They do not establish that the graph follows a power law, arose through preferential attachment, or that a node exercises command or causal control. For graphs above 1,200 nodes, betweenness excludes observation leaves to maintain interactive performance; the interface discloses that scope.
+
+Method reference: Albert-László Barabási, *Network Science*, <https://networksciencebook.com/>
+
+Implementation reference: Graphology standard library, <https://graphology.github.io/standard-library/>
+
 ## Public satellite geometry
 
 The optional satellite layer uses a frozen 2026-08-29 subset of CelesTrak's public SAR general-perturbations catalog. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.

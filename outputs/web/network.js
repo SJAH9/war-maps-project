@@ -20,7 +20,7 @@
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const state = {conflictId:'', start:'', end:'', graph:null, nodeMap:new Map(), positions:new Map(), nodeType:'all',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,labelFrame:null,autoRotating:false};
+  const state = {conflictId:'', start:'', end:'', graph:null, analysis:null, nodeMap:new Map(), positions:new Map(), nodeType:'all',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,labelFrame:null,autoRotating:false};
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
@@ -136,6 +136,61 @@
     return {nodes:[...nodes.values()],edges:[...edges.values()],rows,events};
   }
 
+  function analyzeGraph(graph) {
+    const adjacency=new Map(graph.nodes.map(node=>[node.id,new Set()]));
+    graph.edges.forEach(edge=>{adjacency.get(edge.from)?.add(edge.to);adjacency.get(edge.to)?.add(edge.from);});
+    const uniqueEdges=[...new Set(graph.edges.map(edge=>[edge.from,edge.to].sort().join('|')))];
+    const n=graph.nodes.length;
+    let betweenness=Object.fromEntries(graph.nodes.map(node=>[node.id,0]));
+    let components=[];
+    let engine='topology fallback';
+    let betweennessScope='all visible nodes';
+    try{
+      if(!window.graphology||!window.graphologyLibrary)throw new Error('Graphology unavailable');
+      const topology=new window.graphology.UndirectedGraph({allowSelfLoops:false});
+      graph.nodes.forEach(node=>topology.addNode(node.id));
+      graph.edges.forEach(edge=>{if(edge.from!==edge.to)topology.mergeUndirectedEdge(edge.from,edge.to);});
+      components=window.graphologyLibrary.components.connectedComponents(topology);
+      const centralityIds=n>1200?graph.nodes.filter(node=>node.kind!=='observation').map(node=>node.id):graph.nodes.map(node=>node.id);
+      if(n>1200)betweennessScope='structural nodes; observation leaves excluded for responsiveness';
+      const centralitySet=new Set(centralityIds);
+      const centralityTopology=new window.graphology.UndirectedGraph({allowSelfLoops:false});
+      centralityIds.forEach(id=>centralityTopology.addNode(id));
+      graph.edges.forEach(edge=>{if(edge.from!==edge.to&&centralitySet.has(edge.from)&&centralitySet.has(edge.to))centralityTopology.mergeUndirectedEdge(edge.from,edge.to);});
+      betweenness={...betweenness,...window.graphologyLibrary.metrics.centrality.betweenness(centralityTopology,{getEdgeWeight:null,normalized:true})};
+      engine='Graphology';
+    }catch(error){
+      const unseen=new Set(adjacency.keys());
+      while(unseen.size){const first=unseen.values().next().value,component=[],queue=[first];unseen.delete(first);while(queue.length){const id=queue.shift();component.push(id);adjacency.get(id).forEach(neighbor=>{if(unseen.delete(neighbor))queue.push(neighbor);});}components.push(component);}
+    }
+    const degrees=graph.nodes.map(node=>adjacency.get(node.id).size).sort((a,b)=>a-b);
+    const hubThreshold=degrees[Math.max(0,Math.ceil(degrees.length*.9)-1)]||0;
+    const positiveBetweenness=Object.values(betweenness).filter(value=>value>0).sort((a,b)=>a-b);
+    const bottleneckThreshold=positiveBetweenness[Math.max(0,Math.ceil(positiveBetweenness.length*.9)-1)]||Infinity;
+    graph.nodes.forEach(node=>{
+      const degree=adjacency.get(node.id).size;
+      const between=Number(betweenness[node.id]||0);
+      const hub=degree>0&&degree>=hubThreshold;
+      const bottleneck=between>0&&between>=bottleneckThreshold;
+      node.networkScience={degree,degreeCentrality:n>1?degree/(n-1):0,betweenness:between,role:hub&&bottleneck?'hub + bottleneck':hub?'hub':bottleneck?'bottleneck':'peripheral'};
+    });
+    const distribution=new Map();degrees.forEach(degree=>distribution.set(degree,(distribution.get(degree)||0)+1));
+    return {
+      engine,
+      betweennessScope,
+      components:components.length,
+      largestComponent:Math.max(0,...components.map(component=>component.length)),
+      density:n>1?(2*uniqueEdges.length)/(n*(n-1)):0,
+      maxDegree:degrees.at(-1)||0,
+      meanDegree:n?(2*uniqueEdges.length)/n:0,
+      hubCount:graph.nodes.filter(node=>node.networkScience.role.includes('hub')).length,
+      bottleneckCount:graph.nodes.filter(node=>node.networkScience.role.includes('bottleneck')).length,
+      degreeDistribution:[...distribution.entries()].map(([degree,count])=>({degree,count}))
+    };
+  }
+
+  const nodeTopologyScale = node => 1+Math.min(.72,Math.log2(1+(node.networkScience?.degree||0))*.11);
+
   function positionGraph(graph) {
     const positions = new Map();
     const distribute = (nodes, x, spread=7) => nodes.forEach((node,index)=>positions.set(node.id,{x,y:nodes.length===1?0:(index/(nodes.length-1)-.5)*spread}));
@@ -180,12 +235,12 @@
     return currentTheme()?'#aaa071':'#555b2f';
   };
   const linkBaseWidth = link => {
-    if(isHighlightedLink(link))return 3.6;
+    if(isHighlightedLink(link))return 4.2;
     const relation=linkRelation(link);
-    if(relation==='belligerent side')return 2.4;
-    if(relation==='participant'||relation==='state participant')return 1.45;
-    if(relation==='conflict location')return 1.7;
-    return state.graph?.edges.length>900?.65:1.05;
+    if(relation==='belligerent side')return 3.1;
+    if(relation==='participant'||relation==='state participant')return 2.1;
+    if(relation==='conflict location')return 2.35;
+    return state.graph?.edges.length>900?.9:1.55;
   };
   const nodeDisplayLabel = node => {
     const raw=node.kind==='side'?`Side ${node.metadata.side}`:node.label;
@@ -268,7 +323,7 @@
       })
       .linkColor(linkBaseColor)
       .linkWidth(linkBaseWidth)
-      .linkOpacity(.76)
+      .linkOpacity(.92)
       .linkDirectionalParticles(link=>isHighlightedLink(link)?3:0)
       .linkDirectionalParticleWidth(1.8)
       .linkDirectionalParticleColor('#ffd500')
@@ -286,7 +341,7 @@
   function nodeObject(node){
     if(!window.THREE)return null;
     const sizes={conflict:10,side:8,nation:6.5,location:6,actor:4.5,observation:2.1};
-    const size=sizes[node.kind]||4;
+    const size=(sizes[node.kind]||4)*nodeTopologyScale(node);
     const geometries={
       conflict:()=>new THREE.OctahedronGeometry(size,0),
       side:()=>new THREE.ConeGeometry(size*.82,size*1.8,8),
@@ -333,7 +388,7 @@
       const position=state.positions.get(node.id);
       let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;
       const depth=((Math.abs(hash)%201)-100)*(node.kind==='observation'?.22:.5);
-      const val={conflict:14,side:10,nation:8,location:7,actor:5,observation:1.4}[node.kind]||3;
+      const val=({conflict:14,side:10,nation:8,location:7,actor:5,observation:1.4}[node.kind]||3)*nodeTopologyScale(node);
       return {...node,x:position.x*18,y:position.y*18,z:depth,val};
     });
     const graphLinks=state.graph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
@@ -344,7 +399,7 @@
       .height(Math.max(420,Math.round(rect.height)))
       .backgroundColor('rgba(0,0,0,0)')
       .showNavInfo(false)
-      .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)}</small>`)
+      .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)} · degree ${node.networkScience?.degree||0} · ${esc(node.networkScience?.role||'peripheral')}</small>`)
       .nodeThreeObject(nodeObject)
       .nodeThreeObjectExtend(false)
       .nodeVal('val')
@@ -386,8 +441,9 @@
         const renderer=graph.renderer();renderer.render(graph.scene(),graph.camera());
         const gl=renderer.getContext();const width=gl.drawingBufferWidth;const height=gl.drawingBufferHeight;
         const pixels=new Uint8Array(width*height*4);gl.readPixels(0,0,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
-        let paintedPixels=0;for(let index=0;index<pixels.length;index+=16){if(pixels[index]>22||pixels[index+1]>22||pixels[index+2]>22)paintedPixels++;if(paintedPixels>700)break;}
-        if(paintedPixels<=700)renderSVG3D();
+        let paintedPixels=0;const paintedBins=new Set(),binWidth=Math.max(1,width/10),binHeight=Math.max(1,height/8);
+        for(let y=0;y<height;y+=4)for(let x=0;x<width;x+=4){const index=(y*width+x)*4;if(pixels[index]>22||pixels[index+1]>22||pixels[index+2]>22){paintedPixels++;paintedBins.add(`${Math.floor(x/binWidth)}:${Math.floor(y/binHeight)}`);}}
+        if(paintedPixels<=700||paintedBins.size<12)renderSVG3D();
       }catch(error){renderSVG3D();}
     },1800);
   }
@@ -409,9 +465,9 @@
     const project=node=>{const cy=Math.cos(scene.yaw),sy=Math.sin(scene.yaw),cp=Math.cos(scene.pitch),sp=Math.sin(scene.pitch);const x1=node.x*cy+node.z*sy;const z1=-node.x*sy+node.z*cy;const y1=node.y*cp-z1*sp;const z2=node.y*sp+z1*cp;const scale=scene.zoom*760/(980+z2);return {x:scene.width/2+x1*scale,y:scene.height/2+y1*scale,z:z2,scale};};
     scene.draw=()=>{
       const projected=new Map(nodes.map(node=>[node.id,project(node)]));
-      edgeElements.forEach(({edge,line})=>{const from=projected.get(edge.from),to=projected.get(edge.to);line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);line.setAttribute('stroke',linkBaseColor({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('stroke-width',linkBaseWidth({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('opacity',isHighlightedLink({source:edge.from,target:edge.to})?'1':'.74');});
+      edgeElements.forEach(({edge,line})=>{const from=projected.get(edge.from),to=projected.get(edge.to);line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);line.setAttribute('stroke',linkBaseColor({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('stroke-width',linkBaseWidth({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('opacity',isHighlightedLink({source:edge.from,target:edge.to})?'1':'.92');});
       nodes.sort((a,b)=>projected.get(a.id).z-projected.get(b.id).z).forEach(node=>nodeLayer.append(nodeElements.get(node.id).group));
-      nodes.forEach(node=>{const point=projected.get(node.id),parts=nodeElements.get(node.id);const classMatch=state.nodeType==='all'||node.kind===state.nodeType;const connectionMatch=!state.selected||state.connected.has(node.id);const radius=Math.max(2,radii[node.kind]*point.scale);parts.group.setAttribute('transform',`translate(${point.x} ${point.y})`);parts.group.setAttribute('opacity',classMatch&&connectionMatch?'1':'.13');sizeSvgGlyph(parts.glyph,node.kind,radius);parts.glyph.setAttribute('fill',nodeBaseColor(node));parts.glyph.setAttribute('stroke',state.selected===node.id?'#ffd500':'#d8c58f');parts.glyph.setAttribute('stroke-width',state.selected===node.id?'2.5':'1');if(parts.label){parts.label.setAttribute('y',-(radii[node.kind]*point.scale+5));parts.label.setAttribute('fill',currentTheme()?'#e4d6ad':'#17150f');}});
+      nodes.forEach(node=>{const point=projected.get(node.id),parts=nodeElements.get(node.id);const classMatch=state.nodeType==='all'||node.kind===state.nodeType;const connectionMatch=!state.selected||state.connected.has(node.id);const radius=Math.max(2,radii[node.kind]*nodeTopologyScale(node)*point.scale);parts.group.setAttribute('transform',`translate(${point.x} ${point.y})`);parts.group.setAttribute('opacity',classMatch&&connectionMatch?'1':'.13');sizeSvgGlyph(parts.glyph,node.kind,radius);parts.glyph.setAttribute('fill',nodeBaseColor(node));parts.glyph.setAttribute('stroke',state.selected===node.id?'#ffd500':'#d8c58f');parts.glyph.setAttribute('stroke-width',state.selected===node.id?'2.5':'1');if(parts.label){parts.label.setAttribute('y',-(radius+5));parts.label.setAttribute('fill',currentTheme()?'#e4d6ad':'#17150f');}});
     };
     const resize=()=>{const box=container.getBoundingClientRect();scene.width=Math.max(320,box.width);scene.height=Math.max(420,box.height);svg.setAttribute('viewBox',`0 0 ${scene.width} ${scene.height}`);scene.draw();};
     svg.addEventListener('pointerdown',event=>{noteInteraction();const group=event.target.closest?.('[data-node-id]');scene.drag={x:event.clientX,y:event.clientY,node:group?nodeMap.get(group.dataset.nodeId):null};scene.moved=false;svg.setPointerCapture(event.pointerId);});
@@ -436,7 +492,7 @@
       if(!nodes.length)return;
       const emphasized=state.nodeType==='all'||nodes.some(node=>node.kind===state.nodeType);
       const showText=group!=='observation';
-      traces.push({type:'scatter',mode:showText?'markers+text':'markers',name:setting.label,x:nodes.map(node=>state.positions.get(node.id).x),y:nodes.map(node=>state.positions.get(node.id).y),customdata:nodes.map(node=>node.id),hovertext:nodes.map(node=>nodeDisplayLabel(node)),hovertemplate:'<b>%{hovertext}</b><extra>'+setting.label+'</extra>',text:showText?nodes.map(node=>nodeDisplayLabel(node)):undefined,textposition:'top center',textfont:{color:dark?'#d9d9d2':'#303632',size:10,family:'Inter, Arial, sans-serif'},marker:{size:setting.size,symbol:setting.symbol,color:nodeColors[group].background,line:{color:nodeColors[group].border,width:1}},opacity:emphasized?1:.1});
+      traces.push({type:'scatter',mode:showText?'markers+text':'markers',name:setting.label,x:nodes.map(node=>state.positions.get(node.id).x),y:nodes.map(node=>state.positions.get(node.id).y),customdata:nodes.map(node=>node.id),hovertext:nodes.map(node=>`${nodeDisplayLabel(node)} · degree ${node.networkScience?.degree||0} · ${node.networkScience?.role||'peripheral'}`),hovertemplate:'<b>%{hovertext}</b><extra>'+setting.label+'</extra>',text:showText?nodes.map(node=>nodeDisplayLabel(node)):undefined,textposition:'top center',textfont:{color:dark?'#d9d9d2':'#303632',size:10,family:'Inter, Arial, sans-serif'},marker:{size:nodes.map(node=>setting.size*nodeTopologyScale(node)),symbol:setting.symbol,color:nodeColors[group].background,line:{color:nodeColors[group].border,width:1}},opacity:emphasized?1:.1});
     });
     const layout={margin:{l:20,r:20,t:20,b:20},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,hovermode:'closest',dragmode:'pan',xaxis:{visible:false,fixedrange:false},yaxis:{visible:false,fixedrange:false,scaleanchor:'x',scaleratio:1},uirevision:`${state.conflictId}-${state.start}-${state.end}`};
     Plotly.react('network-canvas',traces,layout,{responsive:true,displaylogo:false,scrollZoom:true,modeBarButtonsToRemove:['select2d','lasso2d']});
@@ -451,6 +507,7 @@
     renderLocaleMap(conflict);
     stopAutoRotation();
     state.graph = buildGraph(conflict);
+    state.analysis = analyzeGraph(state.graph);
     state.nodeMap = new Map(state.graph.nodes.map(node=>[node.id,node]));
     state.positions = positionGraph(state.graph);
     state.selected='';state.connected=new Set();
@@ -538,6 +595,13 @@
       showSummary(node.metadata.conflict);
       return;
     }
+    const topology=node.networkScience;
+    if(topology)meta.push(
+      ['Degree',topology.degree],
+      ['Degree centrality',`${(topology.degreeCentrality*100).toFixed(2)}%`],
+      ['Betweenness',topology.betweenness?topology.betweenness.toFixed(4):'0'],
+      ['Network role',topology.role]
+    );
     $('#node-meta').innerHTML = meta.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
     $('#node-content').innerHTML = content + connectionMarkup(connected);
     bindConnectionButtons();
@@ -548,8 +612,9 @@
     const counts = kind => graph.nodes.filter(node=>node.kind===kind).length;
     $('#node-type').textContent = 'Network extent';
     $('#node-title').textContent = conflict.title;
-    $('#node-meta').innerHTML = [['Side nodes',2],['Nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')]].map(([label,value])=>`<div><span>${label}</span><strong>${value.toLocaleString()}</strong></div>`).join('');
-    $('#node-content').innerHTML = `<div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>${conflict.active_at_source_boundary?'Current at the loaded source boundary; temporal limit set to present.':'Closed before the loaded source boundary.'}</small></div>`;
+    const analysis=state.analysis;
+    $('#node-meta').innerHTML = [['Side nodes',2],['Nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')],['Components',analysis.components],['Density',analysis.density.toFixed(4)],['Peak degree',analysis.maxDegree]].map(([label,value])=>`<div><span>${label}</span><strong>${typeof value==='number'?value.toLocaleString():esc(value)}</strong></div>`).join('');
+    $('#node-content').innerHTML = `<div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>${conflict.active_at_source_boundary?'Current at the loaded source boundary; temporal limit set to present.':'Closed before the loaded source boundary.'}</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile in this selected conflict and period; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}. These are structural descriptions, not claims of command, intent, or causation.</small></div>`;
   }
 
   function renderNetworkStats(conflict) {
@@ -559,6 +624,10 @@
       ['Side B', conflict.parties_b.join('; ') || 'Not coded'],
       ['Network nodes', graph.nodes.length.toLocaleString()],
       ['Network relations', graph.edges.length.toLocaleString()],
+      ['Density', state.analysis.density.toFixed(4)],
+      ['Components', state.analysis.components.toLocaleString()],
+      ['Hubs', state.analysis.hubCount.toLocaleString()],
+      ['Bottlenecks', state.analysis.bottleneckCount.toLocaleString()],
       ['Conflict-year rows', graph.rows.length.toLocaleString()],
       ['Candidate events', graph.events.length.toLocaleString()]
     ];
