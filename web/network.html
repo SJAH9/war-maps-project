@@ -8,9 +8,10 @@
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
   <script src="data.js?v=2026-08-29-r11" defer></script>
-  <script src="network.js?v=2026-08-29-r13" defer></script>
+  <script src="network.js?v=2026-09-03-r1" defer></script>
 </head>
 <body class="network-page">
   <header class="site-header">
@@ -41,7 +42,7 @@
           <div id="network-locale-map" class="network-locale-map" aria-hidden="true"></div>
           <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
           <div class="network-legend" aria-label="Network node legend">
-            <span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span>
+            <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="actor"></i> Actor</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span>
           </div>
         </div>
         <aside class="network-inspector" aria-live="polite">

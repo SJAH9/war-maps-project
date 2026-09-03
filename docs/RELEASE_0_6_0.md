@@ -2,6 +2,21 @@
 
 This release makes War Maps easier to understand, audit, and compare. It adds a complete web information section, carries one semantic palette through every mapping surface, places geographic context behind conflict networks, and joins population-health observations to the primary world explorer without obscuring source boundaries.
 
+## Open the deployed atlas
+
+- [War Maps world explorer](https://sjah9.github.io/war-maps-project/)
+- [Interactive conflict network](https://sjah9.github.io/war-maps-project/outputs/web/network.html)
+- [Life and Death visualization](https://sjah9.github.io/war-maps-project/outputs/web/life-death.html)
+- [Project information and methods](https://sjah9.github.io/war-maps-project/outputs/web/information.html)
+- [About the War Maps Project](https://sjah9.github.io/war-maps-project/outputs/web/about.html)
+
+## Network rendering correction
+
+- Restores clearly visible relationship edges in the WebGL, SVG, and two-dimensional renderers.
+- Encodes Side A structure in slate, Side B structure in oxblood and clay, candidate-event links in primary red, and selected connections in bright yellow.
+- Differentiates conflict, side, nation, actor, location, and observation nodes by both shape and color.
+- Completes the persistent legend so every selectable node class is represented.
+
 ## Information architecture
 
 - Adds an information hub and dedicated About, method, conflict-data, governance-data, population-health, coverage, citation, and color-legend pages.

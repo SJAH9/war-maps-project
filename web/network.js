@@ -168,6 +168,25 @@
   const mutedNodeColor = dark => dark ? '#26312f' : '#b8c1bd';
   const nodeBaseColor = node => nodeColors[node.group]?.background || '#65717b';
   const isHighlightedLink = link => state.selected && (endpointId(link.source)===state.selected || endpointId(link.target)===state.selected);
+  const linkRelation = link => link.relation || '';
+  const linkBaseColor = link => {
+    if(isHighlightedLink(link))return '#ffd500';
+    const source=endpointId(link.source),target=endpointId(link.target),relation=linkRelation(link);
+    if(source==='side:a'||target==='side:a')return '#8b989b';
+    if(source==='side:b'||target==='side:b')return '#b95235';
+    if(relation==='candidate event')return '#d52222';
+    if(relation.includes('observation'))return currentTheme()?'#d8c58f':'#645f4d';
+    if(relation==='conflict location')return '#c97858';
+    return currentTheme()?'#aaa071':'#555b2f';
+  };
+  const linkBaseWidth = link => {
+    if(isHighlightedLink(link))return 3.6;
+    const relation=linkRelation(link);
+    if(relation==='belligerent side')return 2.4;
+    if(relation==='participant'||relation==='state participant')return 1.45;
+    if(relation==='conflict location')return 1.7;
+    return state.graph?.edges.length>900?.65:1.05;
+  };
   const nodeDisplayLabel = node => {
     const raw=node.kind==='side'?`Side ${node.metadata.side}`:node.label;
     const limit=node.kind==='conflict'?44:30;
@@ -247,12 +266,51 @@
         const connectionMatch=!state.selected||state.connected.has(node.id);
         return classMatch&&connectionMatch?nodeBaseColor(node):mutedNodeColor(dark);
       })
-      .linkColor(link=>isHighlightedLink(link)?'#eeb45d':(dark?'#536460':'#84918c'))
-      .linkWidth(link=>isHighlightedLink(link)?2.2:.25)
-      .linkDirectionalParticles(link=>isHighlightedLink(link)?2:0)
-      .linkDirectionalParticleWidth(1.3)
-      .linkDirectionalParticleColor('#f7c86f')
+      .linkColor(linkBaseColor)
+      .linkWidth(linkBaseWidth)
+      .linkOpacity(.76)
+      .linkDirectionalParticles(link=>isHighlightedLink(link)?3:0)
+      .linkDirectionalParticleWidth(1.8)
+      .linkDirectionalParticleColor('#ffd500')
       .refresh();
+    state.forceGraph.graphData().nodes.forEach(node=>{
+      const object=node.__threeObj;if(!object)return;
+      const classMatch=state.nodeType==='all'||node.kind===state.nodeType;
+      const connectionMatch=!state.selected||state.connected.has(node.id);
+      const emphasized=classMatch&&connectionMatch;
+      object.traverse?.(child=>{if(!child.material)return;child.material.opacity=emphasized?.96:.1;child.material.emissiveIntensity=emphasized?.12:0;});
+    });
+    state.forceGraph.refresh();
+  }
+
+  function nodeObject(node){
+    if(!window.THREE)return null;
+    const sizes={conflict:10,side:8,nation:6.5,location:6,actor:4.5,observation:2.1};
+    const size=sizes[node.kind]||4;
+    const geometries={
+      conflict:()=>new THREE.OctahedronGeometry(size,0),
+      side:()=>new THREE.ConeGeometry(size*.82,size*1.8,8),
+      nation:()=>new THREE.BoxGeometry(size*1.45,size*1.45,size*1.45),
+      location:()=>new THREE.CylinderGeometry(size*.78,size*.78,size*1.45,8),
+      actor:()=>new THREE.SphereGeometry(size,12,8),
+      observation:()=>new THREE.TetrahedronGeometry(size,0)
+    };
+    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.12,shininess:28,transparent:true,opacity:.96});
+    const mesh=new THREE.Mesh((geometries[node.kind]||geometries.actor)(),material);mesh.userData.nodeId=node.id;return mesh;
+  }
+
+  function createSvgGlyph(node,ns){
+    const tags={conflict:'rect',side:'polygon',nation:'rect',location:'polygon',actor:'circle',observation:'rect'};
+    const glyph=document.createElementNS(ns,tags[node.kind]||'circle');glyph.dataset.glyphKind=node.kind;return glyph;
+  }
+
+  function sizeSvgGlyph(glyph,kind,radius){
+    if(kind==='actor'){glyph.setAttribute('r',radius);return;}
+    if(kind==='conflict'||kind==='observation'){const size=kind==='observation'?radius*1.45:radius*1.35;glyph.setAttribute('x',-size);glyph.setAttribute('y',-size);glyph.setAttribute('width',size*2);glyph.setAttribute('height',size*2);glyph.setAttribute('transform','rotate(45)');return;}
+    if(kind==='nation'){glyph.setAttribute('x',-radius);glyph.setAttribute('y',-radius);glyph.setAttribute('width',radius*2);glyph.setAttribute('height',radius*2);return;}
+    if(kind==='side'){glyph.setAttribute('points',`0,${-radius*1.25} ${radius*1.1},${radius} ${-radius*1.1},${radius}`);return;}
+    if(kind==='location'){const points=Array.from({length:6},(_,index)=>{const angle=index*Math.PI/3;return `${Math.cos(angle)*radius},${Math.sin(angle)*radius}`});glyph.setAttribute('points',points.join(' '));return;}
+    glyph.setAttribute('r',radius);
   }
 
   function selectGraphNode(id) {
@@ -287,6 +345,8 @@
       .backgroundColor('rgba(0,0,0,0)')
       .showNavInfo(false)
       .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)}</small>`)
+      .nodeThreeObject(nodeObject)
+      .nodeThreeObjectExtend(false)
       .nodeVal('val')
       .nodeRelSize(4)
       .nodeOpacity(.92)
@@ -344,14 +404,14 @@
     const edgeElements=state.graph.edges.map(edge=>{const line=document.createElementNS(ns,'line');line.dataset.source=edge.from;line.dataset.target=edge.to;edgeLayer.append(line);return {edge,line};});
     const radii={conflict:13,side:11,nation:9,location:8,actor:7,observation:3};
     const nodeElements=new Map();
-    nodes.forEach(node=>{const group=document.createElementNS(ns,'g');group.dataset.nodeId=node.id;group.dataset.nodeKind=node.kind;group.classList.add('network-svg-node');const circle=document.createElementNS(ns,'circle');const title=document.createElementNS(ns,'title');title.textContent=`${nodeDisplayLabel(node)} · ${node.kind}`;circle.append(title);group.append(circle);if(hasPersistentLabel(node)){const label=document.createElementNS(ns,'text');label.textContent=nodeDisplayLabel(node);group.append(label);}nodeLayer.append(group);nodeElements.set(node.id,{group,circle,label:group.querySelector('text')});});
+    nodes.forEach(node=>{const group=document.createElementNS(ns,'g');group.dataset.nodeId=node.id;group.dataset.nodeKind=node.kind;group.classList.add('network-svg-node');const glyph=createSvgGlyph(node,ns);const title=document.createElementNS(ns,'title');title.textContent=`${nodeDisplayLabel(node)} · ${node.kind}`;glyph.append(title);group.append(glyph);if(hasPersistentLabel(node)){const label=document.createElementNS(ns,'text');label.textContent=nodeDisplayLabel(node);group.append(label);}nodeLayer.append(group);nodeElements.set(node.id,{group,glyph,label:group.querySelector('text')});});
     const scene={yaw:-.32,pitch:.22,zoom:1,width:1,height:1,nodes,nodeMap,edgeElements,nodeElements,drag:null,moved:false};
     const project=node=>{const cy=Math.cos(scene.yaw),sy=Math.sin(scene.yaw),cp=Math.cos(scene.pitch),sp=Math.sin(scene.pitch);const x1=node.x*cy+node.z*sy;const z1=-node.x*sy+node.z*cy;const y1=node.y*cp-z1*sp;const z2=node.y*sp+z1*cp;const scale=scene.zoom*760/(980+z2);return {x:scene.width/2+x1*scale,y:scene.height/2+y1*scale,z:z2,scale};};
     scene.draw=()=>{
       const projected=new Map(nodes.map(node=>[node.id,project(node)]));
-      edgeElements.forEach(({edge,line})=>{const from=projected.get(edge.from),to=projected.get(edge.to);const highlighted=state.selected&&(edge.from===state.selected||edge.to===state.selected);line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);line.setAttribute('stroke',highlighted?'#eeb45d':(currentTheme()?'#536460':'#84918c'));line.setAttribute('stroke-width',highlighted?'2.3':'.7');line.setAttribute('opacity',highlighted?'1':'.48');});
+      edgeElements.forEach(({edge,line})=>{const from=projected.get(edge.from),to=projected.get(edge.to);line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);line.setAttribute('stroke',linkBaseColor({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('stroke-width',linkBaseWidth({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('opacity',isHighlightedLink({source:edge.from,target:edge.to})?'1':'.74');});
       nodes.sort((a,b)=>projected.get(a.id).z-projected.get(b.id).z).forEach(node=>nodeLayer.append(nodeElements.get(node.id).group));
-      nodes.forEach(node=>{const point=projected.get(node.id),parts=nodeElements.get(node.id);const classMatch=state.nodeType==='all'||node.kind===state.nodeType;const connectionMatch=!state.selected||state.connected.has(node.id);parts.group.setAttribute('transform',`translate(${point.x} ${point.y})`);parts.group.setAttribute('opacity',classMatch&&connectionMatch?'1':'.13');parts.circle.setAttribute('r',Math.max(2,radii[node.kind]*point.scale));parts.circle.setAttribute('fill',nodeBaseColor(node));parts.circle.setAttribute('stroke',state.selected===node.id?'#fff4ce':'#d8e0dc');parts.circle.setAttribute('stroke-width',state.selected===node.id?'2.5':'1');if(parts.label){parts.label.setAttribute('y',-(radii[node.kind]*point.scale+5));parts.label.setAttribute('fill',currentTheme()?'#e7e8e1':'#252b28');}});
+      nodes.forEach(node=>{const point=projected.get(node.id),parts=nodeElements.get(node.id);const classMatch=state.nodeType==='all'||node.kind===state.nodeType;const connectionMatch=!state.selected||state.connected.has(node.id);const radius=Math.max(2,radii[node.kind]*point.scale);parts.group.setAttribute('transform',`translate(${point.x} ${point.y})`);parts.group.setAttribute('opacity',classMatch&&connectionMatch?'1':'.13');sizeSvgGlyph(parts.glyph,node.kind,radius);parts.glyph.setAttribute('fill',nodeBaseColor(node));parts.glyph.setAttribute('stroke',state.selected===node.id?'#ffd500':'#d8c58f');parts.glyph.setAttribute('stroke-width',state.selected===node.id?'2.5':'1');if(parts.label){parts.label.setAttribute('y',-(radii[node.kind]*point.scale+5));parts.label.setAttribute('fill',currentTheme()?'#e4d6ad':'#17150f');}});
     };
     const resize=()=>{const box=container.getBoundingClientRect();scene.width=Math.max(320,box.width);scene.height=Math.max(420,box.height);svg.setAttribute('viewBox',`0 0 ${scene.width} ${scene.height}`);scene.draw();};
     svg.addEventListener('pointerdown',event=>{noteInteraction();const group=event.target.closest?.('[data-node-id]');scene.drag={x:event.clientX,y:event.clientY,node:group?nodeMap.get(group.dataset.nodeId):null};scene.moved=false;svg.setPointerCapture(event.pointerId);});
@@ -366,7 +426,7 @@
     const dark=currentTheme();
     const edgeX=[];const edgeY=[];
     state.graph.edges.forEach(edge=>{const from=state.positions.get(edge.from);const to=state.positions.get(edge.to);if(!from||!to)return;edgeX.push(from.x,to.x,null);edgeY.push(from.y,to.y,null);});
-    const traces=[{type:'scatter',mode:'lines',x:edgeX,y:edgeY,hoverinfo:'skip',line:{color:dark?'rgba(118,132,128,.36)':'rgba(81,96,90,.3)',width:1},name:'Relations'}];
+    const traces=state.graph.edges.map(edge=>{const from=state.positions.get(edge.from),to=state.positions.get(edge.to);return {type:'scatter',mode:'lines',x:[from.x,to.x],y:[from.y,to.y],hoverinfo:'skip',showlegend:false,line:{color:linkBaseColor({source:edge.from,target:edge.to,relation:edge.relation}),width:linkBaseWidth({source:edge.from,target:edge.to,relation:edge.relation})},name:edge.relation};});
     const settings={
       conflict:{label:'Conflict',size:25,symbol:'diamond'},sideA:{label:'Side A',size:22,symbol:'circle'},sideB:{label:'Side B',size:22,symbol:'circle'},
       nation:{label:'Nations',size:16,symbol:'square'},actor:{label:'Actors',size:13,symbol:'circle'},location:{label:'Locations',size:16,symbol:'hexagon'},observation:{label:'Observations',size:7,symbol:'circle'}

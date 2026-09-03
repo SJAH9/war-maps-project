@@ -10,6 +10,14 @@ The first public release establishes the reproducible observed field, the intera
 
 The current release is therefore an operational foundation, not a claim that every conflict already has a complete causal model. Each conflict begins at its available source boundary and can deepen through recursively addressed decisions, actors, conditions, claims, economic relations, alternatives, and consequences without erasing uncertainty or source context. See [First Public Release](docs/FIRST_PUBLIC_RELEASE.md).
 
+## Open the deployed atlas
+
+- [War Maps world explorer](https://sjah9.github.io/war-maps-project/)
+- [Interactive conflict network](https://sjah9.github.io/war-maps-project/outputs/web/network.html)
+- [Life and Death visualization](https://sjah9.github.io/war-maps-project/outputs/web/life-death.html)
+- [Project information and methods](https://sjah9.github.io/war-maps-project/outputs/web/information.html)
+- [About the War Maps Project](https://sjah9.github.io/war-maps-project/outputs/web/about.html)
+
 ## Ternary enclosure
 
 The ternary enclosure function is not a three-valued classification system. It records:

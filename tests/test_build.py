@@ -54,6 +54,13 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("graph2ScreenCoords", network_source)
         self.assertIn("AUTO_ROTATE_IDLE_MS", network_source)
         self.assertIn("autoRotate", network_source)
+        self.assertIn("nodeThreeObject", network_source)
+        self.assertIn("linkBaseColor", network_source)
+        self.assertIn("linkBaseWidth", network_source)
+        self.assertIn("return 2.4", network_source)
+        network_page = ROOT.joinpath("web/network.html").read_text(encoding="utf-8")
+        self.assertIn('class="conflict"', network_page)
+        self.assertIn('class="actor"', network_page)
 
     def test_life_and_death_map_uses_event_fatalities_and_geometry(self):
         page = ROOT.joinpath("web/life-death.html")
