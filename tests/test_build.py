@@ -107,6 +107,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("THREE.CanvasTexture", map_source)
         self.assertIn("minAzimuthAngle", map_source)
         self.assertIn("maxAzimuthAngle", map_source)
+        self.assertIn("minAzimuthAngle=azimuth-Math.PI/2", map_source)
+        self.assertIn("maxAzimuthAngle=azimuth+Math.PI/2", map_source)
         self.assertIn("enablePan=false", map_source)
         self.assertIn("value:format(mean('fertility'),2)", map_source)
         self.assertNotIn("DISPLAYED MEAN", map_source)
