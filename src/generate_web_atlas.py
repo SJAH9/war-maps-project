@@ -21,6 +21,10 @@ def generate() -> Path:
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")
+    geometry_payload = GEOMETRY.read_text(encoding="utf-8")
+    (OUTPUT / "assets/world-geometry.js").write_text(
+        f"window.WAR_MAPS_GEOMETRY={geometry_payload};\n", encoding="utf-8"
+    )
     payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
     (OUTPUT / "data.js").write_text(f"window.WAR_MAPS_DATA={payload};\n", encoding="utf-8")
     (ROOT / "index.html").write_text(

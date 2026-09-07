@@ -20,7 +20,7 @@
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const state = {conflictId:'', start:'', end:'', graph:null, analysis:null, nodeMap:new Map(), positions:new Map(), nodeType:'all',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,labelFrame:null,autoRotating:false};
+  const state = {conflictId:'', start:'', end:'', graph:null, analysis:null, nodeMap:new Map(), positions:new Map(), nodeType:'all',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,labelFrame:null,autoRotating:false,inspectorView:'overview',similarEra:'all',corpusIndex:null};
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
@@ -36,7 +36,7 @@
 
   const splitParties = value => String(value || '').split(',').map(item => item.trim()).filter(Boolean);
   const isoDate = (value, fallback) => /^\d{4}-\d{2}-\d{2}$/.test(value || '') ? value : fallback;
-  const inRange = (start, end) => end >= state.start && start <= state.end;
+  const inRange = (start, end, range=state) => end >= range.start && start <= range.end;
   const nodeId = (type, value) => `${type}:${value}`;
   const displayLocation = value => aliases[value] || value;
   const currentTheme = () => document.documentElement.dataset.theme === 'dark';
@@ -50,7 +50,7 @@
     return {start, end:conflict.active_at_source_boundary ? today : conflict.end_date || observedEnd, observedEnd, current:conflict.active_at_source_boundary};
   }
 
-  function buildGraph(conflict) {
+  function buildGraph(conflict, range=state) {
     const nodes = new Map();
     const edges = new Map();
     const addNode = (id, label, group, kind, metadata={}) => {
@@ -99,7 +99,7 @@
     conflict.parties_b.forEach(name => addActor(name, 'B'));
     conflict.plot_locations.forEach(addLocation);
 
-    const rows = (yearsByConflict.get(conflict.id) || []).filter(row => inRange(`${row.year}-01-01`, `${row.year}-12-31`));
+    const rows = (yearsByConflict.get(conflict.id) || []).filter(row => inRange(`${row.year}-01-01`, `${row.year}-12-31`, range));
     rows.forEach((row, index) => {
       splitParties(row.side_a).forEach(name => addActor(name, 'A'));
       splitParties(row.side_b).forEach(name => addActor(name, 'B'));
@@ -116,7 +116,7 @@
       locations.forEach(location => addEdge(nodeId('location', location), id, 'annual observation'));
     });
 
-    const events = (eventsByConflict.get(conflict.id) || []).filter(event => inRange(event.date_start, event.date_end || event.date_start));
+    const events = (eventsByConflict.get(conflict.id) || []).filter(event => inRange(event.date_start, event.date_end || event.date_start, range));
     events.forEach(event => {
       const location = displayLocation(event.country || event.place || 'Unspecified location');
       const locationId = addLocation(location);
@@ -323,7 +323,7 @@
       })
       .linkColor(linkBaseColor)
       .linkWidth(linkBaseWidth)
-      .linkOpacity(.92)
+      .linkOpacity(.58)
       .linkDirectionalParticles(link=>isHighlightedLink(link)?3:0)
       .linkDirectionalParticleWidth(1.8)
       .linkDirectionalParticleColor('#ffd500')
@@ -350,7 +350,7 @@
       actor:()=>new THREE.SphereGeometry(size,12,8),
       observation:()=>new THREE.TetrahedronGeometry(size,0)
     };
-    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.12,shininess:28,transparent:true,opacity:.96});
+    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.08,shininess:8,flatShading:true,transparent:true,opacity:.96});
     const mesh=new THREE.Mesh((geometries[node.kind]||geometries.actor)(),material);mesh.userData.nodeId=node.id;return mesh;
   }
 
@@ -427,7 +427,12 @@
     graph.onEngineStop(()=>{if(!initiallyFitted){initiallyFitted=true;graph.zoomToFit(550,70);}});
     state.forceGraph=graph;
     state.renderMode='3d';
-    graph.controls().addEventListener('start',noteInteraction);
+    const controls=graph.controls();
+    controls.enableRotate=true;
+    controls.enableZoom=true;
+    controls.enablePan=false;
+    controls.rotateSpeed=.65;
+    controls.addEventListener('start',noteInteraction);
     container.addEventListener('pointerdown',noteInteraction,{passive:true});
     container.addEventListener('wheel',noteInteraction,{passive:true});
     state.resizeObserver=new ResizeObserver(entries=>{const box=entries[0]?.contentRect;if(box&&box.width>0&&box.height>0)graph.width(Math.round(box.width)).height(Math.round(box.height));});
@@ -562,11 +567,107 @@
     }));
   }
 
+  const nodeYear = (node, conflict) => {
+    if (node.metadata?.row?.year) return Number(node.metadata.row.year);
+    if (node.metadata?.event?.date_start) return Number(node.metadata.event.date_start.slice(0,4));
+    return Number(conflict.last_active_year || conflict.first_active_year);
+  };
+
+  function buildCorpusIndex() {
+    if (state.corpusIndex) return state.corpusIndex;
+    const byKind = new Map();
+    data.conflicts.forEach(conflict => {
+      const bounds = conflictBounds(conflict);
+      const graph = buildGraph(conflict, bounds);
+      const corpusNodeMap=new Map(graph.nodes.map(node=>[node.id,node]));
+      const adjacency = new Map(graph.nodes.map(node=>[node.id,new Set()]));
+      graph.edges.forEach(edge=>{adjacency.get(edge.from)?.add(edge.to);adjacency.get(edge.to)?.add(edge.from);});
+      const degrees=[...adjacency.values()].map(neighbors=>neighbors.size).sort((a,b)=>a-b);
+      graph.nodes.forEach(node => {
+        if (!byKind.has(node.kind)) byKind.set(node.kind, []);
+        const neighbors=[...(adjacency.get(node.id)||[])].map(id=>corpusNodeMap.get(id)).filter(Boolean);
+        const neighborCounts={};neighbors.forEach(item=>{neighborCounts[item.kind]=(neighborCounts[item.kind]||0)+1;});
+        const degree=neighbors.length;
+        const degreePercentile=degrees.length?degrees.filter(value=>value<=degree).length/degrees.length:0;
+        byKind.get(node.kind).push({node,conflict,degree,degreeCentrality:graph.nodes.length>1?degree/(graph.nodes.length-1):0,degreePercentile,neighborCounts,year:nodeYear(node,conflict),current:Boolean(conflict.active_at_source_boundary)});
+      });
+    });
+    state.corpusIndex = byKind;
+    return byKind;
+  }
+
+  function similarityScore(source, candidate) {
+    let score=.15;
+    const reasons=['same node type'];
+    const percentileMatch=1-Math.abs(source.degreePercentile-candidate.degreePercentile);
+    score+=percentileMatch*.30;
+    if(percentileMatch>=.85)reasons.push('same relative degree');
+    const kinds=new Set([...Object.keys(source.neighborCounts),...Object.keys(candidate.neighborCounts)]);
+    const sourceTotal=Math.max(1,source.degree),candidateTotal=Math.max(1,candidate.degree);
+    let neighborDistance=0;
+    kinds.forEach(kind=>{neighborDistance+=Math.abs((source.neighborCounts[kind]||0)/sourceTotal-(candidate.neighborCounts[kind]||0)/candidateTotal);});
+    const neighborMatch=Math.max(0,1-neighborDistance/2);
+    score+=neighborMatch*.35;
+    if(neighborMatch>=.8)reasons.push('similar connected types');
+    const centralityMax=Math.max(.000001,source.degreeCentrality,candidate.degreeCentrality);
+    const centralityMatch=1-Math.abs(source.degreeCentrality-candidate.degreeCentrality)/centralityMax;
+    score+=Math.max(0,centralityMatch)*.10;
+    if(centralityMatch>=.75)reasons.push('similar network share');
+    const sourceRole=source.degreePercentile>=.9?'hub':'peripheral';
+    const candidateRole=candidate.degreePercentile>=.9?'hub':'peripheral';
+    if(sourceRole===candidateRole){score+=.05;reasons.push(`same ${sourceRole} position`);}
+    if(source.conflict.type===candidate.conflict.type){score+=.05;reasons.push('same conflict type');}
+    return {score,reasons};
+  }
+
+  function similarNodes(node) {
+    const conflict=conflictsById.get(state.conflictId);
+    const connected=connectedNodes(node.id);
+    const neighborCounts={};connected.forEach(item=>{neighborCounts[item.kind]=(neighborCounts[item.kind]||0)+1;});
+    const degrees=state.graph.nodes.map(item=>item.networkScience?.degree||0).sort((a,b)=>a-b);
+    const degree=node.networkScience?.degree||0;
+    const source={node,conflict,degree,degreeCentrality:node.networkScience?.degreeCentrality||0,degreePercentile:degrees.length?degrees.filter(value=>value<=degree).length/degrees.length:0,neighborCounts,year:nodeYear(node,conflict),current:Boolean(conflict.active_at_source_boundary)};
+    const candidates=buildCorpusIndex().get(node.kind)||[];
+    return candidates
+      .filter(item=>item.conflict.id!==state.conflictId)
+      .filter(item=>state.similarEra==='all'||(state.similarEra==='present'?item.current:!item.current))
+      .map(item=>({...item,...similarityScore(source,item)}))
+      .filter(item=>item.score>.12)
+      .sort((a,b)=>b.score-a.score||b.year-a.year||a.node.label.localeCompare(b.node.label))
+      .slice(0,12);
+  }
+
+  function bindSimilarResults() {
+    document.querySelectorAll('[data-similar-conflict]').forEach(button=>button.addEventListener('click',()=>{
+      const conflictId=button.dataset.similarConflict,nodeIdValue=button.dataset.similarNode;
+      selectConflict(conflictId);
+      const matched=state.nodeMap.get(nodeIdValue);
+      if(matched){focusNode(nodeIdValue);selectGraphNode(nodeIdValue);setInspectorView('overview');}
+    }));
+  }
+
+  function renderSimilarNodes(node) {
+    const list=$('#node-similar-list');
+    if(!list)return;
+    const results=similarNodes(node);
+    list.innerHTML=`<p class="similar-disclosure">Structural matches across ${data.conflicts.length.toLocaleString()} conflict records. Scores compare node type, relative degree, degree centrality, and the proportional mix of connected node types. They do not assert equivalence or causation.</p>${results.length?`<div class="similar-list">${results.map(item=>`<button type="button" data-similar-conflict="${esc(item.conflict.id)}" data-similar-node="${esc(item.node.id)}"><i class="node-glyph ${esc(item.node.group)}" aria-hidden="true"></i><span><strong>${esc(item.node.label)}</strong><small>${esc(item.conflict.title)} · ${item.conflict.first_active_year}-${item.current?'present':item.conflict.last_active_year}</small><em>${esc(item.reasons.slice(0,3).join(' · '))}</em></span><b>${Math.round(Math.min(1,item.score)*100)}%</b></button>`).join('')}</div>`:'<p class="similar-status">No comparable nodes meet this period and structural threshold.</p>'}`;
+    bindSimilarResults();
+  }
+
+  function setInspectorView(view) {
+    if(view==='similar'&&!state.selected)return;
+    state.inspectorView=view;
+    document.querySelectorAll('[data-inspector-view]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.inspectorView===view)));
+    $('#node-overview').hidden=view!=='overview';
+    $('#node-similar').hidden=view!=='similar';
+    if(view==='similar')renderSimilarNodes(state.nodeMap.get(state.selected));
+  }
+
   function showNode(id) {
     const node = state.nodeMap.get(id);
     if (!node) return;
     const connected = connectedNodes(id);
-    $('#node-type').textContent = node.kind;
+    $('#node-type').textContent = `Selected node · ${node.kind}`;
     $('#node-title').textContent = node.label;
     let meta = [];
     let content = '';
@@ -596,14 +697,26 @@
       return;
     }
     const topology=node.networkScience;
-    if(topology)meta.push(
-      ['Degree',topology.degree],
-      ['Degree centrality',`${(topology.degreeCentrality*100).toFixed(2)}%`],
-      ['Betweenness',topology.betweenness?topology.betweenness.toFixed(4):'0'],
-      ['Network role',topology.role]
-    );
+    if(topology){
+      const degrees=state.graph.nodes.map(item=>item.networkScience?.degree||0).sort((a,b)=>a-b);
+      const percentile=degrees.length?degrees.filter(value=>value<=topology.degree).length/degrees.length:0;
+      const connectedTypes={};connected.forEach(item=>{connectedTypes[item.kind]=(connectedTypes[item.kind]||0)+1;});
+      meta.push(
+        ['Degree',topology.degree],
+        ['Relative degree',`${Math.round(percentile*100)}% of nodes or lower`],
+        ['Degree centrality',`${(topology.degreeCentrality*100).toFixed(2)}%`],
+        ['Betweenness',topology.betweenness?topology.betweenness.toFixed(4):'0'],
+        ['Network role',topology.role],
+        ['Connected types',Object.entries(connectedTypes).sort((a,b)=>b[1]-a[1]).map(([kind,count])=>`${kind} ${count}`).join(' · ')||'None']
+      );
+    }
     $('#node-meta').innerHTML = meta.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
-    $('#node-content').innerHTML = content + connectionMarkup(connected);
+    $('#node-overview').innerHTML = `${content}<button class="find-similar-button" id="find-similar-nodes" type="button">Find similar nodes</button>${connectionMarkup(connected)}`;
+    const similarTab=$('[data-inspector-view="similar"]');
+    similarTab.disabled=false;
+    state.inspectorView='overview';
+    setInspectorView('overview');
+    $('#find-similar-nodes').addEventListener('click',()=>setInspectorView('similar'));
     bindConnectionButtons();
   }
 
@@ -614,7 +727,12 @@
     $('#node-title').textContent = conflict.title;
     const analysis=state.analysis;
     $('#node-meta').innerHTML = [['Side nodes',2],['Nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')],['Components',analysis.components],['Density',analysis.density.toFixed(4)],['Peak degree',analysis.maxDegree]].map(([label,value])=>`<div><span>${label}</span><strong>${typeof value==='number'?value.toLocaleString():esc(value)}</strong></div>`).join('');
-    $('#node-content').innerHTML = `<div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>${conflict.active_at_source_boundary?'Current at the loaded source boundary; temporal limit set to present.':'Closed before the loaded source boundary.'}</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile in this selected conflict and period; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}. These are structural descriptions, not claims of command, intent, or causation.</small></div>`;
+    $('#node-overview').innerHTML = `<div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>${conflict.active_at_source_boundary?'Current at the loaded source boundary; temporal limit set to present.':'Closed before the loaded source boundary.'}</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile in this selected conflict and period; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}. These are structural descriptions, not claims of command, intent, or causation.</small></div>`;
+    state.inspectorView='overview';
+    state.selected='';
+    $('[data-inspector-view="similar"]').disabled=true;
+    $('#node-similar-list').innerHTML='';
+    setInspectorView('overview');
   }
 
   function renderNetworkStats(conflict) {
@@ -649,7 +767,7 @@
     $('#network-end').value = bounds.end;
     $('#network-title').textContent = conflict.title;
     $('#network-status').textContent = bounds.current ? `${bounds.start} through present · observed through ${bounds.observedEnd}` : `${bounds.start} through ${bounds.end}`;
-    $('#conflict-record-link').href = `./?conflict=${encodeURIComponent(id)}#detail`;
+    $('#conflict-record-link').href = `map.html?conflict=${encodeURIComponent(id)}#detail`;
     if (updateUrl) history.replaceState(null,'',`?conflict=${encodeURIComponent(id)}`);
     renderGraph();
   }
@@ -696,6 +814,12 @@
     state.nodeType=event.target.value;
     if(state.renderMode==='3d')update3DStyles();else if(state.graph)renderPlot();
   });
+  document.querySelectorAll('[data-inspector-view]').forEach(button=>button.addEventListener('click',()=>setInspectorView(button.dataset.inspectorView)));
+  document.querySelectorAll('[data-similar-era]').forEach(button=>button.addEventListener('click',()=>{
+    state.similarEra=button.dataset.similarEra;
+    document.querySelectorAll('[data-similar-era]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));
+    if(state.selected)renderSimilarNodes(state.nodeMap.get(state.selected));
+  }));
   $('#theme-toggle').addEventListener('click',()=>{
     const theme=currentTheme()?'light':'dark';
     document.documentElement.dataset.theme=theme;
@@ -704,6 +828,12 @@
   });
 
   renderWarDialog();
-  const requested = new URLSearchParams(location.search).get('conflict');
+  const initialParams = new URLSearchParams(location.search);
+  const requested = initialParams.get('conflict');
   selectConflict(conflictsById.has(requested) ? requested : (conflictsById.has('ucdp-candidate-16905') ? 'ucdp-candidate-16905' : data.conflicts.at(-1).id), false);
+  const requestedNode=initialParams.get('node');
+  if(requestedNode&&state.nodeMap.has(requestedNode)){
+    selectGraphNode(requestedNode);
+    if(initialParams.get('inspector')==='similar')setInspectorView('similar');
+  }
 })();

@@ -6,20 +6,20 @@
   <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
   <title>Conflict Network · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-08-29-r12">
+  <link rel="stylesheet" href="styles.css?v=2026-09-07-network-r2">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
   <script src="data.js?v=2026-08-29-r11" defer></script>
-  <script src="network.js?v=2026-09-03-r2" defer></script>
+  <script src="network.js?v=2026-09-07-network-r2" defer></script>
 </head>
 <body class="network-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./#explore">Explore</a><a href="network.html" aria-current="page">Network</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a></nav>
-    <button class="header-command" id="war-dialog-open" type="button">Select war</button>
+    <nav aria-label="Primary navigation"><a href="./" aria-current="page">Network</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a></nav>
+    <button class="header-command" id="war-dialog-open" type="button"><span aria-hidden="true">⌕</span> Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
 
@@ -31,12 +31,12 @@
       </div>
 
       <div class="network-controls" aria-label="Network controls">
-        <button class="network-select" id="network-war-select" type="button">Select war</button>
+        <button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select war</button>
         <label><span>From</span><input id="network-start" type="date"></label>
         <label><span>Through</span><input id="network-end" type="date"></label>
         <label><span>Find node</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
         <label><span>Node class</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
-        <button id="network-fit" type="button">Fit network</button>
+        <button class="network-fit" id="network-fit" type="button" title="Fit the complete network" aria-label="Fit the complete network">⛶</button>
       </div>
 
       <div class="network-workspace">
@@ -47,10 +47,22 @@
             <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="actor"></i> Actor</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span><span>Node size = degree</span>
           </div>
         </div>
-        <aside class="network-inspector" aria-live="polite">
+        <aside class="network-inspector" aria-label="Selected node inspector" aria-live="polite">
           <div class="network-inspector-head"><p class="eyebrow" id="node-type">Network extent</p><h2 id="node-title">Selected conflict</h2></div>
           <div class="network-node-meta" id="node-meta"></div>
-          <div id="node-content"></div>
+          <div class="inspector-tabs" role="tablist" aria-label="Node inspector views">
+            <button type="button" role="tab" data-inspector-view="overview" aria-selected="true">Overview</button>
+            <button type="button" role="tab" data-inspector-view="similar" aria-selected="false" disabled>Similar nodes</button>
+          </div>
+          <section id="node-overview" role="tabpanel"></section>
+          <section id="node-similar" role="tabpanel" hidden>
+            <div class="similar-controls" aria-label="Similar node period">
+              <button type="button" data-similar-era="all" aria-pressed="true">All time</button>
+              <button type="button" data-similar-era="historical" aria-pressed="false">Historical</button>
+              <button type="button" data-similar-era="present" aria-pressed="false">Present</button>
+            </div>
+            <div id="node-similar-list"></div>
+          </section>
         </aside>
       </div>
 

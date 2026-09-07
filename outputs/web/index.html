@@ -3,139 +3,70 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="A recursively enclosed atlas of organized armed conflict from 1946 to the present.">
-  <title>The War Maps Project</title>
-  <script>
-    try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}
-    catch(error){document.documentElement.dataset.theme='dark';}
-  </script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-03-play-audio">
+  <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
+  <title>Conflict Network · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-09-07-network-r2">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
-  <script src="data.js?v=2026-08-29-r8" defer></script>
-  <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
-  <script src="app.js?v=2026-09-03-play-audio" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
+  <script src="data.js?v=2026-08-29-r11" defer></script>
+  <script src="network.js?v=2026-09-07-network-r2" defer></script>
 </head>
-<body>
+<body class="network-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation">
-      <a href="#explore" aria-current="page">Explore</a><a href="network.html">Network</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a>
-    </nav>
-    <button class="header-command" id="war-dialog-open" type="button">Select war</button>
+    <nav aria-label="Primary navigation"><a href="./" aria-current="page">Network</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a></nav>
+    <button class="header-command" id="war-dialog-open" type="button"><span aria-hidden="true">⌕</span> Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
 
   <main>
-    <section class="explorer" id="explore">
-      <div class="title-band">
-        <div>
-          <p class="eyebrow">Organized armed conflict · 1946-present</p>
-          <h1>War Maps</h1>
-        </div>
-        <p class="scope">Claims remain nested inside source, actor, time, place, and coding conditions. Map color indicates recorded conflict activity under the disclosed source methods.</p>
+    <section class="network-section" id="network">
+      <div class="network-title">
+        <div><p class="eyebrow">Interactive network model</p><h1 id="network-title">Conflict network</h1></div>
+        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a></div>
       </div>
 
-      <div class="controls" aria-label="Map controls">
-        <label class="search-control"><span>Find</span><input id="search" type="search" placeholder="Conflict, state, party, territory"></label>
-        <label><span>From</span><input id="year-start" type="range" min="1946" max="2026" value="2026"><output id="year-start-output">2026</output></label>
-        <label><span>Through</span><input id="year-end" type="range" min="1946" max="2026" value="2026"><output id="year-end-output">2026</output></label>
-        <label><span>Window</span><select id="window-size"><option value="">Custom range</option><option value="1" selected>1 year</option><option value="10">10 years</option><option value="25">25 years</option><option value="50">50 years</option><option value="100">All time · 100 years</option></select></label>
-        <label><span>Conflict type</span><select id="type-filter"><option value="all">All types</option><option value="interstate">Interstate</option><option value="internal">Internal</option><option value="internationalized internal">Internationalized internal</option><option value="extrasystemic">Extrasystemic</option><option value="candidate state-based conflict">Candidate state-based</option><option value="candidate non-state conflict">Candidate non-state</option><option value="candidate one-sided violence">Candidate one-sided</option></select></label>
-        <label><span>Government type</span><select id="regime-filter"><option value="all">All V-Dem types</option><option value="0">Closed autocracy</option><option value="1">Electoral autocracy</option><option value="2">Electoral democracy</option><option value="3">Liberal democracy</option></select></label>
-        <label><span>Health layer</span><select id="health-layer"><option value="none">Conflict activity</option><option value="mortality">All-cause mortality</option><option value="fertility">Fertility</option></select></label>
-        <label><span>Health year</span><input id="health-map-year" type="range" min="1980" max="2023" value="2023"><output id="health-map-year-output">2023</output></label>
-        <label class="check-control"><input id="transition-toggle" type="checkbox"><span>Show regime transitions</span></label>
-        <label class="check-control"><input id="active-only" type="checkbox"><span>Active at source boundary</span></label>
-        <button id="reset" type="button">Reset</button>
-      </div>
-      <div class="transport-row" aria-label="Playback and audio">
-        <fieldset class="transport-panel play-panel">
-          <legend>Play</legend>
-          <button id="play-toggle" type="button" aria-pressed="false">Play</button>
-          <label><span>Speed</span>
-            <select id="play-speed" aria-label="Playback speed">
-              <option value="1600">Slow</option>
-              <option value="800" selected>Year / 0.8s</option>
-              <option value="350">Fast</option>
-            </select>
-          </label>
-          <output id="play-year" for="play-toggle">2026</output>
-        </fieldset>
-        <fieldset class="transport-panel audio-panel">
-          <legend>Audio</legend>
-          <button id="audio-mute" type="button" aria-pressed="false">Mute</button>
-          <label class="vol-control"><span>Level</span>
-            <input id="audio-level" type="range" min="0" max="100" value="70" aria-label="Audio level">
-          </label>
-          <span class="audio-note" id="audio-note">Speaks the year and observation count while playing</span>
-        </fieldset>
+      <div class="network-controls" aria-label="Network controls">
+        <button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select war</button>
+        <label><span>From</span><input id="network-start" type="date"></label>
+        <label><span>Through</span><input id="network-end" type="date"></label>
+        <label><span>Find node</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
+        <label><span>Node class</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
+        <button class="network-fit" id="network-fit" type="button" title="Fit the complete network" aria-label="Fit the complete network">⛶</button>
       </div>
 
-      <div class="map-workspace">
-        <div class="map-stage">
-          <div class="satellite-toolbar">
-            <label><input id="satellite-toggle" type="checkbox"><span>Satellite paths</span></label>
-            <select id="satellite-constellation" aria-label="Satellite constellation"><option value="iceye-ukraine-support">ICEYE SAR · Ukraine support</option></select>
-            <span id="satellite-note">Frozen public orbit snapshot · constellation relation</span>
+      <div class="network-workspace">
+        <div class="network-stage">
+          <div id="network-locale-map" class="network-locale-map" aria-hidden="true"></div>
+          <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
+          <div class="network-legend" aria-label="Network node legend">
+            <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation</span><span><i class="actor"></i> Actor</span><span><i class="location"></i> Location</span><span><i class="observation"></i> Observation</span><span>Node size = degree</span>
           </div>
-          <div id="map" role="img" aria-label="World map of recorded conflict activity"></div>
-          <div class="map-legend"><span><i class="low"></i> fewer records</span><span><i class="high"></i> more records</span><span id="map-note">Select a state or conflict to open its enclosure.</span></div>
         </div>
-        <aside class="results" aria-label="Conflict results">
-          <div class="results-head"><div><p class="eyebrow">Conflict register</p><h2 id="result-title">2026 observations</h2></div><strong id="result-count">0</strong></div>
-          <div id="conflict-list" class="conflict-list"></div>
+        <aside class="network-inspector" aria-label="Selected node inspector" aria-live="polite">
+          <div class="network-inspector-head"><p class="eyebrow" id="node-type">Network extent</p><h2 id="node-title">Selected conflict</h2></div>
+          <div class="network-node-meta" id="node-meta"></div>
+          <div class="inspector-tabs" role="tablist" aria-label="Node inspector views">
+            <button type="button" role="tab" data-inspector-view="overview" aria-selected="true">Overview</button>
+            <button type="button" role="tab" data-inspector-view="similar" aria-selected="false" disabled>Similar nodes</button>
+          </div>
+          <section id="node-overview" role="tabpanel"></section>
+          <section id="node-similar" role="tabpanel" hidden>
+            <div class="similar-controls" aria-label="Similar node period">
+              <button type="button" data-similar-era="all" aria-pressed="true">All time</button>
+              <button type="button" data-similar-era="historical" aria-pressed="false">Historical</button>
+              <button type="button" data-similar-era="present" aria-pressed="false">Present</button>
+            </div>
+            <div id="node-similar-list"></div>
+          </section>
         </aside>
       </div>
-      <section class="related-panel" aria-labelledby="related-title">
-        <div><p class="eyebrow">Related data · selected window</p><h2 id="related-title">World conflict field</h2><p id="related-note">Statistics describe nations and conflicts visible in the current map enclosure.</p></div>
-        <div class="stat-grid" id="related-stats"></div>
-        <div class="regime-health-panel"><h3>Population health by V-Dem regime</h3><div id="regime-health-comparison"></div><div id="transition-health-list"></div></div>
-      </section>
-    </section>
 
-    <section class="detail-section" id="detail" hidden>
-      <div class="detail-heading">
-        <div><p class="eyebrow" id="detail-kicker"></p><h2 id="detail-title"></h2></div>
-        <div class="detail-actions"><a class="header-command" id="detail-network-link" href="network.html">Open network</a><button class="icon-button" id="close-detail" type="button" aria-label="Close conflict detail" title="Close conflict detail">×</button></div>
-      </div>
-      <div class="detail-meta" id="detail-meta"></div>
-      <div class="nation-chips" id="nation-chips"></div>
-      <div class="detail-grid">
-        <div>
-          <h3>Conflict timeline</h3>
-          <div class="timeline" id="timeline"></div>
-          <div class="event-stream" id="event-stream"></div>
-        </div>
-        <aside class="enclosure-panel">
-          <h3>Enclosure address</h3>
-          <div id="enclosure"></div>
-          <h3>Claims at this address</h3>
-          <div id="claims"></div>
-          <h3>State conditions at this depth</h3>
-          <div id="state-conditions"></div>
-          <h3>Prompted causal projections</h3>
-          <div id="projections"></div>
-        </aside>
-      </div>
-    </section>
-
-    <section class="states-section" id="states">
-      <div class="section-heading"><div><p class="eyebrow">Participation and projected purpose</p><h2>State conflict record</h2></div><p>Counts establish the outer participation field. A selected state can then be projected inward toward initiators, decisions, territorial or economic purpose, partners, and durable consequences.</p></div>
-      <div class="table-wrap"><table><thead><tr><th>State</th><th>Conflicts</th><th>Territorial incompatibility</th><th>Interstate</th><th>Active at 2025 boundary</th></tr></thead><tbody id="state-table"></tbody></table></div>
-    </section>
-
-    <section class="method-section" id="method">
-      <div class="section-heading"><div><p class="eyebrow">Nested Causal Modelling</p><h2>The question comes before the flag</h2></div></div>
-      <div class="method-grid">
-        <div class="formula"><span>E(outer enclosure)</span><b>[</b><span>D(specified departure)</span><b>|</b><span>E(inner enclosure)</span><b>]</b></div>
-        <div class="method-copy"><p>The first and third positions are always enclosure functions. The middle departure carries its address, repeatable measurements, and join keys. Following outer nesting reaches source conditions; following inner nesting reaches consequences and the information consumer without adding a separate classification system.</p><p>At a finite edge, an addressed E frontier records the next question. New observations open that function without erasing its prior address, source, or method.</p></div>
-      </div>
-    </section>
-
-    <section class="sources-section" id="sources">
-      <div class="section-heading"><div><p class="eyebrow">Reproducible provenance</p><h2>Data sources and boundaries</h2></div></div>
-      <div id="source-list" class="source-list"></div>
+      <div class="network-summary" id="network-summary"></div>
     </section>
   </main>
 
@@ -145,10 +76,10 @@
       <label><span>Find war</span><input id="war-dialog-search" type="search" placeholder="Conflict, territory, state, or party" autocomplete="off"></label>
       <label><span>Region</span><select id="war-dialog-region"><option value="all">All regions</option><option>Europe</option><option>Middle East</option><option>Asia</option><option>Africa</option><option>Americas</option><option>Other</option></select></label>
     </div>
-    <div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946–July 2026 source boundary</span></div>
+    <div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946-July 2026 source boundary</span></div>
     <div class="war-dialog-list" id="war-dialog-list"></div>
   </dialog>
 
-  <footer><a href="about.html">The War Maps Project</a><span>Open source · Source records retain their own licenses</span><a href="sources.html">Citations and data boundaries</a></footer>
+  <footer><a href="about.html">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><a href="method.html">Method and source boundaries</a></footer>
 </body>
 </html>
