@@ -20,7 +20,7 @@
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const state = {conflictId:'', start:'', end:'', graph:null, analysis:null, nodeMap:new Map(), positions:new Map(), nodeType:'all',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,labelFrame:null,autoRotating:false,inspectorView:'overview',similarEra:'all',corpusIndex:null};
+  const state = {conflictId:'', start:'', end:'', graph:null,analysis:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
@@ -190,6 +190,13 @@
   }
 
   const nodeTopologyScale = node => 1+Math.min(.72,Math.log2(1+(node.networkScience?.degree||0))*.11);
+  const candidateFatalities = node => {
+    const value=node.metadata?.recordType==='candidate-event'?Number(node.metadata.event?.fatalities?.best||0):0;
+    return Number.isFinite(value)&&value>0?value:0;
+  };
+  const nodeVisualScale = node => node.metadata?.recordType==='candidate-event'
+    ? .8+Math.min(2.35,Math.log10(1+candidateFatalities(node))*.58)
+    : nodeTopologyScale(node);
 
   function positionGraph(graph) {
     const positions = new Map();
@@ -283,6 +290,68 @@
     state.rotationTimer=setTimeout(startAutoRotation,AUTO_ROTATE_IDLE_MS);
   }
 
+  function stopMotion() {
+    cancelAnimationFrame(state.momentumFrame);state.momentumFrame=null;
+    cancelAnimationFrame(state.layoutFrame);state.layoutFrame=null;
+  }
+
+  function optimizedNodePositions(nodes) {
+    const kindOrder={conflict:0,side:1,nation:2,actor:3,location:4,observation:5};
+    const ordered=[...nodes].sort((a,b)=>(kindOrder[a.kind]??9)-(kindOrder[b.kind]??9)||nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b))||a.id.localeCompare(b.id));
+    const positions=new Map();
+    let area=0;
+    ordered.forEach((node,index)=>{
+      if(index===0&&node.kind==='conflict'){positions.set(node.id,{x:0,y:0,z:0});return;}
+      const scale=nodeVisualScale(node);
+      area+=1.15+scale*scale*.34;
+      const angle=area*2.399963229728653;
+      const radius=25*Math.sqrt(area);
+      positions.set(node.id,{x:Math.cos(angle)*radius,y:Math.sin(angle)*radius,z:0});
+    });
+    return positions;
+  }
+
+  function animateOptimizedLayout(nodes,targets,draw,complete) {
+    cancelAnimationFrame(state.layoutFrame);
+    const starts=new Map(nodes.map(node=>[node.id,{x:node.x||0,y:node.y||0,z:node.z||0}]));
+    const started=performance.now(),duration=1450;
+    const tick=timestamp=>{
+      const progress=Math.min(1,(timestamp-started)/duration);
+      const eased=1-Math.pow(1-progress,3);
+      nodes.forEach(node=>{
+        const from=starts.get(node.id),to=targets.get(node.id);if(!to)return;
+        node.x=from.x+(to.x-from.x)*eased;node.y=from.y+(to.y-from.y)*eased;node.z=from.z+(to.z-from.z)*eased;
+        if('fx' in node||state.renderMode==='3d'){node.fx=node.x;node.fy=node.y;node.fz=node.z;}
+      });
+      draw?.();
+      if(progress<1)state.layoutFrame=requestAnimationFrame(tick);
+      else{state.layoutFrame=null;complete?.();}
+    };
+    state.layoutFrame=requestAnimationFrame(tick);
+  }
+
+  function optimizeView() {
+    if(!state.graph)return;
+    noteInteraction();stopMotion();
+    state.optimized=true;
+    state.optimizedPositions=optimizedNodePositions(state.graph.nodes);
+    $('#network-optimize')?.setAttribute('aria-pressed','true');
+    if(state.renderMode==='3d'&&state.forceGraph){
+      const nodes=state.forceGraph.graphData().nodes;
+      animateOptimizedLayout(nodes,state.optimizedPositions,()=>state.forceGraph.refresh(),()=>state.forceGraph.zoomToFit(700,90));
+      state.forceGraph.linkCurvature?.(link=>.08+(Math.abs([...`${endpointId(link.source)}|${endpointId(link.target)}`].reduce((sum,char)=>sum+char.charCodeAt(0),0))%5)*.025).refresh();
+      return;
+    }
+    if(state.renderMode==='svg3d'&&state.svgScene){
+      const scene=state.svgScene;
+      scene.yaw=0;scene.pitch=.12;
+      animateOptimizedLayout(scene.nodes,state.optimizedPositions,scene.draw,()=>scene.draw());
+      return;
+    }
+    state.positions=new Map([...state.optimizedPositions].map(([id,point])=>[id,{x:point.x/52,y:point.y/52}]));
+    renderPlot();
+  }
+
   function stopNativeLabels() {
     cancelAnimationFrame(state.labelFrame);state.labelFrame=null;
   }
@@ -341,7 +410,7 @@
   function nodeObject(node){
     if(!window.THREE)return null;
     const sizes={conflict:10,side:8,nation:6.5,location:6,actor:4.5,observation:2.1};
-    const size=(sizes[node.kind]||4)*nodeTopologyScale(node);
+    const size=(sizes[node.kind]||4)*nodeVisualScale(node);
     const geometries={
       conflict:()=>new THREE.OctahedronGeometry(size,0),
       side:()=>new THREE.ConeGeometry(size*.82,size*1.8,8),
@@ -350,8 +419,8 @@
       actor:()=>new THREE.SphereGeometry(size,12,8),
       observation:()=>new THREE.TetrahedronGeometry(size,0)
     };
-    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.08,shininess:8,flatShading:true,transparent:true,opacity:.96});
-    const mesh=new THREE.Mesh((geometries[node.kind]||geometries.actor)(),material);mesh.userData.nodeId=node.id;return mesh;
+    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.08,shininess:8,flatShading:true,transparent:true,opacity:.96,depthTest:false});
+    const mesh=new THREE.Mesh((geometries[node.kind]||geometries.actor)(),material);mesh.userData.nodeId=node.id;mesh.renderOrder=3;return mesh;
   }
 
   function createSvgGlyph(node,ns){
@@ -388,7 +457,7 @@
       const position=state.positions.get(node.id);
       let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;
       const depth=((Math.abs(hash)%201)-100)*(node.kind==='observation'?.22:.5);
-      const val=({conflict:14,side:10,nation:8,location:7,actor:5,observation:1.4}[node.kind]||3)*nodeTopologyScale(node);
+      const val=({conflict:14,side:10,nation:8,location:7,actor:5,observation:1.4}[node.kind]||3)*nodeVisualScale(node);
       return {...node,x:position.x*18,y:position.y*18,z:depth,val};
     });
     const graphLinks=state.graph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
@@ -399,7 +468,7 @@
       .height(Math.max(420,Math.round(rect.height)))
       .backgroundColor('rgba(0,0,0,0)')
       .showNavInfo(false)
-      .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)} · degree ${node.networkScience?.degree||0} · ${esc(node.networkScience?.role||'peripheral')}</small>`)
+      .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)} · degree ${node.networkScience?.degree||0} · ${esc(node.networkScience?.role||'peripheral')}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}</small>`)
       .nodeThreeObject(nodeObject)
       .nodeThreeObjectExtend(false)
       .nodeVal('val')
@@ -412,7 +481,14 @@
       .enableNavigationControls(true)
       .onNodeClick(node=>selectGraphNode(node.id))
       .onNodeDrag(()=>noteInteraction())
-      .onNodeDragEnd(node=>{noteInteraction();node.fx=node.x;node.fy=node.y;node.fz=node.z;})
+      .onNodeDragEnd(node=>{
+        noteInteraction();node.fx=node.x;node.fy=node.y;node.fz=node.z;
+        clearTimeout(node._settleTimer);
+        node._settleTimer=setTimeout(()=>{
+          if(state.optimized&&state.optimizedPositions.has(node.id))animateOptimizedLayout([node],state.optimizedPositions,()=>graph.refresh());
+          else{node.fx=undefined;node.fy=undefined;node.fz=undefined;graph.d3ReheatSimulation();}
+        },320);
+      })
       .onBackgroundClick(()=>selectGraphNode(''))
       .onNodeHover(node=>{container.style.cursor=node?'pointer':'grab';})
       .warmupTicks(graphNodes.length>700?35:70)
@@ -420,6 +496,8 @@
       .graphData({nodes:graphNodes,links:graphLinks});
     graph.d3Force('charge')?.strength(graphNodes.length>700?-28:-65);
     graph.d3Force('link')?.distance(link=>link.relation.includes('observation')||link.relation==='candidate event'?24:52);
+    graph.d3AlphaDecay?.(.012);
+    graph.d3VelocityDecay?.(.18);
     graph.d3ReheatSimulation();
     graph.cameraPosition({x:0,y:0,z:520},{x:0,y:0,z:0},0);
     setTimeout(()=>graph.zoomToFit(600,70),500);
@@ -432,6 +510,8 @@
     controls.enableZoom=true;
     controls.enablePan=false;
     controls.rotateSpeed=.65;
+    controls.enableDamping=true;
+    controls.dampingFactor=.06;
     controls.addEventListener('start',noteInteraction);
     container.addEventListener('pointerdown',noteInteraction,{passive:true});
     container.addEventListener('wheel',noteInteraction,{passive:true});
@@ -460,24 +540,30 @@
     const ns='http://www.w3.org/2000/svg';
     const svg=document.createElementNS(ns,'svg');svg.classList.add('network-svg-3d');svg.setAttribute('aria-label','Rotatable three-dimensional conflict network');
     const edgeLayer=document.createElementNS(ns,'g');const nodeLayer=document.createElementNS(ns,'g');svg.append(edgeLayer,nodeLayer);container.append(svg);
-    const nodes=state.graph.nodes.map(node=>{const point=state.positions.get(node.id);let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;return {...node,x:point.x*52,y:point.y*52,z:((Math.abs(hash)%201)-100)*(node.kind==='observation'?1.1:2.1)};});
+    const nodes=state.graph.nodes.map(node=>{const point=state.positions.get(node.id);let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;const x=point.x*52,y=point.y*52,z=((Math.abs(hash)%201)-100)*(node.kind==='observation'?1.1:2.1);return {...node,x,y,z,homeX:x,homeY:y,homeZ:z};});
     const nodeMap=new Map(nodes.map(node=>[node.id,node]));
     const edgeElements=state.graph.edges.map(edge=>{const line=document.createElementNS(ns,'line');line.dataset.source=edge.from;line.dataset.target=edge.to;edgeLayer.append(line);return {edge,line};});
     const radii={conflict:13,side:11,nation:9,location:8,actor:7,observation:3};
     const nodeElements=new Map();
     nodes.forEach(node=>{const group=document.createElementNS(ns,'g');group.dataset.nodeId=node.id;group.dataset.nodeKind=node.kind;group.classList.add('network-svg-node');const glyph=createSvgGlyph(node,ns);const title=document.createElementNS(ns,'title');title.textContent=`${nodeDisplayLabel(node)} · ${node.kind}`;glyph.append(title);group.append(glyph);if(hasPersistentLabel(node)){const label=document.createElementNS(ns,'text');label.textContent=nodeDisplayLabel(node);group.append(label);}nodeLayer.append(group);nodeElements.set(node.id,{group,glyph,label:group.querySelector('text')});});
-    const scene={yaw:-.32,pitch:.22,zoom:1,width:1,height:1,nodes,nodeMap,edgeElements,nodeElements,drag:null,moved:false};
+    const scene={yaw:-.32,pitch:.22,zoom:1,width:1,height:1,nodes,nodeMap,edgeElements,nodeElements,drag:null,moved:false,velocityYaw:0,velocityPitch:0};
     const project=node=>{const cy=Math.cos(scene.yaw),sy=Math.sin(scene.yaw),cp=Math.cos(scene.pitch),sp=Math.sin(scene.pitch);const x1=node.x*cy+node.z*sy;const z1=-node.x*sy+node.z*cy;const y1=node.y*cp-z1*sp;const z2=node.y*sp+z1*cp;const scale=scene.zoom*760/(980+z2);return {x:scene.width/2+x1*scale,y:scene.height/2+y1*scale,z:z2,scale};};
     scene.draw=()=>{
       const projected=new Map(nodes.map(node=>[node.id,project(node)]));
       edgeElements.forEach(({edge,line})=>{const from=projected.get(edge.from),to=projected.get(edge.to);line.setAttribute('x1',from.x);line.setAttribute('y1',from.y);line.setAttribute('x2',to.x);line.setAttribute('y2',to.y);line.setAttribute('stroke',linkBaseColor({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('stroke-width',linkBaseWidth({source:edge.from,target:edge.to,relation:edge.relation}));line.setAttribute('opacity',isHighlightedLink({source:edge.from,target:edge.to})?'1':'.92');});
       nodes.sort((a,b)=>projected.get(a.id).z-projected.get(b.id).z).forEach(node=>nodeLayer.append(nodeElements.get(node.id).group));
-      nodes.forEach(node=>{const point=projected.get(node.id),parts=nodeElements.get(node.id);const classMatch=state.nodeType==='all'||node.kind===state.nodeType;const connectionMatch=!state.selected||state.connected.has(node.id);const radius=Math.max(2,radii[node.kind]*nodeTopologyScale(node)*point.scale);parts.group.setAttribute('transform',`translate(${point.x} ${point.y})`);parts.group.setAttribute('opacity',classMatch&&connectionMatch?'1':'.13');sizeSvgGlyph(parts.glyph,node.kind,radius);parts.glyph.setAttribute('fill',nodeBaseColor(node));parts.glyph.setAttribute('stroke',state.selected===node.id?'#ffd500':'#d8c58f');parts.glyph.setAttribute('stroke-width',state.selected===node.id?'2.5':'1');if(parts.label){parts.label.setAttribute('y',-(radius+5));parts.label.setAttribute('fill',currentTheme()?'#e4d6ad':'#17150f');}});
+      nodes.forEach(node=>{const point=projected.get(node.id),parts=nodeElements.get(node.id);const classMatch=state.nodeType==='all'||node.kind===state.nodeType;const connectionMatch=!state.selected||state.connected.has(node.id);const radius=Math.max(2,radii[node.kind]*nodeVisualScale(node)*point.scale);parts.group.setAttribute('transform',`translate(${point.x} ${point.y})`);parts.group.setAttribute('opacity',classMatch&&connectionMatch?'1':'.13');sizeSvgGlyph(parts.glyph,node.kind,radius);parts.glyph.setAttribute('fill',nodeBaseColor(node));parts.glyph.setAttribute('stroke',state.selected===node.id?'#ffd500':'#d8c58f');parts.glyph.setAttribute('stroke-width',state.selected===node.id?'2.5':'1');if(parts.label){parts.label.setAttribute('y',-(radius+5));parts.label.setAttribute('fill',currentTheme()?'#e4d6ad':'#17150f');}});
     };
     const resize=()=>{const box=container.getBoundingClientRect();scene.width=Math.max(320,box.width);scene.height=Math.max(420,box.height);svg.setAttribute('viewBox',`0 0 ${scene.width} ${scene.height}`);scene.draw();};
-    svg.addEventListener('pointerdown',event=>{noteInteraction();const group=event.target.closest?.('[data-node-id]');scene.drag={x:event.clientX,y:event.clientY,node:group?nodeMap.get(group.dataset.nodeId):null};scene.moved=false;svg.setPointerCapture(event.pointerId);});
-    svg.addEventListener('pointermove',event=>{if(!scene.drag)return;const dx=event.clientX-scene.drag.x,dy=event.clientY-scene.drag.y;if(Math.abs(dx)+Math.abs(dy)>2)scene.moved=true;if(scene.drag.node){scene.drag.node.x+=dx/scene.zoom;scene.drag.node.y+=dy/scene.zoom;}else{scene.yaw+=dx*.008;scene.pitch=Math.max(-1.35,Math.min(1.35,scene.pitch+dy*.008));}scene.drag.x=event.clientX;scene.drag.y=event.clientY;scene.draw();});
-    svg.addEventListener('pointerup',event=>{if(!scene.drag)return;const node=scene.drag.node,moved=scene.moved;scene.drag=null;svg.releasePointerCapture(event.pointerId);if(!moved)selectGraphNode(node?.id||'');});
+    svg.addEventListener('pointerdown',event=>{noteInteraction();stopMotion();const group=event.target.closest?.('[data-node-id]');scene.drag={x:event.clientX,y:event.clientY,node:group?nodeMap.get(group.dataset.nodeId):null};scene.moved=false;scene.velocityYaw=0;scene.velocityPitch=0;svg.setPointerCapture(event.pointerId);});
+    svg.addEventListener('pointermove',event=>{if(!scene.drag)return;const dx=event.clientX-scene.drag.x,dy=event.clientY-scene.drag.y;if(Math.abs(dx)+Math.abs(dy)>2)scene.moved=true;if(scene.drag.node){scene.drag.node.x+=dx/scene.zoom;scene.drag.node.y+=dy/scene.zoom;}else{scene.velocityYaw=dx*.008;scene.velocityPitch=dy*.008;scene.yaw+=scene.velocityYaw;scene.pitch=Math.max(-1.35,Math.min(1.35,scene.pitch+scene.velocityPitch));}scene.drag.x=event.clientX;scene.drag.y=event.clientY;scene.draw();});
+    svg.addEventListener('pointerup',event=>{
+      if(!scene.drag)return;const node=scene.drag.node,moved=scene.moved;scene.drag=null;svg.releasePointerCapture(event.pointerId);
+      if(!moved){selectGraphNode(node?.id||'');return;}
+      if(node){const target=state.optimizedPositions.get(node.id)||{x:node.homeX,y:node.homeY,z:node.homeZ};setTimeout(()=>animateOptimizedLayout([node],new Map([[node.id,target]]),scene.draw),320);return;}
+      const coast=()=>{scene.velocityYaw*=.94;scene.velocityPitch*=.94;if(Math.abs(scene.velocityYaw)+Math.abs(scene.velocityPitch)<.00025){state.momentumFrame=null;return;}scene.yaw+=scene.velocityYaw;scene.pitch=Math.max(-1.35,Math.min(1.35,scene.pitch+scene.velocityPitch));scene.draw();state.momentumFrame=requestAnimationFrame(coast);};
+      state.momentumFrame=requestAnimationFrame(coast);
+    });
     svg.addEventListener('wheel',event=>{event.preventDefault();noteInteraction();scene.zoom=Math.max(.35,Math.min(3.2,scene.zoom*Math.exp(-event.deltaY*.001)));scene.draw();},{passive:false});
     state.svgScene=scene;state.renderMode='svg3d';state.resizeObserver=new ResizeObserver(resize);state.resizeObserver.observe(container);resize();update3DStyles();startAutoRotation();
   }
@@ -497,7 +583,7 @@
       if(!nodes.length)return;
       const emphasized=state.nodeType==='all'||nodes.some(node=>node.kind===state.nodeType);
       const showText=group!=='observation';
-      traces.push({type:'scatter',mode:showText?'markers+text':'markers',name:setting.label,x:nodes.map(node=>state.positions.get(node.id).x),y:nodes.map(node=>state.positions.get(node.id).y),customdata:nodes.map(node=>node.id),hovertext:nodes.map(node=>`${nodeDisplayLabel(node)} · degree ${node.networkScience?.degree||0} · ${node.networkScience?.role||'peripheral'}`),hovertemplate:'<b>%{hovertext}</b><extra>'+setting.label+'</extra>',text:showText?nodes.map(node=>nodeDisplayLabel(node)):undefined,textposition:'top center',textfont:{color:dark?'#d9d9d2':'#303632',size:10,family:'Inter, Arial, sans-serif'},marker:{size:nodes.map(node=>setting.size*nodeTopologyScale(node)),symbol:setting.symbol,color:nodeColors[group].background,line:{color:nodeColors[group].border,width:1}},opacity:emphasized?1:.1});
+      traces.push({type:'scatter',mode:showText?'markers+text':'markers',name:setting.label,x:nodes.map(node=>state.positions.get(node.id).x),y:nodes.map(node=>state.positions.get(node.id).y),customdata:nodes.map(node=>node.id),hovertext:nodes.map(node=>`${nodeDisplayLabel(node)} · degree ${node.networkScience?.degree||0} · ${node.networkScience?.role||'peripheral'}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}`),hovertemplate:'<b>%{hovertext}</b><extra>'+setting.label+'</extra>',text:showText?nodes.map(node=>nodeDisplayLabel(node)):undefined,textposition:'top center',textfont:{color:dark?'#d9d9d2':'#303632',size:10,family:'Inter, Arial, sans-serif'},marker:{size:nodes.map(node=>setting.size*nodeVisualScale(node)),symbol:setting.symbol,color:nodeColors[group].background,line:{color:nodeColors[group].border,width:1}},opacity:emphasized?1:.1});
     });
     const layout={margin:{l:20,r:20,t:20,b:20},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,hovermode:'closest',dragmode:'pan',xaxis:{visible:false,fixedrange:false},yaxis:{visible:false,fixedrange:false,scaleanchor:'x',scaleratio:1},uirevision:`${state.conflictId}-${state.start}-${state.end}`};
     Plotly.react('network-canvas',traces,layout,{responsive:true,displaylogo:false,scrollZoom:true,modeBarButtonsToRemove:['select2d','lasso2d']});
@@ -510,12 +596,12 @@
     const conflict = conflictsById.get(state.conflictId);
     if (!conflict) return;
     renderLocaleMap(conflict);
-    stopAutoRotation();
+    stopAutoRotation();stopMotion();
     state.graph = buildGraph(conflict);
     state.analysis = analyzeGraph(state.graph);
     state.nodeMap = new Map(state.graph.nodes.map(node=>[node.id,node]));
     state.positions = positionGraph(state.graph);
-    state.selected='';state.connected=new Set();
+    state.selected='';state.connected=new Set();state.optimized=false;state.optimizedPositions.clear();$('#network-optimize')?.setAttribute('aria-pressed','false');
     try{if(!window.ForceGraph3D)throw new Error('3D renderer unavailable');render3D();}
     catch(error){state.renderMode='2d';try{renderPlot();}catch(plotError){$('#network-canvas').innerHTML='<p class="boundary-note network-error">The network renderer is unavailable. Conflict records remain available from the atlas.</p>';}}
     showSummary(conflict);
@@ -801,6 +887,7 @@
   $('#war-dialog').addEventListener('click',event=>{if(event.target===$('#war-dialog'))$('#war-dialog').close();});
   $('#network-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#network-end').value=state.end;}renderGraph();});
   $('#network-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
+  $('#network-optimize').addEventListener('click',optimizeView);
   $('#network-fit').addEventListener('click',()=>{noteInteraction();if(state.forceGraph&&state.renderMode==='3d')state.forceGraph.zoomToFit(500,70);else if(state.renderMode==='svg3d'&&state.svgScene){Object.assign(state.svgScene,{yaw:-.32,pitch:.22,zoom:1});state.svgScene.draw();}else if(window.Plotly)Plotly.relayout('network-canvas',{'xaxis.autorange':true,'yaxis.autorange':true});});
   $('#network-search').addEventListener('input',event=>{
     noteInteraction();

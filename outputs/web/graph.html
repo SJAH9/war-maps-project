@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Global force-directed graph of states joined only by recorded same-side participation in organized conflicts since 1946.">
+  <title>Global Relationship Graph · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-09-08-graph-r3">
+  <script src="data.js?v=2026-08-29-r11" defer></script>
+  <script src="graph.js?v=2026-09-08-r5" defer></script>
+</head>
+<body class="global-graph-page">
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"><a href="./">Network</a><a href="graph.html" aria-current="page">Graph</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="information.html">Information</a></nav>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+
+  <main class="global-graph-main">
+    <section class="global-graph-title">
+      <div><p class="eyebrow">Global relationship field · 1946 to source boundary</p><h1>States joined by shared sides</h1></div>
+      <p>Every line is a recorded same-side state participation. Historic opponents appear through the alliance paths that connect them, never as fabricated direct ties.</p>
+    </section>
+
+    <section class="global-graph-controls" aria-label="Global graph controls">
+      <label><span>Find nation</span><input id="graph-search" type="search" placeholder="Nation"></label>
+      <label><span>Minimum shared years</span><select id="graph-min-years"><option value="1">1 year</option><option value="2">2 years</option><option value="5">5 years</option><option value="10">10 years</option></select></label>
+      <button id="graph-reset" type="button">Clear selection</button>
+      <button class="graph-optimize" id="graph-optimize" type="button">Optimize</button>
+      <button class="graph-fit" id="graph-fit" type="button" title="Fit the global graph" aria-label="Fit the global graph">⛶</button>
+    </section>
+
+    <section class="global-graph-workspace">
+      <aside class="global-graph-inspector" aria-live="polite">
+        <div class="global-graph-inspector-head"><p class="eyebrow" id="graph-node-type">Global field</p><h2 id="graph-node-title">All participating states</h2></div>
+        <div class="global-graph-metrics" id="graph-node-metrics"></div>
+        <div id="graph-node-detail"></div>
+      </aside>
+      <div class="global-graph-stage">
+        <div id="global-graph" role="img" aria-label="Force-directed global network of nations joined by same-side conflict participation"></div>
+        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Selected</span><span><i class="graph-ally"></i>Same-side partner</span><span><i class="graph-bridge"></i>Mutual ally</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Node area: number of connections</span><span>Line width: shared years</span></div>
+      </div>
+    </section>
+    <section class="global-graph-summary" id="global-graph-summary"></section>
+  </main>
+
+  <footer><a href="about.html">The War Maps Project</a><span>Relationships derived from UCDP state participation records</span><a href="method.html">Method and source boundaries</a></footer>
+</body>
+</html>
