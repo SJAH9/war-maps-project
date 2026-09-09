@@ -74,6 +74,8 @@ python3 -m src.generate_crude_birth_rate
 python3 -m src.generate_population
 python3 -m src.generate_web_atlas
 python3 -m src.generate_print_atlas --conflict ucdp-candidate-16905 --size standard
+python3 -m src.generate_print_war_map --map falklands-1982
+python3 -m src.generate_print_war_map --map iran-2026-current
 python3 -m unittest discover -s tests
 ```
 
@@ -102,6 +104,12 @@ Print volumes configure themselves to the available depth:
 - `archive`: retains the full available chronology and recursive evidence record.
 
 The format does not enforce both-sideism, one-sideism, or no-sideism. It follows the enclosed causal structure, even when the resulting depth and findings are asymmetric.
+
+The separate print-first War Map prototype treats the map as a recurring information structure populated by a selected conflict and focal interval. The completed print atlas is intended to map every conflict represented in the project's loaded datasets. Its first specification, `falklands-1982`, begins before the San Carlos landings and stops before the formal surrender, keeping the unresolved operational field visible. The resulting landscape A4 PDF includes the interval rule, operational map, reported deaths, a five-measure Life and Death comparison, nation fields, postwar demographic context, dated observations, the conflict network, degree distribution, normalized betweenness, and source disclosures. The focal movement is a sourced retrospective selection open to revision, not a claim that one event alone caused the outcome.
+
+The `iran-2026-current` proof adapts that format to an unresolved war. It maps all 125 UCDP candidate events observed from 28 February through 30 July 2026 without claiming a retrospective turning point. Its print network retains the website topology: Iran is coded on Side A; Israel and the United States are distinct actors and states on Side B; every event connects to its recorded locale; and GCC locales form a distributed vulnerability field rather than another belligerent side. Locale-node area follows event count, event-node area follows best-estimate fatalities, and a separate proportionality page prints the exact event and fatality shares. Israeli and United States actions are not assigned separate event colors because the loaded UCDP rows encode a combined Side B rather than a structured acting-party field.
+
+A separately sourced context layer records selected U.S. overseas-base and access relationships from CRS Report R48123. In the print Life and Death isometric field, this appears only as an ordinal stack: its height compares relationship classes and does not represent installation count, troop strength, operational capacity, or strike attribution. A white outlined stack and outer network ring mark a conflict locale with a documented former U.S. installation or military footprint but no current site identified in that dated inventory; the current proof applies these marks to Iran. Persistent sites, other identified sites, former-only footprint, and locations not classified from the selected table remain distinct. Qatar's Al Udeid Air Base is disclosed as regional context but is not added to the conflict network because Qatar is not one of conflict `16905`'s loaded event locales.
 
 ## Attribution and license
 

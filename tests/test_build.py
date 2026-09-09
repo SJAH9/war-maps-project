@@ -1,5 +1,6 @@
 import json
 import unittest
+from datetime import date
 
 from src.build_atlas import OUTPUT, ROOT, build
 
@@ -108,6 +109,52 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertNotIn("3d-force-graph", page)
         self.assertNotIn("addEdge(opposing", source)
 
+    def test_print_war_map_has_bounded_interval_and_life_death_field(self):
+        specs = json.loads(ROOT.joinpath("data/curated/print_war_maps.json").read_text(encoding="utf-8"))
+        spec = specs["falklands-1982"]
+        start = date.fromisoformat(spec["window_start"])
+        focal = date.fromisoformat(spec["focal_date"])
+        end = date.fromisoformat(spec["window_end"])
+        self.assertLess(start, focal)
+        self.assertLess(focal, end)
+        self.assertLess(end, date(1982, 6, 14))
+        self.assertEqual(spec["conflict_id"], "ucdp-346")
+        self.assertEqual(spec["states"], ["Argentina", "United Kingdom"])
+        self.assertEqual(len(spec["events"]), 12)
+        self.assertGreaterEqual(len(spec["network"]["nodes"]), 20)
+        self.assertGreaterEqual(len(spec["network"]["edges"]), 30)
+        generator = ROOT.joinpath("src/generate_print_war_map.py").read_text(encoding="utf-8")
+        self.assertIn("def add_life_death", generator)
+        self.assertIn("network_metrics", generator)
+        self.assertIn("normalized betweenness", generator.lower())
+        self.assertIn("campaign totals, not deaths isolated", generator)
+
+    def test_current_iran_print_map_retains_event_locale_topology(self):
+        specs = json.loads(ROOT.joinpath("data/curated/print_war_maps.json").read_text(encoding="utf-8"))
+        spec = specs["iran-2026-current"]
+        self.assertEqual(spec["template"], "current-regional")
+        self.assertEqual(spec["conflict_id"], "ucdp-candidate-16905")
+        self.assertEqual(spec["window_start"], "2026-02-28")
+        self.assertEqual(spec["window_end"], "2026-07-30")
+        events = [event for event in self.data["events"] if event["conflict_id"] == spec["conflict_id"]]
+        self.assertEqual(len(events), 125)
+        self.assertEqual(len({event["country"] for event in events}), 12)
+        gcc = {"Bahrain", "Kuwait", "Oman", "Saudi Arabia", "United Arab Emirates"}
+        self.assertEqual(sum(event["country"] in gcc for event in events), 25)
+        basing = spec["us_basing_context"]
+        self.assertEqual(basing["former_only"], ["Iran"])
+        self.assertEqual(basing["locales"]["Kuwait"]["status"], "persistent")
+        self.assertFalse(basing["regional_context"][0]["event_locale"])
+        self.assertIn("crs-basing", spec["sources"])
+        generator = ROOT.joinpath("src/generate_print_war_map.py").read_text(encoding="utf-8")
+        self.assertIn("def draw_current_network", generator)
+        self.assertIn("GCC VULNERABILITY FIELD", generator)
+        self.assertIn("def add_current_isometric_life_death", generator)
+        self.assertIn("Relative relationship class only", generator)
+        self.assertIn("Former-only U.S. footprint", generator)
+        self.assertIn('event["country"] + " / locale"', generator)
+        self.assertIn("normalized betweenness", generator.lower())
+
     def test_life_and_death_map_uses_event_fatalities_and_geometry(self):
         page = ROOT.joinpath("web/life-death.html")
         source = ROOT.joinpath("web/life-death.js")
@@ -205,6 +252,11 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Side B", legend)
         self.assertIn("#657078", legend)
         self.assertIn("#722b20", legend)
+        method = (ROOT / "web/method.html").read_text(encoding="utf-8")
+        self.assertIn("Print War Map temporal range", method)
+        self.assertIn("every conflict represented", method)
+        self.assertIn("ends before the final victory", method)
+        self.assertIn("latest disclosed source observation", method)
 
     def test_world_map_joins_health_and_governance_without_extrapolation(self):
         page = (ROOT / "web/map.html").read_text(encoding="utf-8")

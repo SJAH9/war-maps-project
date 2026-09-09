@@ -1,0 +1,151 @@
+{
+  "iran-2026-current": {
+    "template": "current-regional",
+    "conflict_id": "ucdp-candidate-16905",
+    "title": "The Iran War Map",
+    "subtitle": "The unresolved regional event field",
+    "window_start": "2026-02-28",
+    "window_end": "2026-07-30",
+    "focal_date": "2026-02-28",
+    "focal_label": "Candidate event field opens",
+    "selection_note": "This current-war proof cannot identify a retrospectively decisive movement because the outcome is unresolved. It therefore encloses the complete observed candidate-event interval and treats 28 February only as the opening departure in the loaded record. The frame ends at the latest observed event, not at the present and not at a conflict endpoint.",
+    "states": [
+      {"name": "Iran", "data_name": "Iran", "side": "A"},
+      {"name": "Israel", "data_name": "Israel", "side": "B"},
+      {"name": "United States of America", "data_name": "United States", "side": "B"}
+    ],
+    "map_bounds": [20.0, 84.0, 5.0, 43.0],
+    "us_basing_context": {
+      "snapshot_label": "CRS selected overseas-base inventory, updated 2026; presence figures and posture discussion principally dated 2024",
+      "former_only": ["Iran"],
+      "locales": {
+        "Bahrain": {"status": "persistent + other", "sites": "Naval Support Activity Bahrain; Sheikh Isa Air Base"},
+        "Iran": {"status": "former-only footprint", "sites": "Two U.S. electronic listening posts, including Kabkan; shut down in 1979"},
+        "Iraq": {"status": "other identified sites", "sites": "Erbil Air Base; Al Asad Air Base"},
+        "Israel": {"status": "not classified here", "sites": "Not classified from the selected CRS table"},
+        "Jordan": {"status": "other identified site", "sites": "Muwaffaq Salti Air Base"},
+        "Kuwait": {"status": "persistent", "sites": "Camp Arifjan; Camp Buehring; Al Jaber; Al Mubarak; Ali Al Salem"},
+        "Lebanon": {"status": "not classified here", "sites": "Not classified from the selected CRS table"},
+        "Oman": {"status": "other identified site", "sites": "Duqm"},
+        "Saudi Arabia": {"status": "other identified sites", "sites": "King Faisal Air Base; Prince Sultan Air Base"},
+        "Sri Lanka": {"status": "not classified here", "sites": "Not classified from the selected CRS table"},
+        "Syria": {"status": "other identified sites", "sites": "Al Tanf Garrison; Rumalyn"},
+        "United Arab Emirates": {"status": "persistent + other", "sites": "Al Dhafra Air Base; Jebel Ali"}
+      },
+      "regional_context": [
+        {"country": "Qatar", "status": "persistent", "sites": "Al Udeid Air Base", "event_locale": false}
+      ]
+    },
+    "sources": {
+      "ucdp-candidate": {
+        "title": "UCDP Candidate Events Dataset, June and July 2026 snapshots",
+        "url": "https://ucdp.uu.se/downloads/"
+      },
+      "vdem": {
+        "title": "V-Dem Dataset version 15, latest loaded country-year 2024",
+        "url": "https://www.v-dem.net/data/the-v-dem-dataset/"
+      },
+      "ihme": {
+        "title": "IHME Global Burden of Disease 2023 Results",
+        "url": "https://vizhub.healthdata.org/gbd-results/"
+      },
+      "world-bank": {
+        "title": "World Bank World Development Indicators",
+        "url": "https://data.worldbank.org/"
+      },
+      "natural-earth": {
+        "title": "Natural Earth Admin 0 reference geometry",
+        "url": "https://www.naturalearthdata.com/"
+      },
+      "crs-basing": {
+        "title": "Congressional Research Service R48123: U.S. Overseas Basing",
+        "url": "https://www.congress.gov/crs_external_products/R/PDF/R48123/R48123.2.pdf"
+      },
+      "usaf-iran-1979": {
+        "title": "U.S. Air Force history: evacuation of U.S. military and support personnel from Iran, 1978-1979",
+        "url": "https://www.afhistory.af.mil/FAQs/Fact-Sheets/Article/458949/1980-operation-eagle-claw/"
+      },
+      "cia-iran-posts": {
+        "title": "CIA Reading Room: shutdown of two U.S. electronic listening posts in Iran, 1979",
+        "url": "https://www.cia.gov/readingroom/docs/CIA-RDP88-01315R000400380121-6.pdf"
+      }
+    }
+  },
+  "falklands-1982": {
+    "conflict_id": "ucdp-346",
+    "title": "The Falklands / Malvinas War Map",
+    "subtitle": "The movement from San Carlos toward Stanley",
+    "window_start": "1982-05-18",
+    "window_end": "1982-06-13",
+    "focal_date": "1982-05-21",
+    "focal_label": "San Carlos landings",
+    "selection_note": "The interval opens before British forces established the San Carlos beachhead and closes before the Argentine surrender on 14 June. In retrospect, the landing moved the campaign from maritime approach to a sustained land advance. The atlas treats this as the focal movement, not as a claim that one event alone caused the outcome.",
+    "states": ["Argentina", "United Kingdom"],
+    "casualties": [
+      {"label": "Argentine deaths", "value": 649, "source": "argentina-memorial"},
+      {"label": "British personnel deaths", "value": 255, "source": "raf-falklands-40"},
+      {"label": "Falkland Island civilian deaths", "value": 3, "source": "hansard-2012"}
+    ],
+    "places": [
+      {"name": "San Carlos", "lon": -59.01, "lat": -51.55},
+      {"name": "Goose Green", "lon": -58.98, "lat": -51.83},
+      {"name": "Stanley", "lon": -57.85, "lat": -51.70},
+      {"name": "Mount Tumbledown", "lon": -57.88, "lat": -51.73}
+    ],
+    "events": [
+      {"date": "1982-05-18", "label": "Task-force air component reinforced", "place": "South Atlantic", "side": "B", "source": "raf-1982"},
+      {"date": "1982-05-21", "label": "3 Commando Brigade lands around San Carlos Water", "place": "San Carlos", "side": "B", "source": "nam-campaign"},
+      {"date": "1982-05-21", "label": "HMS Ardent sunk during Argentine air attacks", "place": "Falkland Sound", "side": "A", "source": "raf-1982"},
+      {"date": "1982-05-24", "label": "HMS Antelope sinks after air attack", "place": "San Carlos Water", "side": "A", "source": "raf-1982"},
+      {"date": "1982-05-25", "label": "HMS Coventry and Atlantic Conveyor lost", "place": "North-east Falklands", "side": "A", "source": "raf-1982"},
+      {"date": "1982-05-28", "label": "Battle of Darwin and Goose Green begins", "place": "Goose Green", "side": "both", "source": "nam-campaign"},
+      {"date": "1982-05-29", "label": "Argentine garrison at Goose Green surrenders", "place": "Goose Green", "side": "B", "source": "nam-campaign"},
+      {"date": "1982-06-02", "label": "5 Infantry Brigade lands at San Carlos", "place": "San Carlos", "side": "B", "source": "nam-campaign"},
+      {"date": "1982-06-05", "label": "Forward air base at Port San Carlos enters use", "place": "San Carlos", "side": "B", "source": "raf-1982"},
+      {"date": "1982-06-11", "label": "Final battles for the approaches to Stanley begin", "place": "Stanley approaches", "side": "both", "source": "nam-campaign"},
+      {"date": "1982-06-12", "label": "HMS Glamorgan struck; remains operational", "place": "Stanley approaches", "side": "A", "source": "raf-1982"},
+      {"date": "1982-06-13", "label": "Assaults on Tumbledown and Wireless Ridge underway", "place": "Stanley approaches", "side": "both", "source": "nam-campaign"}
+    ],
+    "network": {
+      "nodes": [
+        ["argentina", "Argentina", "nation"], ["uk", "United Kingdom", "nation"],
+        ["arg-command", "Argentine military government", "command"], ["menendez", "Mario Menendez", "person"],
+        ["arg-forces", "Argentine forces on the islands", "formation"], ["arg-air", "Argentine air forces", "formation"],
+        ["uk-command", "UK government / campaign command", "command"], ["moore", "Jeremy Moore", "person"],
+        ["thompson", "Julian Thompson", "person"], ["task-force", "British Task Force", "formation"],
+        ["3cb", "3 Commando Brigade", "formation"], ["2para", "2 Para", "formation"],
+        ["rn", "Royal Navy", "formation"], ["raf", "Royal Air Force", "formation"],
+        ["islands", "Falkland Islands / Islas Malvinas", "place"], ["san-carlos", "San Carlos", "place"],
+        ["goose-green", "Goose Green", "place"], ["stanley", "Stanley", "place"],
+        ["landing", "21 May landings", "event"], ["air-attacks", "Air attacks on landing area", "event"],
+        ["goose-event", "28-29 May battle", "event"], ["final-battles", "11-13 June battles", "event"],
+        ["arg-deaths", "649 Argentine deaths", "loss"], ["brit-deaths", "255 British deaths", "loss"],
+        ["civilian-deaths", "3 island civilian deaths", "loss"]
+      ],
+      "edges": [
+        ["argentina","arg-command"],["arg-command","menendez"],["menendez","arg-forces"],["arg-command","arg-air"],
+        ["arg-forces","islands"],["arg-forces","san-carlos"],["arg-forces","goose-green"],["arg-forces","stanley"],
+        ["arg-air","air-attacks"],["arg-air","arg-deaths"],["arg-forces","arg-deaths"],
+        ["uk","uk-command"],["uk-command","moore"],["uk-command","task-force"],["moore","thompson"],
+        ["thompson","3cb"],["task-force","rn"],["task-force","raf"],["task-force","3cb"],["3cb","2para"],
+        ["3cb","landing"],["landing","san-carlos"],["landing","islands"],["air-attacks","san-carlos"],["air-attacks","rn"],
+        ["2para","goose-event"],["goose-event","goose-green"],["goose-event","arg-forces"],
+        ["3cb","final-battles"],["final-battles","stanley"],["final-battles","arg-forces"],
+        ["rn","brit-deaths"],["3cb","brit-deaths"],["islands","civilian-deaths"]
+      ]
+    },
+    "sources": {
+      "ucdp": {"title": "UCDP/PRIO Armed Conflict Dataset 26.1", "url": "https://ucdp.uu.se/downloads/"},
+      "nam-campaign": {"title": "National Army Museum: The British Army and the Falklands War", "url": "https://www.nam.ac.uk/explore/british-army-and-falklands-war"},
+      "raf-1982": {"title": "Royal Air Force Museum: British Military Aviation in 1982", "url": "https://www.rafmuseum.org.uk/research/research-enquiries/history-of-aviation-timeline/british-military-aviation/1982-2/"},
+      "raf-falklands-40": {"title": "RAF Museum: Falklands 40 - Myth and Memory", "url": "https://www.rafmuseum.org.uk/virtual-events/joint-operations-events/falklands-40-myth-and-memory/"},
+      "argentina-memorial": {"title": "Argentina.gob.ar: Dia del Veterano y de los Caidos en la Guerra de Malvinas", "url": "https://www.argentina.gob.ar/node/420986"},
+      "argentina-army": {"title": "Ejercito Argentino: El Ejercito en Malvinas", "url": "https://www.argentina.gob.ar/ejercito/malvinas"},
+      "hansard-2012": {"title": "UK Parliament: Falkland Islands debate, 31 January 2012", "url": "https://hansard.parliament.uk/Commons/2012-01-31/debates/12013195000001/FalklandIslands"},
+      "mod-cohort": {"title": "UK Ministry of Defence: Falklands campaign mortality study", "url": "https://www.gov.uk/government/statistics/causes-of-deaths-among-the-uk-armed-forces-veterans-of-the-1982-falklands-campaign"},
+      "ihme": {"title": "IHME Global Burden of Disease 2023 Results", "url": "https://vizhub.healthdata.org/gbd-results/"},
+      "world-bank": {"title": "World Bank World Development Indicators", "url": "https://data.worldbank.org/"},
+      "natural-earth": {"title": "Natural Earth Admin 0 geometry", "url": "https://www.naturalearthdata.com/"}
+    }
+  }
+}
