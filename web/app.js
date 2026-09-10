@@ -129,8 +129,8 @@
     if(state.transitions){const changed=data.nations.filter(transitionsInWindow).map(item=>item.map_name);traces.push({type:'scattergeo',mode:'markers',locationmode:'country names',locations:changed,text:changed,hovertemplate:'<b>%{location}</b><br>V-Dem category transition in selected window<extra></extra>',marker:{size:11,color:'#7dff36',symbol:'circle-open',line:{color:'#7dff36',width:2.6}}});}
     if (state.start <= 2026 && state.end >= 2026) {
       const visibleIds = new Set(conflicts.map(item => item.id));
-      const events = data.events.filter(event => visibleIds.has(event.conflict_id) && event.latitude !== null && event.longitude !== null);
-      if (events.length) traces.push({type:'scattergeo',mode:'markers',lat:events.map(e=>e.latitude),lon:events.map(e=>e.longitude),text:events.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
+      const events = data.events.filter(event => visibleIds.has(event.conflict_id) && event.map_point_eligible && event.plot_latitude !== null && event.plot_longitude !== null);
+      if (events.length) traces.push({type:'scattergeo',mode:'markers',lat:events.map(e=>e.plot_latitude),lon:events.map(e=>e.plot_longitude),text:events.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
     }
     traces.push(...satelliteTraces());
     const dark=currentTheme();
@@ -201,13 +201,13 @@
     const territoryNames=new Set(nations.flatMap(item=>[item.country,item.map_name]));
     const conflictIds=new Set(conflicts.filter(conflict=>conflict.plot_locations.some(name=>names.has(name))).map(item=>item.id));
     const relevant=data.conflicts.filter(item=>conflictIds.has(item.id));
-    const fatalities=data.events.filter(event=>state.start<=2026&&state.end>=2026&&territoryNames.has(event.country)).reduce((sum,event)=>{sum.low+=event.fatalities.low;sum.best+=event.fatalities.best;sum.high+=event.fatalities.high;sum.events++;return sum},{low:0,best:0,high:0,events:0});
+    const candidateEvents=data.events.filter(event=>state.start<=2026&&state.end>=2026&&territoryNames.has(event.country));
     const regime=data.regime_types.find(item=>String(item.code)===state.regime);
     $('#related-title').textContent=regime?regime.name:'World conflict field';
     const regimeWindow=state.healthLayer!=='none'?`health observation year ${state.healthYear}`:state.start>vdemBoundaryYear?`latest available classification (${vdemBoundaryYear}), carried to the map boundary`:`at least once in ${state.start}-${Math.min(state.end,vdemBoundaryYear)}`;
     $('#related-note').textContent=regime?`Nations classified by V-Dem as ${regime.name.toLowerCase()} using the ${regimeWindow}.`:'Statistics describe nations and conflict records visible in the current map enclosure.';
     const satelliteRelation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);
-    const stats=[['Highlighted nations',nations.length],['Unique conflicts',conflictIds.size],['Interstate conflicts',relevant.filter(item=>item.type==='interstate').length],['Territorial incompatibilities',relevant.filter(item=>item.incompatibility==='territory').length],['Candidate event fatalities',fatalities.events?`${fatalities.low.toLocaleString()} / ${fatalities.best.toLocaleString()} / ${fatalities.high.toLocaleString()}`:'Not available'],['Public satellite paths',state.satellites&&satelliteRelation?`${satelliteRelation.object_count} approximate tracks`:'Layer off'],['Military spending','Not available in UCDP/V-Dem']];
+    const stats=[['Highlighted nations',nations.length],['Unique conflicts',conflictIds.size],['Interstate conflicts',relevant.filter(item=>item.type==='interstate').length],['Territorial incompatibilities',relevant.filter(item=>item.incompatibility==='territory').length],['Candidate observations',candidateEvents.length],['Candidate casualty roll-up','Not computed; observations may overlap'],['Public satellite paths',state.satellites&&satelliteRelation?`${satelliteRelation.object_count} approximate tracks`:'Layer off'],['Military spending','Not available in UCDP/V-Dem']];
     $('#related-stats').innerHTML=stats.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
     renderRegimeHealth();
   }

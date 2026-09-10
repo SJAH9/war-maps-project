@@ -30,6 +30,25 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertEqual(len({event["id"] for event in self.data["events"]}), len(self.data["events"]))
         self.assertIn("ucdp-candidate-ged-2026-07", {event["source_id"] for event in self.data["events"]})
 
+    def test_candidate_quality_boundaries_are_machine_readable(self):
+        bad_range = next(event for event in self.data["events"] if event["id"] == "625182")
+        dena = next(event for event in self.data["events"] if event["id"] == "625184")
+        self.assertFalse(bad_range["fatality_estimate_valid"])
+        self.assertFalse(bad_range["fatality_rollup_eligible"])
+        self.assertEqual(bad_range["record_class"], "unclassified")
+        self.assertEqual(dena["location_kind"], "maritime")
+        self.assertEqual(dena["network_location"], "Maritime area near Sri Lanka")
+        self.assertFalse(dena["map_point_eligible"])
+        self.assertIsNone(dena["plot_latitude"])
+        self.assertFalse(any(event["place"] == "Straight of Hormuz" for event in self.data["events"]))
+        self.assertTrue(all(
+            event["map_point_eligible"] or (event["plot_latitude"] is None and event["plot_longitude"] is None)
+            for event in self.data["events"]
+        ))
+        focal = next(item for item in self.data["conflicts"] if item["id"] == "ucdp-candidate-16905")
+        self.assertIn("not a comprehensive regional casualty ledger", focal["layer_scope"])
+        self.assertEqual(focal["observed_through"], "2026-07-30")
+
     def test_conflict_temporal_bounds_support_network_models(self):
         current = next(item for item in self.data["conflicts"] if item["id"] == "ucdp-candidate-16905")
         closed = next(item for item in self.data["conflicts"] if not item["active_at_source_boundary"])
@@ -80,6 +99,24 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Find similar nodes", network_source)
         network_page = ROOT.joinpath("web/network.html").read_text(encoding="utf-8")
         self.assertIn('id="network-optimize"', network_page)
+        self.assertIn('id="network-data"', network_page)
+        self.assertIn("View network data", network_page)
+        self.assertIn("networkDataGraphML", network_source)
+        self.assertIn("application/xml;charset=utf-8", network_source)
+        self.assertIn("graphml.graphdrawing.org", network_source)
+        self.assertIn("n_degree_centrality", network_source)
+        self.assertIn("n_latitude", network_source)
+        self.assertIn("n_fatalities_best", network_source)
+        self.assertIn("g_export_date", network_source)
+        self.assertIn("g_layer_scope", network_source)
+        self.assertIn("n_fatality_estimate_valid", network_source)
+        self.assertIn("n_record_class", network_source)
+        self.assertIn("n_map_point_eligible", network_source)
+        self.assertNotIn("eventFatalities", network_source)
+        self.assertIn(".graphml`", network_source)
+        self.assertIn("download.download=filename", network_source)
+        self.assertIn("Download GraphML", network_source)
+        self.assertNotIn("metadata_json", network_source)
         self.assertIn("candidate fatalities", network_page)
         self.assertIn('class="conflict"', network_page)
         self.assertIn('class="actor"', network_page)
@@ -152,10 +189,10 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("def add_current_isometric_life_death", generator)
         self.assertIn("Relative relationship class only", generator)
         self.assertIn("Former-only U.S. footprint", generator)
-        self.assertIn('event["country"] + " / locale"', generator)
+        self.assertIn('event.get("network_location") or event["country"]', generator)
         self.assertIn("normalized betweenness", generator.lower())
 
-    def test_life_and_death_map_uses_event_fatalities_and_geometry(self):
+    def test_life_and_death_map_uses_candidate_observations_and_geometry(self):
         page = ROOT.joinpath("web/life-death.html")
         source = ROOT.joinpath("web/life-death.js")
         health = ROOT.joinpath("web/life-death-data.js")
@@ -166,8 +203,9 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertTrue(ROOT.joinpath("data/raw/ne_110m_admin_0_countries.geojson").exists())
         map_source = source.read_text(encoding="utf-8")
         self.assertIn("THREE.ShapeGeometry", map_source)
-        self.assertIn("candidate-event", page.read_text(encoding="utf-8"))
-        self.assertIn("event.fatalities", map_source)
+        self.assertIn("candidate-observation", page.read_text(encoding="utf-8"))
+        self.assertIn("item.conflict.events++", map_source)
+        self.assertNotIn("event.fatalities", map_source)
         self.assertIn("blockCount", map_source)
         self.assertTrue(health.exists())
         self.assertIn("window.LIFE_DEATH_METRICS", health.read_text(encoding="utf-8"))
@@ -224,12 +262,12 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("eased*Math.PI/2", map_source)
         self.assertIn("metricRailGroup.position.set(0,MAP_Y+7,-90)", map_source)
         self.assertNotIn('id="mortality-scale"', page.read_text(encoding="utf-8"))
-        totals = {}
+        observations = {}
         for event in self.data["events"]:
             country = event["country"]
-            totals[country] = totals.get(country, 0) + event["fatalities"]["best"]
-        self.assertTrue(totals)
-        self.assertGreater(max(totals.values()), 0)
+            observations[country] = observations.get(country, 0) + 1
+        self.assertTrue(observations)
+        self.assertGreater(max(observations.values()), 0)
 
     def test_information_architecture_and_shared_map_semantics(self):
         pages = {
@@ -299,7 +337,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Iran", {item["country"] for item in israel["opposing_states"]})
         self.assertTrue(iran["regime_periods"])
         self.assertEqual(len(iran["centroid"]), 2)
-        self.assertIn("best", iran["candidate_event_fatalities_in_territory"])
+        self.assertIn("events", iran["candidate_event_observations_in_territory"])
+        self.assertNotIn("candidate_event_fatalities_in_territory", iran)
 
     def test_united_states_uses_continental_map_record(self):
         nation = next(item for item in self.data["nations"] if item["country"] == "United States of America")

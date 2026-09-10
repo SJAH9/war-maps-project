@@ -15,6 +15,9 @@ CURRENT_SOURCES = (
     (ROOT / "data/raw/GEDEvent_v26_01_26_06.csv", "ucdp-candidate-ged-2026-06"),
     (ROOT / "data/raw/GEDEvent_v26_0_7.csv", "ucdp-candidate-ged-2026-07"),
 )
+CANDIDATE_BOUNDARY = "2026-07-31"
+CANDIDATE_LABEL = "July 2026"
+LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-07"
 VDEM = ROOT / "data/raw/V-Dem-CY-Core-v15.csv"
 VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v15.csv"
 GEOMETRY = ROOT / "data/raw/ne_110m_admin_0_countries.geojson"
@@ -52,6 +55,10 @@ LOCATION_ALIASES = {
     "Yemen (North Yemen)": "Yemen",
     "Yemen (South Yemen)": "Yemen",
     "Zimbabwe (Rhodesia)": "Zimbabwe",
+}
+
+PLACE_ALIASES = {
+    "Straight of Hormuz": "Strait of Hormuz",
 }
 
 VDEM_ALIASES = {
@@ -163,6 +170,30 @@ def government_names(value: str | None) -> list[str]:
 
 def mapped_names(names: set[str] | list[str]) -> list[str]:
     return sorted({LOCATION_ALIASES.get(name, name) for name in names})
+
+
+def clean_source_headline(value: str | None) -> str:
+    """Keep source titles while dropping embedded wire-service control blocks."""
+    lines = []
+    for line in (value or "").replace("\r", "\n").split("\n"):
+        line = line.strip()
+        if not line or line in {"AU", "CR"} or line.startswith("Source: "):
+            continue
+        lines.append(line)
+    return "; ".join(part.strip() for part in "; ".join(lines).split(";") if part.strip())
+
+
+def candidate_location(row: dict[str, str]) -> tuple[str, str]:
+    """Return an analytical location without rewriting the preserved source fields."""
+    source_place = row.get("where_coordinates", "").strip()
+    place = PLACE_ALIASES.get(source_place, source_place)
+    description = row.get("where_description", "").lower()
+    maritime_terms = ("strait", "gulf", "sea", "ocean", "offshore", "territorial waters", "exclusive economic zone")
+    if any(term in f"{place.lower()} {description}" for term in maritime_terms):
+        if "beyond its territorial waters" in description:
+            return "Maritime area near Sri Lanka", "maritime"
+        return place or "Maritime area", "maritime"
+    return row.get("country", "") or place or "Unspecified location", "territory"
 
 
 def conflict_title(latest: dict[str, str]) -> str:
@@ -338,6 +369,13 @@ def current_events() -> tuple[list[dict], list[dict]]:
     grouped: dict[str, list[dict]] = defaultdict(list)
     for row, source_id in source_rows.values():
         conflict_id = row.get("conflict_new_id", "").strip()
+        low, best, high = (as_int(row.get(field)) for field in ("low", "best", "high"))
+        fatality_estimate_valid = low <= best <= high
+        code_status = row.get("code_status", "")
+        place = PLACE_ALIASES.get(row.get("where_coordinates", ""), row.get("where_coordinates", ""))
+        network_location, location_kind = candidate_location(row)
+        location_precision = as_int(row.get("where_prec"))
+        map_point_eligible = location_precision < 5 and "Check geography" not in code_status
         record = {
             "id": row.get("id", ""),
             "conflict_id": f"ucdp-candidate-{conflict_id}" if conflict_id else None,
@@ -346,10 +384,16 @@ def current_events() -> tuple[list[dict], list[dict]]:
             "date_end": row.get("date_end", "")[:10],
             "country": row.get("country", ""),
             "region": row.get("region", "Other"),
-            "place": row.get("where_coordinates", ""),
+            "place": place,
+            "place_source": row.get("where_coordinates", ""),
+            "network_location": network_location,
+            "location_kind": location_kind,
             "description": row.get("where_description", ""),
             "latitude": float(row["latitude"]) if row.get("latitude") else None,
             "longitude": float(row["longitude"]) if row.get("longitude") else None,
+            "plot_latitude": float(row["latitude"]) if row.get("latitude") and map_point_eligible else None,
+            "plot_longitude": float(row["longitude"]) if row.get("longitude") and map_point_eligible else None,
+            "map_point_eligible": map_point_eligible,
             "side_a": row.get("side_a", ""),
             "side_b": row.get("side_b", ""),
             "side_a_states": mapped_names(government_names(row.get("side_a"))),
@@ -357,24 +401,34 @@ def current_events() -> tuple[list[dict], list[dict]]:
             "type_of_violence": as_int(row.get("type_of_violence")),
             "dyad_id": row.get("dyad_new_id", ""),
             "dyad_name": row.get("dyad_name", ""),
-            "code_status": row.get("code_status", ""),
+            "code_status": code_status,
             "event_clarity": as_int(row.get("event_clarity")),
             "date_precision": as_int(row.get("date_prec")),
-            "location_precision": as_int(row.get("where_prec")),
+            "location_precision": location_precision,
             "source_count": as_int(row.get("number_of_sources")),
             "source_office": row.get("source_office", ""),
             "source_date": row.get("source_date", ""),
-            "source_headline": row.get("source_headline", ""),
+            "source_headline": clean_source_headline(row.get("source_headline")),
+            "source_headline_raw": row.get("source_headline", ""),
             "source_original": row.get("source_original", ""),
             "fatalities": {
-                "low": as_int(row.get("low")),
-                "best": as_int(row.get("best")),
-                "high": as_int(row.get("high")),
+                "low": low,
+                "best": best,
+                "high": high,
                 "side_a": as_int(row.get("deaths_a")),
                 "side_b": as_int(row.get("deaths_b")),
                 "civilians": as_int(row.get("deaths_civilians")),
                 "unknown": as_int(row.get("deaths_unknown")),
             },
+            "fatality_estimate_valid": fatality_estimate_valid,
+            "fatality_validation_issue": None if fatality_estimate_valid else "Expected low <= best <= high",
+            "record_class": "unclassified",
+            "fatality_rollup_eligible": False,
+            "target_class": "unknown; not present in UCDP Candidate schema",
+            "fatalities_children": None,
+            "fatalities_children_status": "unknown; not present in UCDP Candidate schema",
+            "alleged_perpetrator": "unknown; source sides do not identify the acting party",
+            "attribution_confidence": "unknown; not present in UCDP Candidate schema",
             "source_id": source_id,
         }
         events.append(record)
@@ -385,20 +439,27 @@ def current_events() -> tuple[list[dict], list[dict]]:
     conflicts = []
     for conflict_id, conflict_rows in grouped.items():
         countries = sorted({row["country"] for row in conflict_rows if row["country"]})
+        terrestrial_countries = sorted({
+            row["country"] for row in conflict_rows
+            if row["country"] and row["location_kind"] == "territory"
+        })
         type_codes = {row["type_of_violence"] for row in conflict_rows}
         type_code = next(iter(type_codes)) if len(type_codes) == 1 else 0
         titles = sorted({row["conflict_name"] for row in conflict_rows if row["conflict_name"]})
         source_ids = sorted({row["source_id"] for row in conflict_rows})
-        active = "ucdp-candidate-ged-2026-07" in source_ids
+        active = LATEST_CANDIDATE_SOURCE in source_ids
+        observed_end = max((row["date_end"] or row["date_start"]) for row in conflict_rows)
         record = {
             "id": f"ucdp-candidate-{conflict_id}",
             "source_conflict_id": as_int(conflict_id),
             "title": titles[0] if titles else f"UCDP candidate conflict {conflict_id}",
             "locations": countries,
-            "plot_locations": [LOCATION_ALIASES.get(name, name) for name in countries],
+            "plot_locations": [LOCATION_ALIASES.get(name, name) for name in terrestrial_countries],
+            "network_locations": sorted({row["network_location"] for row in conflict_rows}),
             "region": next((row["region"] for row in conflict_rows if row["region"]), "Other"),
             "start_date": min(row["date_start"] for row in conflict_rows if row["date_start"]),
             "end_date": None if active else max((row["date_end"] or row["date_start"]) for row in conflict_rows),
+            "observed_through": observed_end,
             "first_active_year": 2026,
             "last_active_year": 2026,
             "years_active": [2026],
@@ -415,11 +476,15 @@ def current_events() -> tuple[list[dict], list[dict]]:
             "event_count": len(conflict_rows),
             "source_id": source_ids[-1],
             "source_ids": source_ids,
+            "layer_scope": "UCDP candidate records for one coded conflict; not a comprehensive regional casualty ledger",
+            "included_conflicts": [f"ucdp-candidate-{conflict_id}"],
+            "dyad_ids": sorted({row["dyad_id"] for row in conflict_rows if row["dyad_id"]}),
+            "excluded_fronts": "Other UCDP conflicts and dyads are excluded from this conflict network",
             "enclosure": {
-                "outer": "UCDP candidate-event collection through July 2026",
+                "outer": f"UCDP candidate-event collection through {CANDIDATE_LABEL}",
                 "active": f"provisional event cluster coded as conflict {conflict_id}",
                 "inner": ["geolocated events", "source offices", "fatality ranges", "code-status qualifiers"],
-                "frontier_questions": ["What changed after July 2026?", "Which candidate records were revised?", "How do actor claims nest around each event?"]
+                "frontier_questions": [f"What changed after {CANDIDATE_LABEL}?", "Which candidate records were revised?", "How do actor claims nest around each event?"]
             },
         }
         if conflict_id == "16905":
@@ -516,12 +581,11 @@ def nation_profiles(conflicts: list[dict], years: list[dict], states: list[dict]
                  as_int(event["date_start"][:4]), event["conflict_id"])
 
     state_stats = {row["state"]: row for row in states}
-    fatality_totals: dict[str, dict[str, int]] = defaultdict(lambda: {"low": 0, "best": 0, "high": 0, "events": 0})
+    candidate_observations: dict[str, dict[str, int]] = defaultdict(lambda: {"events": 0, "valid_fatality_ranges": 0})
     for event in events:
         country = LOCATION_ALIASES.get(event["country"], event["country"])
-        fatality_totals[country]["events"] += 1
-        for field in ("low", "best", "high"):
-            fatality_totals[country][field] += event["fatalities"][field]
+        candidate_observations[country]["events"] += 1
+        candidate_observations[country]["valid_fatality_ranges"] += int(event["fatality_estimate_valid"])
 
     names = set(condition_rows) | set(state_stats) | set(conflicts_by_nation)
     names.update(record["map_name"] for record in map_records.values())
@@ -550,7 +614,7 @@ def nation_profiles(conflicts: list[dict], years: list[dict], states: list[dict]
             "same_side_partners": relations(same_side),
             "opposing_states": relations(opposing),
             "regime_periods": regime_periods(condition_rows.get(country, [])),
-            "candidate_event_fatalities_in_territory": fatality_totals[country],
+            "candidate_event_observations_in_territory": candidate_observations[country],
             "conflict_count": len(conflicts_by_nation.get(country, set())),
             "territorial_conflict_count": stats.get("territorial_conflict_count", 0),
             "interstate_conflict_count": stats.get("interstate_conflict_count", 0),
@@ -611,7 +675,7 @@ def build() -> dict:
         "project": "The War Maps Project",
         "revision": 1,
         "generated_from": [source["id"] for source in sources],
-        "coverage": {"start_year": 1946, "reviewed_through": 2025, "candidate_through": "2026-07-31"},
+        "coverage": {"start_year": 1946, "reviewed_through": 2025, "candidate_through": CANDIDATE_BOUNDARY},
         "summary": {
             "conflicts": len(conflicts),
             "historical_conflicts": historical_conflict_count,

@@ -10,7 +10,7 @@ UCDP datasets are licensed CC BY 4.0. The War Maps Project does not relicense th
 
 ## UCDP Candidate Events 2026
 
-The live layer combines the January-June 2026 quarterly release with the July 2026 monthly release. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping quarterly row. The resulting 11,867 unique observations and all 485 candidate conflict clusters are retained in the generated data and made navigable in the atlas.
+The live layer combines the January-June 2026 quarterly release with the July 2026 monthly release, the latest files listed by UCDP when revalidated on 9 September 2026. Fresh downloads matched the committed files byte for byte. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping quarterly row. The resulting 11,867 unique observations and all 485 candidate conflict clusters are retained in the generated data and made navigable in the atlas.
 
 Candidate observations are provisional. `code_status`, source count, source office, source headline, date precision, location precision, dyad identifiers, violence type, and low/best/high fatality estimates are retained. A `Clear` event is not transformed into an unrestricted fact; it remains clear within the candidate UCDP enclosure.
 
@@ -24,7 +24,9 @@ The government-type overlay uses the V-Dem v15 Regimes of the World field `v2x_r
 
 Nation-page “same-side” relationships mean that governments appeared on the same coded UCDP side in at least one conflict-year. “Opposing state” relationships mean they appeared on opposing coded sides. Neither is relabeled as a permanent diplomatic alliance or enduring hostility.
 
-The historical Armed Conflict Dataset does not provide spending or event-level fatality totals. Related-data panels therefore mark spending and historical casualty totals unavailable. Fatality ranges shown for 2026 sum the low, best, and high observations in the loaded UCDP Candidate Events data. Territorial totals describe event locations and do not assign every death to a nationality.
+The historical Armed Conflict Dataset does not provide spending or event-level fatality totals. Candidate records can include incidents, period aggregates, and revisions, but the loaded schema does not classify them. The atlas therefore does not sum candidate fatality estimates into location, country, conflict, or Life and Death totals. Low/best/high values remain attached to individual observations; invalid or `Check deaths` ranges are withheld from visual sizing and GraphML measure fields while their source values remain in the canonical processed record. Event territory is not victim nationality.
+
+Candidate conflicts are scoped as individual UCDP conflict records, not comprehensive regional casualty ledgers. GraphML exports carry the included conflict, dyad identifiers, observed end date, display end date, export date, and this scope boundary. Precision 5-6 and `Check geography` observations are withheld from point maps. Maritime descriptions receive a maritime network location without changing the preserved source country or raw place field.
 
 ## IHME GBD 2023 mortality and fertility
 
@@ -48,7 +50,7 @@ Underlying UN demographic source: <https://population.un.org/wpp/>
 
 The Life and Death view includes World Development Indicators series `SP.POP.TOTL`, distributed by the World Bank under CC BY 4.0 and primarily sourced from UN World Population Prospects. The measure is the de facto population at mid-year. Loaded observations cover 1960-2025 and remain separate from conflict-fatality counts and population-health rates.
 
-The north-side 3D metric rail uses the World Bank's `WLD` aggregate for the population total. Conflict is the sum of loaded candidate-event fatality estimates in the selected range. Mortality and fertility cannot be validly summed across country rates, so those rows report arithmetic means for displayed country observations. To keep the in-scene rail strictly typographic, it shows only metric names and numeric values; this methodology page supplies the aggregation context and units. Each row shares its metric toggle with the corresponding map stacks. Disabled rows are removed, rows above them slide down, and re-enabled rows join the top of the stack. The rail eases from the map plane into an upright stack, placing its rows on the same vertical axis used by the data columns. The camera can orbit through a 180-degree arc centered on the opening view while remaining in front of the map.
+The north-side 3D metric rail uses the World Bank's `WLD` aggregate for the population total. Conflict reports loaded candidate-observation counts, not summed fatalities. Mortality and fertility cannot be validly summed across country rates, so those rows report arithmetic means for displayed country observations. To keep the in-scene rail strictly typographic, it shows only metric names and numeric values; this methodology page supplies the aggregation context and units. Each row shares its metric toggle with the corresponding map stacks.
 
 Indicator and citation metadata: <https://data.worldbank.org/indicator/SP.POP.TOTL>
 

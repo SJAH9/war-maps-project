@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="An isometric comparison of conflict fatalities, population, all-cause mortality, total fertility, and crude birth rate.">
+  <meta name="description" content="An isometric comparison of conflict observations, population, all-cause mortality, total fertility, and crude birth rate.">
   <title>Life and Death · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-03-r3">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
-  <script src="data.js?v=2026-08-29-r11" defer></script>
+  <script src="data.js?v=2026-09-09-r1" defer></script>
   <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
   <script src="crude-birth-rate-data.js?v=2026-09-03-r1" defer></script>
   <script src="population-data.js?v=2026-09-03-r2" defer></script>
   <script src="assets/world-geometry.js?v=2026-09-07-r1" defer></script>
-  <script src="life-death.js?v=2026-09-07-r12" defer></script>
+  <script src="life-death.js?v=2026-09-09-r1" defer></script>
 </head>
 <body class="life-death-page">
   <header class="site-header">
@@ -27,7 +27,7 @@
     <section class="mortality-section">
       <div class="mortality-title">
         <div><p class="eyebrow">Conflict and population health</p><h1>Life and Death</h1></div>
-        <p>Compare UCDP candidate-event fatalities with population, age-standardized all-cause mortality, total fertility, and crude birth rate. Every stack remains independently scaled and the inspector reports native values and units.</p>
+        <p>Compare UCDP candidate-observation density with population, age-standardized all-cause mortality, total fertility, and crude birth rate. Candidate casualty estimates are not summed because records may overlap.</p>
       </div>
 
       <div class="mortality-controls" aria-label="Life and Death map controls">
@@ -36,16 +36,15 @@
         <label><span>Measure year</span><input id="health-year" type="range" min="1960" max="2025" value="2023"><output id="health-year-output">2023</output></label>
         <label><span>From</span><input id="mortality-start" type="date"></label>
         <label><span>Through</span><input id="mortality-end" type="date"></label>
-        <fieldset><legend>Fatality estimate</legend><div class="segmented-control"><button type="button" data-estimate="low">Low</button><button type="button" data-estimate="best" aria-pressed="true">Best</button><button type="button" data-estimate="high">High</button></div></fieldset>
         <button id="mortality-reset" type="button">Reset view</button>
       </div>
 
       <div class="mortality-workspace">
         <div class="mortality-stage">
-          <div id="mortality-map" role="img" aria-label="Isometric world map with vertical stacks representing recorded fatalities"></div>
+          <div id="mortality-map" role="img" aria-label="Isometric world map with vertical stacks representing conflict observations and population-health measures"></div>
           <div class="mortality-scale" aria-hidden="true"><span id="scale-maximum">18 × φ</span><i></i><span>1</span></div>
           <div class="mortality-tooltip" id="mortality-tooltip" hidden></div>
-          <div class="mortality-legend"><span><i class="metric-conflict"></i> conflict fatalities</span><span><i class="metric-population"></i> population</span><span><i class="metric-mortality"></i> mortality rate</span><span><i class="metric-fertility"></i> total fertility</span><span><i class="metric-birth"></i> crude birth rate</span><span>Phi-accelerated blocks · drag to rotate · scroll to zoom</span></div>
+          <div class="mortality-legend"><span><i class="metric-conflict"></i> conflict observations</span><span><i class="metric-population"></i> population</span><span><i class="metric-mortality"></i> mortality rate</span><span><i class="metric-fertility"></i> total fertility</span><span><i class="metric-birth"></i> crude birth rate</span><span>Phi-accelerated blocks · drag to rotate · scroll to zoom</span></div>
         </div>
         <aside class="mortality-inspector" aria-live="polite">
           <div class="mortality-inspector-head"><p class="eyebrow" id="mortality-kicker">Selected boundary</p><h2 id="mortality-selection">Global event field</h2></div>

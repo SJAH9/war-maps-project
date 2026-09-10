@@ -98,9 +98,9 @@ def draw_geometry(pdf: WarPDF, conflict: dict, events: list[dict], x: float, y: 
                 pdf.polygon(points, style="DF")
     pdf.set_fill_color(20, 133, 126)
     for event in events:
-        if event["longitude"] is None or event["latitude"] is None:
+        if not event["map_point_eligible"] or event["plot_longitude"] is None or event["plot_latitude"] is None:
             continue
-        px, py = project(event["longitude"], event["latitude"], x, y, w, h)
+        px, py = project(event["plot_longitude"], event["plot_latitude"], x, y, w, h)
         pdf.ellipse(px - 1.2, py - 1.2, 2.4, 2.4, "F")
 
 

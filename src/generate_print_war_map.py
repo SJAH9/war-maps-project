@@ -564,12 +564,10 @@ def add_sources(pdf: AtlasPDF, spec: dict):
 
 
 def event_totals(events: list[dict]) -> dict[str, dict[str, int]]:
-    totals = defaultdict(lambda: {"events": 0, "best": 0, "low": 0, "high": 0, "side_a": 0, "side_b": 0, "civilians": 0, "unknown": 0})
+    totals = defaultdict(lambda: {"events": 0})
     for event in events:
-        row = totals[event["country"]]
+        row = totals[event.get("network_location") or event["country"]]
         row["events"] += 1
-        for key in ("best", "low", "high", "side_a", "side_b", "civilians", "unknown"):
-            row[key] += int(event["fatalities"].get(key) or 0)
     return dict(totals)
 
 
@@ -618,11 +616,10 @@ def draw_event_region(pdf: AtlasPDF, spec: dict, events: list[dict], x: float, y
         pdf.set_line_width(0.25)
         for ring in rings:
             pdf.polygon([project(float(point[0]), float(point[1])) for point in ring], style="DF")
-    for event in sorted(events, key=lambda item: item["fatalities"]["best"]):
-        px, py = project(float(event["longitude"]), float(event["latitude"]))
-        value = int(event["fatalities"]["best"])
-        radius = 0.65 + min(4.2, math.log10(1 + value) * 1.15)
-        pdf.set_fill_color(*(OXBLOOD if value else ORANGE))
+    for event in (item for item in events if item["map_point_eligible"]):
+        px, py = project(float(event["plot_longitude"]), float(event["plot_latitude"]))
+        radius = 1.15
+        pdf.set_fill_color(*OXBLOOD)
         pdf.set_draw_color(*PAPER)
         pdf.ellipse(px - radius, py - radius, radius * 2, radius * 2, "DF")
     if not cover:
@@ -634,7 +631,7 @@ def draw_event_region(pdf: AtlasPDF, spec: dict, events: list[dict], x: float, y
             pdf.set_xy(x + 9, cy)
             pdf.set_font("Helvetica", "B", 6.5)
             pdf.set_text_color(*PAPER)
-            pdf.cell(52, 4, latin(f"{name}  {values['events']} events / {values['best']:,} best"))
+            pdf.cell(52, 4, latin(f"{name}  {values['events']} observations"))
 
 
 def current_network(events: list[dict], conflict: dict):
@@ -658,8 +655,9 @@ def current_network(events: list[dict], conflict: dict):
         node_id = "actor-" + actor.lower().replace(" ", "-")
         add(node_id, actor, "actor"); link(side, node_id)
     for event in events:
-        location_id = "location-" + event["country"].lower().replace(" ", "-")
-        add(location_id, event["country"] + " / locale", "location"); link("conflict", location_id)
+        location = event.get("network_location") or event["country"]
+        location_id = "location-" + location.lower().replace(" ", "-")
+        add(location_id, location + " / locale", "location"); link("conflict", location_id)
         for node_id, _, _ in parties:
             link(node_id, location_id)
         event_id = "event-" + event["id"]
@@ -676,7 +674,7 @@ def draw_current_network(pdf: AtlasPDF, spec: dict, events: list[dict], conflict
     adjacency, between = network_metrics(nodes, edges)
     by_location = defaultdict(list)
     for event in events:
-        by_location[event["country"]].append(event)
+        by_location[event.get("network_location") or event["country"]].append(event)
     positions = {"conflict": (0.5, 0.5), "side-a": (0.18, 0.10), "side-b": (0.82, 0.10), "iran": (0.12, 0.23), "israel": (0.74, 0.20), "usa": (0.91, 0.23)}
     actor_positions = {
         "actor-government-of-iran": (0.31, 0.05),
@@ -706,8 +704,7 @@ def draw_current_network(pdf: AtlasPDF, spec: dict, events: list[dict], conflict
         node_id, label, kind = node
         px, py = plotted[node_id]
         if kind == "observation":
-            value = int(event_meta[node_id]["fatalities"]["best"])
-            radius = 0.38 + min(2.9, math.log10(1 + value) * 0.72)
+            radius = 0.75
         elif kind == "location":
             country = label.removesuffix(" / locale")
             count = len(by_location[country]); radius = 1.9 + math.sqrt(count) * 0.43
@@ -785,55 +782,48 @@ def add_current_principle(pdf: AtlasPDF, spec: dict):
 
 
 def add_current_range(pdf: AtlasPDF, events: list[dict]):
-    pdf.section_page("Observed interval", "Candidate-event accumulation", "The field develops by month", "Counts show observations in the loaded candidate-event snapshots. Fatalities are summed best estimates and remain provisional; neither measure is an attack-direction variable.")
-    monthly = defaultdict(lambda: {"events": 0, "best": 0})
+    pdf.section_page("Observed interval", "Candidate-event accumulation", "The field develops by month", "Counts show observations in the loaded candidate-event snapshots. Casualty estimates remain attached to individual records because candidate observations can overlap.")
+    monthly = defaultdict(lambda: {"events": 0})
     for event in events:
         key = event["date_start"][:7]
-        monthly[key]["events"] += 1; monthly[key]["best"] += int(event["fatalities"]["best"])
+        monthly[key]["events"] += 1
     items = sorted(monthly.items())
-    max_events = max(row["events"] for _, row in items); max_best = max(row["best"] for _, row in items)
+    max_events = max(row["events"] for _, row in items)
     for index, (month, values) in enumerate(items):
         x = 16 + index * 45
         pdf.set_xy(x, 67); pdf.set_font("Helvetica", "B", 8); pdf.set_text_color(*CLAY); pdf.cell(38, 5, date.fromisoformat(month + "-01").strftime("%B").upper(), align="C")
         event_h = values["events"] / max_events * 55
-        death_h = values["best"] / max_best * 55
-        pdf.set_fill_color(*SLATE); pdf.rect(x + 7, 137 - event_h, 10, event_h, "F")
-        pdf.set_fill_color(*OXBLOOD); pdf.rect(x + 21, 137 - death_h, 10, death_h, "F")
-        pdf.set_xy(x + 3, 142); pdf.set_font("Helvetica", "B", 8); pdf.set_text_color(*SLATE); pdf.cell(18, 4, f"{values['events']} evt", align="C")
-        pdf.set_xy(x + 18, 142); pdf.set_text_color(*OXBLOOD); pdf.cell(19, 4, f"{values['best']:,}", align="C")
+        pdf.set_fill_color(*SLATE); pdf.rect(x + 14, 137 - event_h, 16, event_h, "F")
+        pdf.set_xy(x + 8, 142); pdf.set_font("Helvetica", "B", 8); pdf.set_text_color(*SLATE); pdf.cell(28, 4, f"{values['events']} obs", align="C")
     pdf.label(14, 160, "Reading the interval")
-    pdf.copy(14, 168, 269, "The opening month contains both the largest candidate-event fatality aggregate and the beginning of the multi-locale structure. Later observations extend the temporal enclosure; they do not retroactively establish an eventual winner or decisive movement.", 9, MUTED, 5.2)
+    pdf.copy(14, 168, 269, "The opening month contains the largest number of candidate observations and the beginning of the multi-locale structure. Later observations extend the temporal enclosure; they do not retroactively establish an eventual winner or decisive movement.", 9, MUTED, 5.2)
 
 
 def add_current_map(pdf: AtlasPDF, spec: dict, events: list[dict]):
-    pdf.section_page("Regional field", "Every event / recorded coordinates", "One conflict, twelve event locales", "The formal UCDP dyad occupies a wider geographic event surface. Circles are candidate events; area rises logarithmically with the reported best fatality estimate. Country fill identifies recorded locale, not belligerent membership.")
+    pdf.section_page("Regional field", "Eligible event coordinates", "One conflict, a provisional event field", "The formal UCDP dyad occupies a wider geographic event surface. Equal-area circles are candidate observations with eligible point geometry; country fill identifies recorded terrestrial locale, not belligerent membership.")
     draw_event_region(pdf, spec, events, 14, 58, 269, 126)
     pdf.label(14, 188, "Boundary")
-    pdf.copy(14, 194, 269, "Natural Earth supplies reference geometry. UCDP supplies event coordinates, location precision, status, parties, and fatality ranges. Overlapping circles remain separate observations in the source record.", 7.8, MUTED, 4.2)
+    pdf.copy(14, 194, 269, "Natural Earth supplies reference geometry. UCDP supplies event coordinates, location precision, status, parties, and fatality ranges. Precision 5-6 and Check geography records are withheld from the point layer; maritime observations use separate network locales.", 7.8, MUTED, 4.2)
 
 
 def add_locale_proportions(pdf: AtlasPDF, events: list[dict]):
-    pdf.section_page("Regional field", "Locale proportionality", "Where observations and reported deaths accumulate", "Event share and fatality share use different denominators. A locale can contain many low-fatality observations or few high-fatality observations; both proportions remain visible.")
-    totals = event_totals(events); total_events = len(events); total_best = sum(event["fatalities"]["best"] for event in events)
+    pdf.section_page("Regional field", "Locale proportionality", "Where candidate observations accumulate", "Event share uses the loaded conflict network as its denominator. It describes source-record density, not attack direction, casualties, or a complete regional war ledger.")
+    totals = event_totals(events); total_events = len(events)
     ordered = sorted(totals.items(), key=lambda item: (-item[1]["events"], item[0]))
-    pdf.label(14, 61, "Recorded locale"); pdf.label(93, 61, "Event share", SLATE); pdf.label(190, 61, "Fatality share", OXBLOOD)
+    pdf.label(14, 61, "Recorded locale"); pdf.label(93, 61, "Observation share", SLATE); pdf.label(190, 61, "Casualty roll-up", OXBLOOD)
     for index, (name, values) in enumerate(ordered):
         y = 70 + index * 8.5
         event_share = values["events"] / total_events
-        fatal_share = values["best"] / total_best if total_best else 0
         pdf.set_xy(14, y); size = fitted_text(pdf, name, 55, 7.5, 6); pdf.set_font("Helvetica", "", size); pdf.set_text_color(*INK); pdf.cell(57, 5, latin(name))
         pdf.set_xy(71, y); pdf.set_font("Helvetica", "B", 7); pdf.set_text_color(*SLATE); pdf.cell(20, 5, f"{values['events']}/{total_events}", align="R")
         pdf.set_fill_color(*SURFACE); pdf.rect(95, y, 69, 5, "F"); pdf.set_fill_color(*SLATE); pdf.rect(95, y, 69 * event_share, 5, "F")
         pdf.set_xy(165, y); pdf.set_text_color(*SLATE); pdf.cell(18, 5, f"{event_share:.1%}", align="R")
-        pdf.set_xy(184, y); pdf.set_text_color(*OXBLOOD); pdf.cell(24, 5, f"{values['best']:,}", align="R")
-        pdf.set_fill_color(*SURFACE); pdf.rect(212, y, 53, 5, "F"); pdf.set_fill_color(*OXBLOOD); pdf.rect(212, y, 53 * fatal_share, 5, "F")
-        pdf.set_xy(266, y); pdf.cell(17, 5, f"{fatal_share:.1%}", align="R")
+        pdf.set_xy(190, y); pdf.set_text_color(*MUTED); pdf.cell(93, 5, "not computed / possible overlap", align="R")
     gcc = {"Bahrain", "Kuwait", "Oman", "Saudi Arabia", "United Arab Emirates"}
     gcc_events = sum(values["events"] for name, values in totals.items() if name in gcc)
-    gcc_best = sum(values["best"] for name, values in totals.items() if name in gcc)
     pdf.set_fill_color(*INK); pdf.rect(14, 177, 269, 18, "F")
     pdf.set_xy(20, 181); pdf.set_font("Helvetica", "B", 9); pdf.set_text_color(*PAPER)
-    pdf.cell(0, 5, latin(f"GCC VULNERABILITY FIELD  {gcc_events}/{total_events} observations ({gcc_events/total_events:.1%})  /  {gcc_best:,}/{total_best:,} best-estimate fatalities ({gcc_best/total_best:.1%})"))
+    pdf.cell(0, 5, latin(f"GCC VULNERABILITY FIELD  {gcc_events}/{total_events} observations ({gcc_events/total_events:.1%})  /  CASUALTY ROLL-UP NOT COMPUTED"))
 
 
 def iso_block(pdf: AtlasPDF, x: float, y: float, size: float, color, outline=False):
@@ -859,14 +849,14 @@ def add_current_isometric_life_death(pdf: AtlasPDF, spec: dict, events: list[dic
     countries = list(context["locales"])
     centroids = {}
     for country in countries:
-        local = [event for event in events if event["country"] == country]
+        local = [event for event in events if event.get("network_location") == country and event["map_point_eligible"]]
         if local:
             centroids[country] = (sum(event["longitude"] for event in local) / len(local), sum(event["latitude"] for event in local) / len(local))
     centroids["Qatar"] = (51.18, 25.35)
     countries.append("Qatar")
     base_levels = {"persistent + other": 4, "persistent": 3, "other identified sites": 2, "other identified site": 2, "former-only footprint": 1, "not classified here": 0}
     metric_values = {
-        "conflict": {country: float(totals.get(country, {}).get("best", 0)) for country in countries},
+        "conflict": {country: float(totals.get(country, {}).get("events", 0)) for country in countries},
         "population": {}, "mortality": {}, "fertility": {}, "birth": {}, "bases": {},
     }
     for country in countries:
@@ -928,7 +918,7 @@ def add_current_isometric_life_death(pdf: AtlasPDF, spec: dict, events: list[dic
                 iso_block(pdf, bx, py - block * 2.25, 1.25, colors[metric], outline=outline)
         pdf.set_xy(px - 6, py + 3); pdf.set_font("Helvetica", "B", 5.4); pdf.set_text_color(*PAPER); pdf.cell(12, 3, codes[country], align="C")
     pdf.set_xy(226, 64); pdf.set_font("Helvetica", "B", 7.2); pdf.set_text_color(*INK); pdf.cell(55, 4, "STACK KEY")
-    legend = [("Conflict fatalities", "conflict"), ("Population", "population"), ("Mortality", "mortality"), ("Fertility", "fertility"), ("Crude birth rate", "birth"), ("U.S. basing context", "bases")]
+    legend = [("Conflict observations", "conflict"), ("Population", "population"), ("Mortality", "mortality"), ("Fertility", "fertility"), ("Crude birth rate", "birth"), ("U.S. basing context", "bases")]
     for index, (label, metric) in enumerate(legend):
         y = 74 + index * 12
         iso_block(pdf, 226, y + 2, 2, colors[metric], outline=metric == "bases")
@@ -942,14 +932,14 @@ def add_current_isometric_life_death(pdf: AtlasPDF, spec: dict, events: list[dic
 
 
 def add_current_life_death(pdf: AtlasPDF, spec: dict, events: list[dict], health: dict, birth: dict, population: dict):
-    pdf.section_page("Life and death", "Conflict period / latest available context", "The war inside unequal living fields", "Conflict values use events geocoded to each state during the observed interval. Population-health sources end before 2026, so their latest observations are shown with their actual years rather than projected into the conflict date.")
+    pdf.section_page("Life and death", "Conflict period / latest available context", "The war inside unequal living fields", "Conflict values count candidate observations geocoded to each state during the observed interval. Population-health sources end before 2026, so their latest observations are shown with their actual years rather than projected into the conflict date.")
     totals = event_totals(events)
     countries = [row["name"] for row in spec["states"]]
     columns = [14, 105, 196]
     for x, country in zip(columns, countries):
         pdf.set_xy(x, 61); pdf.set_font("Helvetica", "B", 8.5); pdf.set_text_color(*(OXBLOOD if country == "Iran" else SLATE)); pdf.cell(87, 5, latin(country.upper()), align="C")
     metrics = []
-    metrics.append(("Geocoded event fatalities", "28 Feb-30 Jul 2026", OXBLOOD, {country: (2026, float(totals.get(country, {}).get("best", 0))) for country in countries}))
+    metrics.append(("Geocoded candidate observations", "28 Feb-30 Jul 2026", OXBLOOD, {country: (2026, float(totals.get(country, {}).get("events", 0))) for country in countries}))
     metrics.append(("Population", "latest source observation", MANILA, {country: metric_value_for(population, current_aliases(country, "world-bank"), "population") for country in countries}))
     metrics.append(("All-cause mortality", "deaths per 100,000", (39, 56, 73), {country: metric_value_for(health, current_aliases(country, "health"), "mortality") for country in countries}))
     metrics.append(("Total fertility", "births per woman", (75, 48, 69), {country: metric_value_for(health, current_aliases(country, "health"), "fertility") for country in countries}))
@@ -970,25 +960,24 @@ def add_current_life_death(pdf: AtlasPDF, spec: dict, events: list[dict], health
             else:
                 pdf.set_xy(x + 4, y + 14); pdf.set_font("Helvetica", "", 6.8); pdf.set_text_color(*MUTED); pdf.cell(79, 4, "NO LOADED OBSERVATION", align="R")
     pdf.label(14, 178, "Do not merge the scales")
-    pdf.copy(14, 185, 269, "Fatalities are attached to event location, not nationality. Population is a count; mortality is a rate; fertility and crude birth rate are distinct birth measures. Bar length compares countries within one row only.", 8.2, MUTED, 4.6)
+    pdf.copy(14, 185, 269, "Candidate observations can overlap and are not added into casualty totals. Population is a count; mortality is a rate; fertility and crude birth rate are distinct birth measures. Bar length compares countries within one row only.", 8.2, MUTED, 4.6)
 
 
 def add_current_nation(pdf: AtlasPDF, state: dict, events: list[dict], health: dict, birth: dict, population: dict, conditions: list[dict]):
     country, side = state["name"], state["side"]
     color = OXBLOOD if side == "A" else SLATE
-    local = [event for event in events if event["country"] == country]
-    best = sum(event["fatalities"]["best"] for event in local)
+    local = [event for event in events if event.get("network_location") == country]
     pdf.section_page("Nation field", f"UCDP side {side}", country, "Party role, event-location exposure, and population-health context remain separate. Event counts below mean records geocoded to this state, not a complete measure of attacks conducted, forces deployed, or national deaths.")
     pdf.set_fill_color(*color); pdf.rect(14, 59, 82, 39, "F")
     pdf.set_xy(20, 66); pdf.set_font("Helvetica", "B", 8); pdf.set_text_color(*PAPER); pdf.cell(0, 5, f"SIDE {side} / CANDIDATE LAYER")
-    pdf.set_xy(20, 77); pdf.set_font("Times", "B", 16); pdf.cell(68, 8, f"{len(local)} events / {best:,} best")
+    pdf.set_xy(20, 77); pdf.set_font("Times", "B", 16); pdf.cell(68, 8, f"{len(local)} observations")
     latest = next((row for row in reversed(conditions) if row["country"] == country), None)
     regime = latest["regime"]["name"] if latest else "No loaded V-Dem state row"
     regime_year = latest["year"] if latest else "-"
     pdf.label(105, 64, f"V-Dem {regime_year}")
     pdf.copy(105, 72, 78, regime, 9, INK, 5.2)
     pdf.label(197, 64, "Event-location boundary")
-    pdf.copy(197, 72, 84, "No event location in the loaded interval." if not local else f"{len(local)} observations geocoded here; summed best estimate {best:,}.", 8.7, INK, 5)
+    pdf.copy(197, 72, 84, "No event location in the loaded interval." if not local else f"{len(local)} candidate observations are coded to this territory. Casualty totals are not computed because records may overlap.", 8.7, INK, 5)
     line_chart(pdf, 14, 111, 64, 70, current_series(health, country, "health", "mortality", 2010, 2023), "All-cause mortality", "per 100k", OCEAN)
     line_chart(pdf, 83, 111, 64, 70, current_series(health, country, "health", "fertility", 2010, 2023), "Total fertility", "births/woman", (75, 48, 69))
     line_chart(pdf, 152, 111, 64, 70, current_series(birth, country, "world-bank", "birth_rate", 2010, 2025), "Crude birth rate", "per 1,000", OLIVE)
@@ -996,7 +985,7 @@ def add_current_nation(pdf: AtlasPDF, state: dict, events: list[dict], health: d
 
 
 def add_current_timeline(pdf: AtlasPDF, events: list[dict]):
-    pdf.section_page("Temporal field", "Event sequence by locale", "The regional surface appears immediately", "Every mark is one candidate event positioned by start date and grouped vertically by recorded locale. Marker area rises with reported best-estimate fatalities; blank periods remain blank.")
+    pdf.section_page("Temporal field", "Event sequence by locale", "The regional surface appears immediately", "Every equal-area mark is one candidate observation positioned by start date and grouped vertically by recorded locale. Blank periods remain blank.")
     totals = event_totals(events); ordered = sorted(totals, key=lambda name: (-totals[name]["events"], name))
     start = date.fromisoformat(min(event["date_start"] for event in events)); end = date.fromisoformat(max(event["date_start"] for event in events)); span = max(1, (end - start).days)
     x0, width = 72, 204
@@ -1004,9 +993,9 @@ def add_current_timeline(pdf: AtlasPDF, events: list[dict]):
         y = 64 + index * 9.2
         pdf.set_xy(14, y - 2); size = fitted_text(pdf, name, 51, 7.2, 5.8); pdf.set_font("Helvetica", "", size); pdf.set_text_color(*INK); pdf.cell(52, 4, latin(name), align="R")
         pdf.set_draw_color(204, 201, 186); pdf.set_line_width(0.25); pdf.line(x0, y, x0 + width, y)
-        for event in (row for row in events if row["country"] == name):
+        for event in (row for row in events if (row.get("network_location") or row["country"]) == name):
             px = x0 + (date.fromisoformat(event["date_start"]) - start).days / span * width
-            value = event["fatalities"]["best"]; radius = 0.55 + min(2.7, math.log10(1 + value) * 0.65)
+            radius = 0.9
             pdf.set_fill_color(*(OXBLOOD if name == "Iran" else CLAY)); pdf.ellipse(px - radius, y - radius, radius * 2, radius * 2, "F")
     for month in range(3, 8):
         point = date(2026, month, 1); px = x0 + (point - start).days / span * width
@@ -1016,7 +1005,7 @@ def add_current_timeline(pdf: AtlasPDF, events: list[dict]):
 
 
 def add_current_network_page(pdf: AtlasPDF, spec: dict, events: list[dict], conflict: dict):
-    pdf.section_page("Conflict network", "Website topology / print field", "Parties, vulnerability field, locales, events", "The formal dyad remains at the core. GCC countries are rendered as a distributed vulnerability field, not as members of either side. Every candidate event remains connected to its recorded locale; observation-node area follows best-estimate fatalities.")
+    pdf.section_page("Conflict network", "Website topology / print field", "Parties, vulnerability field, locales, events", "The formal dyad remains at the core. GCC countries are rendered as a distributed vulnerability field, not as members of either side. Every candidate observation remains connected to its recorded territorial or maritime locale with equal node area.")
     result = draw_current_network(pdf, spec, events, conflict, 14, 57, 269, 129)
     pdf.label(14, 188, "Edge semantics")
     pdf.copy(14, 194, 269, "Party-to-locale lines retain the website relation: a side participant belongs to the dyad in which an event is recorded at that locale. They do not assert that every party acted at every location.", 7.5, MUTED, 4)
@@ -1043,7 +1032,7 @@ def add_current_network_analysis(pdf: AtlasPDF, nodes: list[list], edges: list[l
     distribution = Counter(map(len, adjacency.values()))
     pdf.label(14, 168, "Complete graph")
     pdf.copy(14, 175, 269, f"{n} nodes / {unique_edges} edges / density {density:.4f}. Degree distribution: " + " / ".join(f"{degree}:{count}" for degree, count in sorted(distribution.items())), 7.2, MUTED, 4)
-    pdf.copy(14, 188, 269, "Node size in the network: locale nodes follow event count; event nodes follow best-estimate fatalities; other structural nodes follow degree. This preserves proportionality without treating event count, fatalities, and centrality as interchangeable.", 7.7, MUTED, 4.2)
+    pdf.copy(14, 188, 269, "Node size in the network: locale nodes follow observation count; observation nodes have equal area; other structural nodes follow degree. Casualty estimates remain inspectable on individual source records and are not aggregated.", 7.7, MUTED, 4.2)
 
 
 def add_current_sources(pdf: AtlasPDF, spec: dict, events: list[dict]):
@@ -1059,7 +1048,7 @@ def add_current_sources(pdf: AtlasPDF, spec: dict, events: list[dict]):
         pdf.set_xy(x + 36, y + 4); pdf.set_font("Helvetica", "", 5.8); pdf.set_text_color(*CLAY); pdf.cell(96, 3.5, latin(domain), link=source["url"])
     statuses = Counter(event["code_status"] for event in events); snapshots = Counter(event["source_id"] for event in events)
     pdf.label(14, 118, "Loaded candidate layer")
-    pdf.copy(14, 126, 269, f"125 unique events / 28 February-30 July 2026 / 3,808 summed best-estimate fatalities. Source snapshots: " + "; ".join(f"{key}: {value}" for key, value in sorted(snapshots.items())) + ". Coding status: " + "; ".join(f"{key}: {value}" for key, value in sorted(statuses.items())) + ".", 8.5, INK, 5)
+    pdf.copy(14, 126, 269, f"{len(events)} unique candidate observations / 28 February-30 July 2026 / no derived casualty total. Candidate records may overlap. Source snapshots: " + "; ".join(f"{key}: {value}" for key, value in sorted(snapshots.items())) + ". Coding status: " + "; ".join(f"{key}: {value}" for key, value in sorted(statuses.items())) + ".", 8.5, INK, 5)
     pdf.label(14, 153, "Revision path")
     pdf.copy(14, 161, 269, "Regenerate when a new candidate snapshot is deposited. Preserve event IDs, compare revisions, and update the observation boundary. Do not silently carry July values to the publication date or convert candidate coding into a final historical record.", 8.8, MUTED, 5.1)
     pdf.set_fill_color(*INK); pdf.rect(14, 184, 269, 12, "F")

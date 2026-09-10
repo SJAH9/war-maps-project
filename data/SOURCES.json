@@ -18,7 +18,8 @@
       "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_01_26_06.csv",
       "license": "CC BY 4.0",
       "enclosure": "candidate-academic-event-dataset",
-      "retrieved": "2026-08-28"
+      "retrieved": "2026-09-09",
+      "sha256": "68dd3d363b8edf4808bd6bf6f5d0412c3c722ffb1db367aeb8eff48bab80589a"
     },
     {
       "id": "ucdp-candidate-ged-2026-07",
@@ -28,7 +29,8 @@
       "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_7.csv",
       "license": "CC BY 4.0",
       "enclosure": "candidate-academic-event-dataset",
-      "retrieved": "2026-08-29"
+      "retrieved": "2026-09-09",
+      "sha256": "9fc2c6dd85eee91845512e8ef1055281d9fd028fb98748a6f2a27c6e8aa8c562"
     },
     {
       "id": "vdem-core-v15-rtldi",

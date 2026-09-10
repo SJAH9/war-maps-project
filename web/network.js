@@ -39,6 +39,7 @@
   const inRange = (start, end, range=state) => end >= range.start && start <= range.end;
   const nodeId = (type, value) => `${type}:${value}`;
   const displayLocation = value => aliases[value] || value;
+  const fatalityUsable = event => event?.fatality_estimate_valid && !String(event.code_status||'').includes('Check deaths');
   const currentTheme = () => document.documentElement.dataset.theme === 'dark';
 
   function conflictBounds(conflict) {
@@ -97,7 +98,7 @@
 
     conflict.parties_a.forEach(name => addActor(name, 'A'));
     conflict.parties_b.forEach(name => addActor(name, 'B'));
-    conflict.plot_locations.forEach(addLocation);
+    (conflict.network_locations || conflict.plot_locations).forEach(addLocation);
 
     const rows = (yearsByConflict.get(conflict.id) || []).filter(row => inRange(`${row.year}-01-01`, `${row.year}-12-31`, range));
     rows.forEach((row, index) => {
@@ -118,7 +119,7 @@
 
     const events = (eventsByConflict.get(conflict.id) || []).filter(event => inRange(event.date_start, event.date_end || event.date_start, range));
     events.forEach(event => {
-      const location = displayLocation(event.country || event.place || 'Unspecified location');
+      const location = displayLocation(event.network_location || event.country || event.place || 'Unspecified location');
       const locationId = addLocation(location);
       splitParties(event.side_a).forEach(name => addActor(name, 'A'));
       splitParties(event.side_b).forEach(name => addActor(name, 'B'));
@@ -134,6 +135,129 @@
       if (node.metadata.sides instanceof Set) node.metadata.sides = [...node.metadata.sides].sort();
     });
     return {nodes:[...nodes.values()],edges:[...edges.values()],rows,events};
+  }
+
+  const xml = value => String(value ?? '').replace(/[<>&"']/g, char => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[char]));
+  const graphmlData = (key, value) => value === null || value === undefined || value === '' ? '' : `<data key="${key}">${xml(value)}</data>`;
+
+  function networkDataGraphML() {
+    const conflict = conflictsById.get(state.conflictId);
+    const graph = state.graph;
+    if (!conflict || !graph) return '';
+    const exportIds = new Map(graph.nodes.map((node,index)=>[node.id,`n${index}`]));
+    const nations = new Map(data.nations.flatMap(nation => [[nation.country,nation],[nation.map_name,nation]]));
+    const nodeAttributes = node => {
+      const metadata=node.metadata||{},event=metadata.event;
+      let latitude=null,longitude=null,fatalities=[null,null,null];
+      if(event){
+        latitude=Number.isFinite(Number(event.plot_latitude))?Number(event.plot_latitude):null;
+        longitude=Number.isFinite(Number(event.plot_longitude))?Number(event.plot_longitude):null;
+        if(fatalityUsable(event))fatalities=['low','best','high'].map(key=>Number(event.fatalities?.[key]||0));
+      }else if(node.kind==='nation'){
+        const centroid=nations.get(metadata.country)?.centroid;
+        if(centroid){longitude=Number(centroid[0]);latitude=Number(centroid[1]);}
+      }
+      return {latitude,longitude,fatalities};
+    };
+    const observedEnd=graph.events.map(event=>event.date_end||event.date_start).filter(Boolean).sort().at(-1)||state.end;
+    const exportDate=new Date().toISOString().slice(0,10);
+    const keys = [
+      ['g_conflict_id','graph','conflict_id','string'],['g_conflict_title','graph','conflict_title','string'],
+      ['g_temporal_start','graph','temporal_start','string'],['g_temporal_end','graph','temporal_end','string'],
+      ['g_display_end','graph','display_end','string'],['g_export_date','graph','export_date','string'],
+      ['g_layer_scope','graph','layer_scope','string'],['g_included_conflicts','graph','included_conflicts','string'],
+      ['g_dyad_ids','graph','dyad_ids','string'],['g_fatality_aggregation','graph','fatality_aggregation','string'],
+      ['g_node_count','graph','node_count','int'],['g_edge_count','graph','edge_count','int'],
+      ['n_original_id','node','original_id','string'],['n_label','node','label','string'],['n_kind','node','kind','string'],['n_group','node','group','string'],
+      ['n_degree','node','degree','int'],['n_degree_centrality','node','degree_centrality','double'],
+      ['n_betweenness','node','betweenness','double'],['n_network_role','node','network_role','string'],
+      ['n_latitude','node','latitude','double'],['n_longitude','node','longitude','double'],
+      ['n_fatalities_low','node','fatalities_low','long'],['n_fatalities_best','node','fatalities_best','long'],['n_fatalities_high','node','fatalities_high','long'],
+      ['n_fatalities_side_a','node','fatalities_side_a','long'],['n_fatalities_side_b','node','fatalities_side_b','long'],
+      ['n_fatalities_civilians','node','fatalities_civilians','long'],['n_fatalities_unknown','node','fatalities_unknown','long'],
+      ['n_fatalities_children','node','fatalities_children','long'],['n_fatalities_children_status','node','fatalities_children_status','string'],
+      ['n_fatality_estimate_valid','node','fatality_estimate_valid','boolean'],
+      ['n_fatality_validation_issue','node','fatality_validation_issue','string'],['n_fatality_rollup_eligible','node','fatality_rollup_eligible','boolean'],
+      ['n_record_class','node','record_class','string'],['n_map_point_eligible','node','map_point_eligible','boolean'],
+      ['n_location_kind','node','location_kind','string'],['n_network_location','node','network_location','string'],
+      ['n_target_class','node','target_class','string'],['n_alleged_perpetrator','node','alleged_perpetrator','string'],
+      ['n_attribution_confidence','node','attribution_confidence','string'],['n_side_a','node','side_a','string'],['n_side_b','node','side_b','string'],
+      ['n_record_type','node','record_type','string'],['n_country','node','country','string'],['n_location','node','location','string'],
+      ['n_side','node','side','string'],['n_sides','node','sides','string'],['n_actor_name','node','actor_name','string'],
+      ['n_date_start','node','date_start','string'],['n_date_end','node','date_end','string'],['n_year','node','year','int'],
+      ['n_place','node','place','string'],['n_source_id','node','source_id','string'],['n_source_office','node','source_office','string'],
+      ['n_source_headline','node','source_headline','string'],['n_source_count','node','source_count','int'],
+      ['n_code_status','node','code_status','string'],['n_location_precision','node','location_precision','int'],
+      ['n_intensity','node','intensity','int'],['n_episode_end','node','episode_end','boolean'],
+      ['e_relation','edge','relation','string']
+    ];
+    const lines = [
+      '<?xml version="1.0" encoding="UTF-8"?>',
+      '<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">',
+      ...keys.map(([id,target,name,type])=>`<key id="${id}" for="${target}" attr.name="${name}" attr.type="${type}"/>`),
+      '<graph id="conflict-network" edgedefault="undirected">',
+      graphmlData('g_conflict_id',conflict.id),graphmlData('g_conflict_title',conflict.title),
+      graphmlData('g_temporal_start',state.start),graphmlData('g_temporal_end',observedEnd),
+      graphmlData('g_display_end',state.end),graphmlData('g_export_date',exportDate),
+      graphmlData('g_layer_scope',conflict.layer_scope||'UCDP source records for the selected conflict'),
+      graphmlData('g_included_conflicts',(conflict.included_conflicts||[conflict.id]).join('|')),
+      graphmlData('g_dyad_ids',(conflict.dyad_ids||[]).join('|')),
+      graphmlData('g_fatality_aggregation','None. Candidate observations may overlap; location and conflict totals are not computed.'),
+      graphmlData('g_node_count',graph.nodes.length),graphmlData('g_edge_count',graph.edges.length)
+    ];
+    graph.nodes.forEach(node => {
+      const topology=node.networkScience||{},metadata=node.metadata||{},event=metadata.event||{},row=metadata.row||{};
+      const {latitude,longitude,fatalities}=nodeAttributes(node);
+      lines.push(`<node id="${exportIds.get(node.id)}">`,
+        graphmlData('n_original_id',node.id),graphmlData('n_label',node.label),graphmlData('n_kind',node.kind),graphmlData('n_group',node.group),
+        graphmlData('n_degree',topology.degree),graphmlData('n_degree_centrality',topology.degreeCentrality),
+        graphmlData('n_betweenness',topology.betweenness),graphmlData('n_network_role',topology.role),
+        graphmlData('n_latitude',latitude),graphmlData('n_longitude',longitude),
+        graphmlData('n_fatalities_low',fatalities[0]),graphmlData('n_fatalities_best',fatalities[1]),graphmlData('n_fatalities_high',fatalities[2]),
+        graphmlData('n_fatalities_side_a',event.fatalities?.side_a),graphmlData('n_fatalities_side_b',event.fatalities?.side_b),
+        graphmlData('n_fatalities_civilians',event.fatalities?.civilians),graphmlData('n_fatalities_unknown',event.fatalities?.unknown),
+        graphmlData('n_fatalities_children',event.fatalities_children),graphmlData('n_fatalities_children_status',event.fatalities_children_status),
+        graphmlData('n_fatality_estimate_valid',event.fatality_estimate_valid),
+        graphmlData('n_fatality_validation_issue',event.fatality_validation_issue),graphmlData('n_fatality_rollup_eligible',event.fatality_rollup_eligible),
+        graphmlData('n_record_class',event.record_class),graphmlData('n_map_point_eligible',event.map_point_eligible),
+        graphmlData('n_location_kind',event.location_kind),graphmlData('n_network_location',event.network_location),
+        graphmlData('n_target_class',event.target_class),graphmlData('n_alleged_perpetrator',event.alleged_perpetrator),
+        graphmlData('n_attribution_confidence',event.attribution_confidence),graphmlData('n_side_a',event.side_a),graphmlData('n_side_b',event.side_b),
+        graphmlData('n_record_type',metadata.recordType),graphmlData('n_country',metadata.country||event.country),
+        graphmlData('n_location',metadata.location),graphmlData('n_side',metadata.side),graphmlData('n_sides',metadata.sides?.join('|')),
+        graphmlData('n_actor_name',metadata.name),graphmlData('n_date_start',event.date_start),graphmlData('n_date_end',event.date_end),
+        graphmlData('n_year',row.year),graphmlData('n_place',event.place),graphmlData('n_source_id',event.source_id),
+        graphmlData('n_source_office',event.source_office),graphmlData('n_source_headline',event.source_headline),
+        graphmlData('n_source_count',event.source_count),graphmlData('n_code_status',event.code_status),
+        graphmlData('n_location_precision',event.location_precision),graphmlData('n_intensity',row.intensity),
+        graphmlData('n_episode_end',row.episode_end),'</node>');
+    });
+    graph.edges.forEach((edge,index)=>lines.push(`<edge id="e${index}" source="${exportIds.get(edge.from)}" target="${exportIds.get(edge.to)}">`,graphmlData('e_relation',edge.relation),'</edge>'));
+    lines.push('</graph>','</graphml>');
+    return `${lines.join('\n')}\n`;
+  }
+
+  function viewNetworkData() {
+    const text = networkDataGraphML();
+    if (!text) return;
+    const conflict=conflictsById.get(state.conflictId);
+    const slug=String(conflict?.title||conflict?.id||'conflict-network').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    const observedEnd=state.graph.events.map(event=>event.date_end||event.date_start).filter(Boolean).sort().at(-1)||state.end;
+    const filename=`war-maps-${slug}-${state.start}-${observedEnd}.graphml`;
+    const url = URL.createObjectURL(new Blob([text], {type:'application/xml;charset=utf-8'}));
+    const viewer=window.open('', '_blank');
+    if(!viewer){
+      const download=document.createElement('a');download.href=url;download.download=filename;download.click();
+      window.setTimeout(()=>URL.revokeObjectURL(url),60000);return;
+    }
+    viewer.document.open();
+    viewer.document.write('<!doctype html><html><head><meta charset="utf-8"><title>Conflict network GraphML</title><style>html{color-scheme:dark}body{margin:0;background:#0b0e0c;color:#e7dfbd;font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 18px;border-bottom:1px solid #4d4b3c;background:#151914}strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}a{flex:0 0 auto;padding:8px 12px;border:1px solid #f07800;color:#f4f1e4;font:700 13px/1.2 system-ui;text-decoration:none}pre{margin:0;padding:18px;white-space:pre;tab-size:2}</style></head><body><header><strong id="filename"></strong><a id="download">Download GraphML</a></header><pre id="graphml"></pre></body></html>');
+    viewer.document.close();
+    viewer.document.getElementById('filename').textContent=filename;
+    const download=viewer.document.getElementById('download');download.href=url;download.download=filename;
+    viewer.document.getElementById('graphml').textContent=text;
+    viewer.opener=null;
+    window.setTimeout(()=>URL.revokeObjectURL(url),600000);
   }
 
   function analyzeGraph(graph) {
@@ -191,7 +315,8 @@
 
   const nodeTopologyScale = node => 1+Math.min(.72,Math.log2(1+(node.networkScience?.degree||0))*.11);
   const candidateFatalities = node => {
-    const value=node.metadata?.recordType==='candidate-event'?Number(node.metadata.event?.fatalities?.best||0):0;
+    const event=node.metadata?.recordType==='candidate-event'?node.metadata.event:null;
+    const value=fatalityUsable(event)?Number(event.fatalities?.best||0):0;
     return Number.isFinite(value)&&value>0?value:0;
   };
   const nodeVisualScale = node => node.metadata?.recordType==='candidate-event'
@@ -773,7 +898,8 @@
       meta = [['Side',node.metadata.side],['Nations',nations],['Actors',actors]];
     } else if (node.kind === 'observation' && node.metadata.recordType === 'candidate-event') {
       const event = node.metadata.event;
-      meta = [['Date',event.date_start],['Place',event.place||event.country],['Fatalities',`${event.fatalities.low} / ${event.fatalities.best} / ${event.fatalities.high}`],['Sources',event.source_count],['Code status',event.code_status],['Location precision',event.location_precision]];
+      const fatalityLabel=fatalityUsable(event)?`${event.fatalities.low} / ${event.fatalities.best} / ${event.fatalities.high}`:`Not used (${event.fatality_validation_issue||event.code_status||'source range unavailable'})`;
+      meta = [['Date',event.date_start],['Place',event.place||event.country],['Network location',event.network_location],['Location kind',event.location_kind],['Fatalities low / best / high',fatalityLabel],['Record class',event.record_class],['Sources',event.source_count],['Code status',event.code_status],['Location precision',event.location_precision],['Map point',event.map_point_eligible?'Eligible':'Withheld']];
       content = `<div class="node-record"><h3>Source enclosure</h3><p>${esc(event.source_office||'No source office recorded')}</p><p>${esc(event.source_headline||'No source headline recorded')}</p><small>${esc(event.source_id)} · event ${esc(event.id)}</small></div>`;
     } else if (node.kind === 'observation') {
       const row = node.metadata.row;
@@ -813,7 +939,9 @@
     $('#node-title').textContent = conflict.title;
     const analysis=state.analysis;
     $('#node-meta').innerHTML = [['Side nodes',2],['Nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')],['Components',analysis.components],['Density',analysis.density.toFixed(4)],['Peak degree',analysis.maxDegree]].map(([label,value])=>`<div><span>${label}</span><strong>${typeof value==='number'?value.toLocaleString():esc(value)}</strong></div>`).join('');
-    $('#node-overview').innerHTML = `<div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>${conflict.active_at_source_boundary?'Current at the loaded source boundary; temporal limit set to present.':'Closed before the loaded source boundary.'}</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile in this selected conflict and period; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}. These are structural descriptions, not claims of command, intent, or causation.</small></div>`;
+    const observedEnd=graph.events.map(event=>event.date_end||event.date_start).filter(Boolean).sort().at(-1)||state.end;
+    const staleDays=Math.max(0,Math.floor((Date.now()-new Date(`${observedEnd}T00:00:00Z`).getTime())/86400000));
+    $('#node-overview').innerHTML = `<div class="node-record"><h3>Layer scope</h3><p>${esc(conflict.layer_scope||'UCDP records for the selected conflict')}</p><small>${esc(conflict.excluded_fronts||'Other conflict records are outside this graph.')} Fatality totals are not computed because candidate observations may overlap.</small></div><div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>Observed through ${esc(observedEnd)}.${staleDays>30?` Source boundary is ${staleDays.toLocaleString()} days behind the export clock.`:''}</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile in this selected conflict and period; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}. These are structural descriptions, not claims of command, intent, or causation.</small></div>`;
     state.inspectorView='overview';
     state.selected='';
     $('[data-inspector-view="similar"]').disabled=true;
@@ -888,6 +1016,7 @@
   $('#network-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#network-end').value=state.end;}renderGraph();});
   $('#network-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
   $('#network-optimize').addEventListener('click',optimizeView);
+  $('#network-data').addEventListener('click',viewNetworkData);
   $('#network-fit').addEventListener('click',()=>{noteInteraction();if(state.forceGraph&&state.renderMode==='3d')state.forceGraph.zoomToFit(500,70);else if(state.renderMode==='svg3d'&&state.svgScene){Object.assign(state.svgScene,{yaw:-.32,pitch:.22,zoom:1});state.svgScene.draw();}else if(window.Plotly)Plotly.relayout('network-canvas',{'xaxis.autorange':true,'yaxis.autorange':true});});
   $('#network-search').addEventListener('input',event=>{
     noteInteraction();

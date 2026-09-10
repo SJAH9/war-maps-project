@@ -95,8 +95,8 @@
       traceForCountries(roles.adversaries,roles.adversaries.map(()=>1),[[0,'#9a5a43'],[1,'#722b20']],'Opposing state'),
       traceForCountries(roles.locations.filter(name=>name!==nation.map_name),roles.locations.filter(name=>name!==nation.map_name).map(()=>1),[[0,'#d8c58f'],[1,'#b95235']],'Conflict location')
     ].filter(trace => trace.locations.length);
-    const points = roles.events.filter(event => event.latitude !== null && event.longitude !== null);
-    if (points.length) traces.push({type:'scattergeo',mode:'markers',lat:points.map(e=>e.latitude),lon:points.map(e=>e.longitude),text:points.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
+    const points = roles.events.filter(event => event.map_point_eligible && event.plot_latitude !== null && event.plot_longitude !== null);
+    if (points.length) traces.push({type:'scattergeo',mode:'markers',lat:points.map(e=>e.plot_latitude),lon:points.map(e=>e.plot_longitude),text:points.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
     const centroid = nation.centroid || [0,20];
     const geo = baseGeo({type:'natural earth',scale:3.1});
     geo.center = {lon:centroid[0],lat:centroid[1]};
@@ -135,14 +135,15 @@
     $('#date-heading').textContent = `${nation.country} · ${state.year}`;
     $('#nation-year-output').value = state.year;
     const condition = relevantConditions.find(item => item.year === state.year) || relevantConditions.filter(item => item.year <= state.year).at(-1);
-    const fatalities = roles.events.reduce((sum,event)=>{sum.low+=event.fatalities.low;sum.best+=event.fatalities.best;sum.high+=event.fatalities.high;return sum},{low:0,best:0,high:0});
+    const validRanges = roles.events.filter(event=>event.fatality_estimate_valid&&!String(event.code_status||'').includes('Check deaths')).length;
     const stats = [
       [`V-Dem regime${condition?` (${condition.year})`:''}`,condition?.regime?.name || 'No observation'],
       ['Conflict records',roles.conflictIds.length],
       ['Same-side states',roles.allies.length],
       ['Opposing states',roles.adversaries.length],
       ['Candidate events',roles.events.length],
-      ['Fatalities low / best / high',roles.events.length?`${fatalities.low.toLocaleString()} / ${fatalities.best.toLocaleString()} / ${fatalities.high.toLocaleString()}`:'Not available']
+      ['Usable fatality ranges',`${validRanges} of ${roles.events.length}`],
+      ['Candidate casualty roll-up','Not computed; observations may overlap']
     ];
     $('#nation-year-stats').innerHTML=stats.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
     const records=roles.conflictIds.map(id=>conflictsById.get(id)).filter(Boolean);
