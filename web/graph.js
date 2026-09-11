@@ -5,7 +5,7 @@
   if(!data?.nations){$('#global-graph').innerHTML='<p class="boundary-note network-error">The global atlas relationship data is unavailable.</p>';return;}
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
-  const state={minYears:1,selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
+  const state={minYears:1,throughYear:2025,view:'network',organization:'force',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
 
   function normalizedRelations(profile,key){
@@ -13,17 +13,20 @@
   }
 
   function buildModel(){
+    const activeYears=relation=>Math.max(0,Math.min(Number(relation.last_year||state.throughYear),state.throughYear)-Number(relation.first_year||state.throughYear)+1);
     const nodes=data.nations.map(profile=>({
       id:profile.country,label:profile.country,profile,
-      degree:normalizedRelations(profile,'same_side_partners').filter(item=>item.duration_years>=state.minYears).length,
-      weightedDegree:normalizedRelations(profile,'same_side_partners').filter(item=>item.duration_years>=state.minYears).reduce((sum,item)=>sum+item.duration_years,0)
+      degree:normalizedRelations(profile,'same_side_partners').filter(item=>Number(item.first_year||0)<=state.throughYear&&activeYears(item)>=state.minYears).length,
+      weightedDegree:normalizedRelations(profile,'same_side_partners').filter(item=>Number(item.first_year||0)<=state.throughYear&&activeYears(item)>=state.minYears).reduce((sum,item)=>sum+activeYears(item),0)
     }));
     const edges=new Map();
     data.nations.forEach(profile=>normalizedRelations(profile,'same_side_partners').forEach(relation=>{
-      if(relation.duration_years<state.minYears||relation.country===profile.country)return;
+      const lastYear=Math.min(Number(relation.last_year||state.throughYear),state.throughYear);
+      const years=Math.max(0,lastYear-Number(relation.first_year||lastYear)+1);
+      if(years<state.minYears||Number(relation.first_year||0)>state.throughYear||relation.country===profile.country)return;
       const pair=[profile.country,relation.country].sort();const key=pair.join('\u0000');
       const existing=edges.get(key);
-      if(!existing||relation.duration_years>existing.years)edges.set(key,{source:pair[0],target:pair[1],years:relation.duration_years,firstYear:relation.first_year,lastYear:relation.last_year,conflictIds:relation.conflict_ids||[]});
+      if(!existing||years>existing.years)edges.set(key,{source:pair[0],target:pair[1],years,firstYear:relation.first_year,lastYear,conflictIds:relation.conflict_ids||[]});
     }));
     state.nodes=new Map(nodes.map(node=>[node.id,node]));state.links=[...edges.values()];
     state.adjacency=new Map(nodes.map(node=>[node.id,new Set()]));
@@ -76,7 +79,7 @@
 
   function setSelection(id){
     state.selected=state.nodes.has(id)?id:'';
-    state.svgScene?.update();
+    if(state.view==='network')state.svgScene?.update();else renderCurrentView(buildModel());
     renderInspector();
   }
 
@@ -113,7 +116,26 @@
     $('#global-graph-summary').innerHTML=`<div><span>Displayed states</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>States with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Same-side ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} states</strong></div><div><span>Edge rule</span><strong>Same-side records only</strong></div>`;
   }
 
+  function organizedLayout(model){
+    const width=1200,height=780,center={x:width/2,y:height/2},degree=node=>node.degree||0;
+    const hash=value=>{let result=0;for(const char of String(value))result=(result*31+char.charCodeAt(0))|0;return Math.abs(result);};
+    const angle=node=>hash(node.id)%6283/1000;
+    const nodes=[...model.nodes].sort((a,b)=>degree(b)-degree(a)||a.label.localeCompare(b.label));
+    if(state.organization==='social-degrees'){
+      const groups=new Map();nodes.sort((a,b)=>degree(a)-degree(b)||a.label.localeCompare(b.label)).forEach(node=>{if(!groups.has(degree(node)))groups.set(degree(node),[]);groups.get(degree(node)).push(node);});
+      [...groups.values()].forEach((group,shell)=>group.forEach((node,index)=>{const theta=index*2*Math.PI/group.length+angle(node)*.1,radius=35+shell*42;node.x=center.x+Math.cos(theta)*radius;node.y=center.y+Math.sin(theta)*radius;node.topLabel=shell>groups.size-3||index===0;}));
+    }else nodes.forEach((node,index)=>{
+      const radius=state.organization==='barabasi'?(index?23*Math.sqrt(index)+Math.max(0,28-degree(node))*.8:0):state.organization==='scale-free'?(index?18+index*5+Math.max(0,22-degree(node))*.7:0):26*Math.sqrt(index+1);
+      const theta=angle(node)+index*(state.organization==='barabasi'?.37:2.399963);
+      node.x=center.x+Math.cos(theta)*radius;node.y=center.y+Math.sin(theta)*radius;node.topLabel=index<16;
+    });
+    const xs=model.nodes.map(node=>node.x),ys=model.nodes.map(node=>node.y),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys),scale=Math.min(1080/Math.max(1,maxX-minX),660/Math.max(1,maxY-minY));
+    model.nodes.forEach(node=>{node.x=60+(node.x-minX)*scale;node.y=60+(node.y-minY)*scale;node.z=0;});
+    return new Map(model.nodes.map(node=>[node.id,node]));
+  }
+
   function forceLayout(model){
+    if(state.organization!=='force')return organizedLayout(model);
     const width=1200,height=780,nodes=model.nodes,byId=new Map(nodes.map(node=>[node.id,node]));
     nodes.sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).forEach((node,index)=>{const angle=index*2.3999632297,radius=29*Math.sqrt(index+1);node.topLabel=index<12;node.x=width/2+Math.cos(angle)*radius;node.y=height/2+Math.sin(angle)*radius;node.vx=0;node.vy=0;});
     const k=Math.sqrt((width*height)/Math.max(1,nodes.length));
@@ -166,12 +188,32 @@
     state.svgScene=scene;scene.update();scene.fit();
   }
 
+  function renderMatrix(model){
+    const container=$('#global-graph'),nodes=[...model.nodes].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).slice(0,80),byPair=new Map(model.links.map(link=>[[link.source,link.target].sort().join('\u0000'),link]));
+    container.innerHTML=`<div class="global-graph-matrix"><table><thead><tr><th>State</th>${nodes.map(node=>`<th title="${esc(node.label)}">${esc(node.label.slice(0,3))}</th>`).join('')}</tr></thead><tbody>${nodes.map(row=>`<tr><th>${esc(row.label)}</th>${nodes.map(column=>{const link=byPair.get([row.id,column.id].sort().join('\u0000')),selected=state.selected&&(row.id===state.selected||column.id===state.selected);return `<td class="${selected?'is-selected':''}" ${link?`data-years="${link.years}" style="--cell-strength:${Math.min(1,link.years/30)}" data-source="${esc(row.id)}" data-target="${esc(column.id)}" title="${esc(row.label)} · ${esc(column.label)} · ${link.years} shared years`:''}></td>`;}).join('')}</tr>`).join('')}</tbody></table></div>`;
+    container.querySelectorAll('[data-source]').forEach(cell=>cell.addEventListener('click',()=>focusNation(cell.dataset.source)));
+  }
+
+  function renderTimeline(model){
+    const container=$('#global-graph'),links=[...model.links].sort((a,b)=>b.years-a.years||a.firstYear-b.firstYear).slice(0,70),left=250,right=30,top=30,row=24,width=1150,height=top+links.length*row+45,x=year=>left+(year-1946)/(2025-1946)*(width-left-right);
+    container.innerHTML=`<div class="global-graph-timeline"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Timeline of shared-side state relationships"><line class="axis" x1="${left}" x2="${width-right}" y1="${top-10}" y2="${top-10}"></line><text x="${left}" y="${top-17}">1946</text><text x="${width-right-30}" y="${top-17}">2025</text>${links.map((link,index)=>{const selected=state.selected&&(link.source===state.selected||link.target===state.selected);return `<g data-source="${esc(link.source)}" data-target="${esc(link.target)}"><text x="${left-10}" y="${top+index*row+9}" text-anchor="end">${esc(link.source)} · ${esc(link.target)}</text><rect class="bar ${selected?'selected':''}" x="${x(link.firstYear)}" y="${top+index*row}" width="${Math.max(3,x(link.lastYear)-x(link.firstYear))}" height="14" rx="3"><title>${esc(link.source)} · ${esc(link.target)} · ${link.years} shared years</title></rect></g>`;}).join('')}</svg></div>`;
+    container.querySelectorAll('[data-source]').forEach(item=>item.addEventListener('click',()=>focusNation(item.dataset.source)));
+  }
+
+  function renderCurrentView(model){
+    state.svgScene=null;
+    if(state.view==='matrix')renderMatrix(model);else if(state.view==='timeline')renderTimeline(model);else renderSVG(model);
+  }
+
   function render(){
-    const model=buildModel();state.svgScene=null;renderSVG(model);renderInspector();renderSummary();
+    const model=buildModel();renderCurrentView(model);renderInspector();renderSummary();
   }
 
   $('#graph-search').addEventListener('input',event=>{const needle=event.target.value.trim().toLowerCase();if(!needle)return;const match=[...state.nodes.values()].find(node=>node.label.toLowerCase().includes(needle));if(match)focusNation(match.id);});
   $('#graph-min-years').addEventListener('change',event=>{state.minYears=Number(event.target.value);state.selected='';render();});
+  $('#graph-view').addEventListener('change',event=>{state.view=event.target.value;render();});
+  $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;render();});
+  $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});
   $('#graph-optimize').addEventListener('click',()=>state.svgScene?.optimize());
   $('#graph-fit').addEventListener('click',()=>state.svgScene?.fit());
