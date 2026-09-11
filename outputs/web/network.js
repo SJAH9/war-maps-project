@@ -763,8 +763,8 @@
     state.nodeMap = new Map(state.graph.nodes.map(node=>[node.id,node]));
     state.positions = positionGraph(state.graph);
     state.selected='';state.connected=new Set();state.optimized=false;state.optimizedPositions.clear();state.organization='force';if($('#network-organization'))$('#network-organization').value='force';$('#network-optimize')?.setAttribute('aria-pressed','false');
-    try{if(!window.ForceGraph3D)throw new Error('3D renderer unavailable');render3D();}
-    catch(error){state.renderMode='2d';try{renderPlot();}catch(plotError){$('#network-canvas').innerHTML='<p class="boundary-note network-error">The network renderer is unavailable. Conflict records remain available from the atlas.</p>';}}
+    if(!window.ForceGraph3D)throw new Error('3D network renderer unavailable');
+    render3D();
     showSummary(conflict);
     renderNetworkStats(conflict);
   }
