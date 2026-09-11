@@ -8,7 +8,7 @@
   const $=selector=>document.querySelector(selector);
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const dark=()=>document.documentElement.dataset.theme==='dark';
-  const PHI=(1+Math.sqrt(5))/2,MAX_BLOCKS=18,BLOCK_GAP=.12,MAP_SCALE=.63,MAP_Y=9;
+  const PHI=(1+Math.sqrt(5))/2,MAX_BLOCKS=18,POPULATION_MAX_BLOCKS=14,POPULATION_EXPONENT=.42,BLOCK_GAP=.12,MAP_SCALE=.63,MAP_Y=9;
   const palette={conflict:['#090a08','#d52222'],population:['#776526','#ffd500'],mortality:['#111820','#273849'],fertility:['#21151e','#4b3045'],birth:['#27310f','#7dff36']};
   const RAIL_METRICS=['population','fertility','conflict','mortality'];
   const aliases={
@@ -45,7 +45,7 @@
   }
   function valueFor(item,metric){if(metric==='conflict')return item?.conflict?.events||0;return item?.[metric]?.[0]||0;}
   function maxima(){const result={};['conflict','population','mortality','fertility','birth'].forEach(metric=>result[metric]=Math.max(0,...[...state.observations.values()].map(item=>valueFor(item,metric))));return result;}
-  function blockCount(value,max){if(!value||!max)return 0;return 1+Math.floor((MAX_BLOCKS-1)*Math.pow(value/max,PHI));}
+  function blockCount(value,max,metric){if(!value||!max)return 0;if(metric==='population')return Math.min(POPULATION_MAX_BLOCKS,1+Math.floor((POPULATION_MAX_BLOCKS-1)*Math.pow(value/max,POPULATION_EXPONENT)));return 1+Math.floor((MAX_BLOCKS-1)*Math.pow(value/max,PHI));}
   function blockHeight(index){return 1+(PHI-1)*(index/(MAX_BLOCKS-1));}
   function metricColor(metric,index,count,selected=false){const t=count<=1?0:index/(count-1),color=new THREE.Color(palette[metric][0]).lerp(new THREE.Color(palette[metric][1]),t);return selected?color.lerp(new THREE.Color('#f1ca6a'),.38):color;}
   function makeShape(rings){const outer=rings[0];if(!outer?.length)return null;const shape=new THREE.Shape();outer.forEach((point,index)=>{const [x,y]=project(point);index?shape.lineTo(x,y):shape.moveTo(x,y)});shape.closePath();rings.slice(1).forEach(ring=>{const hole=new THREE.Path();ring.forEach((point,index)=>{const [x,y]=project(point);index?hole.lineTo(x,y):hole.moveTo(x,y)});hole.closePath();shape.holes.push(hole)});return shape;}
@@ -129,7 +129,7 @@
   }
 
   function addStack(country,metric,value,max,x,z,offset){
-    const count=blockCount(value,max);let y=MAP_Y+.35;
+    const count=blockCount(value,max,metric);let y=MAP_Y+.35;
     for(let index=0;index<count;index++){const height=blockHeight(index),material=new THREE.MeshPhongMaterial({color:metricColor(metric,index,count,state.selected===country),emissive:state.selected===country?'#3b2405':'#000000',shininess:20});const block=new THREE.Mesh(blockGeometries[index],material);block.position.set(x+offset,y+height/2,z);block.userData={country,metric,index,count,type:'bar'};state.barGroup.add(block);state.blocks.push(block);y+=height+BLOCK_GAP;}
   }
   function updateColumns(){
