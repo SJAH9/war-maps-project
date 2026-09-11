@@ -504,12 +504,12 @@
     state.organization=mode;
     if(mode==='force'){
       state.optimized=false;state.optimizedPositions.clear();$('#network-optimize')?.setAttribute('aria-pressed','false');
-      if(state.renderMode==='3d'&&state.forceGraph){state.forceGraph.graphData().nodes.forEach(node=>{node.fx=undefined;node.fy=undefined;node.fz=undefined;});state.forceGraph.d3ReheatSimulation();}
+      if(state.renderMode==='3d'&&state.forceGraph){state.forceGraph.graphData().nodes.forEach(node=>{node.fx=undefined;node.fy=undefined;node.fz=undefined;});state.forceGraph.d3ReheatSimulation();startAutoRotation();}
       else renderPlot();
       return;
     }
     state.optimized=true;state.optimizedPositions=organizationPositions(state.graph.nodes,mode);$('#network-optimize')?.setAttribute('aria-pressed','true');stopMotion();
-    if(state.renderMode==='3d'&&state.forceGraph){const nodes=state.forceGraph.graphData().nodes;animateOptimizedLayout(nodes,state.optimizedPositions,()=>state.forceGraph.refresh(),()=>{state.forceGraph.cameraPosition({x:0,y:0,z:520},{x:0,y:0,z:0},700);state.forceGraph.zoomToFit(700,90);});return;}
+    if(state.renderMode==='3d'&&state.forceGraph){const nodes=state.forceGraph.graphData().nodes;animateOptimizedLayout(nodes,state.optimizedPositions,()=>state.forceGraph.refresh(),()=>{state.forceGraph.cameraPosition({x:0,y:0,z:520},{x:0,y:0,z:0},700);state.forceGraph.zoomToFit(700,90);startAutoRotation();});return;}
     state.positions=new Map([...state.optimizedPositions].map(([id,point])=>[id,{x:point.x/52,y:point.y/52}]));renderPlot();
   }
 
