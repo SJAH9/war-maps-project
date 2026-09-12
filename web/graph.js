@@ -7,6 +7,7 @@
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
   const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organization:'all',topology:'observed',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
+  const relationshipLabel=()=>state.relationship==='observed'?'same-side participation':state.relationship==='organization'?'organization co-membership':'displayed relationship';
 
   function normalizedRelations(profile,key){
     return (profile?.[key]||[]).filter(item=>profileByName.has(item.country));
@@ -105,7 +106,7 @@
   }
 
   function linkColor(link){
-    if(!state.selected)return '#686d55';
+    if(!state.selected)return link.kind==='synthetic'?'#b46b52':link.kind==='organization'?'#d78b2f':'#686d55';
     const source=endpointId(link.source),target=endpointId(link.target);
     if(source===state.selected||target===state.selected)return colors.ally;
     const bridges=selectedBridges(),opponents=selectedOpponents();
@@ -128,16 +129,16 @@
     if(!state.selected){
       const ranked=[...state.nodes.values()].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||b.weightedDegree-a.weightedDegree||a.label.localeCompare(b.label)).slice(0,12);
       $('#graph-node-type').textContent='Global field';$('#graph-node-title').textContent='All participating states';
-      metrics.innerHTML=`<div><span>States</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>Same-side ties</span><strong>${state.links.length.toLocaleString()}</strong></div>`;
-      detail.innerHTML=listBlock('Highest same-side reach',ranked.map(node=>({country:node.id,note:`${node.degree} partners · ${node.weightedDegree} shared partner-years`})),'No same-side relations in this threshold.');
+      metrics.innerHTML=`<div><span>States</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div>`;
+      detail.innerHTML=listBlock(`Highest ${relationshipLabel()} reach`,ranked.map(node=>({country:node.id,note:`${node.degree} connections · ${node.weightedDegree} observed partner-years`})),'No relationships meet this threshold.');
     }else{
       const node=state.nodes.get(state.selected),profile=node.profile;
       const allies=normalizedRelations(profile,'same_side_partners').filter(item=>item.duration_years>=state.minYears).map(item=>({country:item.country,note:`${item.duration_years} year${item.duration_years===1?'':'s'} · ${item.first_year}-${item.last_year}`}));
       const opponents=normalizedRelations(profile,'opposing_states').map(item=>({country:item.country,note:`${item.duration_years} opposing year${item.duration_years===1?'':'s'} · not drawn as an edge`}));
       const paths=bridgePaths(node.id).map(path=>({country:path.opponent,note:`via ${path.mutual.slice(0,3).join(', ')}${path.mutual.length>3?` +${path.mutual.length-3}`:''}`}));
       $('#graph-node-type').textContent='Selected state';$('#graph-node-title').textContent=node.label;
-      metrics.innerHTML=`<div><span>Same-side degree</span><strong>${node.degree}</strong></div><div><span>Partner-years</span><strong>${node.weightedDegree}</strong></div><div><span>Conflicts</span><strong>${profile.conflict_count||0}</strong></div><div><span>Bridged opponents</span><strong>${paths.length}</strong></div>`;
-      detail.innerHTML=`<a class="global-nation-link" href="nation.html?country=${encodeURIComponent(node.id)}">Open nation record</a>${listBlock('Same-side partners',allies,'No same-side partner meets this threshold.')}${listBlock('Historic opponents connected through mutual allies',paths,'No two-step mutual-ally path is present at this threshold.')}${listBlock('Historic opponents',opponents,'No opposing state participation is recorded.')}`;
+      metrics.innerHTML=`<div><span>Displayed degree</span><strong>${node.degree}</strong></div><div><span>Observed partner-years</span><strong>${node.weightedDegree}</strong></div><div><span>Conflicts</span><strong>${profile.conflict_count||0}</strong></div><div><span>Bridged opponents</span><strong>${paths.length}</strong></div>`;
+      detail.innerHTML=`<a class="global-nation-link" href="nation.html?country=${encodeURIComponent(node.id)}">Open nation record</a>${listBlock(`${relationshipLabel()} records`,allies,'No observed same-side record meets this threshold.')}${listBlock('Historic opponents connected through mutual allies',paths,'No two-step mutual-ally path is present at this threshold.')}${listBlock('Historic opponents',opponents,'No opposing state participation is recorded.')}`;
     }
     detail.querySelectorAll('[data-graph-nation]').forEach(button=>button.addEventListener('click',()=>focusNation(button.dataset.graphNation)));
   }
@@ -183,12 +184,12 @@
 
   function renderSVG(model){
     const container=$('#global-graph'),ns='http://www.w3.org/2000/svg',byId=forceLayout(model);container.innerHTML='';
-    const svg=document.createElementNS(ns,'svg');svg.classList.add('global-graph-svg');svg.setAttribute('viewBox','0 0 1200 780');svg.setAttribute('aria-label','Interactive force-directed same-side participation graph');
+    const svg=document.createElementNS(ns,'svg');svg.classList.add('global-graph-svg');svg.setAttribute('viewBox','0 0 1200 780');svg.setAttribute('aria-label',`Interactive force-directed ${relationshipLabel()} graph`);
     const viewport=document.createElementNS(ns,'g'),edgeLayer=document.createElementNS(ns,'g'),nodeLayer=document.createElementNS(ns,'g');viewport.append(edgeLayer,nodeLayer);svg.append(viewport);container.append(svg);
     const incident=new Map(model.nodes.map(node=>[node.id,[]]));
     const edgeElements=model.links.map(link=>{const line=document.createElementNS(ns,'line'),source=byId.get(link.source),target=byId.get(link.target);line.setAttribute('x1',source.x);line.setAttribute('y1',source.y);line.setAttribute('x2',target.x);line.setAttribute('y2',target.y);line.setAttribute('stroke-width',.35+Math.log2(1+link.years)*.28);edgeLayer.append(line);const item={link,line};incident.get(link.source).push(item);incident.get(link.target).push(item);return item;});
     const nodeElements=new Map();
-    model.nodes.forEach(node=>{const group=document.createElementNS(ns,'g'),circle=document.createElementNS(ns,'circle'),title=document.createElementNS(ns,'title'),label=document.createElementNS(ns,'text'),radius=nodeRadius(node);group.classList.add('global-graph-node');group.dataset.nodeId=node.id;group.setAttribute('transform',`translate(${node.x} ${node.y})`);circle.setAttribute('r',radius);title.textContent=`${node.label} · ${node.degree} same-side partners · ${node.weightedDegree} partner-years`;circle.append(title);group.append(circle);label.textContent=node.label;label.setAttribute('y',-(radius+5));label.hidden=!node.topLabel;group.append(label);nodeLayer.append(group);nodeElements.set(node.id,{group,circle,label,node});});
+    model.nodes.forEach(node=>{const group=document.createElementNS(ns,'g'),circle=document.createElementNS(ns,'circle'),title=document.createElementNS(ns,'title'),label=document.createElementNS(ns,'text'),radius=nodeRadius(node);group.classList.add('global-graph-node');group.dataset.nodeId=node.id;group.setAttribute('transform',`translate(${node.x} ${node.y})`);circle.setAttribute('r',radius);title.textContent=`${node.label} · ${node.degree} displayed connections · ${node.weightedDegree} observed partner-years`;circle.append(title);group.append(circle);label.textContent=node.label;label.setAttribute('y',-(radius+5));label.hidden=!node.topLabel;group.append(label);nodeLayer.append(group);nodeElements.set(node.id,{group,circle,label,node});});
     const scene={svg,viewport,byId,edgeElements,nodeElements,zoom:.92,panX:0,panY:0,yaw:-.18,pitch:.1,drag:null,moved:false,animation:null};
     scene.transform=()=>viewport.setAttribute('transform',`translate(${scene.panX} ${scene.panY}) scale(${scene.zoom})`);
     scene.project=node=>{const x=node.x-600,y=node.y-390,z=node.z||0,cy=Math.cos(scene.yaw),sy=Math.sin(scene.yaw),cp=Math.cos(scene.pitch),sp=Math.sin(scene.pitch),x1=x*cy+z*sy,z1=-x*sy+z*cy,y1=y*cp-z1*sp,z2=y*sp+z1*cp,perspective=900/(900+z2);return {x:600+x1*perspective,y:390+y1*perspective,z:z2,scale:Math.max(.62,Math.min(1.45,perspective))};};

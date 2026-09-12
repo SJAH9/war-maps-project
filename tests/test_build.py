@@ -149,6 +149,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("organizationLinks", source)
         self.assertIn("Shared organization membership", source)
         self.assertIn("syntheticLinks", source)
+        self.assertIn("organization co-membership", source)
+        self.assertIn("kind==='synthetic'", source)
         self.assertIn("barabasi-albert", page)
         self.assertIn("erdos-renyi", page)
         self.assertIn("watts-strogatz", page)
