@@ -79,3 +79,4 @@
 .global-graph-stage .global-graph-svg{display:block;width:100%;height:100%;cursor:grab;touch-action:none}.global-graph-stage .global-graph-svg:active{cursor:grabbing}.global-graph-svg line,.global-graph-svg circle{vector-effect:non-scaling-stroke}.global-graph-node{cursor:pointer}.global-graph-node text{fill:#e9deb9;font:700 9px/1 Inter,Arial,sans-serif;text-anchor:middle;paint-order:stroke;stroke:#0d100c;stroke-width:3px;stroke-linejoin:round;pointer-events:none}:root:not([data-theme="dark"]) .global-graph-node text{fill:#171a14;stroke:#d8c99a}
 @media(min-width:961px){.global-graph-controls{grid-template-columns:minmax(220px,1.4fr) minmax(150px,.8fr) minmax(120px,.7fr) minmax(190px,1.2fr) minmax(170px,1fr)}}
 @media(min-width:761px) and (max-width:960px){.global-graph-controls{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.global-graph-controls>*{min-width:0}.global-graph-controls select,.global-graph-controls input,.global-graph-controls button{min-width:0}
