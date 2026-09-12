@@ -5,14 +5,18 @@
   if(!data?.nations){$('#global-graph').innerHTML='<p class="boundary-note network-error">The global atlas relationship data is unavailable.</p>';return;}
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
-  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organization:'all',topology:'observed',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
+  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organizations:[],includeUngrouped:false,topology:'observed',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
   const relationshipLabel=()=>state.relationship==='observed'?'same-side participation':state.relationship==='organization'?'organization co-membership':'displayed relationship';
   const linkDescription=link=>link.kind==='organization'?`Shared ${link.organizations?.join(', ')||'organization'} membership`:link.kind==='synthetic'?`Synthetic ${link.model} edge`:`${link.years} shared years`;
 
+  function selectedOrganizations(){return (data.organizations||[]).filter(item=>state.organizations.includes(item.id));}
+  function organizationMembers(organization){return organization.member_count?organization.members:(organization.entity_nations||[]);}
+
   function updatePageDescription(){
-    const entityScope=state.organization==='wef',synthetic=state.topology!=='observed',title=entityScope?'World Economic Forum partner entities':state.relationship==='organization'?'States joined by organization membership':'States joined by conflict and organization records';
-    const description=synthetic?`This is a deterministic ${state.topology} comparison graph. Its edges are modeled, not observed evidence.`:entityScope?'The graph connects the World Economic Forum to the sourced partner entities retained in the organization layer. These are company relationships, not state membership or conflict participation.':state.relationship==='organization'?'Each line represents shared membership in the selected state-organization set; the World Economic Forum is available separately as an entity graph and is not inferred as state membership. Membership is not treated as alliance or causation.':'Every line is an observed same-side state participation record, or an explicitly selected organization relationship. Historic opposing participation remains disclosed rather than fabricated as a direct edge.';
+    const selected=selectedOrganizations(),names=selected.map(item=>item.name).join(', '),wef=selected.some(item=>item.id==='wef'),synthetic=state.topology!=='observed',title=wef&&selected.length===1?'WEF partner home-nation network':selected.length?`Membership network: ${names}`:state.relationship==='organization'?'Organization membership network':'States joined by conflict and organization records';
+    const scopeNote=state.includeUngrouped?' Ungrouped nations are included.':' Only nations belonging to a selected organization are included.';
+    const description=synthetic?`This is a deterministic ${state.topology} comparison graph. Its edges are modeled, not observed evidence.`:wef?'WEF partner companies are resolved to disclosed home nations for graph placement. The organization node connects those nations; this does not infer state membership, conflict participation, or corporate control.':selected.length&&state.relationship==='observed'?`Observed same-side participation is filtered to members of ${names}.${scopeNote} Organization nodes are hidden in this view.`:selected.length?`Each selected organization is a node connected to its sourced member states.${scopeNote} Membership is not treated as alliance, coordination, or causation.`:'Every line is an observed same-side state participation record, or an explicitly selected organization relationship. Historic opposing participation remains disclosed rather than fabricated as a direct edge.';
     $('#graph-page-title').textContent=title;$('#graph-rule-description').textContent=description;$('#global-graph').setAttribute('aria-label',`${title}. ${description}`);
   }
 
@@ -21,22 +25,14 @@
   }
 
   function organizationLinks(nodes){
-    const selected=state.organization==='all'?data.organizations||[]:(data.organizations||[]).filter(item=>item.id===state.organization),links=new Map(),nodeIds=new Set(nodes.map(node=>node.id));
-    selected.filter(item=>item.member_count||item.entity_member_count).forEach(organization=>{
-      if(organization.entity_member_count){
-        const organizationId=`organization:${organization.id}`;
-        if(!nodeIds.has(organizationId))return;
-        organization.entity_members.forEach(member=>{
-          const pair=[organizationId,`entity:${organization.id}:${member}`].sort(),key=pair.join('\u0000'),existing=links.get(key);
-          if(existing)existing.organizations.push(organization.name);else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name]});
-        });
-        return;
-      }
-      const members=organization.members.filter(member=>nodeIds.has(member));
-      for(let left=0;left<members.length;left++)for(let right=left+1;right<members.length;right++){
-        const pair=[members[left],members[right]].sort(),key=pair.join('\u0000'),existing=links.get(key);
-        if(existing)existing.organizations.push(organization.name);else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name]});
-      }
+    const selected=selectedOrganizations(),links=new Map(),nodeIds=new Set(nodes.map(node=>node.id));
+    selected.forEach(organization=>{
+      const organizationId=`organization:${organization.id}`;
+      if(!nodeIds.has(organizationId))return;
+      organizationMembers(organization).filter(member=>nodeIds.has(member)).forEach(member=>{
+        const pair=[organizationId,member].sort(),key=pair.join('\u0000'),existing=links.get(key),entityMembers=organization.entity_member_nations?Object.entries(organization.entity_member_nations).filter(([,nation])=>nation===member).map(([entity])=>entity):[];
+        if(existing){existing.organizations.push(organization.name);existing.entityMembers.push(...entityMembers);}else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name],entityMembers});
+      });
     });
     return [...links.values()];
   }
@@ -62,17 +58,19 @@
 
   function buildModel(){
     const activeYears=relation=>Math.max(0,Math.min(Number(relation.last_year||state.throughYear),state.throughYear)-Number(relation.first_year||state.throughYear)+1);
-    const entityOrganization=state.organization!=='all'?(data.organizations||[]).find(item=>item.id===state.organization&&item.entity_member_count):null;
-    const nodes=entityOrganization?[{id:`organization:${entityOrganization.id}`,label:entityOrganization.name,profile:null,degree:0,weightedDegree:0,entityKind:'organization'},...entityOrganization.entity_members.map(member=>({id:`entity:${entityOrganization.id}:${member}`,label:member,profile:null,degree:0,weightedDegree:0,entityKind:'company'}))]:data.nations.map(profile=>({
+    const selected=selectedOrganizations(),selectedMemberNames=selected.length&&!state.includeUngrouped?new Set(selected.flatMap(organizationMembers)):null,includeOrganizationNodes=selected.length&&state.relationship!=='observed';
+    const nationNodes=data.nations.filter(profile=>!selectedMemberNames||selectedMemberNames.has(profile.country)).map(profile=>({
       id:profile.country,label:profile.country,profile,
       degree:normalizedRelations(profile,'same_side_partners').filter(item=>Number(item.first_year||0)<=state.throughYear&&activeYears(item)>=state.minYears).length,
       weightedDegree:normalizedRelations(profile,'same_side_partners').filter(item=>Number(item.first_year||0)<=state.throughYear&&activeYears(item)>=state.minYears).reduce((sum,item)=>sum+activeYears(item),0)
     }));
+    const organizationNodes=includeOrganizationNodes?selected.map(organization=>({id:`organization:${organization.id}`,label:organization.name,profile:null,degree:0,weightedDegree:0,entityKind:'organization',organizationId:organization.id})):[];
+    const nodes=[...nationNodes,...organizationNodes],nodeIds=new Set(nationNodes.map(node=>node.id));
     const edges=new Map();
-    if(!entityOrganization)data.nations.forEach(profile=>normalizedRelations(profile,'same_side_partners').forEach(relation=>{
+    data.nations.forEach(profile=>normalizedRelations(profile,'same_side_partners').forEach(relation=>{
       const lastYear=Math.min(Number(relation.last_year||state.throughYear),state.throughYear);
       const years=Math.max(0,lastYear-Number(relation.first_year||lastYear)+1);
-      if(years<state.minYears||Number(relation.first_year||0)>state.throughYear||relation.country===profile.country)return;
+      if(!nodeIds.has(profile.country)||!nodeIds.has(relation.country)||years<state.minYears||Number(relation.first_year||0)>state.throughYear||relation.country===profile.country)return;
       const pair=[profile.country,relation.country].sort();const key=pair.join('\u0000');
       const existing=edges.get(key);
       if(!existing||years>existing.years)edges.set(key,{source:pair[0],target:pair[1],years,firstYear:relation.first_year,lastYear,conflictIds:relation.conflict_ids||[]});
@@ -108,12 +106,13 @@
   }
 
   const endpointId=value=>typeof value==='object'?value.id:value;
-  const nodeRadius=node=>3.5+Math.sqrt(node.degree)*1.3;
+  const nodeRadius=node=>node.entityKind==='organization'?8+Math.sqrt(node.degree)*1.7:3.5+Math.sqrt(node.degree)*1.3;
   const selectedAllies=()=>state.selected?state.adjacency.get(state.selected)||new Set():new Set();
   const selectedOpponents=()=>state.selected?state.opponents.get(state.selected)||new Set():new Set();
   const selectedBridges=()=>new Set(state.selected?bridgePaths(state.selected).flatMap(path=>path.mutual):[]);
 
   function nodeColor(node){
+    if(node.entityKind==='organization')return '#d78b2f';
     if(!state.selected)return node.degree?colors.base:colors.isolated;
     if(node.id===state.selected)return colors.selected;
     if(selectedBridges().has(node.id))return colors.bridge;
@@ -145,17 +144,17 @@
     const metrics=$('#graph-node-metrics'),detail=$('#graph-node-detail');
     if(!state.selected){
       const ranked=[...state.nodes.values()].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||b.weightedDegree-a.weightedDegree||a.label.localeCompare(b.label)).slice(0,12);
-      const entityScope=state.organization==='wef';
-      $('#graph-node-type').textContent='Global field';$('#graph-node-title').textContent=entityScope?'Organization entity field':'All participating states';
-      metrics.innerHTML=`<div><span>${entityScope?'Entities':'States'}</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div>`;
+      const organizationScope=selectedOrganizations().length;
+      $('#graph-node-type').textContent='Global field';$('#graph-node-title').textContent=organizationScope?'Membership network':'All participating states';
+      metrics.innerHTML=`<div><span>${organizationScope?'Nodes':'States'}</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div>`;
       detail.innerHTML=listBlock(`Highest ${relationshipLabel()} reach`,ranked.map(node=>({country:node.id,note:`${node.degree} connections · ${node.weightedDegree} observed partner-years`})),'No relationships meet this threshold.');
     }else{
       const node=state.nodes.get(state.selected),profile=node.profile;
       if(!profile){
         const organizationNode=node.entityKind==='organization';
-        $('#graph-node-type').textContent=organizationNode?'Organization':'Organization partner';$('#graph-node-title').textContent=node.label;
-        metrics.innerHTML=`<div><span>Entity type</span><strong>${organizationNode?'Organization':'Company'}</strong></div><div><span>Displayed degree</span><strong>${node.degree}</strong></div>`;
-        detail.innerHTML=`<p class="boundary-note">This is a sourced ${organizationNode?'organization':'partner entity'} relationship. It is not a state-membership or conflict-participation claim.</p>`;
+        $('#graph-node-type').textContent=organizationNode?'Organization':'State';$('#graph-node-title').textContent=node.label;
+        metrics.innerHTML=`<div><span>Node type</span><strong>${organizationNode?'Organization':'Resolved nation'}</strong></div><div><span>Displayed degree</span><strong>${node.degree}</strong></div>`;
+        detail.innerHTML=`<p class="boundary-note">${organizationNode?'This organization node connects its sourced member nations.':'This nation is included by the selected organization membership criterion. WEF partner home-nation resolution does not imply state membership or corporate control.'}</p>`;
       }else{
       const allies=normalizedRelations(profile,'same_side_partners').filter(item=>item.duration_years>=state.minYears).map(item=>({country:item.country,note:`${item.duration_years} year${item.duration_years===1?'':'s'} · ${item.first_year}-${item.last_year}`}));
       const opponents=normalizedRelations(profile,'opposing_states').map(item=>({country:item.country,note:`${item.duration_years} opposing year${item.duration_years===1?'':'s'} · not drawn as an edge`}));
@@ -175,7 +174,7 @@
 
   function renderSummary(){
     const components=connectedComponents(),active=[...state.nodes.values()].filter(node=>node.degree>0),possible=state.nodes.size*(state.nodes.size-1)/2,density=possible?state.links.length/possible:0;
-    const entityScope=state.organization==='wef',scope=entityScope?'entities':'states',rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Shared organization membership':'Observed records plus shared organization membership',model=state.topology==='observed'?'Observed topology':`${state.topology} model generated on the selected node set`;
+    const organizationScope=selectedOrganizations().length,scope=organizationScope?'nodes':'states',rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Organization nodes connected to members':'Observed records plus organization membership',model=state.topology==='observed'?'Observed topology':`${state.topology} model generated on the selected node set`;
     $('#global-graph-summary').innerHTML=`<div><span>Displayed ${scope}</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>${scope[0].toUpperCase()+scope.slice(1)} with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} ${scope}</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div><div><span>Topology</span><strong>${esc(model)}</strong></div>`;
   }
 
@@ -233,7 +232,7 @@
   }
 
   function renderMatrix(model){
-    const container=$('#global-graph'),nodes=[...model.nodes].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).slice(0,80),byPair=new Map(model.links.map(link=>[[link.source,link.target].sort().join('\u0000'),link])),heading=state.organization==='wef'?'Entity': 'State';
+    const container=$('#global-graph'),nodes=[...model.nodes].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).slice(0,80),byPair=new Map(model.links.map(link=>[[link.source,link.target].sort().join('\u0000'),link])),heading=selectedOrganizations().length?'Node':'State';
     container.innerHTML=`<div class="global-graph-matrix"><table><thead><tr><th>${heading}</th>${nodes.map(node=>`<th title="${esc(node.label)}">${esc(node.label.slice(0,3))}</th>`).join('')}</tr></thead><tbody>${nodes.map(row=>`<tr><th>${esc(row.label)}</th>${nodes.map(column=>{const link=byPair.get([row.id,column.id].sort().join('\u0000')),selected=state.selected&&(row.id===state.selected||column.id===state.selected),strength=link?(link.kind==='organization'?1:link.kind==='synthetic'?.7:Math.min(1,link.years/30)):0;return `<td class="${selected?'is-selected':''}" ${link?`data-years="${link.years}" style="--cell-strength:${strength}" data-source="${esc(row.id)}" data-target="${esc(column.id)}" title="${esc(row.label)} · ${esc(column.label)} · ${esc(linkDescription(link))}`:''}></td>`;}).join('')}</tr>`).join('')}</tbody></table></div>`;
     container.querySelectorAll('[data-source]').forEach(cell=>cell.addEventListener('click',()=>focusNation(cell.dataset.source)));
   }
@@ -258,7 +257,8 @@
   $('#graph-min-years').addEventListener('change',event=>{state.minYears=Number(event.target.value);state.selected='';render();});
   $('#graph-view').addEventListener('change',event=>{state.view=event.target.value;render();});
   $('#graph-relationship').addEventListener('change',event=>{state.relationship=event.target.value;state.selected='';render();});
-  $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;state.relationship='organization';$('#graph-relationship').value='organization';state.selected='';render();});
+  document.querySelectorAll('[data-organization]').forEach(input=>input.addEventListener('change',()=>{state.organizations=[...document.querySelectorAll('[data-organization]:checked')].map(item=>item.dataset.organization);if(state.organizations.length){state.relationship='organization';$('#graph-relationship').value='organization';}else{state.relationship='observed';$('#graph-relationship').value='observed';}state.selected='';render();}));
+  $('#graph-include-ungrouped').addEventListener('change',event=>{state.includeUngrouped=event.target.checked;state.selected='';render();});
   $('#graph-topology').addEventListener('change',event=>{state.topology=event.target.value;state.selected='';render();});
   $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});

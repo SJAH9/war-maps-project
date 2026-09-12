@@ -86,9 +86,12 @@
       "members": [
         "ABB", "Accenture", "Amazon", "Apple", "Aramco", "AstraZeneca", "BlackRock", "Citi", "Cisco", "Coca-Cola Company", "Deloitte", "Google", "Goldman Sachs", "IBM", "JPMorganChase", "Mastercard", "McKinsey & Company", "Microsoft", "Nestlé", "Palantir Technologies", "PepsiCo", "Pfizer", "Salesforce", "SAP", "Siemens", "Sony Group", "UBS", "Unilever", "Visa", "Volkswagen Group"
       ],
+      "entity_nations": {
+        "ABB": "Switzerland", "Accenture": "Ireland", "Amazon": "United States of America", "Apple": "United States of America", "Aramco": "Saudi Arabia", "AstraZeneca": "United Kingdom", "BlackRock": "United States of America", "Citi": "United States of America", "Cisco": "United States of America", "Coca-Cola Company": "United States of America", "Deloitte": "United Kingdom", "Google": "United States of America", "Goldman Sachs": "United States of America", "IBM": "United States of America", "JPMorganChase": "United States of America", "Mastercard": "United States of America", "McKinsey & Company": "United States of America", "Microsoft": "United States of America", "Nestlé": "Switzerland", "Palantir Technologies": "United States of America", "PepsiCo": "United States of America", "Pfizer": "United States of America", "Salesforce": "United States of America", "SAP": "Germany", "Siemens": "Germany", "Sony Group": "Japan", "UBS": "Switzerland", "Unilever": "United Kingdom", "Visa": "United States of America", "Volkswagen Group": "Germany"
+      },
       "as_of": "2026-09-11",
       "source_id": "wef-membership-and-partners",
-      "note": "The Forum's membership and partner communities are primarily companies and other stakeholders. These entity records are retained for a future entity graph; this state graph does not infer state membership from attendance, partnership, or participation."
+      "note": "The Forum's membership and partner communities are primarily companies and other stakeholders. The entity_nations field is a disclosed home-nation resolution for graph placement, not WEF state membership and not evidence that a nation participated through the company."
     }
   ],
   "sources": [

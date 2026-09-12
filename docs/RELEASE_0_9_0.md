@@ -6,6 +6,8 @@ This release candidate adds explicit relationship criteria to the global Graph w
 
 - The conflict-specific Network page no longer presents unsupported named network layouts.
 - The global Graph can display observed same-side participation, sourced organization co-membership, or both.
+- Organization filters are checkboxes: selecting one or more organizations scopes the graph to their member nations and adds each organization as a typed hub node connected to those members.
+- The optional “Include ungrouped nations” control restores nations outside the selected organization set without changing the membership edges.
 - The topology selector implements deterministic Barabási–Albert, Erdős–Rényi, and Watts–Strogatz synthetic comparison graphs.
 - Synthetic edges are marked and described as modeled comparisons. They are never treated as UCDP observations.
 - Organization edges retain their organization name and do not imply alliance, coordination, causation, or conflict participation.
@@ -18,6 +20,7 @@ This release candidate adds explicit relationship criteria to the global Graph w
 - European Union: official 27-member roster.
 - ASEAN: official 11-member roster, including Timor-Leste.
 - World Economic Forum: 30 explicitly retained partner entities from the official partner directory. These are company-level records and are shown through the entity-aware graph path; they are not converted into state membership.
+- WEF partner entities resolve to seven disclosed home nations for graph placement. The nation is a placement criterion only; it is not a WEF membership, conflict-participation, or corporate-control claim.
 - New organizations can be added through `data/curated/organization_memberships.json` with a typed relation, entity scope, source identifier, and date boundary.
 
 ## Validation recorded for this candidate

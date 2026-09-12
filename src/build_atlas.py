@@ -661,6 +661,12 @@ def organization_memberships(nations: list[dict]) -> dict:
     for organization in payload["organizations"]:
         if organization.get("member_basis") == "explicit_entities":
             organization["entity_members"] = sorted(set(organization.get("members", [])))
+            organization["entity_member_nations"] = {
+                member: ORGANIZATION_NAME_ALIASES.get(nation, nation)
+                for member, nation in organization.get("entity_nations", {}).items()
+                if member in organization["entity_members"] and ORGANIZATION_NAME_ALIASES.get(nation, nation) in nation_names
+            }
+            organization["entity_nations"] = sorted(set(organization["entity_member_nations"].values()))
             roster = []
             members = []
         elif organization.get("member_basis") == "explicit":
@@ -676,6 +682,7 @@ def organization_memberships(nations: list[dict]) -> dict:
         organization["members"] = sorted(set(members))
         organization["member_count"] = len(organization["members"])
         organization["entity_member_count"] = len(organization.get("entity_members", []))
+        organization["entity_nation_count"] = len(organization.get("entity_nations", []))
         organization["unloaded_members"] = sorted(set(roster) - set(organization["members"]))
         organization["membership_status"] = "explicit" if organization["member_basis"] in {"explicit", "explicit_entities"} else "derived"
     return payload

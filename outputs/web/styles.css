@@ -80,3 +80,6 @@
 @media(min-width:961px){.global-graph-controls{grid-template-columns:minmax(220px,1.4fr) minmax(150px,.8fr) minmax(120px,.7fr) minmax(190px,1.2fr) minmax(170px,1fr)}}
 @media(min-width:761px) and (max-width:960px){.global-graph-controls{grid-template-columns:repeat(5,minmax(0,1fr))}}
 .global-graph-controls>*{min-width:0}.global-graph-controls select,.global-graph-controls input,.global-graph-controls button{min-width:0}
+.global-graph-controls .graph-organization-filter{min-width:0;margin:0;padding:4px 8px;border:1px solid var(--line);display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px 8px;align-items:center;height:auto;min-height:40px}.graph-organization-filter legend{grid-column:1/-1;padding:0;color:var(--muted);font-size:.68rem;font-weight:800;text-transform:uppercase}.graph-organization-filter label{display:flex;align-items:center;gap:4px;color:var(--ink);font-size:.66rem;font-weight:800;text-transform:none}.graph-organization-filter input{width:13px;height:13px;accent-color:var(--orange)}
+ .graph-organization-filter .graph-ungrouped-option{grid-column:1/-1;border-top:1px solid var(--line);padding-top:3px}
+@media(max-width:760px){.global-graph-controls .graph-organization-filter{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));padding:7px 8px}}
