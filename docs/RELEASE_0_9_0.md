@@ -26,6 +26,7 @@ This release candidate adds explicit relationship criteria to the global Graph w
 - `python3 -m src.generate_web_atlas`: generated output is synchronized.
 - Chrome runtime smoke checks exercised observed, organization, combined, matrix, timeline, Barabási–Albert, Erdős–Rényi, Watts–Strogatz, NATO, BRICS, EU, ASEAN, and WEF selections without page errors.
 - The WEF runtime graph produced 31 entity nodes and 30 organization-to-partner edges; the state organization checks produced 32 NATO members/496 edges, 11 BRICS members/55 edges, 27 EU members/351 edges, and 11 ASEAN members/55 edges.
+- Visual smoke checks at 1600px desktop and 390px mobile widths confirmed that the graph controls remain visible and usable without horizontal overflow.
 - The working branch remains local and has not been pushed.
 
 ## Review gates before publication
