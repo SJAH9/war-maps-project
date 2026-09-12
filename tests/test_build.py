@@ -174,6 +174,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertGreaterEqual(by_id["brics"]["member_count"], 10)
         self.assertEqual(by_id["wef"]["member_count"], 0)
         self.assertGreaterEqual(by_id["wef"]["entity_member_count"], 20)
+        self.assertIn("Microsoft", by_id["wef"]["entity_members"])
         source_ids = {source["id"] for source in self.data["sources"]}
         self.assertTrue({item["source_id"] for item in organizations}.issubset(source_ids))
         self.assertTrue(all(item["membership_status"] in {"explicit", "derived"} for item in organizations))

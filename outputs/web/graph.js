@@ -15,8 +15,9 @@
 
   function organizationLinks(nodes){
     const selected=state.organization==='all'?data.organizations||[]:(data.organizations||[]).filter(item=>item.id===state.organization),links=new Map(),nodeIds=new Set(nodes.map(node=>node.id));
-    selected.filter(item=>item.member_count&&item.relation_type!=='organization_metadata_only').forEach(organization=>{
-      const members=organization.members.filter(member=>nodeIds.has(member));
+    selected.filter(item=>item.member_count||item.entity_member_count).forEach(organization=>{
+      const members=organization.entity_member_count?[`organization:${organization.id}`,...organization.entity_members.map(member=>`entity:${organization.id}:${member}`)]:organization.members.filter(member=>nodeIds.has(member));
+      if(organization.entity_member_count&&!nodeIds.has(`organization:${organization.id}`))return;
       for(let left=0;left<members.length;left++)for(let right=left+1;right<members.length;right++){
         const pair=[members[left],members[right]].sort(),key=pair.join('\u0000'),existing=links.get(key);
         if(existing)existing.organizations.push(organization.name);else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name]});
@@ -46,13 +47,14 @@
 
   function buildModel(){
     const activeYears=relation=>Math.max(0,Math.min(Number(relation.last_year||state.throughYear),state.throughYear)-Number(relation.first_year||state.throughYear)+1);
-    const nodes=data.nations.map(profile=>({
+    const entityOrganization=state.organization!=='all'?(data.organizations||[]).find(item=>item.id===state.organization&&item.entity_member_count):null;
+    const nodes=entityOrganization?[{id:`organization:${entityOrganization.id}`,label:entityOrganization.name,profile:null,degree:0,weightedDegree:0,entityKind:'organization'},...entityOrganization.entity_members.map(member=>({id:`entity:${entityOrganization.id}:${member}`,label:member,profile:null,degree:0,weightedDegree:0,entityKind:'company'}))]:data.nations.map(profile=>({
       id:profile.country,label:profile.country,profile,
       degree:normalizedRelations(profile,'same_side_partners').filter(item=>Number(item.first_year||0)<=state.throughYear&&activeYears(item)>=state.minYears).length,
       weightedDegree:normalizedRelations(profile,'same_side_partners').filter(item=>Number(item.first_year||0)<=state.throughYear&&activeYears(item)>=state.minYears).reduce((sum,item)=>sum+activeYears(item),0)
     }));
     const edges=new Map();
-    data.nations.forEach(profile=>normalizedRelations(profile,'same_side_partners').forEach(relation=>{
+    if(!entityOrganization)data.nations.forEach(profile=>normalizedRelations(profile,'same_side_partners').forEach(relation=>{
       const lastYear=Math.min(Number(relation.last_year||state.throughYear),state.throughYear);
       const years=Math.max(0,lastYear-Number(relation.first_year||lastYear)+1);
       if(years<state.minYears||Number(relation.first_year||0)>state.throughYear||relation.country===profile.country)return;
@@ -133,12 +135,19 @@
       detail.innerHTML=listBlock(`Highest ${relationshipLabel()} reach`,ranked.map(node=>({country:node.id,note:`${node.degree} connections · ${node.weightedDegree} observed partner-years`})),'No relationships meet this threshold.');
     }else{
       const node=state.nodes.get(state.selected),profile=node.profile;
+      if(!profile){
+        const organizationNode=node.entityKind==='organization';
+        $('#graph-node-type').textContent=organizationNode?'Organization':'Organization partner';$('#graph-node-title').textContent=node.label;
+        metrics.innerHTML=`<div><span>Entity type</span><strong>${organizationNode?'Organization':'Company'}</strong></div><div><span>Displayed degree</span><strong>${node.degree}</strong></div>`;
+        detail.innerHTML=`<p class="boundary-note">This is a sourced ${organizationNode?'organization':'partner entity'} relationship. It is not a state-membership or conflict-participation claim.</p>`;
+      }else{
       const allies=normalizedRelations(profile,'same_side_partners').filter(item=>item.duration_years>=state.minYears).map(item=>({country:item.country,note:`${item.duration_years} year${item.duration_years===1?'':'s'} · ${item.first_year}-${item.last_year}`}));
       const opponents=normalizedRelations(profile,'opposing_states').map(item=>({country:item.country,note:`${item.duration_years} opposing year${item.duration_years===1?'':'s'} · not drawn as an edge`}));
       const paths=bridgePaths(node.id).map(path=>({country:path.opponent,note:`via ${path.mutual.slice(0,3).join(', ')}${path.mutual.length>3?` +${path.mutual.length-3}`:''}`}));
       $('#graph-node-type').textContent='Selected state';$('#graph-node-title').textContent=node.label;
       metrics.innerHTML=`<div><span>Displayed degree</span><strong>${node.degree}</strong></div><div><span>Observed partner-years</span><strong>${node.weightedDegree}</strong></div><div><span>Conflicts</span><strong>${profile.conflict_count||0}</strong></div><div><span>Bridged opponents</span><strong>${paths.length}</strong></div>`;
       detail.innerHTML=`<a class="global-nation-link" href="nation.html?country=${encodeURIComponent(node.id)}">Open nation record</a>${listBlock(`${relationshipLabel()} records`,allies,'No observed same-side record meets this threshold.')}${listBlock('Historic opponents connected through mutual allies',paths,'No two-step mutual-ally path is present at this threshold.')}${listBlock('Historic opponents',opponents,'No opposing state participation is recorded.')}`;
+      }
     }
     detail.querySelectorAll('[data-graph-nation]').forEach(button=>button.addEventListener('click',()=>focusNation(button.dataset.graphNation)));
   }
