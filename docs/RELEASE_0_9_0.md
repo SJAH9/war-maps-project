@@ -20,6 +20,14 @@ This release candidate adds explicit relationship criteria to the global Graph w
 - World Economic Forum: 30 explicitly retained partner entities from the official partner directory. These are company-level records and are shown through the entity-aware graph path; they are not converted into state membership.
 - New organizations can be added through `data/curated/organization_memberships.json` with a typed relation, entity scope, source identifier, and date boundary.
 
+## Validation recorded for this candidate
+
+- `python3 -m unittest discover -s tests -q`: 20 tests pass.
+- `python3 -m src.generate_web_atlas`: generated output is synchronized.
+- Chrome runtime smoke checks exercised observed, organization, combined, matrix, timeline, Barabási–Albert, Erdős–Rényi, Watts–Strogatz, NATO, BRICS, EU, ASEAN, and WEF selections without page errors.
+- The WEF runtime graph produced 31 entity nodes and 30 organization-to-partner edges; the state organization checks produced 32 NATO members/496 edges, 11 BRICS members/55 edges, 27 EU members/351 edges, and 11 ASEAN members/55 edges.
+- The working branch remains local and has not been pushed.
+
 ## Review gates before publication
 
 - Inspect the Graph page in a browser for each connection criterion and topology model.
