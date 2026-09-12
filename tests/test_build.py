@@ -173,6 +173,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertEqual(by_id["brics"]["relation_type"], "member")
         self.assertEqual(by_id["wef"]["relation_type"], "partner")
         self.assertEqual(by_id["un"]["membership_status"], "explicit")
+        self.assertEqual(by_id["wef"]["membership_status"], "explicit")
         self.assertEqual(by_id["un"]["member_roster_count"], 193)
         self.assertGreaterEqual(by_id["un"]["member_count"], 160)
         self.assertNotIn("Antarctica", by_id["un"]["members"])

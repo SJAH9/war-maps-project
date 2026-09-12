@@ -677,7 +677,7 @@ def organization_memberships(nations: list[dict]) -> dict:
         organization["member_count"] = len(organization["members"])
         organization["entity_member_count"] = len(organization.get("entity_members", []))
         organization["unloaded_members"] = sorted(set(roster) - set(organization["members"]))
-        organization["membership_status"] = "explicit" if organization["member_basis"] == "explicit" else "derived"
+        organization["membership_status"] = "explicit" if organization["member_basis"] in {"explicit", "explicit_entities"} else "derived"
     return payload
 
 
