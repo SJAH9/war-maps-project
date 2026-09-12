@@ -33,6 +33,8 @@
       <label class="graph-year-control"><span>Through <output id="graph-year-value">2025</output></span><input id="graph-through-year" type="range" min="1946" max="2025" value="2025"></label>
       <button id="graph-reset" type="button">Clear selection</button>
       <button class="graph-optimize" id="graph-optimize" type="button">Optimize</button>
+      <button id="graph-data" type="button">View network data</button>
+      <button id="graph-help" type="button">How to navigate</button>
       <button class="graph-fit" id="graph-fit" type="button" title="Fit the global graph" aria-label="Fit the global graph">⛶</button>
     </section>
 
@@ -49,6 +51,16 @@
     </section>
     <section class="global-graph-summary" id="global-graph-summary"></section>
   </main>
+
+  <dialog class="graph-help-dialog" id="graph-help-dialog" aria-labelledby="graph-help-title">
+    <form method="dialog" class="dialog-heading"><div><p class="eyebrow">Graph controls</p><h2 id="graph-help-title">How to navigate</h2></div><button class="icon-button" value="cancel" aria-label="Close graph instructions">×</button></form>
+    <div class="graph-help-content">
+      <p><strong>Pan:</strong> drag empty space. <strong>Rotate:</strong> hold Shift or Alt while dragging empty space. <strong>Zoom:</strong> scroll or use the fit button.</p>
+      <p><strong>Move a node:</strong> drag it; release to give it momentum. Connected nodes follow gradually. <strong>Optimize:</strong> lays the selected network out in 3D, with connected nodes grouped around hubs.</p>
+      <p><strong>Selection:</strong> selecting a nation narrows the view to its recorded conflict and organization relationships. Search and organization checkboxes focus the camera automatically. “Include ungrouped nations” restores nations outside the selected groups.</p>
+      <p><strong>Evidence:</strong> observed connections are source-derived. Synthetic topology choices are visual comparison models, not evidence of relationships.</p>
+    </div>
+  </dialog>
 
   <footer><a href="about.html">The War Maps Project</a><span>Relationships derived from UCDP state participation records</span><a href="method.html">Method and source boundaries</a></footer>
 </body>

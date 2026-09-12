@@ -800,7 +800,7 @@
         const neighborCounts={};neighbors.forEach(item=>{neighborCounts[item.kind]=(neighborCounts[item.kind]||0)+1;});
         const degree=neighbors.length;
         const degreePercentile=degrees.length?degrees.filter(value=>value<=degree).length/degrees.length:0;
-        byKind.get(node.kind).push({node,conflict,degree,degreeCentrality:graph.nodes.length>1?degree/(graph.nodes.length-1):0,degreePercentile,neighborCounts,year:nodeYear(node,conflict),current:Boolean(conflict.active_at_source_boundary)});
+        byKind.get(node.kind).push({node,conflict,degree,degreeCentrality:graph.nodes.length>1?degree/(graph.nodes.length-1):0,degreePercentile,neighborCounts,fatalities:candidateFatalities(node),year:nodeYear(node,conflict),current:Boolean(conflict.active_at_source_boundary)});
       });
     });
     state.corpusIndex = byKind;
@@ -828,6 +828,7 @@
     const candidateRole=candidate.degreePercentile>=.9?'hub':'peripheral';
     if(sourceRole===candidateRole){score+=.05;reasons.push(`same ${sourceRole} position`);}
     if(source.conflict.type===candidate.conflict.type){score+=.05;reasons.push('same conflict type');}
+    if(source.fatalities>0&&candidate.fatalities>0){const difference=Math.abs(source.fatalities-candidate.fatalities),match=1-difference/Math.max(source.fatalities,candidate.fatalities);score+=Math.max(0,match)*.15;if(source.fatalities===candidate.fatalities)reasons.push(`same casualties (${source.fatalities})`);else if(match>=.8)reasons.push('similar casualties');}
     return {score,reasons};
   }
 
@@ -837,7 +838,7 @@
     const neighborCounts={};connected.forEach(item=>{neighborCounts[item.kind]=(neighborCounts[item.kind]||0)+1;});
     const degrees=state.graph.nodes.map(item=>item.networkScience?.degree||0).sort((a,b)=>a-b);
     const degree=node.networkScience?.degree||0;
-    const source={node,conflict,degree,degreeCentrality:node.networkScience?.degreeCentrality||0,degreePercentile:degrees.length?degrees.filter(value=>value<=degree).length/degrees.length:0,neighborCounts,year:nodeYear(node,conflict),current:Boolean(conflict.active_at_source_boundary)};
+    const source={node,conflict,degree,degreeCentrality:node.networkScience?.degreeCentrality||0,degreePercentile:degrees.length?degrees.filter(value=>value<=degree).length/degrees.length:0,neighborCounts,fatalities:candidateFatalities(node),year:nodeYear(node,conflict),current:Boolean(conflict.active_at_source_boundary)};
     const candidates=buildCorpusIndex().get(node.kind)||[];
     return candidates
       .filter(item=>item.conflict.id!==state.conflictId)
@@ -861,7 +862,7 @@
     const list=$('#node-similar-list');
     if(!list)return;
     const results=similarNodes(node);
-    list.innerHTML=`<p class="similar-disclosure">Structural matches across ${data.conflicts.length.toLocaleString()} conflict records. Scores compare node type, relative degree, degree centrality, and the proportional mix of connected node types. They do not assert equivalence or causation.</p>${results.length?`<div class="similar-list">${results.map(item=>`<button type="button" data-similar-conflict="${esc(item.conflict.id)}" data-similar-node="${esc(item.node.id)}"><i class="node-glyph ${esc(item.node.group)}" aria-hidden="true"></i><span><strong>${esc(item.node.label)}</strong><small>${esc(item.conflict.title)} · ${item.conflict.first_active_year}-${item.current?'present':item.conflict.last_active_year}</small><em>${esc(item.reasons.slice(0,3).join(' · '))}</em></span><b>${Math.round(Math.min(1,item.score)*100)}%</b></button>`).join('')}</div>`:'<p class="similar-status">No comparable nodes meet this period and structural threshold.</p>'}`;
+    list.innerHTML=`<p class="similar-disclosure">Structural matches across ${data.conflicts.length.toLocaleString()} conflict records. Scores compare node type, relative degree, casualties when available, degree centrality, and the proportional mix of connected node types. They do not assert equivalence or causation.</p>${results.length?`<div class="similar-list">${results.map(item=>`<button type="button" data-similar-conflict="${esc(item.conflict.id)}" data-similar-node="${esc(item.node.id)}"><i class="node-glyph ${esc(item.node.group)}" aria-hidden="true"></i><span><strong>${esc(item.node.label)}</strong><small>${esc(item.conflict.title)} · ${item.current?'present':item.conflict.last_active_year}${item.fatalities?` · ${item.fatalities.toLocaleString()} casualties`:''}</small><em>${esc(item.reasons.slice(0,3).join(' · '))}</em></span><b>${Math.round(Math.min(1,item.score)*100)}%</b></button>`).join('')}</div>`:'<p class="similar-status">No comparable nodes meet this period and structural threshold.</p>'}`;
     bindSimilarResults();
   }
 
