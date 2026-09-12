@@ -6,10 +6,22 @@
       "name": "United Nations",
       "entity_kind": "intergovernmental_organization",
       "relation_type": "member",
-      "member_basis": "canonical_map_country_id",
+      "member_basis": "explicit",
       "as_of": "2026-04-30",
       "source_id": "un-member-states-2026",
-      "note": "Derived only across canonical current map-country profiles present in this atlas; historical aliases, territories, and disputed entities are excluded. This is not a substitute for the complete UN roster."
+      "members": [
+        "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan",
+        "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bhutan", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Brunei", "Bulgaria", "Burkina Faso", "Burundi",
+        "Cabo Verde", "Cambodia", "Cameroon", "Canada", "Central African Republic", "Chad", "Chile", "China", "Colombia", "Comoros", "Congo", "Costa Rica", "Cote d'Ivoire", "Croatia", "Cuba", "Cyprus", "Czechia",
+        "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Eswatini", "Ethiopia",
+        "Fiji", "Finland", "France", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Greece", "Grenada", "Guatemala", "Guinea", "Guinea-Bissau", "Guyana", "Haiti", "Honduras", "Hungary",
+        "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica", "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan",
+        "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Monaco", "Mongolia", "Montenegro", "Morocco", "Mozambique", "Myanmar",
+        "Namibia", "Nauru", "Nepal", "Netherlands", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "North Macedonia", "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
+        "Qatar", "South Korea", "Moldova", "Romania", "Russia", "Rwanda", "Saint Kitts and Nevis", "Saint Lucia", "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Sudan", "Spain", "Sri Lanka", "Sudan", "Suriname", "Sweden", "Switzerland", "Syria",
+        "Tajikistan", "Thailand", "Timor-Leste", "Togo", "Tonga", "Trinidad and Tobago", "Tunisia", "Türkiye", "Turkmenistan", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "Tanzania", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Venezuela", "Vietnam", "Yemen", "Zambia", "Zimbabwe"
+      ],
+      "note": "Complete current member-state roster from the United Nations source. The build reports the subset whose canonical names are present in the atlas nation profiles."
     },
     {
       "id": "nato",
@@ -45,11 +57,14 @@
       "id": "wef",
       "name": "World Economic Forum",
       "entity_kind": "nonprofit_multistakeholder_forum",
-      "relation_type": "organization_metadata_only",
-      "member_basis": "not_state_membership",
+      "relation_type": "partner",
+      "member_basis": "explicit_entities",
+      "members": [
+        "ABB", "Accenture", "Amazon", "Apple", "Aramco", "AstraZeneca", "BlackRock", "Citi", "Cisco", "Coca-Cola Company", "Deloitte", "Google", "Goldman Sachs", "IBM", "JPMorganChase", "Mastercard", "McKinsey & Company", "Microsoft", "Nestlé", "Palantir Technologies", "PepsiCo", "Pfizer", "Salesforce", "SAP", "Siemens", "Sony Group", "UBS", "Unilever", "Visa", "Volkswagen Group"
+      ],
       "as_of": "2026-09-11",
       "source_id": "wef-membership-and-partners",
-      "note": "The Forum's membership and partner communities are primarily companies and other stakeholders. This release does not infer state membership from attendance, partnership, or participation."
+      "note": "The Forum's membership and partner communities are primarily companies and other stakeholders. These entity records are retained for a future entity graph; this state graph does not infer state membership from attendance, partnership, or participation."
     }
   ],
   "sources": [

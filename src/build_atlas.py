@@ -72,6 +72,15 @@ VDEM_FIELDS = (
     "v2cltort", "v2x_clphy", "v2clrspct", "v2x_freexp",
 )
 
+ORGANIZATION_NAME_ALIASES = {
+    "United States": "United States of America",
+    "Tanzania": "United Republic of Tanzania",
+    "Cote d'Ivoire": "Ivory Coast",
+    "Cabo Verde": "Cape Verde",
+    "Brunei": "Brunei Darussalam",
+    "Türkiye": "Türkiye",
+}
+
 
 def departure(statement: str, departure_id: str, *, measurements: list[str] | None = None,
               join_keys: list[str] | None = None) -> dict:
@@ -648,19 +657,24 @@ def organization_memberships(nations: list[dict]) -> dict:
     payload = json.loads(ORGANIZATIONS.read_text(encoding="utf-8"))
     nation_names = {item["country"] for item in nations}
     for organization in payload["organizations"]:
-        if organization.get("member_basis") == "canonical_map_country_id":
-            excluded = {
-                "Antarctica", "Falkland Islands", "French Southern and Antarctic Lands", "Greenland",
-                "Hong Kong", "Kosovo", "New Caledonia", "Palestine/British Mandate", "Palestine/Gaza",
-                "Palestine/West Bank", "Puerto Rico", "Somaliland", "Taiwan", "Western Sahara", "Zanzibar",
-                "East Timor", "German Democratic Republic", "Republic of Serbia", "Republic of Vietnam",
-                "South Yemen", "The Bahamas", "Turkey", "United Republic of Tanzania", "Vietnam",
-            }
-            members = [item["country"] for item in nations if item.get("country_id") and item["country"] == item.get("map_name") and item["country"] not in excluded]
+        if organization.get("member_basis") == "explicit_entities":
+            organization["entity_members"] = sorted(set(organization.get("members", [])))
+            roster = []
+            members = []
+        elif organization.get("member_basis") == "explicit":
+            roster = [ORGANIZATION_NAME_ALIASES.get(member, member) for member in organization.get("members", [])]
+            members = []
+            for canonical in roster:
+                if canonical in nation_names:
+                    members.append(canonical)
         else:
-            members = [item for item in organization.get("members", []) if item in nation_names]
+            roster = list(organization.get("members", []))
+            members = [item for item in roster if item in nation_names]
+        organization["member_roster_count"] = len(roster)
         organization["members"] = sorted(set(members))
         organization["member_count"] = len(organization["members"])
+        organization["entity_member_count"] = len(organization.get("entity_members", []))
+        organization["unloaded_members"] = sorted(set(roster) - set(organization["members"]))
         organization["membership_status"] = "explicit" if organization["member_basis"] == "explicit" else "derived"
     return payload
 
