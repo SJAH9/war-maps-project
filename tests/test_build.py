@@ -152,6 +152,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn('value="organization"', page)
         self.assertIn("organizationLinks", source)
         self.assertIn("organization.entity_members.forEach", source)
+        self.assertIn("observedKeys.has([link.source,link.target].sort().join('\\u0000'))", source)
         self.assertIn("Shared organization membership", source)
         self.assertIn("syntheticLinks", source)
         self.assertIn("organization co-membership", source)

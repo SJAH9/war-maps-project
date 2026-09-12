@@ -79,7 +79,7 @@
     }));
     const observedLinks=[...edges.values()],membershipLinks=organizationLinks(nodes),observedKeys=new Set(observedLinks.map(link=>[link.source,link.target].sort().join('\u0000')));
     state.nodes=new Map(nodes.map(node=>[node.id,node]));
-    const basisLinks=state.relationship==='observed'?observedLinks:state.relationship==='organization'?membershipLinks:[...observedLinks,...membershipLinks.filter(link=>!observedKeys.has([link.source,link.target].sort().join('\u0000)))];
+    const basisLinks=state.relationship==='observed'?observedLinks:state.relationship==='organization'?membershipLinks:[...observedLinks,...membershipLinks.filter(link=>!observedKeys.has([link.source,link.target].sort().join('\u0000')))];
     state.links=state.topology==='observed'?basisLinks:syntheticLinks(nodes,basisLinks,state.topology);
     state.nodes.forEach(node=>{node.degree=0;node.weightedDegree=0;});
     state.links.forEach(link=>{state.nodes.get(link.source).degree++;state.nodes.get(link.target).degree++;state.nodes.get(link.source).weightedDegree+=link.years;state.nodes.get(link.target).weightedDegree+=link.years;});
