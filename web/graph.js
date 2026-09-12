@@ -8,6 +8,7 @@
   const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organization:'all',topology:'observed',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
   const relationshipLabel=()=>state.relationship==='observed'?'same-side participation':state.relationship==='organization'?'organization co-membership':'displayed relationship';
+  const linkDescription=link=>link.kind==='organization'?`Shared ${link.organizations?.join(', ')||'organization'} membership`:link.kind==='synthetic'?`Synthetic ${link.model} edge`:`${link.years} shared years`;
 
   function updatePageDescription(){
     const entityScope=state.organization==='wef',synthetic=state.topology!=='observed',title=entityScope?'World Economic Forum partner entities':state.relationship==='organization'?'States joined by organization membership':'States joined by conflict and organization records';
@@ -22,8 +23,16 @@
   function organizationLinks(nodes){
     const selected=state.organization==='all'?data.organizations||[]:(data.organizations||[]).filter(item=>item.id===state.organization),links=new Map(),nodeIds=new Set(nodes.map(node=>node.id));
     selected.filter(item=>item.member_count||item.entity_member_count).forEach(organization=>{
-      const members=organization.entity_member_count?[`organization:${organization.id}`,...organization.entity_members.map(member=>`entity:${organization.id}:${member}`)]:organization.members.filter(member=>nodeIds.has(member));
-      if(organization.entity_member_count&&!nodeIds.has(`organization:${organization.id}`))return;
+      if(organization.entity_member_count){
+        const organizationId=`organization:${organization.id}`;
+        if(!nodeIds.has(organizationId))return;
+        organization.entity_members.forEach(member=>{
+          const pair=[organizationId,`entity:${organization.id}:${member}`].sort(),key=pair.join('\u0000'),existing=links.get(key);
+          if(existing)existing.organizations.push(organization.name);else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name]});
+        });
+        return;
+      }
+      const members=organization.members.filter(member=>nodeIds.has(member));
       for(let left=0;left<members.length;left++)for(let right=left+1;right<members.length;right++){
         const pair=[members[left],members[right]].sort(),key=pair.join('\u0000'),existing=links.get(key);
         if(existing)existing.organizations.push(organization.name);else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name]});
@@ -224,15 +233,15 @@
   }
 
   function renderMatrix(model){
-    const container=$('#global-graph'),nodes=[...model.nodes].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).slice(0,80),byPair=new Map(model.links.map(link=>[[link.source,link.target].sort().join('\u0000'),link]));
-    container.innerHTML=`<div class="global-graph-matrix"><table><thead><tr><th>State</th>${nodes.map(node=>`<th title="${esc(node.label)}">${esc(node.label.slice(0,3))}</th>`).join('')}</tr></thead><tbody>${nodes.map(row=>`<tr><th>${esc(row.label)}</th>${nodes.map(column=>{const link=byPair.get([row.id,column.id].sort().join('\u0000')),selected=state.selected&&(row.id===state.selected||column.id===state.selected);return `<td class="${selected?'is-selected':''}" ${link?`data-years="${link.years}" style="--cell-strength:${Math.min(1,link.years/30)}" data-source="${esc(row.id)}" data-target="${esc(column.id)}" title="${esc(row.label)} · ${esc(column.label)} · ${link.years} shared years`:''}></td>`;}).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const container=$('#global-graph'),nodes=[...model.nodes].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).slice(0,80),byPair=new Map(model.links.map(link=>[[link.source,link.target].sort().join('\u0000'),link])),heading=state.organization==='wef'?'Entity': 'State';
+    container.innerHTML=`<div class="global-graph-matrix"><table><thead><tr><th>${heading}</th>${nodes.map(node=>`<th title="${esc(node.label)}">${esc(node.label.slice(0,3))}</th>`).join('')}</tr></thead><tbody>${nodes.map(row=>`<tr><th>${esc(row.label)}</th>${nodes.map(column=>{const link=byPair.get([row.id,column.id].sort().join('\u0000')),selected=state.selected&&(row.id===state.selected||column.id===state.selected),strength=link?(link.kind==='organization'?1:link.kind==='synthetic'?.7:Math.min(1,link.years/30)):0;return `<td class="${selected?'is-selected':''}" ${link?`data-years="${link.years}" style="--cell-strength:${strength}" data-source="${esc(row.id)}" data-target="${esc(column.id)}" title="${esc(row.label)} · ${esc(column.label)} · ${esc(linkDescription(link))}`:''}></td>`;}).join('')}</tr>`).join('')}</tbody></table></div>`;
     container.querySelectorAll('[data-source]').forEach(cell=>cell.addEventListener('click',()=>focusNation(cell.dataset.source)));
   }
 
   function renderTimeline(model){
     const container=$('#global-graph'),links=[...model.links].filter(link=>Number.isFinite(link.firstYear)).sort((a,b)=>b.years-a.years||a.firstYear-b.firstYear).slice(0,70),left=250,right=30,top=30,row=24,width=1150,height=top+links.length*row+45,x=year=>left+(year-1946)/(2025-1946)*(width-left-right);
-    if(!links.length){container.innerHTML='<p class="boundary-note">Organization co-membership has no time interval in this layer; choose the Network or Adjacency matrix view.</p>';return;}
-    container.innerHTML=`<div class="global-graph-timeline"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Timeline of shared-side state relationships"><line class="axis" x1="${left}" x2="${width-right}" y1="${top-10}" y2="${top-10}"></line><text x="${left}" y="${top-17}">1946</text><text x="${width-right-30}" y="${top-17}">2025</text>${links.map((link,index)=>{const selected=state.selected&&(link.source===state.selected||link.target===state.selected);return `<g data-source="${esc(link.source)}" data-target="${esc(link.target)}"><text x="${left-10}" y="${top+index*row+9}" text-anchor="end">${esc(link.source)} · ${esc(link.target)}</text><rect class="bar ${selected?'selected':''}" x="${x(link.firstYear)}" y="${top+index*row}" width="${Math.max(3,x(link.lastYear)-x(link.firstYear))}" height="14" rx="3"><title>${esc(link.source)} · ${esc(link.target)} · ${link.years} shared years</title></rect></g>`;}).join('')}</svg></div>`;
+    if(!links.length){container.innerHTML=`<p class="boundary-note">${state.topology!=='observed'?'Synthetic topology has no historical interval.':'Organization co-membership has no time interval in this layer.'} Choose the Network or Adjacency matrix view.</p>`;return;}
+    container.innerHTML=`<div class="global-graph-timeline"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Timeline of shared-side state relationships"><line class="axis" x1="${left}" x2="${width-right}" y1="${top-10}" y2="${top-10}"></line><text x="${left}" y="${top-17}">1946</text><text x="${width-right-30}" y="${top-17}">2025</text>${links.map((link,index)=>{const selected=state.selected&&(link.source===state.selected||link.target===state.selected);return `<g data-source="${esc(link.source)}" data-target="${esc(link.target)}"><text x="${left-10}" y="${top+index*row+9}" text-anchor="end">${esc(link.source)} · ${esc(link.target)}</text><rect class="bar ${selected?'selected':''}" x="${x(link.firstYear)}" y="${top+index*row}" width="${Math.max(3,x(link.lastYear)-x(link.firstYear))}" height="14" rx="3"><title>${esc(link.source)} · ${esc(link.target)} · ${esc(linkDescription(link))}</title></rect></g>`;}).join('')}</svg></div>`;
     container.querySelectorAll('[data-source]').forEach(item=>item.addEventListener('click',()=>focusNation(item.dataset.source)));
   }
 
