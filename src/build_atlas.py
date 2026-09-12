@@ -25,6 +25,7 @@ SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-08-29.json"
 SATELLITE_RELATIONS = ROOT / "data/curated/satellite_relations.json"
 CLAIMS = ROOT / "data/curated/claims.json"
 PROJECTIONS = ROOT / "data/curated/projections.json"
+ORGANIZATIONS = ROOT / "data/curated/organization_memberships.json"
 SOURCES = ROOT / "data/SOURCES.json"
 OUTPUT = ROOT / "data/processed/war_maps.json"
 
@@ -642,6 +643,21 @@ def satellite_constellations() -> list[dict]:
     return relations
 
 
+def organization_memberships(nations: list[dict]) -> dict:
+    """Load typed organization relations without turning them into alliances."""
+    payload = json.loads(ORGANIZATIONS.read_text(encoding="utf-8"))
+    nation_names = {item["country"] for item in nations}
+    for organization in payload["organizations"]:
+        if organization.get("member_basis") == "country_profile_country_id":
+            members = [item["country"] for item in nations if item.get("country_id")]
+        else:
+            members = [item for item in organization.get("members", []) if item in nation_names]
+        organization["members"] = sorted(set(members))
+        organization["member_count"] = len(organization["members"])
+        organization["membership_status"] = "explicit" if organization["member_basis"] == "explicit" else "derived"
+    return payload
+
+
 def build() -> dict:
     conflicts, years, states = historical_records()
     historical_conflict_count = len(conflicts)
@@ -649,10 +665,13 @@ def build() -> dict:
     events, candidate_conflicts = current_events()
     conflicts.extend(candidate_conflicts)
     nations = nation_profiles(conflicts, years, states, state_conditions, events)
+    organizations = organization_memberships(nations)
     constellations = satellite_constellations()
     claims = json.loads(CLAIMS.read_text(encoding="utf-8"))["claims"]
     projections = json.loads(PROJECTIONS.read_text(encoding="utf-8"))["projections"]
     sources = json.loads(SOURCES.read_text(encoding="utf-8"))["sources"]
+    known_source_ids = {source["id"] for source in sources}
+    sources.extend(source for source in organizations.get("sources", []) if source["id"] not in known_source_ids)
     for conflict in conflicts:
         conflict["enclosure"] = canonical_enclosure(
             conflict["enclosure"], f"conflict.{conflict['id']}",
@@ -688,11 +707,14 @@ def build() -> dict:
             "vdem_state_years": len(state_conditions),
             "prompted_projection_branches": len(projections) + sum(claim["source_type"] == "user-prompted-causal-projection" for claim in claims),
             "public_satellite_orbits": sum(item["object_count"] for item in constellations),
+            "organizations": len(organizations["organizations"]),
+            "organization_memberships": sum(item["member_count"] for item in organizations["organizations"]),
         },
         "conflicts": conflicts,
         "conflict_years": years,
         "states": states,
         "nations": nations,
+        "organizations": organizations["organizations"],
         "regime_types": [{"code": code, "name": name} for code, name in REGIME_NAMES.items()],
         "satellite_constellations": constellations,
         "state_conditions": state_conditions,

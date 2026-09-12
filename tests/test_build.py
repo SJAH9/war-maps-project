@@ -142,9 +142,27 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("event.key.toLowerCase()!=='o'", source)
         self.assertIn("scene.optimize", source)
         self.assertIn('id="graph-optimize"', page)
+        self.assertIn('id="graph-relationship"', page)
+        self.assertIn('value="organization"', page)
+        self.assertIn("organizationLinks", source)
+        self.assertIn("Shared organization membership", source)
         self.assertIn("Math.sqrt(node.degree)", source)
         self.assertNotIn("3d-force-graph", page)
         self.assertNotIn("addEdge(opposing", source)
+
+    def test_organization_layer_is_typed_and_source_bound(self):
+        organizations = self.data["organizations"]
+        by_id = {item["id"]: item for item in organizations}
+        self.assertEqual(set(by_id), {"un", "nato", "brics", "wef"})
+        self.assertEqual(by_id["nato"]["relation_type"], "member")
+        self.assertEqual(by_id["brics"]["relation_type"], "member")
+        self.assertEqual(by_id["wef"]["relation_type"], "organization_metadata_only")
+        self.assertGreaterEqual(by_id["nato"]["member_count"], 30)
+        self.assertGreaterEqual(by_id["brics"]["member_count"], 10)
+        self.assertEqual(by_id["wef"]["member_count"], 0)
+        source_ids = {source["id"] for source in self.data["sources"]}
+        self.assertTrue({item["source_id"] for item in organizations}.issubset(source_ids))
+        self.assertTrue(all(item["membership_status"] in {"explicit", "derived"} for item in organizations))
 
     def test_print_war_map_has_bounded_interval_and_life_death_field(self):
         specs = json.loads(ROOT.joinpath("data/curated/print_war_maps.json").read_text(encoding="utf-8"))

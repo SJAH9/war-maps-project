@@ -436,28 +436,6 @@
     return positions;
   }
 
-  function organizationPositions(nodes, mode) {
-    const degree=node=>node.networkScience?.degree||0;
-    const hash=value=>{let result=0;for(const char of String(value))result=(result*31+char.charCodeAt(0))|0;return Math.abs(result);};
-    const angle=node=>hash(node.id)%6283/1000;
-    if(mode==='force')return optimizedNodePositions(nodes);
-    if(mode==='barabasi'||mode==='scale-free'){
-      const ordered=[...nodes].sort((a,b)=>degree(b)-degree(a)||a.id.localeCompare(b.id));
-      return new Map(ordered.map((node,index)=>{
-        const radius=index?((mode==='barabasi'?19:15)*Math.sqrt(index)+Math.max(0,35-degree(node))*.35):0;
-        const theta=angle(node)+index*(mode==='barabasi'?.37:2.399963);
-        return [node.id,{x:Math.cos(theta)*radius,y:Math.sin(theta)*radius,z:mode==='scale-free'?0:(index%7-3)*2}];
-      }));
-    }
-    if(mode==='social-degrees'){
-      const groups=new Map();[...nodes].sort((a,b)=>degree(a)-degree(b)||a.id.localeCompare(b.id)).forEach(node=>{if(!groups.has(degree(node)))groups.set(degree(node),[]);groups.get(degree(node)).push(node);});
-      const positions=new Map();[...groups.values()].forEach((group,shell)=>group.forEach((node,index)=>{const theta=2*Math.PI*index/group.length+angle(node)*.1,radius=18+shell*16;positions.set(node.id,{x:Math.cos(theta)*radius,y:Math.sin(theta)*radius,z:0});}));
-      return positions;
-    }
-    const ordered=[...nodes].sort((a,b)=>a.id.localeCompare(b.id));
-    return new Map(ordered.map((node,index)=>{const radius=18*Math.sqrt(1.2+index*.92),theta=index*2.399963;return [node.id,{x:Math.cos(theta)*radius,y:Math.sin(theta)*radius,z:((hash(node.id)%101)-50)*.7}];}));
-  }
-
   function animateOptimizedLayout(nodes,targets,draw,complete) {
     cancelAnimationFrame(state.layoutFrame);
     const starts=new Map(nodes.map(node=>[node.id,{x:node.x||0,y:node.y||0,z:node.z||0}]));
@@ -497,20 +475,6 @@
     }
     state.positions=new Map([...state.optimizedPositions].map(([id,point])=>[id,{x:point.x/52,y:point.y/52}]));
     renderPlot();
-  }
-
-  function applyOrganization(mode) {
-    if(!state.graph)return;
-    state.organization=mode;
-    if(mode==='force'){
-      state.optimized=false;state.optimizedPositions.clear();$('#network-optimize')?.setAttribute('aria-pressed','false');
-      if(state.renderMode==='3d'&&state.forceGraph){state.forceGraph.graphData().nodes.forEach(node=>{node.fx=undefined;node.fy=undefined;node.fz=undefined;});state.forceGraph.d3ReheatSimulation();startAutoRotation();}
-      else renderPlot();
-      return;
-    }
-    state.optimized=true;state.optimizedPositions=organizationPositions(state.graph.nodes,mode);$('#network-optimize')?.setAttribute('aria-pressed','true');stopMotion();
-    if(state.renderMode==='3d'&&state.forceGraph){const nodes=state.forceGraph.graphData().nodes;animateOptimizedLayout(nodes,state.optimizedPositions,()=>state.forceGraph.refresh(),()=>{state.forceGraph.cameraPosition({x:0,y:0,z:520},{x:0,y:0,z:0},700);state.forceGraph.zoomToFit(700,90);startAutoRotation();});return;}
-    state.positions=new Map([...state.optimizedPositions].map(([id,point])=>[id,{x:point.x/52,y:point.y/52}]));renderPlot();
   }
 
   function stopNativeLabels() {
@@ -1052,7 +1016,6 @@
   $('#network-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#network-end').value=state.end;}renderGraph();});
   $('#network-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
   $('#network-optimize').addEventListener('click',optimizeView);
-  $('#network-organization').addEventListener('change',event=>applyOrganization(event.target.value));
   $('#network-data').addEventListener('click',viewNetworkData);
   $('#network-fit').addEventListener('click',()=>{noteInteraction();if(state.forceGraph&&state.renderMode==='3d')state.forceGraph.zoomToFit(500,70);else if(state.renderMode==='svg3d'&&state.svgScene){Object.assign(state.svgScene,{yaw:-.32,pitch:.22,zoom:1});state.svgScene.draw();}else if(window.Plotly)Plotly.relayout('network-canvas',{'xaxis.autorange':true,'yaxis.autorange':true});});
   $('#network-search').addEventListener('input',event=>{

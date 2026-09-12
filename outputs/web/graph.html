@@ -27,7 +27,8 @@
       <label><span>Find nation</span><input id="graph-search" type="search" placeholder="Nation"></label>
       <label><span>Minimum shared years</span><select id="graph-min-years"><option value="1">1 year</option><option value="2">2 years</option><option value="5">5 years</option><option value="10">10 years</option></select></label>
       <label><span>View</span><select id="graph-view"><option value="network">Network</option><option value="matrix">Adjacency matrix</option><option value="timeline">Timeline</option></select></label>
-      <label><span>Organize graph</span><select id="graph-organization"><option value="force">Force-directed</option><option value="barabasi">Barabási</option><option value="erdos-renyi">Erdős–Rényi</option><option value="scale-free">Scale-free</option><option value="social-degrees">Social degrees</option></select></label>
+      <label><span>Connections</span><select id="graph-relationship"><option value="observed">Observed same-side participation</option><option value="organization">Organization co-membership</option><option value="combined">Observed + organization</option></select></label>
+      <label><span>Organization</span><select id="graph-organization"><option value="all">All sourced organizations</option><option value="un">United Nations</option><option value="nato">NATO</option><option value="brics">BRICS</option><option value="wef">World Economic Forum</option></select></label>
       <label class="graph-year-control"><span>Through <output id="graph-year-value">2025</output></span><input id="graph-through-year" type="range" min="1946" max="2025" value="2025"></label>
       <button id="graph-reset" type="button">Clear selection</button>
       <button class="graph-optimize" id="graph-optimize" type="button">Optimize</button>

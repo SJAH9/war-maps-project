@@ -5,11 +5,23 @@
   if(!data?.nations){$('#global-graph').innerHTML='<p class="boundary-note network-error">The global atlas relationship data is unavailable.</p>';return;}
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
-  const state={minYears:1,throughYear:2025,view:'network',organization:'force',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
+  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organization:'all',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
 
   function normalizedRelations(profile,key){
     return (profile?.[key]||[]).filter(item=>profileByName.has(item.country));
+  }
+
+  function organizationLinks(nodes){
+    const selected=state.organization==='all'?data.organizations||[]:(data.organizations||[]).filter(item=>item.id===state.organization),links=new Map(),nodeIds=new Set(nodes.map(node=>node.id));
+    selected.filter(item=>item.member_count&&item.relation_type!=='organization_metadata_only').forEach(organization=>{
+      const members=organization.members.filter(member=>nodeIds.has(member));
+      for(let left=0;left<members.length;left++)for(let right=left+1;right<members.length;right++){
+        const pair=[members[left],members[right]].sort(),key=pair.join('\u0000'),existing=links.get(key);
+        if(existing)existing.organizations.push(organization.name);else links.set(key,{source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'organization',organizations:[organization.name]});
+      }
+    });
+    return [...links.values()];
   }
 
   function buildModel(){
@@ -28,7 +40,11 @@
       const existing=edges.get(key);
       if(!existing||years>existing.years)edges.set(key,{source:pair[0],target:pair[1],years,firstYear:relation.first_year,lastYear,conflictIds:relation.conflict_ids||[]});
     }));
-    state.nodes=new Map(nodes.map(node=>[node.id,node]));state.links=[...edges.values()];
+    const observedLinks=[...edges.values()],membershipLinks=organizationLinks(nodes),observedKeys=new Set(observedLinks.map(link=>[link.source,link.target].sort().join('\u0000')));
+    state.nodes=new Map(nodes.map(node=>[node.id,node]));
+    state.links=state.relationship==='observed'?observedLinks:state.relationship==='organization'?membershipLinks:[...observedLinks,...membershipLinks.filter(link=>!observedKeys.has([link.source,link.target].sort().join('\u0000)))];
+    state.nodes.forEach(node=>{node.degree=0;node.weightedDegree=0;});
+    state.links.forEach(link=>{state.nodes.get(link.source).degree++;state.nodes.get(link.target).degree++;state.nodes.get(link.source).weightedDegree+=link.years;state.nodes.get(link.target).weightedDegree+=link.years;});
     state.adjacency=new Map(nodes.map(node=>[node.id,new Set()]));
     state.links.forEach(link=>{state.adjacency.get(link.source)?.add(link.target);state.adjacency.get(link.target)?.add(link.source);});
     state.opponents=new Map(nodes.map(node=>[node.id,new Set(normalizedRelations(node.profile,'opposing_states').map(item=>item.country))]));
@@ -113,29 +129,11 @@
 
   function renderSummary(){
     const components=connectedComponents(),active=[...state.nodes.values()].filter(node=>node.degree>0),possible=state.nodes.size*(state.nodes.size-1)/2,density=possible?state.links.length/possible:0;
-    $('#global-graph-summary').innerHTML=`<div><span>Displayed states</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>States with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Same-side ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} states</strong></div><div><span>Edge rule</span><strong>Same-side records only</strong></div>`;
-  }
-
-  function organizedLayout(model){
-    const width=1200,height=780,center={x:width/2,y:height/2},degree=node=>node.degree||0;
-    const hash=value=>{let result=0;for(const char of String(value))result=(result*31+char.charCodeAt(0))|0;return Math.abs(result);};
-    const angle=node=>hash(node.id)%6283/1000;
-    const nodes=[...model.nodes].sort((a,b)=>degree(b)-degree(a)||a.label.localeCompare(b.label));
-    if(state.organization==='social-degrees'){
-      const groups=new Map();nodes.sort((a,b)=>degree(a)-degree(b)||a.label.localeCompare(b.label)).forEach(node=>{if(!groups.has(degree(node)))groups.set(degree(node),[]);groups.get(degree(node)).push(node);});
-      [...groups.values()].forEach((group,shell)=>group.forEach((node,index)=>{const theta=index*2*Math.PI/group.length+angle(node)*.1,radius=35+shell*42;node.x=center.x+Math.cos(theta)*radius;node.y=center.y+Math.sin(theta)*radius;node.topLabel=shell>groups.size-3||index===0;}));
-    }else nodes.forEach((node,index)=>{
-      const radius=state.organization==='barabasi'?(index?23*Math.sqrt(index)+Math.max(0,28-degree(node))*.8:0):state.organization==='scale-free'?(index?18+index*5+Math.max(0,22-degree(node))*.7:0):26*Math.sqrt(index+1);
-      const theta=angle(node)+index*(state.organization==='barabasi'?.37:2.399963);
-      node.x=center.x+Math.cos(theta)*radius;node.y=center.y+Math.sin(theta)*radius;node.topLabel=index<16;
-    });
-    const xs=model.nodes.map(node=>node.x),ys=model.nodes.map(node=>node.y),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys),scale=Math.min(1080/Math.max(1,maxX-minX),660/Math.max(1,maxY-minY));
-    model.nodes.forEach(node=>{node.x=60+(node.x-minX)*scale;node.y=60+(node.y-minY)*scale;node.z=0;});
-    return new Map(model.nodes.map(node=>[node.id,node]));
+    const rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Shared organization membership':'Observed records plus shared organization membership';
+    $('#global-graph-summary').innerHTML=`<div><span>Displayed states</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>States with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} states</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div>`;
   }
 
   function forceLayout(model){
-    if(state.organization!=='force')return organizedLayout(model);
     const width=1200,height=780,nodes=model.nodes,byId=new Map(nodes.map(node=>[node.id,node]));
     nodes.sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).forEach((node,index)=>{const angle=index*2.3999632297,radius=29*Math.sqrt(index+1);node.topLabel=index<12;node.x=width/2+Math.cos(angle)*radius;node.y=height/2+Math.sin(angle)*radius;node.vx=0;node.vy=0;});
     const k=Math.sqrt((width*height)/Math.max(1,nodes.length));
@@ -195,7 +193,8 @@
   }
 
   function renderTimeline(model){
-    const container=$('#global-graph'),links=[...model.links].sort((a,b)=>b.years-a.years||a.firstYear-b.firstYear).slice(0,70),left=250,right=30,top=30,row=24,width=1150,height=top+links.length*row+45,x=year=>left+(year-1946)/(2025-1946)*(width-left-right);
+    const container=$('#global-graph'),links=[...model.links].filter(link=>Number.isFinite(link.firstYear)).sort((a,b)=>b.years-a.years||a.firstYear-b.firstYear).slice(0,70),left=250,right=30,top=30,row=24,width=1150,height=top+links.length*row+45,x=year=>left+(year-1946)/(2025-1946)*(width-left-right);
+    if(!links.length){container.innerHTML='<p class="boundary-note">Organization co-membership has no time interval in this layer; choose the Network or Adjacency matrix view.</p>';return;}
     container.innerHTML=`<div class="global-graph-timeline"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Timeline of shared-side state relationships"><line class="axis" x1="${left}" x2="${width-right}" y1="${top-10}" y2="${top-10}"></line><text x="${left}" y="${top-17}">1946</text><text x="${width-right-30}" y="${top-17}">2025</text>${links.map((link,index)=>{const selected=state.selected&&(link.source===state.selected||link.target===state.selected);return `<g data-source="${esc(link.source)}" data-target="${esc(link.target)}"><text x="${left-10}" y="${top+index*row+9}" text-anchor="end">${esc(link.source)} · ${esc(link.target)}</text><rect class="bar ${selected?'selected':''}" x="${x(link.firstYear)}" y="${top+index*row}" width="${Math.max(3,x(link.lastYear)-x(link.firstYear))}" height="14" rx="3"><title>${esc(link.source)} · ${esc(link.target)} · ${link.years} shared years</title></rect></g>`;}).join('')}</svg></div>`;
     container.querySelectorAll('[data-source]').forEach(item=>item.addEventListener('click',()=>focusNation(item.dataset.source)));
   }
@@ -212,7 +211,8 @@
   $('#graph-search').addEventListener('input',event=>{const needle=event.target.value.trim().toLowerCase();if(!needle)return;const match=[...state.nodes.values()].find(node=>node.label.toLowerCase().includes(needle));if(match)focusNation(match.id);});
   $('#graph-min-years').addEventListener('change',event=>{state.minYears=Number(event.target.value);state.selected='';render();});
   $('#graph-view').addEventListener('change',event=>{state.view=event.target.value;render();});
-  $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;render();});
+  $('#graph-relationship').addEventListener('change',event=>{state.relationship=event.target.value;state.selected='';render();});
+  $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;state.selected='';render();});
   $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});
   $('#graph-optimize').addEventListener('click',()=>state.svgScene?.optimize());

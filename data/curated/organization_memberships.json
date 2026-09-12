@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "organizations": [
+    {
+      "id": "un",
+      "name": "United Nations",
+      "entity_kind": "intergovernmental_organization",
+      "relation_type": "member",
+      "member_basis": "country_profile_country_id",
+      "as_of": "2026-04-30",
+      "source_id": "un-member-states-2026"
+    },
+    {
+      "id": "nato",
+      "name": "North Atlantic Treaty Organization",
+      "entity_kind": "intergovernmental_organization",
+      "relation_type": "member",
+      "member_basis": "explicit",
+      "members": [
+        "Albania", "Belgium", "Bulgaria", "Canada", "Croatia", "Czechia",
+        "Denmark", "Estonia", "Finland", "France", "Germany", "Greece",
+        "Hungary", "Iceland", "Italy", "Latvia", "Lithuania", "Luxembourg",
+        "Montenegro", "North Macedonia", "Norway", "Poland", "Portugal",
+        "Romania", "Slovakia", "Slovenia", "Spain", "Sweden", "Netherlands",
+        "Türkiye", "United Kingdom", "United States"
+      ],
+      "as_of": "2026-09-11",
+      "source_id": "nato-member-countries"
+    },
+    {
+      "id": "brics",
+      "name": "BRICS",
+      "entity_kind": "intergovernmental_forum",
+      "relation_type": "member",
+      "member_basis": "explicit",
+      "members": [
+        "Brazil", "China", "Egypt", "Ethiopia", "India", "Indonesia",
+        "Iran", "Russia", "Saudi Arabia", "South Africa", "United Arab Emirates"
+      ],
+      "as_of": "2026-09-11",
+      "source_id": "brics-about-the-brics"
+    },
+    {
+      "id": "wef",
+      "name": "World Economic Forum",
+      "entity_kind": "nonprofit_multistakeholder_forum",
+      "relation_type": "organization_metadata_only",
+      "member_basis": "not_state_membership",
+      "as_of": "2026-09-11",
+      "source_id": "wef-membership-and-partners",
+      "note": "The Forum's membership and partner communities are primarily companies and other stakeholders. This release does not infer state membership from attendance, partnership, or participation."
+    }
+  ],
+  "sources": [
+    {
+      "id": "un-member-states-2026",
+      "title": "United Nations Member States",
+      "publisher": "United Nations",
+      "url": "https://www.un.org/about-us/member-states",
+      "coverage": "Current UN member-state roster; admission dates supplied by the UN",
+      "retrieved": "2026-09-11",
+      "license": "United Nations attribution and use terms"
+    },
+    {
+      "id": "nato-member-countries",
+      "title": "NATO member countries",
+      "publisher": "North Atlantic Treaty Organization",
+      "url": "https://www.nato.int/cps/en/natohq/nato_countries.htm",
+      "coverage": "NATO member countries and accession years",
+      "retrieved": "2026-09-11",
+      "license": "NATO website terms"
+    },
+    {
+      "id": "brics-about-the-brics",
+      "title": "About the BRICS",
+      "publisher": "BRICS Brazil",
+      "url": "https://brics.br/en/about-the-brics",
+      "coverage": "BRICS member-country roster and stated institutional scope",
+      "retrieved": "2026-09-11",
+      "license": "Source attribution"
+    },
+    {
+      "id": "wef-membership-and-partners",
+      "title": "Forum membership and partner communities",
+      "publisher": "World Economic Forum",
+      "url": "https://www.weforum.org/communities/partnership-institutional-membership/",
+      "coverage": "Institutional membership and partner-community semantics; not a state roster",
+      "retrieved": "2026-09-11",
+      "license": "World Economic Forum source terms"
+    }
+  ]
+}
