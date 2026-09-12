@@ -5,7 +5,7 @@
   if(!data?.nations){$('#global-graph').innerHTML='<p class="boundary-note network-error">The global atlas relationship data is unavailable.</p>';return;}
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
-  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organization:'all',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
+  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organization:'all',topology:'observed',selected:'',nodes:new Map(),links:[],adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
 
   function normalizedRelations(profile,key){
@@ -22,6 +22,25 @@
       }
     });
     return [...links.values()];
+  }
+
+  function seededRandom(seed){let value=0;for(const char of String(seed))value=(value*31+char.charCodeAt(0))>>>0;return ()=>{value=(value*1664525+1013904223)>>>0;return value/4294967296;};}
+
+  function syntheticLinks(nodes,basis,model){
+    const ordered=[...nodes].sort((a,b)=>a.id.localeCompare(b.id)),n=ordered.length,random=seededRandom(`${model}|${ordered.map(node=>node.id).join('|')}`),links=[],keys=new Set();
+    const add=(left,right)=>{if(left===right)return;const pair=[left,right].sort(),key=pair.join('\u0000');if(keys.has(key))return;keys.add(key);links.push({source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'synthetic',model});};
+    if(n<2)return links;
+    const density=Math.max(0.01,Math.min(.35,basis.length/Math.max(1,n*(n-1)/2)));
+    if(model==='erdos-renyi'){for(let left=0;left<n;left++)for(let right=left+1;right<n;right++)if(random()<density)add(ordered[left].id,ordered[right].id);}
+    else if(model==='barabasi-albert'){
+      const m=Math.max(1,Math.min(4,n-1)),degrees=new Map(ordered.map(node=>[node.id,0]));
+      for(let left=0;left<m+1;left++)for(let right=left+1;right<m+1;right++){add(ordered[left].id,ordered[right].id);degrees.set(ordered[left].id,degrees.get(ordered[left].id)+1);degrees.set(ordered[right].id,degrees.get(ordered[right].id)+1);}
+      for(let index=m+1;index<n;index++){const chosen=new Set(),total=[...degrees.values()].reduce((sum,value)=>sum+value,0)||1;while(chosen.size<m){let cursor=random()*total;for(const node of ordered.slice(0,index)){cursor-=degrees.get(node.id);if(cursor<=0){chosen.add(node.id);break;}}}chosen.forEach(target=>{add(ordered[index].id,target);degrees.set(ordered[index].id,degrees.get(ordered[index].id)+1);degrees.set(target,degrees.get(target)+1);});}
+    }else{
+      const k=Math.max(2,Math.min(n-1,Math.floor(Math.sqrt(n))|1)),half=Math.floor(k/2),rewire=.12;
+      for(let index=0;index<n;index++)for(let step=1;step<=half;step++){let target=(index+step)%n;if(random()<rewire){const candidates=ordered.filter((_,candidate)=>candidate!==index&&!keys.has([ordered[index].id,ordered[candidate].id].sort().join('\u0000')));if(candidates.length)target=ordered.indexOf(candidates[Math.floor(random()*candidates.length)]);}add(ordered[index].id,ordered[target].id);}
+    }
+    return links;
   }
 
   function buildModel(){
@@ -42,7 +61,8 @@
     }));
     const observedLinks=[...edges.values()],membershipLinks=organizationLinks(nodes),observedKeys=new Set(observedLinks.map(link=>[link.source,link.target].sort().join('\u0000')));
     state.nodes=new Map(nodes.map(node=>[node.id,node]));
-    state.links=state.relationship==='observed'?observedLinks:state.relationship==='organization'?membershipLinks:[...observedLinks,...membershipLinks.filter(link=>!observedKeys.has([link.source,link.target].sort().join('\u0000)))];
+    const basisLinks=state.relationship==='observed'?observedLinks:state.relationship==='organization'?membershipLinks:[...observedLinks,...membershipLinks.filter(link=>!observedKeys.has([link.source,link.target].sort().join('\u0000)))];
+    state.links=state.topology==='observed'?basisLinks:syntheticLinks(nodes,basisLinks,state.topology);
     state.nodes.forEach(node=>{node.degree=0;node.weightedDegree=0;});
     state.links.forEach(link=>{state.nodes.get(link.source).degree++;state.nodes.get(link.target).degree++;state.nodes.get(link.source).weightedDegree+=link.years;state.nodes.get(link.target).weightedDegree+=link.years;});
     state.adjacency=new Map(nodes.map(node=>[node.id,new Set()]));
@@ -129,8 +149,8 @@
 
   function renderSummary(){
     const components=connectedComponents(),active=[...state.nodes.values()].filter(node=>node.degree>0),possible=state.nodes.size*(state.nodes.size-1)/2,density=possible?state.links.length/possible:0;
-    const rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Shared organization membership':'Observed records plus shared organization membership';
-    $('#global-graph-summary').innerHTML=`<div><span>Displayed states</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>States with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} states</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div>`;
+    const rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Shared organization membership':'Observed records plus shared organization membership',model=state.topology==='observed'?'Observed topology':`${state.topology} model generated on the selected node set`;
+    $('#global-graph-summary').innerHTML=`<div><span>Displayed states</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>States with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} states</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div><div><span>Topology</span><strong>${esc(model)}</strong></div>`;
   }
 
   function forceLayout(model){
@@ -213,6 +233,7 @@
   $('#graph-view').addEventListener('change',event=>{state.view=event.target.value;render();});
   $('#graph-relationship').addEventListener('change',event=>{state.relationship=event.target.value;state.selected='';render();});
   $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;state.selected='';render();});
+  $('#graph-topology').addEventListener('change',event=>{state.topology=event.target.value;state.selected='';render();});
   $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});
   $('#graph-optimize').addEventListener('click',()=>state.svgScene?.optimize());
