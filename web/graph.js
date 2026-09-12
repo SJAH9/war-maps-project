@@ -130,8 +130,9 @@
     const metrics=$('#graph-node-metrics'),detail=$('#graph-node-detail');
     if(!state.selected){
       const ranked=[...state.nodes.values()].filter(node=>node.degree).sort((a,b)=>b.degree-a.degree||b.weightedDegree-a.weightedDegree||a.label.localeCompare(b.label)).slice(0,12);
-      $('#graph-node-type').textContent='Global field';$('#graph-node-title').textContent='All participating states';
-      metrics.innerHTML=`<div><span>States</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div>`;
+      const entityScope=state.organization==='wef';
+      $('#graph-node-type').textContent='Global field';$('#graph-node-title').textContent=entityScope?'Organization entity field':'All participating states';
+      metrics.innerHTML=`<div><span>${entityScope?'Entities':'States'}</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div>`;
       detail.innerHTML=listBlock(`Highest ${relationshipLabel()} reach`,ranked.map(node=>({country:node.id,note:`${node.degree} connections · ${node.weightedDegree} observed partner-years`})),'No relationships meet this threshold.');
     }else{
       const node=state.nodes.get(state.selected),profile=node.profile;
@@ -159,8 +160,8 @@
 
   function renderSummary(){
     const components=connectedComponents(),active=[...state.nodes.values()].filter(node=>node.degree>0),possible=state.nodes.size*(state.nodes.size-1)/2,density=possible?state.links.length/possible:0;
-    const rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Shared organization membership':'Observed records plus shared organization membership',model=state.topology==='observed'?'Observed topology':`${state.topology} model generated on the selected node set`;
-    $('#global-graph-summary').innerHTML=`<div><span>Displayed states</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>States with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} states</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div><div><span>Topology</span><strong>${esc(model)}</strong></div>`;
+    const entityScope=state.organization==='wef',scope=entityScope?'entities':'states',rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Shared organization membership':'Observed records plus shared organization membership',model=state.topology==='observed'?'Observed topology':`${state.topology} model generated on the selected node set`;
+    $('#global-graph-summary').innerHTML=`<div><span>Displayed ${scope}</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>${scope[0].toUpperCase()+scope.slice(1)} with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} ${scope}</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div><div><span>Topology</span><strong>${esc(model)}</strong></div>`;
   }
 
   function forceLayout(model){
