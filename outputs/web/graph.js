@@ -243,7 +243,7 @@
   $('#graph-min-years').addEventListener('change',event=>{state.minYears=Number(event.target.value);state.selected='';render();});
   $('#graph-view').addEventListener('change',event=>{state.view=event.target.value;render();});
   $('#graph-relationship').addEventListener('change',event=>{state.relationship=event.target.value;state.selected='';render();});
-  $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;state.selected='';render();});
+  $('#graph-organization').addEventListener('change',event=>{state.organization=event.target.value;if(state.organization==='wef'){state.relationship='organization';$('#graph-relationship').value='organization';}state.selected='';render();});
   $('#graph-topology').addEventListener('change',event=>{state.topology=event.target.value;state.selected='';render();});
   $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});

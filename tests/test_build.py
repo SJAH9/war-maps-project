@@ -152,6 +152,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("organization co-membership", source)
         self.assertIn("kind==='synthetic'", source)
         self.assertIn("entity:${entityOrganization.id}", source)
+        self.assertIn("state.organization==='wef'", source)
         self.assertIn("barabasi-albert", page)
         self.assertIn("erdos-renyi", page)
         self.assertIn("watts-strogatz", page)
