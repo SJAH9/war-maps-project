@@ -1018,6 +1018,21 @@
   $('#network-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
   $('#network-optimize').addEventListener('click',optimizeView);
   $('#network-data').addEventListener('click',viewNetworkData);
+  let navigatorWindow=null,navigatorPoll=null;
+  $('#network-3d-nav').addEventListener('click',()=>{
+    noteInteraction();
+    if(state.forceGraph?.pauseAnimation)state.forceGraph.pauseAnimation();
+    stopAutoRotation();stopMotion();
+    const url=new URL('network-3d.html',location.href);url.searchParams.set('conflict',state.conflictId);
+    navigatorWindow=window.open(url.toString(),'war-maps-conflict-3d','popup=yes,width=1600,height=1000');
+    clearInterval(navigatorPoll);
+    navigatorPoll=setInterval(()=>{
+      if(navigatorWindow&&!navigatorWindow.closed)return;
+      clearInterval(navigatorPoll);navigatorPoll=null;
+      state.forceGraph?.resumeAnimation?.();
+      startAutoRotation();
+    },500);
+  });
   $('#network-fit').addEventListener('click',()=>{noteInteraction();if(state.forceGraph&&state.renderMode==='3d')state.forceGraph.zoomToFit(500,70);else if(state.renderMode==='svg3d'&&state.svgScene){Object.assign(state.svgScene,{yaw:-.32,pitch:.22,zoom:1});state.svgScene.draw();}else if(window.Plotly)Plotly.relayout('network-canvas',{'xaxis.autorange':true,'yaxis.autorange':true});});
   $('#network-search').addEventListener('input',event=>{
     noteInteraction();
