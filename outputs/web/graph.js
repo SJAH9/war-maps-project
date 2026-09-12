@@ -9,6 +9,12 @@
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
   const relationshipLabel=()=>state.relationship==='observed'?'same-side participation':state.relationship==='organization'?'organization co-membership':'displayed relationship';
 
+  function updatePageDescription(){
+    const entityScope=state.organization==='wef',synthetic=state.topology!=='observed',title=entityScope?'World Economic Forum partner entities':state.relationship==='organization'?'States joined by organization membership':'States joined by conflict and organization records';
+    const description=synthetic?`This is a deterministic ${state.topology} comparison graph. Its edges are modeled, not observed evidence.`:entityScope?'The graph connects the World Economic Forum to the sourced partner entities retained in the organization layer. These are company relationships, not state membership or conflict participation.':state.relationship==='organization'?'Each line represents shared membership in the selected sourced organization set; membership is not treated as alliance or causation.':'Every line is an observed same-side state participation record, or an explicitly selected organization relationship. Historic opposing participation remains disclosed rather than fabricated as a direct edge.';
+    $('#graph-page-title').textContent=title;$('#graph-rule-description').textContent=description;$('#global-graph').setAttribute('aria-label',`${title}. ${description}`);
+  }
+
   function normalizedRelations(profile,key){
     return (profile?.[key]||[]).filter(item=>profileByName.has(item.country));
   }
@@ -236,7 +242,7 @@
   }
 
   function render(){
-    const model=buildModel();renderCurrentView(model);renderInspector();renderSummary();
+    updatePageDescription();const model=buildModel();renderCurrentView(model);renderInspector();renderSummary();
   }
 
   $('#graph-search').addEventListener('input',event=>{const needle=event.target.value.trim().toLowerCase();if(!needle)return;const match=[...state.nodes.values()].find(node=>node.label.toLowerCase().includes(needle));if(match)focusNation(match.id);});
