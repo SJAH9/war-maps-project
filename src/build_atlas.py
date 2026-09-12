@@ -648,8 +648,15 @@ def organization_memberships(nations: list[dict]) -> dict:
     payload = json.loads(ORGANIZATIONS.read_text(encoding="utf-8"))
     nation_names = {item["country"] for item in nations}
     for organization in payload["organizations"]:
-        if organization.get("member_basis") == "country_profile_country_id":
-            members = [item["country"] for item in nations if item.get("country_id")]
+        if organization.get("member_basis") == "canonical_map_country_id":
+            excluded = {
+                "Antarctica", "Falkland Islands", "French Southern and Antarctic Lands", "Greenland",
+                "Hong Kong", "Kosovo", "New Caledonia", "Palestine/British Mandate", "Palestine/Gaza",
+                "Palestine/West Bank", "Puerto Rico", "Somaliland", "Taiwan", "Western Sahara", "Zanzibar",
+                "East Timor", "German Democratic Republic", "Republic of Serbia", "Republic of Vietnam",
+                "South Yemen", "The Bahamas", "Turkey", "United Republic of Tanzania", "Vietnam",
+            }
+            members = [item["country"] for item in nations if item.get("country_id") and item["country"] == item.get("map_name") and item["country"] not in excluded]
         else:
             members = [item for item in organization.get("members", []) if item in nation_names]
         organization["members"] = sorted(set(members))

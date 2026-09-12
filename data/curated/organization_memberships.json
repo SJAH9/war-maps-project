@@ -6,9 +6,10 @@
       "name": "United Nations",
       "entity_kind": "intergovernmental_organization",
       "relation_type": "member",
-      "member_basis": "country_profile_country_id",
+      "member_basis": "canonical_map_country_id",
       "as_of": "2026-04-30",
-      "source_id": "un-member-states-2026"
+      "source_id": "un-member-states-2026",
+      "note": "Derived only across canonical current map-country profiles present in this atlas; historical aliases, territories, and disputed entities are excluded. This is not a substitute for the complete UN roster."
     },
     {
       "id": "nato",
