@@ -15,6 +15,8 @@ This release candidate adds explicit relationship criteria to the global Graph w
 - United Nations: explicit 193-member roster; the build reports the subset represented by the atlas nation profiles.
 - NATO: official 32-member roster.
 - BRICS: official 11-member roster used by the sourced snapshot.
+- European Union: official 27-member roster.
+- ASEAN: official 11-member roster, including Timor-Leste.
 - World Economic Forum: 30 explicitly retained partner entities from the official partner directory. These are company-level records and are shown through the entity-aware graph path; they are not converted into state membership.
 - New organizations can be added through `data/curated/organization_memberships.json` with a typed relation, entity scope, source identifier, and date boundary.
 

@@ -163,7 +163,7 @@ class WarMapsBuildTests(unittest.TestCase):
     def test_organization_layer_is_typed_and_source_bound(self):
         organizations = self.data["organizations"]
         by_id = {item["id"]: item for item in organizations}
-        self.assertEqual(set(by_id), {"un", "nato", "brics", "wef"})
+        self.assertEqual(set(by_id), {"un", "nato", "brics", "eu", "asean", "wef"})
         self.assertEqual(by_id["nato"]["relation_type"], "member")
         self.assertEqual(by_id["brics"]["relation_type"], "member")
         self.assertEqual(by_id["wef"]["relation_type"], "partner")
@@ -174,6 +174,9 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertNotIn("Taiwan", by_id["un"]["members"])
         self.assertGreaterEqual(by_id["nato"]["member_count"], 30)
         self.assertGreaterEqual(by_id["brics"]["member_count"], 10)
+        self.assertEqual(by_id["eu"]["member_roster_count"], 27)
+        self.assertEqual(by_id["asean"]["member_roster_count"], 11)
+        self.assertEqual(by_id["asean"]["member_count"], 11)
         self.assertEqual(by_id["wef"]["member_count"], 0)
         self.assertGreaterEqual(by_id["wef"]["entity_member_count"], 20)
         self.assertIn("Microsoft", by_id["wef"]["entity_members"])

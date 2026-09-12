@@ -77,7 +77,9 @@ ORGANIZATION_NAME_ALIASES = {
     "Tanzania": "United Republic of Tanzania",
     "Cote d'Ivoire": "Ivory Coast",
     "Cabo Verde": "Cape Verde",
-    "Brunei": "Brunei Darussalam",
+    "Brunei Darussalam": "Brunei",
+    "Lao PDR": "Laos",
+    "Viet Nam": "Vietnam",
     "Türkiye": "Türkiye",
 }
 

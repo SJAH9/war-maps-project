@@ -153,6 +153,26 @@
       "retrieved": "2026-09-11"
     },
     {
+      "id": "eu-member-states",
+      "title": "EU Member States",
+      "publisher": "European Union",
+      "coverage": "Current 27 EU member states",
+      "url": "https://european-union.europa.eu/principles-countries-history/country-profiles_en",
+      "license": "European Union source terms",
+      "enclosure": "organization membership roster",
+      "retrieved": "2026-09-11"
+    },
+    {
+      "id": "asean-member-states",
+      "title": "ASEAN Member States",
+      "publisher": "Association of Southeast Asian Nations",
+      "coverage": "Current 11 ASEAN member states, including Timor-Leste",
+      "url": "https://asean.org/member-states/",
+      "license": "ASEAN source terms",
+      "enclosure": "organization membership roster",
+      "retrieved": "2026-09-11"
+    },
+    {
       "id": "wef-membership-and-partners",
       "title": "Forum membership and partner communities",
       "publisher": "World Economic Forum",
