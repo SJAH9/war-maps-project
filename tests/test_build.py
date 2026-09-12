@@ -145,6 +145,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("scene.optimize", source)
         self.assertIn('id="graph-optimize"', page)
         self.assertIn('id="graph-relationship"', page)
+        self.assertIn("All state organizations", page)
         self.assertIn('id="graph-rule-description"', page)
         self.assertIn("updatePageDescription", source)
         self.assertIn("linkDescription", source)
