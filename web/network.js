@@ -1019,7 +1019,7 @@
   $('#network-optimize').addEventListener('click',optimizeView);
   $('#network-data').addEventListener('click',viewNetworkData);
   let navigatorWindow=null,navigatorPoll=null;
-  $('#network-3d-nav')?.addEventListener('click',()=>{
+  const open3DNavigator=()=>{
     noteInteraction();
     if(state.forceGraph?.pauseAnimation)state.forceGraph.pauseAnimation();
     stopAutoRotation();stopMotion();
@@ -1032,7 +1032,9 @@
       state.forceGraph?.resumeAnimation?.();
       startAutoRotation();
     },500);
-  });
+  };
+  $('#network-3d-nav')?.addEventListener('click',open3DNavigator);
+  $('#network-3d-nav-title')?.addEventListener('click',open3DNavigator);
   $('#network-fit').addEventListener('click',()=>{noteInteraction();if(state.forceGraph&&state.renderMode==='3d')state.forceGraph.zoomToFit(500,70);else if(state.renderMode==='svg3d'&&state.svgScene){Object.assign(state.svgScene,{yaw:-.32,pitch:.22,zoom:1});state.svgScene.draw();}else if(window.Plotly)Plotly.relayout('network-canvas',{'xaxis.autorange':true,'yaxis.autorange':true});});
   $('#network-search').addEventListener('input',event=>{
     noteInteraction();

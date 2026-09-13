@@ -6,14 +6,14 @@
   <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
   <title>Conflict Network · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-12-network-r4">
+  <link rel="stylesheet" href="styles.css?v=2026-09-12-network-r5">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="network.js?v=2026-09-12-r2" defer></script>
+  <script src="network.js?v=2026-09-12-r3" defer></script>
 </head>
 <body class="network-page">
   <header class="site-header">
@@ -27,7 +27,7 @@
     <section class="network-section" id="network">
       <div class="network-title">
         <div><p class="eyebrow">Interactive network model</p><h1 id="network-title">Conflict network</h1></div>
-        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a></div>
+        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D navigator</button></div>
       </div>
 
       <div class="network-controls" aria-label="Network controls">
