@@ -1019,7 +1019,7 @@
   $('#network-optimize').addEventListener('click',optimizeView);
   $('#network-data').addEventListener('click',viewNetworkData);
   let navigatorWindow=null,navigatorPoll=null;
-  $('#network-3d-nav').addEventListener('click',()=>{
+  $('#network-3d-nav')?.addEventListener('click',()=>{
     noteInteraction();
     if(state.forceGraph?.pauseAnimation)state.forceGraph.pauseAnimation();
     stopAutoRotation();stopMotion();
