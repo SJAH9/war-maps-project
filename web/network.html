@@ -6,14 +6,14 @@
   <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
   <title>Conflict Network · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-12-network-r5">
+  <link rel="stylesheet" href="styles.css?v=2026-09-12-network-r6">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="network.js?v=2026-09-12-r3" defer></script>
+  <script src="network.js?v=2026-09-12-r4" defer></script>
 </head>
 <body class="network-page">
   <header class="site-header">
@@ -36,7 +36,7 @@
         <label><span>Through</span><input id="network-end" type="date"></label>
         <label><span>Find node</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
         <label><span>Node class</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
-        <div class="network-view-actions"><button class="network-optimize" id="network-optimize" type="button">Optimize view</button><button class="network-data" id="network-data" type="button">View network data</button><button class="network-3d-nav" id="network-3d-nav" type="button">3D navigator</button></div>
+        <div class="network-view-actions"><button class="network-optimize" id="network-optimize" type="button">Optimize view</button><button class="network-data" id="network-data" type="button">View network data</button></div>
         <button class="network-fit" id="network-fit" type="button" title="Fit the complete network" aria-label="Fit the complete network">⛶</button>
       </div>
 
