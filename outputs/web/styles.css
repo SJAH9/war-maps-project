@@ -65,6 +65,8 @@
 
 /* Keep the organization control readable on wide network views. */
 @media(min-width:1101px){.network-controls{grid-template-columns:auto minmax(142px,.62fr) minmax(142px,.62fr) minmax(220px,1.2fr) minmax(160px,.72fr) minmax(180px,.82fr) auto 40px}}
+.network-view-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;min-width:330px}.network-controls .network-view-actions button{width:100%;padding-inline:9px;white-space:nowrap}.network-controls .network-3d-nav{border-color:var(--teal);color:var(--ink)}
+@media(max-width:1100px){.network-controls .network-view-actions{grid-column:1/-1}}
 
 /* Selected-node inspector leads the network on wide screens. */
 .network-workspace{grid-template-columns:minmax(350px,29vw) minmax(0,1fr)}.network-inspector{order:1;border-right:1px solid var(--line)}.network-stage{order:2;border-right:0}.find-similar-button{width:calc(100% - 40px);min-height:42px;margin:18px 20px;padding:9px 12px;border:1px solid var(--orange);background:var(--orange);color:var(--black);font-size:.8rem;font-weight:850}.find-similar-button:hover,.find-similar-button:focus-visible{background:var(--yellow);border-color:var(--yellow);outline:none}
