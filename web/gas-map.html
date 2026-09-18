@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="assets/world-geometry.js" defer></script>
   <script src="gas-price-data.js" defer></script>
-  <script src="gas-map.js?v=2026-09-18-a" defer></script>
+  <script src="gas-map.js?v=2026-09-18-b" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
@@ -23,7 +23,7 @@
   <main class="gas-main">
     <div class="gas-heading">
       <div><p class="eyebrow">Fuel · Place · Price</p><h1>Gas Map</h1></div>
-      <p>Pump prices across local, regional, and national reporting boundaries. Select a price tower to see the actual reported unit, date, geography, and source.</p>
+      <p>Pump prices across local, regional, and national reporting boundaries, displayed in USD per U.S. gallon. Click a nation to turn the map over, or select a price tower to see its date, geography, and source.</p>
     </div>
     <div class="gas-controls" aria-label="Gas Map controls">
       <label>Fuel <select id="gas-fuel"><option value="gasoline">Pump gasoline</option><option value="diesel">Diesel</option></select></label>
@@ -33,11 +33,12 @@
     </div>
     <div class="gas-workspace">
       <div class="gas-stage">
-        <div id="gas-map" role="img" aria-label="Isometric, flattened Earth with vertical fuel-price towers. Drag to rotate; scroll to zoom."></div>
-        <div class="gas-stage-label"><span>THE PRICE FIELD</span><strong id="gas-count">—</strong><span>mapped observations</span></div>
-        <div class="gas-scale" aria-label="Color scale from lower to higher comparable price"><span>USD / L comparison</span><i></i><div><span>lower</span><span>higher</span></div></div>
+        <div id="gas-map" aria-label="Interactive isometric fuel-price map. Click a country to turn the map over; click outside its outline to return. Drag to rotate; scroll to zoom."></div>
+        <div class="gas-stage-label"><span id="gas-view-name">WORLD PRICE FIELD</span><strong id="gas-count">—</strong><span>mapped observations</span></div>
+        <button class="gas-back" id="gas-back" type="button" hidden>↶ World map</button>
+        <div class="gas-scale" aria-label="Color scale from lower to higher comparable price"><span>USD / US GALLON</span><i></i><div><span>lower</span><span>higher</span></div></div>
         <div class="gas-tooltip" id="gas-tooltip" hidden></div>
-        <div class="gas-stage-foot">DRAG TO ORBIT <b>·</b> SCROLL TO ZOOM <b>·</b> SELECT A TOWER</div>
+        <div class="gas-stage-foot" id="gas-stage-hint">CLICK A NATION TO TURN THE MAP <b>·</b> DRAG TO ORBIT</div>
       </div>
       <aside class="gas-aside" aria-live="polite">
         <div class="gas-aside-head"><p class="eyebrow" id="gas-kicker">Source-dated snapshot</p><h2 id="gas-selected">A geography of pump prices</h2><p id="gas-selected-sub">Choose a tower or a location below.</p></div>
@@ -46,7 +47,7 @@
         <div class="gas-list" id="gas-list"></div>
       </aside>
     </div>
-    <div class="gas-method"><div><h2>Read the boundary</h2><p>These are reported retail observations, not a single worldwide survey. U.S. regular, EU Eurosuper 95, Japanese regular, Australian regular unleaded, New Zealand 91, Taiwan CPC 92, and the Delhi outlet quote are not identical fuels. National, state, prefecture, city, regional, schedule, and outlet prices are not interchangeable.</p></div><div><h2>How to compare</h2><p>Tower height and color use an indicative USD per litre conversion with the <span id="gas-fx-date">dated</span> ECB exchange-rate reference (Taiwan uses the central bank’s TWD/USD close); exact local price is shown on selection. The snapshot is not a live feed. Missing places are not zero-price places. Source links and observation dates remain attached to every point.</p></div></div>
+    <div class="gas-method"><div><h2>Read the boundary</h2><p>These are reported retail observations, not a single worldwide survey. U.S. regular, EU Eurosuper 95, Japanese regular, Australian regular unleaded, New Zealand 91, Taiwan CPC 92, and the Delhi outlet quote are not identical fuels. National, state, prefecture, city, regional, schedule, and outlet prices are not interchangeable.</p></div><div><h2>How to compare</h2><p>All displayed prices use USD per U.S. gallon. The selected-place panel also shows the indicative USD-per-litre conversion. Both use the <span id="gas-fx-date">dated</span> ECB exchange-rate reference (Taiwan uses the central bank’s TWD/USD close). Original source values remain in the data; the snapshot is not a live feed. Missing places are not zero-price places.</p></div></div>
     <div class="gas-source-line" id="gas-source-line"></div>
   </main>
   <footer><a href="about.html">The War Maps Project</a><span>Price observations retain their source boundaries</span><a href="sources.html">Citations</a></footer>

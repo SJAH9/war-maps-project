@@ -350,7 +350,13 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn('value="Islands"', page.read_text(encoding="utf-8"))
         self.assertIn("GALLON_LITRES = 3.785411784", source.read_text(encoding="utf-8"))
         self.assertIn("new THREE.CylinderGeometry", source.read_text(encoding="utf-8"))
-        self.assertIn("addAtmosphere();addWorld()", source.read_text(encoding="utf-8"))
+        map_source = source.read_text(encoding="utf-8")
+        self.assertIn("addAtmosphere();state.plateRoot", map_source)
+        self.assertIn("function flipToNation(country,selected=null)", map_source)
+        self.assertIn("function flipToWorld()", map_source)
+        self.assertIn("state.plateRoot.rotation.x+=delta*.15", map_source)
+        self.assertIn("else if(!country)flipToWorld()", map_source)
+        self.assertIn('id="gas-back"', page.read_text(encoding="utf-8"))
 
     def test_information_architecture_and_shared_map_semantics(self):
         pages = {

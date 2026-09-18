@@ -14,9 +14,11 @@ The 18 September 2026 snapshot contains 333 located observations. Geographic res
 
 Five Australian ACCC regional locations (Mt Isa, Whitsunday, Mt Gambier, Victor Harbour, Koo Wee Rup) remain unplotted because the source names did not match confidently to a point in the [GeoNames Australia gazetteer](https://download.geonames.org/export/dump/AU.zip). Their omission is recorded in the generated payload rather than silently assigning a wrong location. Some national and published-schedule observations are plotted at a capital as a *locator*, not as a claim about that city's price. Natural Earth provides country shapes; the U.S. state and Japanese prefecture shapes are used only to position reporting-area markers.
 
-The displayed local price is primary. Tower height and color are only an indicative cross-currency comparison in USD per litre:
+The source's original local-currency price and unit remain in the data payload. The map, tooltip, list, and selected-place headline show an indicative **USD per U.S. gallon** conversion. The selected-place panel separately shows the same converted price in **USD per litre**. Tower height and color use USD per U.S. gallon:
 
 `price_USD_per_litre = local_price × (USD_per_EUR / local_currency_per_EUR) ÷ litres_per_reported_unit`
+
+`price_USD_per_US_gallon = price_USD_per_litre × 3.785411784`
 
 The unit divisor is 3.785411784 for a U.S. gallon and 1 for a litre. [ECB reference rates](https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml) dated 18 September 2026 provide most currencies. Taiwan uses the [CBC TWD/USD closing rate](https://www.cbc.gov.tw/tw/lp-645-1-1-40.html) on that date and the ECB USD/EUR rate. These conversions do not equal contemporaneous local purchasing power or compare like-for-like fuel grades: U.S. regular, EU Eurosuper 95, Japanese regular, Australian regular unleaded, NZ 91, and CPC 92 differ. State averages, city surveys, a single outlet, and a published schedule also have different sampling boundaries. Do not rank places as if these were one harmonized survey.
 
