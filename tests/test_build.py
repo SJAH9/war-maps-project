@@ -372,6 +372,10 @@ class WarMapsBuildTests(unittest.TestCase):
         markup = page.read_text(encoding="utf-8")
         self.assertIn("civilian-casualties.js", markup)
         self.assertIn("CLICK A NATION", markup)
+        external = {item["id"]: item for item in data.get("external") or []}
+        self.assertEqual(external["gaza-ocha-moh"]["in_ucdp"], False)
+        self.assertGreater(external["gaza-ocha-moh"]["civilians"], external["gaza-aoav"]["civilians"])
+        self.assertNotIn("gaza-ocha-moh", {row["admin"] for row in data["countries"]})
 
     def test_information_architecture_and_shared_map_semantics(self):
         pages = {

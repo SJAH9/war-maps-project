@@ -43,7 +43,7 @@
       (!state.search || `${row.name} ${row.admin} ${row.region}`.toLocaleLowerCase().includes(state.search)));
     state.visible = state.nation ? state.worldVisible.filter(row => row.admin === state.nation) : state.worldVisible;
     $('#civ-count').textContent = state.visible.length.toLocaleString();
-    $('#civ-list-count').textContent = `${state.visible.length} countries`;
+    $('#civ-list-count').textContent = `${state.visible.length} UCDP countries`;
     if (state.selected && !state.visible.includes(state.selected)) state.selected = null;
     refreshScale(data.countries.filter(row => row.civilians > 0));
     drawTowers();
@@ -52,11 +52,27 @@
   }
   function renderInspector() {
     const row = state.selected;
+    if (row && row.in_ucdp === false) {
+      $('#civ-kicker').textContent = 'Not in UCDP GED';
+      $('#civ-selected').textContent = row.place;
+      $('#civ-selected-sub').textContent = row.note;
+      $('#civ-facts').innerHTML = [
+        ['Reported figure', formatCount(row.civilians)],
+        ['What is counted', row.metric],
+        ['Source', `<a href="${esc(row.url)}" target="_blank" rel="noopener noreferrer">${esc(row.source)} ↗</a>`],
+        ['As of', row.as_of],
+        ['Period', row.period],
+        ['UCDP datasets', 'Excluded. Shown beside GED, not added to the world total.'],
+      ].map(([label, value]) => `<div><span>${esc(label)}</span><strong>${label === 'Source' ? value : esc(value)}</strong></div>`).join('');
+      return;
+    }
     $('#civ-kicker').textContent = row ? `${row.region} · UCDP GED` : state.nation ? `Nation view / ${data.snapshot}` : `World total ${formatCount(data.world_total)}`;
     $('#civ-selected').textContent = row ? row.name : state.nation || 'Reported civilian deaths';
     $('#civ-selected-sub').textContent = row ? `${formatCount(row.civilians)} civilian deaths coded in this territory` : state.nation ? 'Click the tower to inspect the national total. Click outside the nation to return.' : 'Choose a tower or a country below.';
     if (!row) {
-      $('#civ-facts').innerHTML = `<div><span>World total</span><strong>${esc(formatCount(data.world_total))}</strong></div><div><span>Countries mapped</span><strong>${esc(formatCount(data.country_count))}</strong></div><div><span>GED years</span><strong>${data.coverage.ged_years[0]}–${data.coverage.ged_years[1]}</strong></div><div><span>Candidate through</span><strong>${esc(data.coverage.candidate_through)}</strong></div>`;
+      const external = data.external || [];
+    const extra = external.map(item => `<div><span>${esc(item.place)} · ${esc(item.source_short)} (not UCDP)</span><strong>${esc(formatCount(item.civilians))}</strong></div>`).join('');
+    $('#civ-facts').innerHTML = `<div><span>UCDP world total</span><strong>${esc(formatCount(data.world_total))}</strong></div><div><span>UCDP countries mapped</span><strong>${esc(formatCount(data.country_count))}</strong></div><div><span>GED years</span><strong>${data.coverage.ged_years[0]}–${data.coverage.ged_years[1]}</strong></div><div><span>Candidate through</span><strong>${esc(data.coverage.candidate_through)}</strong></div>${extra}`;
       return;
     }
     const years = (row.years || []).map(([year, deaths]) => `${year}: ${formatCount(deaths)}`).join(' · ') || '—';
@@ -71,10 +87,15 @@
   }
   function renderList() {
     const sorted = [...state.visible].sort((a, b) => b.civilians - a.civilians || a.name.localeCompare(b.name));
-    $('#civ-list').innerHTML = sorted.length ? sorted.map(row => {
+    const ucdp = sorted.length ? sorted.map(row => {
       const index = data.countries.indexOf(row);
-      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(row.civilians)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.region)} · ${row.year_start}–${row.year_end}</small></span><strong>${esc(formatCount(row.civilians))}</strong></button>`;
-    }).join('') : `<p class="gas-list-empty">${state.nation ? 'No civilian-death record is mapped for this nation. Click outside the nation to return to the world.' : 'No countries match this search.'}</p>`;
+      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(row.civilians)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.region)} · ${row.year_start}–${row.year_end} · UCDP GED</small></span><strong>${esc(formatCount(row.civilians))}</strong></button>`;
+    }).join('') : `<p class="gas-list-empty">${state.nation ? 'No UCDP civilian-death record is mapped for this nation. Click outside the nation to return to the world.' : 'No countries match this search.'}</p>`;
+    const showExternal = !state.nation || state.nation === 'Palestine' || state.nation === 'Israel';
+    const external = showExternal ? (data.external || []).map((row, index) =>
+      `<button type="button" data-external="${index}" aria-current="${row === state.selected}"><i style="background:#7ec8e3"></i><span><b>${esc(row.place)}</b><small>NOT IN UCDP · ${esc(row.source_short)} · ${esc(row.as_of)}</small></span><strong>${esc(formatCount(row.civilians))}</strong></button>`
+    ).join('') : '';
+    $('#civ-list').innerHTML = (external ? `<p class="gas-list-empty">Not part of the UCDP datasets</p>${external}` : '') + ucdp;
   }
   function selectRow(row) {
     if (state.nation !== row.admin && state.worldMeshes.some(mesh => mesh.userData.country === row.admin)) {
@@ -257,15 +278,16 @@
     const makeTower=(row,reverse=false)=>{
       const value=row.civilians; if(!value)return;
       const height=.55+priceFraction(value)*52;
-      const radius=1.2;
+      const external=row.in_ucdp===false;
+      const radius=external?1.45:1.2;
       const selected=row===state.selected && reverse===Boolean(state.nation);
-      const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:priceColor(value),emissive:selected?'#f9bf67':'#101a12',emissiveIntensity:selected?.35:.08,shininess:38}));
+      const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:external?'#5eb3d4':priceColor(value),emissive:selected?'#f9bf67':external?'#163048':'#101a12',emissiveIntensity:selected?0.35:(external?0.22:0.08),shininess:38}));
       if(reverse){const p=state.nationProjection;tower.position.set((p.unwrap(row.lon)-p.centerX)*p.scale,-1.76-height/2-.3,(row.lat-p.centerY)*p.scale);}
       else tower.position.set(row.lon*MAP_SCALE,height/2+.3,-row.lat*MAP_SCALE);
       tower.userData.row=row; tower.userData.towerHeight=height;
       if(reverse===Boolean(state.nation)){
         const sprite=new THREE.Sprite(new THREE.SpriteMaterial({
-          map: canvasTexture(compact(value), {
+          map: canvasTexture(external ? compact(value)+'*' : compact(value), {
             w: 256, h: 96,
             font: '700 42px ui-sans-serif, system-ui, sans-serif',
             fill: selected ? '#ffe08a' : '#fff6d8',
@@ -287,7 +309,13 @@
       (reverse?state.reverseTowers:state.worldTowers).push(tower);
     };
     state.worldVisible.forEach(row=>makeTower(row));
-    if(state.nation&&state.reverseTowerGroup)state.visible.forEach(row=>makeTower(row,true));
+    const externals=(data.external||[]).filter(row=>!state.search||`${row.place} ${row.source_short}`.toLocaleLowerCase().includes(state.search));
+    const showExternal=!state.nation||state.nation==='Palestine'||state.nation==='Israel';
+    if(showExternal) externals.forEach(row=>makeTower(row,false));
+    if(state.nation&&state.reverseTowerGroup){
+      state.visible.forEach(row=>makeTower(row,true));
+      if(state.nation==='Palestine') externals.forEach(row=>makeTower(row,true));
+    }
     state.towers=state.nation?state.reverseTowers:state.worldTowers;
   }
   function hit(event) {
@@ -317,7 +345,9 @@
       renderer.domElement.style.cursor=state.flipping?'wait':row||(!state.nation&&country)||state.nation?'pointer':'grab';
       if(!object){tip.hidden=true;return;}
       if(row){
-        tip.innerHTML=`<strong>${esc(formatCount(row.civilians))}</strong><em>${esc(row.name)}</em><span>reported civilian deaths · ${row.year_start}–${row.year_end}</span>`;
+        tip.innerHTML=row.in_ucdp===false
+          ? `<strong>${esc(formatCount(row.civilians))}</strong><em>${esc(row.place)} · ${esc(row.source_short)}</em><span>NOT IN UCDP · ${esc(row.metric)} · ${esc(row.as_of)}</span>`
+          : `<strong>${esc(formatCount(row.civilians))}</strong><em>${esc(row.name)}</em><span>UCDP GED civilian deaths · ${row.year_start}–${row.year_end}</span>`;
       }else{
         tip.innerHTML=`<em>${esc(country)}</em><span>${state.nation?'Click outside this outline to return':'Click to turn the map over'}</span>`;
       }
@@ -355,7 +385,12 @@
     if (!data?.countries?.length) {$('#civ-map').innerHTML='<p class="gas-error">The civilian-death snapshot did not load. Reload the page and check the data asset.</p>';return;}
     $('#civ-source-line').innerHTML=`Sources: <a href="${esc(data.sources.ged)}" target="_blank" rel="noopener noreferrer">UCDP GED ↗</a> ${esc(data.sources.citation)} Coverage: ${data.coverage.ged_years[0]}–${data.coverage.ged_years[1]}, plus candidate events through ${esc(data.coverage.candidate_through)}. ${esc(data.coverage.note)}`;
     $('#civ-search').addEventListener('input',event=>{state.search=event.target.value.trim().toLocaleLowerCase();filterRows();});
-    $('#civ-list').addEventListener('click',event=>{const button=event.target.closest('[data-index]');if(button)selectRow(data.countries[Number(button.dataset.index)]);});
+    $('#civ-list').addEventListener('click',event=>{
+      const external=event.target.closest('[data-external]');
+      if(external){selectRow((data.external||[])[Number(external.dataset.external)]);return;}
+      const button=event.target.closest('[data-index]');
+      if(button)selectRow(data.countries[Number(button.dataset.index)]);
+    });
     $('#civ-back').addEventListener('click',flipToWorld);
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.nation)flipToWorld();});
     $('#civ-reset').addEventListener('click',()=>{if(state.nation)flipToWorld();state.search='';state.selected=null;$('#civ-search').value='';if(state.camera){state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();}filterRows();});

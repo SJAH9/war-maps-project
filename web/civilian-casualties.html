@@ -7,12 +7,12 @@
   <title>Civilian Casualties · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-18-gas">
-  <link rel="stylesheet" href="civilian-casualties.css?v=2026-09-18-a">
+  <link rel="stylesheet" href="civilian-casualties.css?v=2026-09-18-b">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="assets/world-geometry.js" defer></script>
-  <script src="civilian-casualty-data.js?v=2026-09-18-a" defer></script>
-  <script src="civilian-casualties.js?v=2026-09-18-a" defer></script>
+  <script src="civilian-casualty-data.js?v=2026-09-18-b" defer></script>
+  <script src="civilian-casualties.js?v=2026-09-18-b" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
@@ -49,7 +49,7 @@
         <div class="gas-list" id="civ-list"></div>
       </aside>
     </div>
-    <div class="gas-method"><div><h2>Read the boundary</h2><p>Towers show UCDP GED <code>deaths_civilians</code> totaled by event country: civilians killed in state-based, non-state, and one-sided organized violence events. Combatant deaths are excluded. Indirect deaths (famine, disease, infrastructure collapse) are not in this field. Location is where UCDP coded the event, not the perpetrator's home state.</p></div><div><h2>How to compare</h2><p>Height and color use one linear scale across all mapped countries. GED 25.1 covers 1989–2024. Candidate events add 2026 through 31 July. <strong>2025 is not in these releases.</strong> Missing countries are not confirmed zeroes. Rwanda's 1994 total dominates the world field; that is in the source, not a display exaggeration.</p></div></div>
+    <div class="gas-method"><div><h2>Read the boundary</h2><p>Ochre-red towers show UCDP GED <code>deaths_civilians</code> totaled by event country: civilians killed in state-based, non-state, and one-sided organized violence events. Combatant deaths are excluded. Indirect deaths (famine, disease, infrastructure collapse) are not in this field. Location is where UCDP coded the event, not the perpetrator's home state.</p></div><div><h2>Gaza, not in the datasets</h2><p>Two blue towers sit on the Gaza Strip and are <strong>not part of UCDP GED</strong>. They are not added to the world total. The taller one is UN OCHA citing Gaza Ministry of Health reported fatalities (all recorded deaths, 2 September 2026). Beside it is AOAV’s independent count of civilians reported killed by explosive weapons in English-language media (17 September 2026), a lower-bound civilian figure.</p></div></div>
     <p class="gas-source-line" id="civ-source-line"></p>
   </main>
   <footer><a href="about.html">The War Maps Project</a><span>UCDP civilian deaths, not a complete casualty census</span><a href="https://github.com/SJAH9/war-maps-project">Source code and data</a></footer>
