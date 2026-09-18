@@ -4,24 +4,54 @@
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784;
-  const state = {fuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const state = {fuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const dark = () => document.documentElement.dataset.theme === 'dark';
   const rawPrice = row => row[state.fuel];
-  const usdPerLitre = row => {
-    const rate = data.currency_per_eur[row.currency];
-    return rate && rawPrice(row) != null ? rawPrice(row) * data.usd_per_eur / rate / (row.unit === 'US gallon' ? GALLON_LITRES : 1) : null;
+  const usdPerGallon = row => {
+    const raw = rawPrice(row);
+    if (raw == null) return null;
+    const perEur = data.currency_per_eur[row.currency];
+    if (!perEur) return null;
+    const inUsd = raw * data.usd_per_eur / perEur;
+    return row.unit === 'US gallon' ? inUsd : inUsd * GALLON_LITRES;
   };
-  const usdPerGallon = row => {const perL=usdPerLitre(row);return perL==null?null:perL*GALLON_LITRES;};
+  const usdPerLitre = row => { const gallon = usdPerGallon(row); return gallon == null ? null : gallon / GALLON_LITRES; };
   const money = (value, currency, digits = 2) => new Intl.NumberFormat('en-US', {style:'currency', currency, minimumFractionDigits:digits, maximumFractionDigits:digits}).format(value);
-  const priceFraction = value => Math.max(0, Math.min(1, (value - 2) / 9.5));
+  const contrast = t => {
+    const x = Math.max(0, Math.min(1, t));
+    return x < .5 ? .5 * Math.pow(2 * x, 1.9) : 1 - .5 * Math.pow(2 * (1 - x), 1.9);
+  };
+  const priceFraction = value => {
+    const {min, max} = state.priceScale || {min: 0, max: 1};
+    return contrast((value - min) / Math.max(0.01, max - min));
+  };
   const priceColor = value => {
     const t = priceFraction(value);
-    return new THREE.Color(t < .5 ? '#51d7c4' : '#e3bb55').lerp(new THREE.Color(t < .5 ? '#e3bb55' : '#ed6547'), t < .5 ? t * 2 : (t - .5) * 2);
+    return t < .5
+      ? new THREE.Color('#12f0c8').lerp(new THREE.Color('#ffd028'), t * 2)
+      : new THREE.Color('#ffd028').lerp(new THREE.Color('#ff140c'), (t - .5) * 2);
   };
   const tone = value => {
     const t = priceFraction(value);
-    return t < .5 ? `color-mix(in srgb, #51d7c4 ${Math.round((1-t*2)*100)}%, #e3bb55)` : `color-mix(in srgb, #e3bb55 ${Math.round((2-t*2)*100)}%, #ed6547)`;
+    return t < .5 ? `color-mix(in srgb, #12f0c8 ${Math.round((1-t*2)*100)}%, #ffd028)` : `color-mix(in srgb, #ffd028 ${Math.round((2-t*2)*100)}%, #ff140c)`;
   };
+  function refreshPriceScale(rows) {
+    const values = [];
+    for (const row of rows) {
+      const value = usdPerGallon(row);
+      if (value != null) values.push(value);
+    }
+    if (!values.length) {
+      state.priceScale = {min: 0, max: 1};
+    } else {
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      state.priceScale = {min, max: max <= min ? min + 0.01 : max};
+    }
+    const minEl = $('#gas-scale-min'), maxEl = $('#gas-scale-max');
+    if (minEl) minEl.textContent = money(state.priceScale.min, 'USD');
+    if (maxEl) maxEl.textContent = money(state.priceScale.max, 'USD');
+  }
   const countryForRow = row => row.region === 'United States' ? 'United States of America'
     : row.source === 'japan' ? 'Japan' : row.source === 'india' ? 'India'
     : row.source === 'taiwan' ? 'Taiwan' : row.source === 'accc' ? 'Australia'
@@ -34,6 +64,7 @@
     $('#gas-count').textContent = state.visible.length.toLocaleString();
     $('#gas-list-count').textContent = `${state.visible.length} priced locations`;
     if (state.selected && !state.visible.includes(state.selected)) state.selected = null;
+    refreshPriceScale(state.visible);
     drawTowers();
     renderInspector();
     renderList();
@@ -106,6 +137,36 @@
         edge.position.y=.08; state.worldLandGroup.add(edge);
       });
     });
+    addCountryLabels();
+  }
+  function addCountryLabels() {
+    const layer = $('#gas-country-labels');
+    if (!layer || !geometry?.features) return;
+    layer.innerHTML = '';
+    state.countryAnchors = [];
+    if (state.countryAnchorGroup) {
+      state.plateRoot.remove(state.countryAnchorGroup);
+    }
+    const group = new THREE.Group();
+    state.countryAnchorGroup = group;
+    state.plateRoot.add(group);
+    geometry.features.forEach(feature => {
+      const props = feature.properties || {};
+      const lon = Number(props.LABEL_X), lat = Number(props.LABEL_Y);
+      if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
+      if (props.ADMIN === 'Antarctica') return;
+      const anchor = new THREE.Object3D();
+      anchor.position.set(lon * MAP_SCALE, 1.2, -lat * MAP_SCALE);
+      anchor.userData.name = props.NAME || props.ADMIN;
+      anchor.userData.rank = Number(props.LABELRANK) || 6;
+      group.add(anchor);
+      const el = document.createElement('div');
+      el.className = 'gas-country-label';
+      el.textContent = anchor.userData.name;
+      layer.appendChild(el);
+      anchor.userData.label = el;
+      state.countryAnchors.push(anchor);
+    });
   }
   function addNationReverse(country) {
     if (state.reverseGroup) {
@@ -173,15 +234,23 @@
     if (!state.towerGroup) return;
     const clear=group=>{if(!group)return;group.children.forEach(child=>{child.geometry.dispose();child.material.dispose();});group.clear();};
     clear(state.towerGroup);if(state.nation)clear(state.reverseTowerGroup);state.worldTowers=[];if(state.nation)state.reverseTowers=[];
+    const layer=$('#gas-price-labels'); if(layer) layer.innerHTML='';
     const makeTower=(row,reverse=false)=>{
       const price=usdPerGallon(row); if(price==null)return;
-      const height=2+priceFraction(price)*28;
+      const height=.55+priceFraction(price)*52;
       const radius=row.scope==='country'?1.35:row.scope==='state'||row.scope==='prefecture'?1.05:.78;
       const selected=row===state.selected && reverse===Boolean(state.nation);
       const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:priceColor(price),emissive:selected?'#f9bf67':'#101a12',emissiveIntensity:selected?.35:.08,shininess:38}));
       if(reverse){const p=state.nationProjection;tower.position.set((p.unwrap(row.lon)-p.centerX)*p.scale,-1.76-height/2-.3,(row.lat-p.centerY)*p.scale);}
       else tower.position.set(row.lon*MAP_SCALE,height/2+.3,-row.lat*MAP_SCALE);
-      tower.userData.row=row;
+      tower.userData.row=row; tower.userData.towerHeight=height;
+      if(reverse===Boolean(state.nation)){
+        const label=document.createElement('div');
+        label.className='gas-price-label'+(selected?' is-selected':'');
+        label.textContent=money(price,'USD');
+        layer?.appendChild(label);
+        tower.userData.label=label;
+      }
       (reverse?state.reverseTowerGroup:state.towerGroup).add(tower);
       (reverse?state.reverseTowers:state.worldTowers).push(tower);
     };
@@ -214,9 +283,16 @@
       const object=state.flipping?null:hit(event),row=object?.userData.row,country=object?.userData.country,tip=$('#gas-tooltip');
       renderer.domElement.style.cursor=state.flipping?'wait':row||(!state.nation&&country)||state.nation?'pointer':'grab';
       if(!object){tip.hidden=true;return;}
-      tip.innerHTML=row?`<strong>${esc(row.name)}</strong><span>${esc(money(usdPerGallon(row),'USD'))} / U.S. gallon · ${esc(row.date)}</span>`
-        :`<strong>${esc(country)}</strong><span>${state.nation?'Click outside this outline to return':'Click to turn the map over'}</span>`;
-      const box=renderer.domElement.getBoundingClientRect();tip.style.left=`${Math.min(box.width-245,event.clientX-box.left+15)}px`;tip.style.top=`${event.clientY-box.top+15}px`;tip.hidden=false;
+      if(row){
+        tip.innerHTML=`<strong>${esc(money(usdPerGallon(row),'USD'))}</strong><em>${esc(row.name)}</em><span>USD / U.S. gallon · ${esc(row.date)}</span>`;
+      }else{
+        tip.innerHTML=`<em>${esc(country)}</em><span>${state.nation?'Click outside this outline to return':'Click to turn the map over'}</span>`;
+      }
+      const box=renderer.domElement.getBoundingClientRect();
+      const maxLeft=Math.max(8,box.width-Math.min(460,box.width*.86)-8);
+      tip.style.left=`${Math.min(maxLeft,event.clientX-box.left+18)}px`;
+      tip.style.top=`${Math.max(8,event.clientY-box.top-12)}px`;
+      tip.hidden=false;
     });
     renderer.domElement.addEventListener('pointerleave',()=>{$('#gas-tooltip').hidden=true;});
     renderer.domElement.addEventListener('click',event=>{
@@ -226,10 +302,48 @@
       else if(row)flipToNation(countryForRow(row),row);
       else if(country)flipToNation(country);
     });
+    const project=new THREE.Vector3();
+    const placeLabel=(el,worldX,worldY,worldZ,box)=>{
+      project.set(worldX,worldY,worldZ); project.project(camera);
+      const x=(project.x*.5+.5)*box.width, y=(-project.y*.5+.5)*box.height;
+      const hide=project.z>1||x<-60||y<-28||x>box.width+60||y>box.height+28;
+      el.style.display=hide?'none':'block';
+      if(hide)return false;
+      el.style.left=`${x}px`; el.style.top=`${y}px`;
+      return true;
+    };
+    const updateLabels=()=>{
+      const box=renderer.domElement.getBoundingClientRect();
+      const dist=camera.position.distanceTo(controls.target);
+      const base=Math.max(15,Math.min(34,9200/dist));
+      (state.towers||[]).forEach(tower=>{
+        const el=tower.userData.label; if(!el)return;
+        const h=tower.userData.towerHeight||2;
+        project.set(0,h/2+.55,0); tower.localToWorld(project);
+        if(placeLabel(el,project.x,project.y,project.z,box)){
+          el.style.fontSize=`${tower.userData.row===state.selected?base*1.45:base}px`;
+        }
+      });
+      const countries=$('#gas-country-labels');
+      const showCountries=!state.nation && !state.flipping;
+      if(countries) countries.style.display=showCountries?'block':'none';
+      if(showCountries){
+        const rankLimit=dist>620?2:dist>420?4:6;
+        const countrySize=Math.max(10,Math.min(18,5400/dist));
+        (state.countryAnchors||[]).forEach(anchor=>{
+          const el=anchor.userData.label; if(!el)return;
+          if(anchor.userData.rank>rankLimit){el.style.display='none';return;}
+          anchor.getWorldPosition(project);
+          if(placeLabel(el,project.x,project.y,project.z,box)){
+            el.style.fontSize=`${anchor.userData.rank<=2?countrySize*1.25:countrySize}px`;
+          }
+        });
+      }
+    };
     const animate=()=>{
       state.animationId=requestAnimationFrame(animate);
       if(state.flipping){const delta=state.flipTarget-state.plateRoot.rotation.x;state.plateRoot.rotation.x+=delta*.15;if(Math.abs(delta)<.004){state.plateRoot.rotation.x=state.flipTarget;state.flipping=false;controls.enabled=true;}}
-      controls.update();renderer.render(scene,camera);
+      controls.update();renderer.render(scene,camera);updateLabels();
     };animate();
   }
   function init() {
