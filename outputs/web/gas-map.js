@@ -4,7 +4,7 @@
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784;
-  const state = {fuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const state = {fuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const dark = () => document.documentElement.dataset.theme === 'dark';
   const rawPrice = row => row[state.fuel];
   const usdPerGallon = row => {
@@ -139,33 +139,67 @@
     });
     addCountryLabels();
   }
+  function canvasTexture(text, opts) {
+    const w = opts.w, h = opts.h;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = opts.font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (opts.stroke) {
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = opts.strokeWidth || 6;
+      ctx.strokeStyle = opts.stroke;
+      ctx.strokeText(text, w / 2, h / 2);
+    }
+    ctx.fillStyle = opts.fill;
+    ctx.fillText(text, w / 2, h / 2);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    return tex;
+  }
   function addCountryLabels() {
-    const layer = $('#gas-country-labels');
-    if (!layer || !geometry?.features) return;
-    layer.innerHTML = '';
-    state.countryAnchors = [];
+    if (!geometry?.features || !state.plateRoot) return;
     if (state.countryAnchorGroup) {
+      state.countryAnchorGroup.traverse(object => {
+        object.geometry?.dispose?.();
+        if (object.material) {
+          object.material.map?.dispose?.();
+          object.material.dispose();
+        }
+      });
       state.plateRoot.remove(state.countryAnchorGroup);
     }
     const group = new THREE.Group();
     state.countryAnchorGroup = group;
     state.plateRoot.add(group);
+    state.countryAnchors = [];
     geometry.features.forEach(feature => {
       const props = feature.properties || {};
+      const rank = Number(props.LABELRANK) || 6;
+      if (rank > 2) return;
       const lon = Number(props.LABEL_X), lat = Number(props.LABEL_Y);
       if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
       if (props.ADMIN === 'Antarctica') return;
-      const anchor = new THREE.Object3D();
-      anchor.position.set(lon * MAP_SCALE, 1.2, -lat * MAP_SCALE);
-      anchor.userData.name = props.NAME || props.ADMIN;
-      anchor.userData.rank = Number(props.LABELRANK) || 6;
-      group.add(anchor);
-      const el = document.createElement('div');
-      el.className = 'gas-country-label';
-      el.textContent = anchor.userData.name;
-      layer.appendChild(el);
-      anchor.userData.label = el;
-      state.countryAnchors.push(anchor);
+      const name = String(props.NAME || props.ADMIN).toUpperCase();
+      const tex = canvasTexture(name, {
+        w: 512, h: 96,
+        font: '600 40px Georgia, serif',
+        fill: 'rgba(214,222,204,0.95)',
+      });
+      const width = Math.min(20, 1.05 * name.length);
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, width * 96 / 512),
+        new THREE.MeshBasicMaterial({map: tex, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide})
+      );
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.set(lon * MAP_SCALE, 1.05, -lat * MAP_SCALE);
+      mesh.renderOrder = 2;
+      mesh.raycast = () => {};
+      group.add(mesh);
+      state.countryAnchors.push(mesh);
     });
   }
   function addNationReverse(country) {
@@ -232,7 +266,17 @@
   }
   function drawTowers() {
     if (!state.towerGroup) return;
-    const clear=group=>{if(!group)return;group.children.forEach(child=>{child.geometry.dispose();child.material.dispose();});group.clear();};
+    const clear=group=>{
+      if(!group)return;
+      group.traverse(child=>{
+        child.geometry?.dispose?.();
+        if(child.material){
+          child.material.map?.dispose?.();
+          child.material.dispose();
+        }
+      });
+      group.clear();
+    };
     clear(state.towerGroup);if(state.nation)clear(state.reverseTowerGroup);state.worldTowers=[];if(state.nation)state.reverseTowers=[];
     const layer=$('#gas-price-labels'); if(layer) layer.innerHTML='';
     const makeTower=(row,reverse=false)=>{
@@ -245,11 +289,25 @@
       else tower.position.set(row.lon*MAP_SCALE,height/2+.3,-row.lat*MAP_SCALE);
       tower.userData.row=row; tower.userData.towerHeight=height;
       if(reverse===Boolean(state.nation)){
-        const label=document.createElement('div');
-        label.className='gas-price-label'+(selected?' is-selected':'');
-        label.textContent=money(price,'USD');
-        layer?.appendChild(label);
-        tower.userData.label=label;
+        const sprite=new THREE.Sprite(new THREE.SpriteMaterial({
+          map: canvasTexture(money(price,'USD'), {
+            w: 256, h: 96,
+            font: '700 42px ui-sans-serif, system-ui, sans-serif',
+            fill: selected ? '#ffe08a' : '#fff6d8',
+            stroke: 'rgba(0,0,0,0.88)',
+            strokeWidth: 8,
+          }),
+          transparent: true,
+          depthWrite: false,
+        }));
+        const sw=3.4, sh=1.25;
+        sprite.scale.set(sw, sh, 1);
+        sprite.position.set(0, reverse ? -(height/2+.95) : height/2+.95, 0);
+        sprite.userData.isPriceSprite=true;
+        tower.add(sprite);
+        tower.userData.priceSprite=sprite;
+        tower.userData.spriteW=sw;
+        tower.userData.spriteH=sh;
       }
       (reverse?state.reverseTowerGroup:state.towerGroup).add(tower);
       (reverse?state.reverseTowers:state.worldTowers).push(tower);
@@ -281,6 +339,7 @@
     renderer.domElement.addEventListener('pointerdown',event=>{state.pointerDown={x:event.clientX,y:event.clientY};});
     renderer.domElement.addEventListener('pointermove',event=>{
       const object=state.flipping?null:hit(event),row=object?.userData.row,country=object?.userData.country,tip=$('#gas-tooltip');
+      state.hoveredTower=row?object:null;
       renderer.domElement.style.cursor=state.flipping?'wait':row||(!state.nation&&country)||state.nation?'pointer':'grab';
       if(!object){tip.hidden=true;return;}
       if(row){
@@ -294,7 +353,7 @@
       tip.style.top=`${Math.max(8,event.clientY-box.top-12)}px`;
       tip.hidden=false;
     });
-    renderer.domElement.addEventListener('pointerleave',()=>{$('#gas-tooltip').hidden=true;});
+    renderer.domElement.addEventListener('pointerleave',()=>{state.hoveredTower=null;$('#gas-tooltip').hidden=true;});
     renderer.domElement.addEventListener('click',event=>{
       if(state.flipping||!state.pointerDown||Math.hypot(event.clientX-state.pointerDown.x,event.clientY-state.pointerDown.y)>5)return;
       const object=hit(event),row=object?.userData.row,country=object?.userData.country;
@@ -302,48 +361,20 @@
       else if(row)flipToNation(countryForRow(row),row);
       else if(country)flipToNation(country);
     });
-    const project=new THREE.Vector3();
-    const placeLabel=(el,worldX,worldY,worldZ,box)=>{
-      project.set(worldX,worldY,worldZ); project.project(camera);
-      const x=(project.x*.5+.5)*box.width, y=(-project.y*.5+.5)*box.height;
-      const hide=project.z>1||x<-60||y<-28||x>box.width+60||y>box.height+28;
-      el.style.display=hide?'none':'block';
-      if(hide)return false;
-      el.style.left=`${x}px`; el.style.top=`${y}px`;
-      return true;
-    };
-    const updateLabels=()=>{
-      const box=renderer.domElement.getBoundingClientRect();
-      const dist=camera.position.distanceTo(controls.target);
-      const base=Math.max(15,Math.min(34,9200/dist));
+    const updatePriceSprites=()=>{
+      if(state.countryAnchorGroup) state.countryAnchorGroup.visible=!state.nation;
       (state.towers||[]).forEach(tower=>{
-        const el=tower.userData.label; if(!el)return;
-        const h=tower.userData.towerHeight||2;
-        project.set(0,h/2+.55,0); tower.localToWorld(project);
-        if(placeLabel(el,project.x,project.y,project.z,box)){
-          el.style.fontSize=`${tower.userData.row===state.selected?base*1.45:base}px`;
-        }
+        const sprite=tower.userData.priceSprite; if(!sprite)return;
+        const hot=tower===state.hoveredTower||tower.userData.row===state.selected;
+        const s=hot?2.4:1;
+        sprite.scale.set((tower.userData.spriteW||3.4)*s,(tower.userData.spriteH||1.25)*s,1);
       });
-      const countries=$('#gas-country-labels');
-      const showCountries=!state.nation && !state.flipping;
-      if(countries) countries.style.display=showCountries?'block':'none';
-      if(showCountries){
-        const rankLimit=dist>620?2:dist>420?4:6;
-        const countrySize=Math.max(10,Math.min(18,5400/dist));
-        (state.countryAnchors||[]).forEach(anchor=>{
-          const el=anchor.userData.label; if(!el)return;
-          if(anchor.userData.rank>rankLimit){el.style.display='none';return;}
-          anchor.getWorldPosition(project);
-          if(placeLabel(el,project.x,project.y,project.z,box)){
-            el.style.fontSize=`${anchor.userData.rank<=2?countrySize*1.25:countrySize}px`;
-          }
-        });
-      }
     };
     const animate=()=>{
       state.animationId=requestAnimationFrame(animate);
       if(state.flipping){const delta=state.flipTarget-state.plateRoot.rotation.x;state.plateRoot.rotation.x+=delta*.15;if(Math.abs(delta)<.004){state.plateRoot.rotation.x=state.flipTarget;state.flipping=false;controls.enabled=true;}}
-      controls.update();renderer.render(scene,camera);updateLabels();
+      updatePriceSprites();
+      controls.update();renderer.render(scene,camera);
     };animate();
   }
   function init() {
