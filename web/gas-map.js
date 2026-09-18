@@ -17,13 +17,9 @@
   };
   const usdPerLitre = row => { const gallon = usdPerGallon(row); return gallon == null ? null : gallon / GALLON_LITRES; };
   const money = (value, currency, digits = 2) => new Intl.NumberFormat('en-US', {style:'currency', currency, minimumFractionDigits:digits, maximumFractionDigits:digits}).format(value);
-  const contrast = t => {
-    const x = Math.max(0, Math.min(1, t));
-    return x < .5 ? .5 * Math.pow(2 * x, 1.9) : 1 - .5 * Math.pow(2 * (1 - x), 1.9);
-  };
   const priceFraction = value => {
     const {min, max} = state.priceScale || {min: 0, max: 1};
-    return contrast((value - min) / Math.max(0.01, max - min));
+    return Math.max(0, Math.min(1, (value - min) / Math.max(0.01, max - min)));
   };
   const priceColor = value => {
     const t = priceFraction(value);
@@ -64,7 +60,7 @@
     $('#gas-count').textContent = state.visible.length.toLocaleString();
     $('#gas-list-count').textContent = `${state.visible.length} priced locations`;
     if (state.selected && !state.visible.includes(state.selected)) state.selected = null;
-    refreshPriceScale(state.visible);
+    refreshPriceScale(state.worldVisible);
     drawTowers();
     renderInspector();
     renderList();
