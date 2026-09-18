@@ -236,7 +236,8 @@
     addNationReverse(country);
     state.nation=country;state.selected=selected;
     state.flipTarget=Math.PI;state.flipping=true;state.controls.enabled=false;
-    $('#gas-view-name').textContent=country.toUpperCase();$('#gas-back').hidden=false;
+    const nationLabel=(geometry.features.find(item=>item.properties.ADMIN===country)?.properties.NAME||country).toUpperCase();
+    $('#gas-view-name').textContent=nationLabel;$('#gas-nation-name').textContent=nationLabel;$('#gas-nation-name').hidden=false;$('#gas-back').hidden=false;
     $('#gas-stage-hint').innerHTML='CLICK OUTSIDE THE NATION TO RETURN <b>·</b> SELECT A TOWER';
     $('#gas-tooltip').hidden=true;
     filterRows();
@@ -244,7 +245,7 @@
   function flipToWorld() {
     if(!state.nation||state.flipping)return;
     state.nation=null;state.selected=null;state.flipTarget=0;state.flipping=true;state.controls.enabled=false;
-    $('#gas-view-name').textContent='WORLD PRICE FIELD';$('#gas-back').hidden=true;
+    $('#gas-view-name').textContent='WORLD PRICE FIELD';$('#gas-nation-name').textContent='';$('#gas-nation-name').hidden=true;$('#gas-back').hidden=true;
     $('#gas-stage-hint').innerHTML='CLICK A NATION TO TURN THE MAP <b>·</b> DRAG TO ORBIT';
     $('#gas-tooltip').hidden=true;
     filterRows();

@@ -7,12 +7,12 @@
   <title>Gas Map · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-18-gas">
-  <link rel="stylesheet" href="gas-map.css?v=2026-09-18-f">
+  <link rel="stylesheet" href="gas-map.css?v=2026-09-18-g">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="assets/world-geometry.js" defer></script>
   <script src="gas-price-data.js" defer></script>
-  <script src="gas-map.js?v=2026-09-18-f" defer></script>
+  <script src="gas-map.js?v=2026-09-18-g" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
@@ -36,7 +36,10 @@
         <div id="gas-map" aria-label="Interactive isometric fuel-price map. Click a country to turn the map over; click outside its outline to return. Drag to rotate; scroll to zoom."></div>
         <div class="gas-stage-label"><span id="gas-view-name">WORLD PRICE FIELD</span><strong id="gas-count">—</strong><span>mapped observations</span></div>
         <button class="gas-back" id="gas-back" type="button" hidden>↶ World map</button>
-        <div class="gas-scale" aria-label="Relative color scale in USD per U.S. gallon"><span>USD / US GALLON · RELATIVE</span><i></i><div><span id="gas-scale-min">lower</span><span id="gas-scale-max">higher</span></div></div>
+        <div class="gas-stage-right">
+          <div class="gas-nation-name" id="gas-nation-name" hidden></div>
+          <div class="gas-scale" aria-label="Relative color scale in USD per U.S. gallon"><span>USD / US GALLON · RELATIVE</span><i></i><div><span id="gas-scale-min">lower</span><span id="gas-scale-max">higher</span></div></div>
+        </div>
         <div class="gas-country-labels" id="gas-country-labels" aria-hidden="true"></div>
         <div class="gas-price-labels" id="gas-price-labels" aria-hidden="true"></div>
         <div class="gas-tooltip" id="gas-tooltip" hidden></div>
