@@ -308,6 +308,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("maxAzimuthAngle=azimuth+Math.PI/2", map_source)
         self.assertIn("enablePan=false", map_source)
         self.assertIn("value:format(mean('fertility'),2)", map_source)
+
         self.assertNotIn("DISPLAYED MEAN", map_source)
         self.assertIn("state.metricRailOrder.push(metric)", map_source)
         self.assertIn("state.metricRailOrder=state.metricRailOrder.filter(item=>item!==metric)", map_source)
@@ -323,6 +324,33 @@ class WarMapsBuildTests(unittest.TestCase):
             observations[country] = observations.get(country, 0) + 1
         self.assertTrue(observations)
         self.assertGreater(max(observations.values()), 0)
+
+    def test_gas_map_snapshot_retains_source_scope_and_units(self):
+        page = ROOT / "web/gas-map.html"
+        source = ROOT / "web/gas-map.js"
+        payload = ROOT / "web/gas-price-data.js"
+        self.assertTrue(page.exists())
+        self.assertTrue(source.exists())
+        self.assertTrue((ROOT / "outputs/web/gas-map.html").exists())
+        data = json.loads(payload.read_text(encoding="utf-8").removeprefix(
+            "window.GAS_PRICE_DATA=").removesuffix(";\n"))
+        rows = data["observations"]
+        self.assertEqual(len(rows), 333)
+        self.assertEqual({row["region"] for row in rows},
+                         {"United States", "Europe", "Asia", "Oceania"})
+        self.assertEqual(len([row for row in rows if row["region"] == "United States"]), 61)
+        self.assertEqual(len([row for row in rows if row["region"] == "Europe"]), 27)
+        self.assertEqual(len([row for row in rows if row["region"] == "Asia"]), 49)
+        self.assertEqual(len([row for row in rows if row["region"] == "Oceania"]), 196)
+        self.assertTrue(all(row["date"] and row["scope"] and row["source"] and row["unit"]
+                            for row in rows))
+        self.assertTrue(all(-180 <= row["lon"] <= 180 and -90 <= row["lat"] <= 90
+                            for row in rows))
+        self.assertEqual(len(data["unlocated_australia"]), 5)
+        self.assertIn('value="Islands"', page.read_text(encoding="utf-8"))
+        self.assertIn("GALLON_LITRES = 3.785411784", source.read_text(encoding="utf-8"))
+        self.assertIn("new THREE.CylinderGeometry", source.read_text(encoding="utf-8"))
+        self.assertIn("addAtmosphere();addWorld()", source.read_text(encoding="utf-8"))
 
     def test_information_architecture_and_shared_map_semantics(self):
         pages = {

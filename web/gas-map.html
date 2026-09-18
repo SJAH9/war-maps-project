@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A source-dated, isometric map of local pump gasoline and diesel prices across the United States, Europe, Asia, Oceania, and islands.">
+  <title>Gas Map · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-09-18-gas">
+  <link rel="stylesheet" href="gas-map.css?v=2026-09-18-a">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+  <script src="assets/world-geometry.js" defer></script>
+  <script src="gas-price-data.js" defer></script>
+  <script src="gas-map.js?v=2026-09-18-a" defer></script>
+</head>
+<body class="gas-page">
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"><a href="./">Network</a><a href="graph.html">Graph</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="gas-map.html" aria-current="page">Gas Map</a><a href="information.html">Information</a></nav>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+  <main class="gas-main">
+    <div class="gas-heading">
+      <div><p class="eyebrow">Fuel · Place · Price</p><h1>Gas Map</h1></div>
+      <p>Pump prices across local, regional, and national reporting boundaries. Select a price tower to see the actual reported unit, date, geography, and source.</p>
+    </div>
+    <div class="gas-controls" aria-label="Gas Map controls">
+      <label>Fuel <select id="gas-fuel"><option value="gasoline">Pump gasoline</option><option value="diesel">Diesel</option></select></label>
+      <label>Region <select id="gas-region"><option value="All">All regions</option><option value="United States">United States</option><option value="Europe">Europe</option><option value="Asia">Asia</option><option value="Oceania">Oceania</option><option value="Islands">Islands</option></select></label>
+      <label class="gas-find">Find a place <input id="gas-search" type="search" placeholder="Search mapped observations" autocomplete="off"></label>
+      <button id="gas-reset" type="button">Reset view</button>
+    </div>
+    <div class="gas-workspace">
+      <div class="gas-stage">
+        <div id="gas-map" role="img" aria-label="Isometric, flattened Earth with vertical fuel-price towers. Drag to rotate; scroll to zoom."></div>
+        <div class="gas-stage-label"><span>THE PRICE FIELD</span><strong id="gas-count">—</strong><span>mapped observations</span></div>
+        <div class="gas-scale" aria-label="Color scale from lower to higher comparable price"><span>USD / L comparison</span><i></i><div><span>lower</span><span>higher</span></div></div>
+        <div class="gas-tooltip" id="gas-tooltip" hidden></div>
+        <div class="gas-stage-foot">DRAG TO ORBIT <b>·</b> SCROLL TO ZOOM <b>·</b> SELECT A TOWER</div>
+      </div>
+      <aside class="gas-aside" aria-live="polite">
+        <div class="gas-aside-head"><p class="eyebrow" id="gas-kicker">Source-dated snapshot</p><h2 id="gas-selected">A geography of pump prices</h2><p id="gas-selected-sub">Choose a tower or a location below.</p></div>
+        <div class="gas-facts" id="gas-facts"></div>
+        <div class="gas-list-head"><h3>Places in view</h3><span id="gas-list-count"></span></div>
+        <div class="gas-list" id="gas-list"></div>
+      </aside>
+    </div>
+    <div class="gas-method"><div><h2>Read the boundary</h2><p>These are reported retail observations, not a single worldwide survey. U.S. regular, EU Eurosuper 95, Japanese regular, Australian regular unleaded, New Zealand 91, Taiwan CPC 92, and the Delhi outlet quote are not identical fuels. National, state, prefecture, city, regional, schedule, and outlet prices are not interchangeable.</p></div><div><h2>How to compare</h2><p>Tower height and color use an indicative USD per litre conversion with the <span id="gas-fx-date">dated</span> ECB exchange-rate reference (Taiwan uses the central bank’s TWD/USD close); exact local price is shown on selection. The snapshot is not a live feed. Missing places are not zero-price places. Source links and observation dates remain attached to every point.</p></div></div>
+    <div class="gas-source-line" id="gas-source-line"></div>
+  </main>
+  <footer><a href="about.html">The War Maps Project</a><span>Price observations retain their source boundaries</span><a href="sources.html">Citations</a></footer>
+</body>
+</html>

@@ -16,6 +16,7 @@ The current release is therefore an operational foundation, not a claim that eve
 - [Interactive conflict map](https://sjah9.github.io/war-maps-project/outputs/web/map.html)
 - [Global relationship graph](https://sjah9.github.io/war-maps-project/outputs/web/graph.html)
 - [Life and Death visualization](https://sjah9.github.io/war-maps-project/outputs/web/life-death.html)
+- [Gas Map](https://sjah9.github.io/war-maps-project/outputs/web/gas-map.html)
 - [Project information and methods](https://sjah9.github.io/war-maps-project/outputs/web/information.html)
 - [About the War Maps Project](https://sjah9.github.io/war-maps-project/outputs/web/about.html)
 
