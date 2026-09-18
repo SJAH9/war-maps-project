@@ -3,3 +3,5 @@ __pycache__/
 .DS_Store
 outputs/web/data/*.json
 data/processed/*.json
+data/raw/ged251-csv.zip
+data/raw/GEDEvent_v25_1.csv

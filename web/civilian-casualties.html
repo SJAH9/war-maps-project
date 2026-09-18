@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="UCDP georeferenced civilian deaths from organized violence, totaled by country from 1989 through the project's candidate-event boundary.">
+  <title>Civilian Casualties · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-09-18-gas">
+  <link rel="stylesheet" href="civilian-casualties.css?v=2026-09-18-a">
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
+  <script src="assets/world-geometry.js" defer></script>
+  <script src="civilian-casualty-data.js?v=2026-09-18-a" defer></script>
+  <script src="civilian-casualties.js?v=2026-09-18-a" defer></script>
+</head>
+<body class="gas-page">
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"><a href="./">Network</a><a href="graph.html">Graph</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="gas-map.html">Gas Map</a><a href="civilian-casualties.html" aria-current="page">Casualties</a><a href="information.html">Information</a></nav>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+  <main class="gas-main">
+    <div class="gas-heading">
+      <div><p class="eyebrow">Organized violence · Civilians</p><h1>Civilian Casualties</h1></div>
+      <p>Reported civilian deaths in UCDP georeferenced events, summed by the country where the event was coded. This is not a complete ledger of every civilian killed in war. Click a nation to turn the map over.</p>
+    </div>
+    <div class="gas-controls" aria-label="Civilian casualty map controls">
+      <label class="gas-find">Find a country <input id="civ-search" type="search" placeholder="Search countries" autocomplete="off"></label>
+      <button id="civ-reset" type="button">Reset view</button>
+    </div>
+    <div class="gas-workspace">
+      <div class="gas-stage">
+        <div id="civ-map" aria-label="Interactive isometric map of reported civilian deaths by country. Click a country to turn the map over; click outside its outline to return. Drag to rotate; scroll to zoom."></div>
+        <div class="gas-stage-label"><span id="civ-view-name">WORLD CIVILIAN DEATHS</span><strong id="civ-count">—</strong><span>countries with a civilian death record</span></div>
+        <button class="gas-back" id="civ-back" type="button" hidden>↶ World map</button>
+        <div class="gas-stage-right">
+          <div class="gas-nation-name" id="civ-nation-name" hidden></div>
+          <div class="gas-scale" aria-label="Relative color scale of reported civilian deaths"><span>CIVILIAN DEATHS · RELATIVE</span><i></i><div><span id="civ-scale-min">fewer</span><span id="civ-scale-max">more</span></div></div>
+        </div>
+        <div class="gas-country-labels" id="civ-country-labels" aria-hidden="true"></div>
+        <div class="gas-tooltip" id="civ-tooltip" hidden></div>
+        <div class="gas-stage-foot" id="civ-stage-hint">CLICK A NATION TO TURN THE MAP <b>·</b> DRAG TO ORBIT</div>
+      </div>
+      <aside class="gas-aside" aria-live="polite">
+        <div class="gas-aside-head"><p class="eyebrow" id="civ-kicker">UCDP GED</p><h2 id="civ-selected">A geography of reported civilian deaths</h2><p id="civ-selected-sub">Choose a tower or a country below.</p></div>
+        <div class="gas-facts" id="civ-facts"></div>
+        <div class="gas-list-head"><h3>Countries in view</h3><span id="civ-list-count"></span></div>
+        <div class="gas-list" id="civ-list"></div>
+      </aside>
+    </div>
+    <div class="gas-method"><div><h2>Read the boundary</h2><p>Towers show UCDP GED <code>deaths_civilians</code> totaled by event country: civilians killed in state-based, non-state, and one-sided organized violence events. Combatant deaths are excluded. Indirect deaths (famine, disease, infrastructure collapse) are not in this field. Location is where UCDP coded the event, not the perpetrator's home state.</p></div><div><h2>How to compare</h2><p>Height and color use one linear scale across all mapped countries. GED 25.1 covers 1989–2024. Candidate events add 2026 through 31 July. <strong>2025 is not in these releases.</strong> Missing countries are not confirmed zeroes. Rwanda's 1994 total dominates the world field; that is in the source, not a display exaggeration.</p></div></div>
+    <p class="gas-source-line" id="civ-source-line"></p>
+  </main>
+  <footer><a href="about.html">The War Maps Project</a><span>UCDP civilian deaths, not a complete casualty census</span><a href="https://github.com/SJAH9/war-maps-project">Source code and data</a></footer>
+</body>
+</html>

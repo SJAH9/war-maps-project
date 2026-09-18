@@ -358,6 +358,21 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("else if(!country)flipToWorld()", map_source)
         self.assertIn('id="gas-back"', page.read_text(encoding="utf-8"))
 
+    def test_civilian_casualty_map_uses_ged_civilian_totals(self):
+        page = ROOT / "web/civilian-casualties.html"
+        payload = ROOT / "web/civilian-casualty-data.js"
+        self.assertTrue(page.exists())
+        self.assertTrue(payload.exists())
+        data = json.loads(payload.read_text(encoding="utf-8").removeprefix(
+            "window.CIVILIAN_CASUALTY_DATA=").removesuffix(";\n"))
+        countries = {row["admin"]: row for row in data["countries"]}
+        self.assertGreaterEqual(data["world_total"], 1_000_000)
+        self.assertGreater(countries["Rwanda"]["civilians"], 500_000)
+        self.assertTrue(all(row["civilians"] > 0 and row["lon"] is not None for row in data["countries"]))
+        markup = page.read_text(encoding="utf-8")
+        self.assertIn("civilian-casualties.js", markup)
+        self.assertIn("CLICK A NATION", markup)
+
     def test_information_architecture_and_shared_map_semantics(self):
         pages = {
             "information.html", "about.html", "method.html", "data-conflict.html",
