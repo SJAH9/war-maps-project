@@ -6,14 +6,14 @@
   <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
   <title>Conflict Network · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-19-network-r9">
+  <link rel="stylesheet" href="styles.css?v=2026-09-19-network-language-r1">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
   <script src="network-model.js?v=2026-09-19-r4" defer></script>
-  <script src="network.js?v=2026-09-19-r9" defer></script>
+  <script src="network.js?v=2026-09-19-r10" defer></script>
 </head>
 <body class="network-page">
   <header class="site-header">
@@ -27,17 +27,17 @@
     <section class="network-section" id="network">
       <div class="network-title">
         <div><p class="eyebrow">Interactive network model</p><h1 id="network-title">Conflict network</h1></div>
-        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D Network Browser</button></div>
+        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a></div>
       </div>
 
-      <div class="network-controls" aria-label="Network controls">
-        <button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select war</button>
-        <label><span>From</span><input id="network-start" type="date"></label>
-        <label><span>Through</span><input id="network-end" type="date"></label>
-        <label><span>Find node</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
-        <label><span>Node class</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
-        <div class="network-view-actions"><label class="network-topology-control"><span>Optimization</span><select id="network-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Coalition shells</option><option value="prisoner">Prisoner's dilemma proxy</option><option value="third-party">Interested third party</option><option value="pirates">Pirates allocation proxy</option><option value="temporal">Temporal orbits</option></select></label><button class="network-optimize" id="network-optimize" type="button">Optimize view</button><button class="network-data" id="network-data" type="button">View network data</button></div>
-        <button class="network-fit" id="network-fit" type="button" title="Fit the complete network" aria-label="Fit the complete network">⛶</button>
+      <div class="network-controls network-command-deck" aria-label="Network visualization controls">
+        <div class="network-command"><span>Scope</span><button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select conflict</button></div>
+        <div class="network-command"><span>Time</span><label><span>From</span><input id="network-start" type="date"></label><label><span>Through</span><input id="network-end" type="date"></label></div>
+        <label class="network-command"><span>Search</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
+        <label class="network-command"><span>Filter</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
+        <div class="network-command"><span>Layout</span><select id="network-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Coalition shells</option><option value="prisoner">Prisoner's dilemma proxy</option><option value="third-party">Interested third party</option><option value="pirates">Pirates allocation proxy</option><option value="temporal">Temporal orbits</option></select><button class="network-optimize" id="network-optimize" type="button">Arrange</button></div>
+        <div class="network-command"><span>View</span><button class="network-fit" id="network-fit" type="button">Fit</button><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D Browser</button></div>
+        <div class="network-command"><span>Evidence</span><button class="network-data" id="network-data" type="button">View network data</button></div>
       </div>
 
       <div class="network-workspace">
