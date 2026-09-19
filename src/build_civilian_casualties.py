@@ -185,8 +185,7 @@ def build() -> dict:
             continue
         years = sorted(
             ([year, deaths] for year, deaths in rec["years"].items() if deaths),
-            key=lambda item: -item[1],
-        )[:8]
+        )
         countries.append({
             "name": rec["name"],
             "admin": rec["admin"],
@@ -209,8 +208,9 @@ def build() -> dict:
         "coverage": {
             "ged_version": "25.1",
             "ged_years": [1989, 2024],
+            "play_years": list(range(2015, 2025)),
             "candidate_through": "2026-07-31",
-            "note": "UCDP GED 25.1 covers 1989-2024. Candidate events add 2026 through July. 2025 is not in these releases.",
+            "note": "UCDP GED 25.1 covers 1989-2024. Candidate events add 2026 through July. 2025 is not in these releases. Play steps through cumulative totals for 2015–2024.",
         },
         "world_total": sum(item["civilians"] for item in countries),
         "country_count": len(countries),

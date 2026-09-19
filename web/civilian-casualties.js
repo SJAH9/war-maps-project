@@ -4,7 +4,19 @@
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const MAP_SCALE = .63, MAP_Y = 9;
-  const state = {search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const state = {search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, year:null, playTimer:null, playIndex:0, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const playYears = () => data.coverage.play_years || [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024];
+  const deathsThrough = (row, year) => {
+    if (year == null) return row.civilians || 0;
+    if (row.in_ucdp === false) return year >= 2023 ? row.civilians : 0;
+    let total = 0;
+    for (const item of row.years || []) {
+      const y = item[0], n = item[1];
+      if (y <= year) total += n;
+    }
+    return total;
+  };
+  const worldThrough = year => (data.countries || []).reduce((sum, row) => sum + deathsThrough(row, year), 0);
   const dark = () => document.documentElement.dataset.theme === 'dark';
   const formatCount = value => Number(value || 0).toLocaleString('en-US');
   const compact = value => {
@@ -38,17 +50,46 @@
     if (minEl) minEl.textContent = formatCount(state.priceScale.min);
     if (maxEl) maxEl.textContent = formatCount(state.priceScale.max);
   }
+  function setYearLabel() {
+    const el = $('#civ-year');
+    if (el) el.textContent = state.year == null ? 'All years' : `Through ${state.year}`;
+  }
   function filterRows() {
-    state.worldVisible = data.countries.filter(row => row.civilians > 0 &&
+    const year = state.year;
+    state.worldVisible = data.countries.filter(row => deathsThrough(row, year) > 0 &&
       (!state.search || `${row.name} ${row.admin} ${row.region}`.toLocaleLowerCase().includes(state.search)));
     state.visible = state.nation ? state.worldVisible.filter(row => row.admin === state.nation) : state.worldVisible;
     $('#civ-count').textContent = state.visible.length.toLocaleString();
     $('#civ-list-count').textContent = `${state.visible.length} UCDP countries`;
-    if (state.selected && !state.visible.includes(state.selected)) state.selected = null;
+    if (state.selected && !state.visible.includes(state.selected) && state.selected.in_ucdp !== false) state.selected = null;
     refreshScale(data.countries.filter(row => row.civilians > 0));
+    setYearLabel();
+    if (!state.nation) $('#civ-view-name').textContent = state.year == null ? 'WORLD CIVILIAN DEATHS' : `THROUGH ${state.year}`;
     drawTowers();
     renderInspector();
     renderList();
+  }
+  function stopPlay() {
+    if (state.playTimer) { clearInterval(state.playTimer); state.playTimer = null; }
+    const btn = $('#civ-play');
+    if (btn) { btn.setAttribute('aria-pressed', 'false'); btn.textContent = 'Play 2015–2024'; }
+  }
+  function playStep() {
+    const years = playYears();
+    state.year = years[state.playIndex % years.length];
+    state.playIndex += 1;
+    filterRows();
+  }
+  function togglePlay() {
+    if (state.playTimer) {
+      stopPlay();
+      return;
+    }
+    const btn = $('#civ-play');
+    if (btn) { btn.setAttribute('aria-pressed', 'true'); btn.textContent = 'Pause'; }
+    state.playIndex = 0;
+    playStep();
+    state.playTimer = setInterval(playStep, 1100);
   }
   function renderInspector() {
     const row = state.selected;
@@ -66,18 +107,19 @@
       ].map(([label, value]) => `<div><span>${esc(label)}</span><strong>${label === 'Source' ? value : esc(value)}</strong></div>`).join('');
       return;
     }
-    $('#civ-kicker').textContent = row ? `${row.region} · UCDP GED` : state.nation ? `Nation view / ${data.snapshot}` : `World total ${formatCount(data.world_total)}`;
+    const through = state.year == null ? data.world_total : worldThrough(state.year);
+    $('#civ-kicker').textContent = row ? `${row.region} · UCDP GED` : state.nation ? `Nation view / ${data.snapshot}` : `World total ${formatCount(through)}${state.year ? ` through ${state.year}` : ''}`;
     $('#civ-selected').textContent = row ? row.name : state.nation || 'Reported civilian deaths';
-    $('#civ-selected-sub').textContent = row ? `${formatCount(row.civilians)} civilian deaths coded in this territory` : state.nation ? 'Click the tower to inspect the national total. Click outside the nation to return.' : 'Choose a tower or a country below.';
+    $('#civ-selected-sub').textContent = row ? `${formatCount(deathsThrough(row, state.year))} civilian deaths coded in this territory${state.year ? ` through ${state.year}` : ''}` : state.nation ? 'Click the tower to inspect the national total. Click outside the nation to return.' : 'Choose a tower or a country below.';
     if (!row) {
       const external = data.external || [];
     const extra = external.map(item => `<div><span>${esc(item.place)} · ${esc(item.source_short)} (not UCDP)</span><strong>${esc(formatCount(item.civilians))}</strong></div>`).join('');
-    $('#civ-facts').innerHTML = `<div><span>UCDP world total</span><strong>${esc(formatCount(data.world_total))}</strong></div><div><span>UCDP countries mapped</span><strong>${esc(formatCount(data.country_count))}</strong></div><div><span>GED years</span><strong>${data.coverage.ged_years[0]}–${data.coverage.ged_years[1]}</strong></div><div><span>Candidate through</span><strong>${esc(data.coverage.candidate_through)}</strong></div>${extra}`;
+    $('#civ-facts').innerHTML = `<div><span>UCDP world total${state.year ? ` through ${state.year}` : ''}</span><strong>${esc(formatCount(through))}</strong></div><div><span>UCDP countries mapped</span><strong>${esc(formatCount(data.country_count))}</strong></div><div><span>GED years</span><strong>${data.coverage.ged_years[0]}–${data.coverage.ged_years[1]}</strong></div><div><span>Candidate through</span><strong>${esc(data.coverage.candidate_through)}</strong></div>${extra}`;
       return;
     }
-    const years = (row.years || []).map(([year, deaths]) => `${year}: ${formatCount(deaths)}`).join(' · ') || '—';
+    const years = [...(row.years || [])].sort((a,b)=>b[1]-a[1]).slice(0,8).map(([year, deaths]) => `${year}: ${formatCount(deaths)}`).join(' · ') || '—';
     $('#civ-facts').innerHTML = [
-      ['Civilian deaths', formatCount(row.civilians)],
+      ['Civilian deaths', formatCount(deathsThrough(row, state.year))],
       ['Events', formatCount(row.events)],
       ['Events with civilian deaths', formatCount(row.events_with_civilians)],
       ['Years observed', `${row.year_start}–${row.year_end}`],
@@ -86,12 +128,13 @@
     ].map(([label, value]) => `<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
   }
   function renderList() {
-    const sorted = [...state.visible].sort((a, b) => b.civilians - a.civilians || a.name.localeCompare(b.name));
+    const sorted = [...state.visible].sort((a, b) => deathsThrough(b, state.year) - deathsThrough(a, state.year) || a.name.localeCompare(b.name));
     const ucdp = sorted.length ? sorted.map(row => {
       const index = data.countries.indexOf(row);
-      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(row.civilians)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.region)} · ${row.year_start}–${row.year_end} · UCDP GED</small></span><strong>${esc(formatCount(row.civilians))}</strong></button>`;
+      const value = deathsThrough(row, state.year);
+      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(value)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.region)} · ${row.year_start}–${row.year_end} · UCDP GED</small></span><strong>${esc(formatCount(value))}</strong></button>`;
     }).join('') : `<p class="gas-list-empty">${state.nation ? 'No UCDP civilian-death record is mapped for this nation. Click outside the nation to return to the world.' : 'No countries match this search.'}</p>`;
-    const showExternal = !state.nation || state.nation === 'Palestine' || state.nation === 'Israel';
+    const showExternal = state.year == null && (!state.nation || state.nation === 'Palestine' || state.nation === 'Israel');
     const external = showExternal ? (data.external || []).map((row, index) =>
       `<button type="button" data-external="${index}" aria-current="${row === state.selected}"><i style="background:#7ec8e3"></i><span><b>${esc(row.place)}</b><small>NOT IN UCDP · ${esc(row.source_short)} · ${esc(row.as_of)}</small></span><strong>${esc(formatCount(row.civilians))}</strong></button>`
     ).join('') : '';
@@ -276,7 +319,7 @@
     };
     clear(state.towerGroup);if(state.nation)clear(state.reverseTowerGroup);state.worldTowers=[];if(state.nation)state.reverseTowers=[];
     const makeTower=(row,reverse=false)=>{
-      const value=row.civilians; if(!value)return;
+      const value=deathsThrough(row, state.year); if(!value)return;
       const height=.55+priceFraction(value)*52;
       const external=row.in_ucdp===false;
       const radius=external?1.45:1.2;
@@ -310,7 +353,7 @@
     };
     state.worldVisible.forEach(row=>makeTower(row));
     const externals=(data.external||[]).filter(row=>!state.search||`${row.place} ${row.source_short}`.toLocaleLowerCase().includes(state.search));
-    const showExternal=!state.nation||state.nation==='Palestine'||state.nation==='Israel';
+    const showExternal=state.year==null&&(!state.nation||state.nation==='Palestine'||state.nation==='Israel');
     if(showExternal) externals.forEach(row=>makeTower(row,false));
     if(state.nation&&state.reverseTowerGroup){
       state.visible.forEach(row=>makeTower(row,true));
@@ -347,7 +390,7 @@
       if(row){
         tip.innerHTML=row.in_ucdp===false
           ? `<strong>${esc(formatCount(row.civilians))}</strong><em>${esc(row.place)} · ${esc(row.source_short)}</em><span>NOT IN UCDP · ${esc(row.metric)} · ${esc(row.as_of)}</span>`
-          : `<strong>${esc(formatCount(row.civilians))}</strong><em>${esc(row.name)}</em><span>UCDP GED civilian deaths · ${row.year_start}–${row.year_end}</span>`;
+          : `<strong>${esc(formatCount(deathsThrough(row, state.year)))}</strong><em>${esc(row.name)}</em><span>UCDP GED civilian deaths · ${state.year ? `through ${state.year}` : `${row.year_start}–${row.year_end}`}</span>`;
       }else{
         tip.innerHTML=`<em>${esc(country)}</em><span>${state.nation?'Click outside this outline to return':'Click to turn the map over'}</span>`;
       }
@@ -385,6 +428,7 @@
     if (!data?.countries?.length) {$('#civ-map').innerHTML='<p class="gas-error">The civilian-death snapshot did not load. Reload the page and check the data asset.</p>';return;}
     $('#civ-source-line').innerHTML=`Sources: <a href="${esc(data.sources.ged)}" target="_blank" rel="noopener noreferrer">UCDP GED ↗</a> ${esc(data.sources.citation)} Coverage: ${data.coverage.ged_years[0]}–${data.coverage.ged_years[1]}, plus candidate events through ${esc(data.coverage.candidate_through)}. ${esc(data.coverage.note)}`;
     $('#civ-search').addEventListener('input',event=>{state.search=event.target.value.trim().toLocaleLowerCase();filterRows();});
+    $('#civ-play').addEventListener('click',togglePlay);
     $('#civ-list').addEventListener('click',event=>{
       const external=event.target.closest('[data-external]');
       if(external){selectRow((data.external||[])[Number(external.dataset.external)]);return;}
@@ -393,7 +437,7 @@
     });
     $('#civ-back').addEventListener('click',flipToWorld);
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.nation)flipToWorld();});
-    $('#civ-reset').addEventListener('click',()=>{if(state.nation)flipToWorld();state.search='';state.selected=null;$('#civ-search').value='';if(state.camera){state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();}filterRows();});
+    $('#civ-reset').addEventListener('click',()=>{stopPlay();if(state.nation)flipToWorld();state.search='';state.selected=null;state.year=null;$('#civ-search').value='';if(state.camera){state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();}filterRows();});
     $('#theme-toggle').addEventListener('click',()=>{const next=dark()?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('war-maps-theme',next);}catch(error){} window.location.reload();});
     try{initScene();}catch(error){$('#civ-map').innerHTML=`<p class="gas-error">The 3D field could not start: ${esc(error.message)}. The searchable country list remains available.</p>`;}
     filterRows();

@@ -368,6 +368,9 @@ class WarMapsBuildTests(unittest.TestCase):
         countries = {row["admin"]: row for row in data["countries"]}
         self.assertGreaterEqual(data["world_total"], 1_000_000)
         self.assertGreater(countries["Rwanda"]["civilians"], 500_000)
+        self.assertEqual(data["coverage"]["play_years"], list(range(2015, 2025)))
+        rwanda_years = {year: deaths for year, deaths in countries["Rwanda"]["years"]}
+        self.assertGreater(rwanda_years.get(1994, 0), 500_000)
         self.assertTrue(all(row["civilians"] > 0 and row["lon"] is not None for row in data["countries"]))
         markup = page.read_text(encoding="utf-8")
         self.assertIn("civilian-casualties.js", markup)
