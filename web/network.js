@@ -542,22 +542,6 @@
     state.forceGraph.refresh();
   }
 
-  function nodeObject(node){
-    if(!window.THREE)return null;
-    const sizes={conflict:14,side:11,nation:9,location:8,actor:6,observation:3.4};
-    const size=(sizes[node.kind]||4)*nodeVisualScale(node);
-    const geometries={
-      conflict:()=>new THREE.OctahedronGeometry(size,0),
-      side:()=>new THREE.ConeGeometry(size*.82,size*1.8,8),
-      nation:()=>new THREE.BoxGeometry(size*1.45,size*1.45,size*1.45),
-      location:()=>new THREE.CylinderGeometry(size*.78,size*.78,size*1.45,8),
-      actor:()=>new THREE.SphereGeometry(size,12,8),
-      observation:()=>new THREE.TetrahedronGeometry(size,0)
-    };
-    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.38,shininess:18,flatShading:true,transparent:true,opacity:.98,depthTest:false});
-    const mesh=new THREE.Mesh((geometries[node.kind]||geometries.actor)(),material);mesh.userData.nodeId=node.id;mesh.renderOrder=3;return mesh;
-  }
-
   function createSvgGlyph(node,ns){
     const tags={conflict:'rect',side:'polygon',nation:'rect',location:'polygon',actor:'circle',observation:'rect'};
     const glyph=document.createElementNS(ns,tags[node.kind]||'circle');glyph.dataset.glyphKind=node.kind;return glyph;
@@ -607,11 +591,10 @@
       .backgroundColor('rgba(0,0,0,0)')
       .showNavInfo(false)
       .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)} · degree ${node.networkScience?.degree||0} · ${esc(node.networkScience?.role||'peripheral')}${node.metadata?.posture?` · ${esc(node.metadata.posture.role)} ${Math.round(node.metadata.posture.certainty*100)}%`:''}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}</small>`)
-      .nodeThreeObject(nodeObject)
-      .nodeThreeObjectExtend(false)
+      .nodeColor(nodeBaseColor)
       .nodeVal('val')
       .nodeRelSize(4)
-      .nodeOpacity(.92)
+      .nodeOpacity(.98)
       .nodeResolution(10)
       .linkOpacity(.68)
       .linkLabel(link=>esc(link.relation))
@@ -636,12 +619,12 @@
     graph.d3Force('link')?.distance(link=>link.relation.includes('observation')||link.relation==='candidate event'?24:52);
     graph.d3AlphaDecay?.(.012);
     graph.d3VelocityDecay?.(.18);
-    graph.d3ReheatSimulation();
     graph.cameraPosition({x:0,y:0,z:520},{x:0,y:0,z:0},0);
-    setTimeout(()=>graph.zoomToFit(600,70),500);
+    setTimeout(()=>graph.zoomToFit(600,120),500);
     let initiallyFitted=false;
-    graph.onEngineStop(()=>{if(!initiallyFitted){initiallyFitted=true;graph.zoomToFit(550,70);}});
+    graph.onEngineStop(()=>{if(!initiallyFitted){initiallyFitted=true;graph.zoomToFit(550,120);}});
     state.forceGraph=graph;
+    setTimeout(()=>{if(state.forceGraph===graph)graph.resumeAnimation();},0);
     state.renderMode='3d';
     const controls=graph.controls();
     controls.enableRotate=true;

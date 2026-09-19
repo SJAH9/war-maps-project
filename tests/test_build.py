@@ -75,7 +75,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("paintedBins", network_source)
         self.assertIn("AUTO_ROTATE_IDLE_MS", network_source)
         self.assertIn("autoRotate", network_source)
-        self.assertIn("nodeThreeObject", network_source)
+        self.assertIn("nodeColor(nodeBaseColor)", network_source)
         self.assertIn("linkBaseColor", network_source)
         self.assertIn("linkBaseWidth", network_source)
         self.assertIn("return 3.1", network_source)
