@@ -58,6 +58,8 @@ The conflict network applies Barabási's network-science vocabulary to the obser
 
 The network opens at the conflict's earliest recorded date. A closed conflict ends at its generated episode end date; a conflict active at the loaded source boundary extends to the present while separately disclosing the latest observed source date. The visible date controls can narrow that automatically established temporal enclosure.
 
+The conflict view's [posture and strategic model](docs/NETWORK_POSTURE_MODEL.md) begins with composite sovereign nodes, exposes an optional regime split, colors candidate casualty observations with a disclosed territorial offense/defense inference, and provides a source-date-only War Register with cumulative playback. Its structural zero-sum proxy and potential-equilibrium bridges describe the encoded topology; they are not payoff estimates or legal findings.
+
 ## Information and population-health layers
 
 The web atlas includes dedicated pages for [project background](web/about.html), [map formulation](web/method.html), [conflict data](web/data-conflict.html), [governance data](web/data-governance.html), [population-health data](web/data-health.html), [coverage limits](web/coverage.html), [citations](web/sources.html), and the shared [color legend](web/color-legend.html).

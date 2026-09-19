@@ -1,6 +1,7 @@
 (() => {
   const data = window.WAR_MAPS_DATA;
-  if (!data) return;
+  const model = window.WAR_MAPS_NETWORK_MODEL;
+  if (!data || !model) return;
 
   const $ = selector => document.querySelector(selector);
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
@@ -20,7 +21,7 @@
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const state = {conflictId:'', start:'', end:'', graph:null,analysis:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',organization:'force',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
+  const state = {conflictId:'', start:'', end:'', focalDate:'', graph:null,analysis:null,strategy:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',organization:'force',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),isolatedRegimes:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,registerTimer:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
@@ -34,7 +35,7 @@
   };
   const aliases = {'Bosnia-Herzegovina':'Bosnia and Herzegovina','Cambodia (Kampuchea)':'Cambodia','DR Congo (Zaire)':'Democratic Republic of the Congo','Ivory Coast':"Cote d'Ivoire",'Myanmar (Burma)':'Myanmar','Russia (Soviet Union)':'Russia','Serbia (Yugoslavia)':'Serbia','South Vietnam':'Vietnam','Yemen (North Yemen)':'Yemen','Yemen (South Yemen)':'Yemen','Zimbabwe (Rhodesia)':'Zimbabwe'};
 
-  const splitParties = value => String(value || '').split(',').map(item => item.trim()).filter(Boolean);
+  const splitParties = model.split;
   const isoDate = (value, fallback) => /^\d{4}-\d{2}-\d{2}$/.test(value || '') ? value : fallback;
   const inRange = (start, end, range=state) => end >= range.start && start <= range.end;
   const nodeId = (type, value) => `${type}:${value}`;
@@ -74,16 +75,20 @@
 
     const addActor = (name, side) => {
       if (!name) return;
-      const id = nodeId('actor', name);
-      addNode(id, name, 'actor', 'actor', {name,side});
-      addEdge(side === 'A' ? sideAId : sideBId, id, 'participant');
+      const country=model.regimeCountry(name,nationNames);
+      if(country&&!state.isolatedRegimes.has(country)){addNation(country,side,'',name);return;}
+      const id = nodeId(country?'regime':'actor', name);
+      addNode(id, name, 'actor', 'actor', {name,side,regimeOf:country||''});
+      addEdge(side === 'A' ? sideAId : sideBId, id, country?'governing regime':'participant');
+      if(country){addNation(country,side,'',name);addEdge(nodeId('nation',country),id,'regime of');}
     };
-    const addNation = (name, side, location) => {
+    const addNation = (name, side, location, regime='') => {
       if (!name) return;
       const mapped = displayLocation(name);
       const id = nodeId('nation', mapped);
-      const node = addNode(id, mapped, 'nation', 'nation', {country:mapped,sides:new Set()});
+      const node = addNode(id, mapped, 'nation', 'nation', {country:mapped,sides:new Set(),regimes:new Set(),citizensIncluded:true});
       node.metadata.sides.add(side);
+      if(regime)node.metadata.regimes.add(regime);
       addEdge(side === 'A' ? sideAId : sideBId, id, 'state participant');
       if (location) addEdge(id, nodeId('location', displayLocation(location)), 'recorded at');
     };
@@ -96,8 +101,8 @@
       return id;
     };
 
-    conflict.parties_a.forEach(name => addActor(name, 'A'));
-    conflict.parties_b.forEach(name => addActor(name, 'B'));
+    conflict.parties_a.flatMap(splitParties).forEach(name => addActor(name, 'A'));
+    conflict.parties_b.flatMap(splitParties).forEach(name => addActor(name, 'B'));
     (conflict.network_locations || conflict.plot_locations).forEach(addLocation);
 
     const rows = (yearsByConflict.get(conflict.id) || []).filter(row => inRange(`${row.year}-01-01`, `${row.year}-12-31`, range));
@@ -127,12 +132,13 @@
       event.side_b_states.forEach(name => addNation(name, 'B', location));
       const id = nodeId('observation', event.id);
       const place = event.place || event.country || 'Unspecified place';
-      addNode(id, `${event.date_start} · ${place}`, 'observation', 'observation', {recordType:'candidate-event',event});
+      addNode(id, `${event.date_start} · ${place}`, 'observation', 'observation', {recordType:'candidate-event',event,posture:model.eventPosture(event)});
       addEdge(locationId, id, 'candidate event');
     });
 
     nodes.forEach(node => {
       if (node.metadata.sides instanceof Set) node.metadata.sides = [...node.metadata.sides].sort();
+      if (node.metadata.regimes instanceof Set) node.metadata.regimes = [...node.metadata.regimes].sort();
     });
     return {nodes:[...nodes.values()],edges:[...edges.values()],rows,events};
   }
@@ -353,7 +359,7 @@
 
   const endpointId = endpoint => typeof endpoint === 'object' ? endpoint.id : endpoint;
   const mutedNodeColor = dark => dark ? '#26312f' : '#b8c1bd';
-  const nodeBaseColor = node => nodeColors[node.group]?.background || '#65717b';
+  const nodeBaseColor = node => node.metadata?.posture ? model.postureColor(node.metadata.posture) : nodeColors[node.group]?.background || '#65717b';
   const isHighlightedLink = link => state.selected && (endpointId(link.source)===state.selected || endpointId(link.target)===state.selected);
   const linkRelation = link => link.relation || '';
   const linkBaseColor = link => {
@@ -421,18 +427,22 @@
   }
 
   function optimizedNodePositions(nodes) {
-    const kindOrder={conflict:0,side:1,nation:2,actor:3,location:4,observation:5};
-    const ordered=[...nodes].sort((a,b)=>(kindOrder[a.kind]??9)-(kindOrder[b.kind]??9)||nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b))||a.id.localeCompare(b.id));
     const positions=new Map();
-    let area=0;
-    ordered.forEach((node,index)=>{
-      if(index===0&&node.kind==='conflict'){positions.set(node.id,{x:0,y:0,z:0});return;}
-      const scale=nodeVisualScale(node);
-      area+=1.15+scale*scale*.34;
-      const angle=area*2.399963229728653;
-      const radius=25*Math.sqrt(area);
-      positions.set(node.id,{x:Math.cos(angle)*radius,y:Math.sin(angle)*radius,z:0});
+    positions.set(nodeId('conflict',state.conflictId),{x:0,y:-120,z:0});
+    positions.set(nodeId('side','a'),{x:-190,y:-70,z:0});positions.set(nodeId('side','b'),{x:190,y:-70,z:0});
+    const lane=(items,x,startY,spacing)=>items.sort((a,b)=>nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b))).forEach((node,index)=>positions.set(node.id,{x,y:startY+index*spacing,z:0}));
+    const sided=side=>nodes.filter(node=>['nation','actor'].includes(node.kind)&&(node.metadata.side===side||node.metadata.sides?.includes(side)));
+    lane(sided('A'),-230,-20,30);lane(sided('B'),230,-20,30);
+    lane(nodes.filter(node=>['nation','actor'].includes(node.kind)&&!(node.metadata.side||node.metadata.sides?.length)),0,-20,30);
+    const locations=nodes.filter(node=>node.kind==='location').sort((a,b)=>nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b)));
+    locations.forEach((node,index)=>positions.set(node.id,{x:0,y:-5+index*34,z:0}));
+    const dates=[...new Set(nodes.filter(node=>node.metadata?.event).map(node=>node.metadata.event.date_start))].sort(),dateIndex=new Map(dates.map((date,index)=>[date,index]));
+    nodes.filter(node=>node.kind==='observation').forEach((node,index)=>{
+      const date=node.metadata.event?.date_start||`${node.metadata.row?.year||''}-01-01`,order=dateIndex.get(date)??index;
+      const role=node.metadata.posture?.role,x=role==='defensive'?-78:role==='offensive'?78:0;
+      positions.set(node.id,{x:x+(index%5-2)*7,y:15+order*11,z:(index%7-3)*5});
     });
+    nodes.forEach((node,index)=>{if(!positions.has(node.id))positions.set(node.id,{x:(index%2?-1:1)*115,y:index*17,z:0});});
     return positions;
   }
 
@@ -527,14 +537,14 @@
       const classMatch=state.nodeType==='all'||node.kind===state.nodeType;
       const connectionMatch=!state.selected||state.connected.has(node.id);
       const emphasized=classMatch&&connectionMatch;
-      object.traverse?.(child=>{if(!child.material)return;child.material.opacity=emphasized?.96:.1;child.material.emissiveIntensity=emphasized?.12:0;});
+      object.traverse?.(child=>{if(!child.material)return;child.material.opacity=emphasized?.98:.1;child.material.emissiveIntensity=emphasized?.3:0;});
     });
     state.forceGraph.refresh();
   }
 
   function nodeObject(node){
     if(!window.THREE)return null;
-    const sizes={conflict:10,side:8,nation:6.5,location:6,actor:4.5,observation:2.1};
+    const sizes={conflict:14,side:11,nation:9,location:8,actor:6,observation:3.4};
     const size=(sizes[node.kind]||4)*nodeVisualScale(node);
     const geometries={
       conflict:()=>new THREE.OctahedronGeometry(size,0),
@@ -544,7 +554,7 @@
       actor:()=>new THREE.SphereGeometry(size,12,8),
       observation:()=>new THREE.TetrahedronGeometry(size,0)
     };
-    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.08,shininess:8,flatShading:true,transparent:true,opacity:.96,depthTest:false});
+    const color=nodeBaseColor(node),material=new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.38,shininess:18,flatShading:true,transparent:true,opacity:.98,depthTest:false});
     const mesh=new THREE.Mesh((geometries[node.kind]||geometries.actor)(),material);mesh.userData.nodeId=node.id;mesh.renderOrder=3;return mesh;
   }
 
@@ -583,7 +593,10 @@
       let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;
       const depth=((Math.abs(hash)%201)-100)*(node.kind==='observation'?.22:.5);
       const val=({conflict:14,side:10,nation:8,location:7,actor:5,observation:1.4}[node.kind]||3)*nodeVisualScale(node);
-      return {...node,x:position.x*18,y:position.y*18,z:depth,val};
+      const factor=state.optimized?52:18,target=state.optimizedPositions.get(node.id);
+      const placed={...node,x:position.x*factor,y:position.y*factor,z:state.optimized?(target?.z||0):depth,val};
+      if(state.optimized){placed.fx=placed.x;placed.fy=placed.y;placed.fz=placed.z;}
+      return placed;
     });
     const graphLinks=state.graph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
     state.forceNodes=new Map(graphNodes.map(node=>[node.id,node]));
@@ -593,14 +606,14 @@
       .height(Math.max(420,Math.round(rect.height)))
       .backgroundColor('rgba(0,0,0,0)')
       .showNavInfo(false)
-      .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)} · degree ${node.networkScience?.degree||0} · ${esc(node.networkScience?.role||'peripheral')}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}</small>`)
+      .nodeLabel(node=>`<b>${esc(nodeDisplayLabel(node))}</b><br><small>${esc(node.kind)} · degree ${node.networkScience?.degree||0} · ${esc(node.networkScience?.role||'peripheral')}${node.metadata?.posture?` · ${esc(node.metadata.posture.role)} ${Math.round(node.metadata.posture.certainty*100)}%`:''}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}</small>`)
       .nodeThreeObject(nodeObject)
       .nodeThreeObjectExtend(false)
       .nodeVal('val')
       .nodeRelSize(4)
       .nodeOpacity(.92)
       .nodeResolution(10)
-      .linkOpacity(.42)
+      .linkOpacity(.68)
       .linkLabel(link=>esc(link.relation))
       .enableNodeDrag(true)
       .enableNavigationControls(true)
@@ -708,7 +721,7 @@
       if(!nodes.length)return;
       const emphasized=state.nodeType==='all'||nodes.some(node=>node.kind===state.nodeType);
       const showText=group!=='observation';
-      traces.push({type:'scatter',mode:showText?'markers+text':'markers',name:setting.label,x:nodes.map(node=>state.positions.get(node.id).x),y:nodes.map(node=>state.positions.get(node.id).y),customdata:nodes.map(node=>node.id),hovertext:nodes.map(node=>`${nodeDisplayLabel(node)} · degree ${node.networkScience?.degree||0} · ${node.networkScience?.role||'peripheral'}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}`),hovertemplate:'<b>%{hovertext}</b><extra>'+setting.label+'</extra>',text:showText?nodes.map(node=>nodeDisplayLabel(node)):undefined,textposition:'top center',textfont:{color:dark?'#d9d9d2':'#303632',size:10,family:'Inter, Arial, sans-serif'},marker:{size:nodes.map(node=>setting.size*nodeVisualScale(node)),symbol:setting.symbol,color:nodeColors[group].background,line:{color:nodeColors[group].border,width:1}},opacity:emphasized?1:.1});
+      traces.push({type:'scatter',mode:showText?'markers+text':'markers',name:setting.label,x:nodes.map(node=>state.positions.get(node.id).x),y:nodes.map(node=>state.positions.get(node.id).y),customdata:nodes.map(node=>node.id),hovertext:nodes.map(node=>`${nodeDisplayLabel(node)} · degree ${node.networkScience?.degree||0} · ${node.networkScience?.role||'peripheral'}${node.metadata?.posture?` · ${node.metadata.posture.role} ${Math.round(node.metadata.posture.certainty*100)}%`:''}${node.metadata?.recordType==='candidate-event'?` · ${candidateFatalities(node).toLocaleString()} best fatalities`:''}`),hovertemplate:'<b>%{hovertext}</b><extra>'+setting.label+'</extra>',text:showText?nodes.map(node=>nodeDisplayLabel(node)):undefined,textposition:'top center',textfont:{color:dark?'#d9d9d2':'#303632',size:10,family:'Inter, Arial, sans-serif'},marker:{size:nodes.map(node=>setting.size*nodeVisualScale(node)),symbol:setting.symbol,color:nodes.map(node=>nodeBaseColor(node)),line:{color:nodeColors[group].border,width:1}},opacity:emphasized?1:.1});
     });
     const layout={margin:{l:20,r:20,t:20,b:20},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,hovermode:'closest',dragmode:'pan',xaxis:{visible:false,fixedrange:false},yaxis:{visible:false,fixedrange:false,scaleanchor:'x',scaleratio:1},uirevision:`${state.conflictId}-${state.start}-${state.end}`};
     Plotly.react('network-canvas',traces,layout,{responsive:true,displaylogo:false,scrollZoom:true,modeBarButtonsToRemove:['select2d','lasso2d']});
@@ -724,13 +737,44 @@
     stopAutoRotation();stopMotion();
     state.graph = buildGraph(conflict);
     state.analysis = analyzeGraph(state.graph);
+    state.strategy = model.strategicModel(state.graph);
     state.nodeMap = new Map(state.graph.nodes.map(node=>[node.id,node]));
-    state.positions = positionGraph(state.graph);
-    state.selected='';state.connected=new Set();state.optimized=false;state.optimizedPositions.clear();$('#network-optimize')?.setAttribute('aria-pressed','false');
+    state.optimizedPositions=optimizedNodePositions(state.graph.nodes);
+    state.positions=new Map([...state.optimizedPositions].map(([id,point])=>[id,{x:point.x/52,y:point.y/52}]));
+    state.selected='';state.connected=new Set();state.optimized=true;$('#network-optimize')?.setAttribute('aria-pressed','true');
     if(!window.ForceGraph3D)throw new Error('3D network renderer unavailable');
     render3D();
     showSummary(conflict);
     renderNetworkStats(conflict);
+    renderWarRegister(conflict);
+  }
+
+  function registerEntries(conflict){
+    const events=(eventsByConflict.get(conflict.id)||[]).slice().sort((a,b)=>a.date_start.localeCompare(b.date_start)||String(a.id).localeCompare(String(b.id)));
+    const grouped=new Map();events.forEach(event=>{if(!grouped.has(event.date_start))grouped.set(event.date_start,[]);grouped.get(event.date_start).push(event);});
+    if(!grouped.size)(yearsByConflict.get(conflict.id)||[]).forEach(row=>grouped.set(`${row.year}-01-01`,[{date_start:`${row.year}-01-01`,place:`${row.year} conflict-year observation`,fatality_estimate_valid:false}]));
+    return [...grouped].map(([date,items])=>({date,items}));
+  }
+  function renderWarRegister(conflict){
+    const entries=registerEntries(conflict),observed=entries.at(-1)?.date||state.end;
+    $('#war-register-date').textContent=state.focalDate===today?`Today · ${today}`:state.focalDate;
+    $('#war-register-boundary').textContent=`${entries.length.toLocaleString()} selectable event dates · observed through ${observed}. Dates without records are intentionally absent.`;
+    $('#war-register-list').innerHTML=entries.map(entry=>{
+      const fatalities=entry.items.reduce((sum,event)=>sum+(fatalityUsable(event)?Number(event.fatalities?.best||0):0),0);
+      const places=[...new Set(entry.items.map(event=>event.place||event.country).filter(Boolean))];
+      return `<button type="button" data-register-date="${esc(entry.date)}" aria-current="${entry.date===state.focalDate}"><time>${esc(entry.date)}</time><strong>${entry.items.length} record${entry.items.length===1?'':'s'}${fatalities?` · ${fatalities.toLocaleString()} best fatalities`:''}</strong><span>${esc(places.slice(0,3).join(' · ')||'Conflict-year observation')}${places.length>3?` · +${places.length-3} places`:''}</span></button>`;
+    }).join('');
+  }
+  function setFocalDate(date){
+    const conflict=conflictsById.get(state.conflictId),dates=registerEntries(conflict).map(entry=>entry.date);if(!dates.includes(date))return;
+    state.focalDate=date;state.end=date;$('#network-end').value=date;renderGraph();
+    requestAnimationFrame(()=>document.querySelector(`[data-register-date="${CSS.escape(date)}"]`)?.scrollIntoView({block:'center'}));
+  }
+  function playWarRegister(){
+    clearTimeout(state.registerTimer);const button=$('#war-register-play'),conflict=conflictsById.get(state.conflictId),dates=registerEntries(conflict).map(entry=>entry.date);
+    if(button.getAttribute('aria-pressed')==='true'){button.setAttribute('aria-pressed','false');button.textContent='▶ Play';return;}
+    button.setAttribute('aria-pressed','true');button.textContent='Ⅱ Pause';let index=Math.max(0,dates.indexOf(state.focalDate));if(state.focalDate===today||index===dates.length-1)index=0;
+    const advance=()=>{if(button.getAttribute('aria-pressed')!=='true')return;setFocalDate(dates[index]);index++;if(index>=dates.length){button.setAttribute('aria-pressed','false');button.textContent='▶ Play';return;}state.registerTimer=setTimeout(advance,900);};advance();
   }
 
   function renderLocaleMap(conflict){
@@ -884,24 +928,26 @@
     let meta = [];
     let content = '';
     if (node.kind === 'nation') {
-      meta = [['Side',node.metadata.sides.join(' + ')],['Connections',connected.length]];
-      content = `<a class="node-primary-link" href="nation.html?country=${encodeURIComponent(node.metadata.country)}">Open nation record</a>`;
+      meta = [['Side',node.metadata.sides.join(' + ')],['Connections',connected.length],['Regime',node.metadata.regimes?.join('; ')||'Not separately coded'],['Citizens','Included in sovereign node unless directly observed']];
+      const isolated=state.isolatedRegimes.has(node.metadata.country);
+      content = `<a class="node-primary-link" href="nation.html?country=${encodeURIComponent(node.metadata.country)}">Open nation record</a>${node.metadata.regimes?.length?`<button class="isolate-regime-button" id="isolate-regime" type="button">${isolated?'Recombine regime':'Isolate regime'}</button>`:''}`;
     } else if (node.kind === 'location') {
       const observations = connected.filter(item=>item.kind==='observation').length;
       const nations = connected.filter(item=>item.kind==='nation').length;
       meta = [['Observations',observations],['Connected nations',nations],['All connections',connected.length]];
       content = nationNames.has(node.metadata.location)?`<a class="node-primary-link" href="nation.html?country=${encodeURIComponent(node.metadata.location)}">Open location record</a>`:'';
     } else if (node.kind === 'actor') {
-      meta = [['Side',node.metadata.side],['Connections',connected.length]];
+      meta = [['Side',node.metadata.side],['Connections',connected.length],...(node.metadata.regimeOf?[['Regime of',node.metadata.regimeOf]]:[])];
     } else if (node.kind === 'side') {
       const nations = connected.filter(item=>item.kind==='nation').length;
       const actors = connected.filter(item=>item.kind==='actor').length;
       meta = [['Side',node.metadata.side],['Nations',nations],['Actors',actors]];
     } else if (node.kind === 'observation' && node.metadata.recordType === 'candidate-event') {
       const event = node.metadata.event;
+      const posture=node.metadata.posture;
       const fatalityLabel=fatalityUsable(event)?`${event.fatalities.low} / ${event.fatalities.best} / ${event.fatalities.high}`:`Not used (${event.fatality_validation_issue||event.code_status||'source range unavailable'})`;
-      meta = [['Date',event.date_start],['Place',event.place||event.country],['Network location',event.network_location],['Location kind',event.location_kind],['Fatalities low / best / high',fatalityLabel],['Record class',event.record_class],['Sources',event.source_count],['Code status',event.code_status],['Location precision',event.location_precision],['Map point',event.map_point_eligible?'Eligible':'Withheld']];
-      content = `<div class="node-record"><h3>Source enclosure</h3><p>${esc(event.source_office||'No source office recorded')}</p><p>${esc(event.source_headline||'No source headline recorded')}</p><small>${esc(event.source_id)} · event ${esc(event.id)}</small></div>`;
+      meta = [['Date',event.date_start],['Place',event.place||event.country],['Network location',event.network_location],['Casualty posture',`${posture.role} · ${Math.round(posture.certainty*100)}% model certainty`],['Host / coded side',`${posture.host||'Unresolved'} / ${posture.hostSide||'none'}`],['Fatalities low / best / high',fatalityLabel],['Record class',event.record_class],['Sources',event.source_count],['Code status',event.code_status],['Map point',event.map_point_eligible?'Eligible':'Withheld']];
+      content = `<div class="node-record posture-record"><h3>Offense / defense inference</h3><p>${esc(posture.reasons.join('. '))}.</p><small>Defense ${(posture.defense*100).toFixed(0)}% · offense ${(posture.offense*100).toFixed(0)}%. Spatial posture is not a finding about aggression, lawful self-defense, distinction, proportionality, or individual responsibility.</small></div><div class="node-record"><h3>Source enclosure</h3><p>${esc(event.source_office||'No source office recorded')}</p><p>${esc(event.source_headline||'No source headline recorded')}</p><small>${esc(event.source_id)} · event ${esc(event.id)}</small></div>`;
     } else if (node.kind === 'observation') {
       const row = node.metadata.row;
       meta = [['Year',row.year],['Intensity',row.intensity],['Episode end',row.episode_end?'Yes':'No'],['Side A',row.side_a],['Side B',row.side_b]];
@@ -930,6 +976,7 @@
     state.inspectorView='overview';
     setInspectorView('overview');
     $('#find-similar-nodes').addEventListener('click',()=>setInspectorView('similar'));
+    $('#isolate-regime')?.addEventListener('click',()=>{const country=node.metadata.country;if(state.isolatedRegimes.has(country))state.isolatedRegimes.delete(country);else state.isolatedRegimes.add(country);renderGraph();const target=state.nodeMap.get(nodeId('nation',country));if(target)selectGraphNode(target.id);});
     bindConnectionButtons();
   }
 
@@ -939,10 +986,10 @@
     $('#node-type').textContent = 'Network extent';
     $('#node-title').textContent = conflict.title;
     const analysis=state.analysis;
-    $('#node-meta').innerHTML = [['Side nodes',2],['Nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')],['Components',analysis.components],['Density',analysis.density.toFixed(4)],['Peak degree',analysis.maxDegree]].map(([label,value])=>`<div><span>${label}</span><strong>${typeof value==='number'?value.toLocaleString():esc(value)}</strong></div>`).join('');
+    $('#node-meta').innerHTML = [['Side nodes',2],['Composite nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')],['Structural zero-sum proxy',`${(state.strategy.zeroSumProxy*100).toFixed(1)}%`],['Equilibrium candidates',state.strategy.equilibrium.length],['Peak degree',analysis.maxDegree]].map(([label,value])=>`<div><span>${label}</span><strong>${typeof value==='number'?value.toLocaleString():esc(value)}</strong></div>`).join('');
     const observedEnd=graph.events.map(event=>event.date_end||event.date_start).filter(Boolean).sort().at(-1)||state.end;
     const staleDays=Math.max(0,Math.floor((Date.now()-new Date(`${observedEnd}T00:00:00Z`).getTime())/86400000));
-    $('#node-overview').innerHTML = `<div class="node-record"><h3>Layer scope</h3><p>${esc(conflict.layer_scope||'UCDP records for the selected conflict')}</p><small>${esc(conflict.excluded_fronts||'Other conflict records are outside this graph.')} Fatality totals are not computed because candidate observations may overlap.</small></div><div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through ${esc(state.end)}</p><small>Observed through ${esc(observedEnd)}.${staleDays>30?` Source boundary is ${staleDays.toLocaleString()} days behind the export clock.`:''}</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile in this selected conflict and period; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}. These are structural descriptions, not claims of command, intent, or causation.</small></div>`;
+    $('#node-overview').innerHTML = `<div class="node-record"><h3>Layer scope</h3><p>${esc(conflict.layer_scope||'UCDP records for the selected conflict')}</p><small>${esc(conflict.excluded_fronts||'Other conflict records are outside this graph.')} Fatality totals are not computed because candidate observations may overlap.</small></div><div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through focal date ${esc(state.focalDate)}</p><small>Observed through ${esc(observedEnd)}.${staleDays>30?` Source boundary is ${staleDays.toLocaleString()} days behind the export clock.`:''}</small></div><div class="node-record"><h3>Strategic balance</h3><p>Structural zero-sum proxy: ${(state.strategy.zeroSumProxy*100).toFixed(1)}%. Potential equilibrium bridges: ${esc(state.strategy.equilibrium.map(node=>node.label).join('; ')||'none in this view')}.</p><small>${esc(state.strategy.disclosure)}</small></div><div class="node-record"><h3>Law and rights lens</h3><p>International humanitarian law distinguishes civilians and civilian objects from military objectives and separately requires proportionality and feasible precautions. The UN Charter rules on force and self-defense operate at a different legal level.</p><small>The map's posture score does not decide any of those questions. See Method for the legal-reference boundary.</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}.</small></div>`;
     state.inspectorView='overview';
     state.selected='';
     $('[data-inspector-view="similar"]').disabled=true;
@@ -971,9 +1018,11 @@
     const conflict = conflictsById.get(id);
     if (!conflict) return;
     state.conflictId = id;
+    state.isolatedRegimes.clear();clearTimeout(state.registerTimer);$('#war-register-play')?.setAttribute('aria-pressed','false');
     const bounds = conflictBounds(conflict);
     state.start = bounds.start;
     state.end = bounds.end;
+    state.focalDate = bounds.current ? today : bounds.end;
     $('#network-start').min = bounds.start;
     $('#network-start').max = bounds.end;
     $('#network-start').value = bounds.start;
@@ -1015,15 +1064,19 @@
   $('#war-dialog-region').addEventListener('change',renderWarDialog);
   $('#war-dialog').addEventListener('click',event=>{if(event.target===$('#war-dialog'))$('#war-dialog').close();});
   $('#network-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#network-end').value=state.end;}renderGraph();});
-  $('#network-end').addEventListener('change',event=>{state.end=event.target.value;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
+  $('#network-end').addEventListener('change',event=>{state.end=event.target.value;state.focalDate=state.end;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
   $('#network-optimize').addEventListener('click',optimizeView);
   $('#network-data').addEventListener('click',viewNetworkData);
+  $('#war-register-list').addEventListener('click',event=>{const button=event.target.closest('[data-register-date]');if(button)setFocalDate(button.dataset.registerDate);});
+  $('#war-register-play').addEventListener('click',playWarRegister);
+  $('#war-register-latest').addEventListener('click',()=>{const conflict=conflictsById.get(state.conflictId),date=registerEntries(conflict).at(-1)?.date;if(date)setFocalDate(date);});
   let navigatorWindow=null,navigatorPoll=null;
   const open3DNavigator=()=>{
     noteInteraction();
     if(state.forceGraph?.pauseAnimation)state.forceGraph.pauseAnimation();
     stopAutoRotation();stopMotion();
     const url=new URL('network-3d.html',location.href);url.searchParams.set('conflict',state.conflictId);
+    url.searchParams.set('through',state.end);url.searchParams.set('focal',state.focalDate);
     navigatorWindow=window.open(url.toString(),'war-maps-conflict-3d','popup=yes,width=1600,height=1000');
     clearInterval(navigatorPoll);
     navigatorPoll=setInterval(()=>{
