@@ -489,6 +489,7 @@
 
   function stopNativeLabels() {
     cancelAnimationFrame(state.labelFrame);state.labelFrame=null;
+    document.querySelector('#network-canvas .network-label-layer')?.remove();
   }
 
   function startNativeLabels(graph,container,nodes) {
@@ -604,11 +605,8 @@
       .onNodeDrag(()=>noteInteraction())
       .onNodeDragEnd(node=>{
         noteInteraction();node.fx=node.x;node.fy=node.y;node.fz=node.z;
-        clearTimeout(node._settleTimer);
-        node._settleTimer=setTimeout(()=>{
-          if(state.optimized&&state.optimizedPositions.has(node.id))animateOptimizedLayout([node],state.optimizedPositions,()=>graph.refresh());
-          else{node.fx=undefined;node.fy=undefined;node.fz=undefined;graph.d3ReheatSimulation();}
-        },320);
+        state.optimizedPositions.set(node.id,{x:node.x,y:node.y,z:node.z});
+        graph.refresh();
       })
       .onBackgroundClick(()=>selectGraphNode(''))
       .onNodeHover(node=>{container.style.cursor=node?'pointer':'grab';})
@@ -732,6 +730,45 @@
     renderWarRegister(conflict);
   }
 
+  function updateFocalGraph(conflict) {
+    if(state.renderMode!=='3d'||!state.forceGraph){renderGraph();return;}
+    const graph=state.forceGraph,previous=new Map(graph.graphData().nodes.map(node=>[node.id,node]));
+    const nextGraph=buildGraph(conflict);
+    state.analysis=analyzeGraph(nextGraph);
+    state.strategy=model.strategicModel(nextGraph);
+    const targets=optimizedNodePositions(nextGraph.nodes);
+    const nextNodes=nextGraph.nodes.map(node=>{
+      const existing=previous.get(node.id);
+      if(existing){
+        const position={x:existing.x,y:existing.y,z:existing.z,fx:existing.fx,fy:existing.fy,fz:existing.fz};
+        Object.assign(existing,node,position);
+        return existing;
+      }
+      const target=targets.get(node.id)||{x:0,y:0,z:0};
+      return {...node,x:target.x,y:target.y,z:target.z,fx:target.x,fy:target.y,fz:target.z};
+    });
+    nextGraph.nodes=nextNodes;
+    state.graph=nextGraph;
+    state.nodeMap=new Map(nextNodes.map(node=>[node.id,node]));
+    state.forceNodes=new Map(nextNodes.map(node=>[node.id,node]));
+    state.optimizedPositions=new Map(nextNodes.map(node=>[node.id,{x:node.x,y:node.y,z:node.z}]));
+    state.positions=new Map(nextNodes.map(node=>[node.id,{x:node.x/52,y:node.y/52}]));
+    const links=nextGraph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
+    graph.graphData({nodes:nextNodes,links}).refresh();
+    graph.resumeAnimation();
+    stopNativeLabels();
+    startNativeLabels(graph,$('#network-canvas'),nextNodes);
+    if(state.selected&&state.nodeMap.has(state.selected)){
+      state.connected=new Set([state.selected,...connectedNodes(state.selected).map(node=>node.id)]);
+      showNode(state.selected);
+    }else{
+      state.selected='';state.connected=new Set();showSummary(conflict);
+    }
+    update3DStyles();
+    renderNetworkStats(conflict);
+    renderWarRegister(conflict);
+  }
+
   function registerEntries(conflict){
     const events=(eventsByConflict.get(conflict.id)||[]).slice().sort((a,b)=>a.date_start.localeCompare(b.date_start)||String(a.id).localeCompare(String(b.id)));
     const grouped=new Map();events.forEach(event=>{if(!grouped.has(event.date_start))grouped.set(event.date_start,[]);grouped.get(event.date_start).push(event);});
@@ -750,7 +787,7 @@
   }
   function setFocalDate(date){
     const conflict=conflictsById.get(state.conflictId),dates=registerEntries(conflict).map(entry=>entry.date);if(!dates.includes(date))return;
-    state.focalDate=date;state.end=date;$('#network-end').value=date;renderGraph();
+    state.focalDate=date;state.end=date;$('#network-end').value=date;updateFocalGraph(conflict);
     requestAnimationFrame(()=>document.querySelector(`[data-register-date="${CSS.escape(date)}"]`)?.scrollIntoView({block:'center'}));
   }
   function playWarRegister(){
