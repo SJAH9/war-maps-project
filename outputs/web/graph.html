@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Global force-directed graph of states joined only by recorded same-side participation in organized conflicts since 1946.">
-  <title>Global Relationship Graph · The War Maps Project</title>
+  <meta name="description" content="Connection-following graph of states and organizations joined by observed relationships in the War Maps archive.">
+  <title>Network Graph · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-08-graph-r3">
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="graph.js?v=2026-09-08-r5" defer></script>
+  <script src="graph.js?v=2026-09-19-r6" defer></script>
 </head>
 <body class="global-graph-page">
   <header class="site-header">
@@ -19,7 +19,7 @@
 
   <main class="global-graph-main">
     <section class="global-graph-title">
-      <div><p class="eyebrow">Global relationship field · 1946 to source boundary</p><h1 id="graph-page-title">States joined by conflict</h1></div>
+      <div><p class="eyebrow">Connection-following field · 1946 to source boundary</p><h1 id="graph-page-title">Network Graph</h1></div>
       <p id="graph-rule-description">Every line is a recorded same-side state participation. Historic opponents appear through the alliance paths that connect them, never as fabricated direct ties.</p>
     </section>
 
@@ -29,10 +29,11 @@
       <label><span>View</span><select id="graph-view"><option value="network">Network</option><option value="matrix">Adjacency matrix</option><option value="timeline">Timeline</option></select></label>
       <label><span>Connections</span><select id="graph-relationship"><option value="observed">Observed same-side participation</option><option value="organization">Organization co-membership</option><option value="combined">Observed + organization</option></select></label>
       <fieldset class="graph-organization-filter"><legend>Organizations</legend><label><input type="checkbox" data-organization="un"> UN</label><label><input type="checkbox" data-organization="nato"> NATO</label><label><input type="checkbox" data-organization="brics"> BRICS</label><label><input type="checkbox" data-organization="eu"> EU</label><label><input type="checkbox" data-organization="asean"> ASEAN</label><label><input type="checkbox" data-organization="wef"> WEF</label><label class="graph-ungrouped-option"><input id="graph-include-ungrouped" type="checkbox"> Include ungrouped nations</label></fieldset>
-      <label><span>Topology model</span><select id="graph-topology"><option value="observed">Observed topology</option><option value="barabasi-albert">Barabási–Albert synthetic</option><option value="erdos-renyi">Erdős–Rényi synthetic</option><option value="watts-strogatz">Watts–Strogatz synthetic</option></select></label>
+      <label><span>Optimization landscape</span><select id="graph-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Connection shells</option><option value="prisoner">Opposing fields</option><option value="third-party">Bridge landscape</option><option value="pirates">Influence hierarchy</option><option value="temporal">Temporal landscape</option></select></label>
       <label class="graph-year-control"><span>Through <output id="graph-year-value">2025</output></span><input id="graph-through-year" type="range" min="1946" max="2025" value="2025"></label>
       <button id="graph-reset" type="button">Clear selection</button>
       <button class="graph-optimize" id="graph-optimize" type="button">Optimize</button>
+      <button id="graph-browser" type="button">3D Network Browser</button>
       <button id="graph-data" type="button">View network data</button>
       <button id="graph-help" type="button">How to navigate</button>
       <button class="graph-fit" id="graph-fit" type="button" title="Fit the global graph" aria-label="Fit the global graph">⛶</button>
@@ -46,7 +47,7 @@
       </aside>
       <div class="global-graph-stage">
         <div id="global-graph" role="img" aria-label="Force-directed global network of nations joined by same-side conflict participation"></div>
-        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Selected</span><span><i class="graph-ally"></i>Active relationship</span><span><i class="graph-bridge"></i>Mutual ally</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Node area: displayed connections</span><span>Edge color: observed / organization / synthetic</span></div>
+        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Central node</span><span><i class="graph-ally"></i>Direct connection</span><span><i class="graph-bridge"></i>Mutual bridge</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Circle: nation</span><span>Diamond: organization</span><span>Click: recenter and follow connections</span></div>
       </div>
     </section>
     <section class="global-graph-summary" id="global-graph-summary"></section>
@@ -57,8 +58,8 @@
     <div class="graph-help-content">
       <p><strong>Pan:</strong> drag empty space. <strong>Rotate:</strong> hold Shift or Alt while dragging empty space. <strong>Zoom:</strong> scroll or use the fit button.</p>
       <p><strong>Move a node:</strong> drag it; release to give it momentum. Connected nodes follow gradually. <strong>Optimize:</strong> lays the selected network out in 3D, with connected nodes grouped around hubs.</p>
-      <p><strong>Selection:</strong> selecting a nation narrows the view to its recorded conflict and organization relationships. Search and organization checkboxes focus the camera automatically. “Include ungrouped nations” restores nations outside the selected groups.</p>
-      <p><strong>Evidence:</strong> observed connections are source-derived. Synthetic topology choices are visual comparison models, not evidence of relationships.</p>
+      <p><strong>Selection:</strong> selecting a node makes it central and loads all of its immediate recorded connections. Select any connected node to continue through the archive. Search and organization checkboxes can start a new path.</p>
+      <p><strong>Optimization landscapes:</strong> each arrangement emphasizes a different structural feature while retaining the same observed edges. No optimization fabricates a relationship.</p>
     </div>
   </dialog>
 

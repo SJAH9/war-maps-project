@@ -5,18 +5,18 @@
   if(!data?.nations){$('#global-graph').innerHTML='<p class="boundary-note network-error">The global atlas relationship data is unavailable.</p>';return;}
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
-  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organizations:[],includeUngrouped:false,topology:'observed',selected:'',nodes:new Map(),links:[],model:null,adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
+  const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organizations:[],includeUngrouped:false,topology:'equilibrium',selected:'',nodes:new Map(),links:[],model:null,adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
   const relationshipLabel=()=>state.relationship==='observed'?'same-side participation':state.relationship==='organization'?'organization co-membership':'displayed relationship';
-  const linkDescription=link=>link.kind==='organization'?`Shared ${link.organizations?.join(', ')||'organization'} membership`:link.kind==='synthetic'?`Synthetic ${link.model} edge`:`${link.years} shared years`;
+  const linkDescription=link=>link.kind==='organization'?`Shared ${link.organizations?.join(', ')||'organization'} membership`:`${link.years} shared years`;
 
   function selectedOrganizations(){return (data.organizations||[]).filter(item=>state.organizations.includes(item.id));}
   function organizationMembers(organization){return organization.member_count?organization.members:(organization.entity_nations||[]);}
 
   function updatePageDescription(){
-    const selected=selectedOrganizations(),names=selected.map(item=>item.name).join(', '),wef=selected.some(item=>item.id==='wef'),synthetic=state.topology!=='observed',title=wef&&selected.length===1?'WEF partner home-nation network':selected.length?`Membership network: ${names}`:state.relationship==='organization'?'Organization membership network':'States joined by conflict and organization records';
+    const selected=selectedOrganizations(),names=selected.map(item=>item.name).join(', '),wef=selected.some(item=>item.id==='wef'),title=wef&&selected.length===1?'WEF partner home-nation network':selected.length?`Membership network: ${names}`:state.relationship==='organization'?'Organization membership network':'Network Graph';
     const scopeNote=state.includeUngrouped?' Ungrouped nations are included.':' Only nations belonging to a selected organization are included.';
-    const description=synthetic?`This is a deterministic ${state.topology} comparison graph. Its edges are modeled, not observed evidence.`:wef?'WEF partner companies are resolved to disclosed home nations for graph placement. The organization node connects those nations; this does not infer state membership, conflict participation, or corporate control.':selected.length&&state.relationship==='observed'?`Observed same-side participation is filtered to members of ${names}.${scopeNote} Organization nodes are hidden in this view.`:selected.length?`Each selected organization is a node connected to its sourced member states.${scopeNote} Membership is not treated as alliance, coordination, or causation.`:'Every line is an observed same-side state participation record, or an explicitly selected organization relationship. Historic opposing participation remains disclosed rather than fabricated as a direct edge.';
+    const description=wef?'WEF partner companies are resolved to disclosed home nations for graph placement. The organization node connects those nations; this does not infer state membership, conflict participation, or corporate control.':selected.length&&state.relationship==='observed'?`Observed same-side participation is filtered to members of ${names}.${scopeNote} Organization nodes are hidden in this view.`:selected.length?`Each selected organization is a node connected to its sourced member states.${scopeNote} Membership is not treated as alliance, coordination, or causation.`:'Select any node to make it central and load its immediate observed conflict and organization relationships. Optimization changes the landscape, never the evidence.';
     $('#graph-page-title').textContent=title;$('#graph-rule-description').textContent=description;$('#global-graph').setAttribute('aria-label',`${title}. ${description}`);
   }
 
@@ -38,23 +38,6 @@
   }
 
   function seededRandom(seed){let value=0;for(const char of String(seed))value=(value*31+char.charCodeAt(0))>>>0;return ()=>{value=(value*1664525+1013904223)>>>0;return value/4294967296;};}
-
-  function syntheticLinks(nodes,basis,model){
-    const ordered=[...nodes].sort((a,b)=>a.id.localeCompare(b.id)),n=ordered.length,random=seededRandom(`${model}|${ordered.map(node=>node.id).join('|')}`),links=[],keys=new Set();
-    const add=(left,right)=>{if(left===right)return;const pair=[left,right].sort(),key=pair.join('\u0000');if(keys.has(key))return;keys.add(key);links.push({source:pair[0],target:pair[1],years:0,firstYear:null,lastYear:null,conflictIds:[],kind:'synthetic',model});};
-    if(n<2)return links;
-    const density=Math.max(0.01,Math.min(.35,basis.length/Math.max(1,n*(n-1)/2)));
-    if(model==='erdos-renyi'){for(let left=0;left<n;left++)for(let right=left+1;right<n;right++)if(random()<density)add(ordered[left].id,ordered[right].id);}
-    else if(model==='barabasi-albert'){
-      const m=Math.max(1,Math.min(4,n-1)),degrees=new Map(ordered.map(node=>[node.id,0]));
-      for(let left=0;left<m+1;left++)for(let right=left+1;right<m+1;right++){add(ordered[left].id,ordered[right].id);degrees.set(ordered[left].id,degrees.get(ordered[left].id)+1);degrees.set(ordered[right].id,degrees.get(ordered[right].id)+1);}
-      for(let index=m+1;index<n;index++){const chosen=new Set(),total=[...degrees.values()].reduce((sum,value)=>sum+value,0)||1;while(chosen.size<m){let cursor=random()*total;for(const node of ordered.slice(0,index)){cursor-=degrees.get(node.id);if(cursor<=0){chosen.add(node.id);break;}}}chosen.forEach(target=>{add(ordered[index].id,target);degrees.set(ordered[index].id,degrees.get(ordered[index].id)+1);degrees.set(target,degrees.get(target)+1);});}
-    }else{
-      const k=Math.max(2,Math.min(n-1,Math.floor(Math.sqrt(n))|1)),half=Math.floor(k/2),rewire=.12;
-      for(let index=0;index<n;index++)for(let step=1;step<=half;step++){let target=(index+step)%n;if(random()<rewire){const candidates=ordered.filter((_,candidate)=>candidate!==index&&!keys.has([ordered[index].id,ordered[candidate].id].sort().join('\u0000')));if(candidates.length)target=ordered.indexOf(candidates[Math.floor(random()*candidates.length)]);}add(ordered[index].id,ordered[target].id);}
-    }
-    return links;
-  }
 
   function buildModel(){
     const activeYears=relation=>Math.max(0,Math.min(Number(relation.last_year||state.throughYear),state.throughYear)-Number(relation.first_year||state.throughYear)+1);
@@ -86,7 +69,7 @@
       visibleBasis=visibleBasis.filter(link=>focus.has(link.source)&&focus.has(link.target));
     }
     state.nodes=new Map(visibleNodes.map(node=>[node.id,node]));
-    state.links=state.topology==='observed'?visibleBasis:syntheticLinks(visibleNodes,visibleBasis,state.topology);
+    state.links=visibleBasis;
     state.nodes.forEach(node=>{node.degree=0;node.weightedDegree=0;});
     state.links.forEach(link=>{state.nodes.get(link.source).degree++;state.nodes.get(link.target).degree++;state.nodes.get(link.source).weightedDegree+=link.years;state.nodes.get(link.target).weightedDegree+=link.years;});
     state.adjacency=new Map(visibleNodes.map(node=>[node.id,new Set()]));
@@ -130,7 +113,7 @@
   }
 
   function linkColor(link){
-    if(!state.selected)return link.kind==='synthetic'?'#b46b52':link.kind==='organization'?'#d78b2f':'#686d55';
+    if(!state.selected)return link.kind==='organization'?'#d78b2f':'#686d55';
     const source=endpointId(link.source),target=endpointId(link.target);
     if(source===state.selected||target===state.selected)return colors.ally;
     const bridges=selectedBridges(),opponents=selectedOpponents();
@@ -139,7 +122,8 @@
   }
 
   function setSelection(id){
-    state.selected=state.nodes.has(id)?id:'';
+    const organizationId=String(id||'').startsWith('organization:')&&selectedOrganizations().some(item=>`organization:${item.id}`===id);
+    state.selected=profileByName.has(id)||organizationId?id:'';
     render();
   }
 
@@ -175,32 +159,43 @@
   }
 
   function focusNation(id){
-    if(!state.nodes.has(id))return;
+    if(!profileByName.has(id)&&!String(id).startsWith('organization:'))return;
     setSelection(id);state.svgScene?.focus(id);
   }
 
   function renderSummary(){
     const components=connectedComponents(),active=[...state.nodes.values()].filter(node=>node.degree>0),possible=state.nodes.size*(state.nodes.size-1)/2,density=possible?state.links.length/possible:0;
-    const organizationScope=selectedOrganizations().length,scope=organizationScope?'nodes':'states',rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Organization nodes connected to members':'Observed records plus organization membership',model=state.topology==='observed'?'Observed topology':`${state.topology} model generated on the selected node set`;
+    const organizationScope=selectedOrganizations().length,scope=organizationScope?'nodes':'states',rule=state.relationship==='observed'?'Observed same-side records':state.relationship==='organization'?'Organization nodes connected to members':'Observed records plus organization membership',model=`${state.topology} optimization of observed edges`;
     $('#global-graph-summary').innerHTML=`<div><span>Displayed ${scope}</span><strong>${state.nodes.size.toLocaleString()}</strong></div><div><span>${scope[0].toUpperCase()+scope.slice(1)} with ties</span><strong>${active.length.toLocaleString()}</strong></div><div><span>Displayed ties</span><strong>${state.links.length.toLocaleString()}</strong></div><div><span>Graph density</span><strong>${(density*100).toFixed(2)}%</strong></div><div><span>Largest component</span><strong>${components.largest.toLocaleString()} ${scope}</strong></div><div><span>Connection rule</span><strong>${esc(rule)}</strong></div><div><span>Topology</span><strong>${esc(model)}</strong></div>`;
   }
 
   function forceLayout(model,spread=1){
-    // The previous 2D collision pass used minimum=leftSpace+rightSpace; 3D repulsion now supplies that spacing in all axes.
-    const width=1200,height=780,nodes=model.nodes,byId=new Map(nodes.map(node=>[node.id,node])),random=seededRandom(nodes.map(node=>node.id).join('|'));
-    const hubs=[...nodes].sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)).slice(0,Math.max(3,Math.min(12,Math.ceil(Math.sqrt(nodes.length)))));
-    const hubSet=new Set(hubs.map(node=>node.id));
-    nodes.forEach((node,index)=>{const hub=hubSet.has(node.id)?node:hubs[index%hubs.length]||node,angle=index*2.3999632297,rad=hub===node?120:245+random()*100;node.x=600+(hub===node?Math.cos(angle)*rad:Math.cos(angle)*rad);node.y=390+Math.sin(angle)*rad*.62;node.z=(hub===node?0:(random()-.5)*340)*spread;node.vx=node.vy=node.vz=0;node.topLabel=index<Math.min(16,nodes.length);});
-    for(let step=0;step<150;step++){
-      const cooling=1-step/150;
+    const nodes=model.nodes,byId=new Map(nodes.map(node=>[node.id,node])),random=seededRandom(`${state.topology}|${nodes.map(node=>node.id).join('|')}`),centerId=state.selected&&byId.has(state.selected)?state.selected:'',ordered=[...nodes].sort((a,b)=>b.degree-a.degree||a.label.localeCompare(b.label)),allies=selectedAllies(),opponents=selectedOpponents(),firstYear=new Map(nodes.map(node=>[node.id,2025]));
+    model.links.forEach(link=>{if(Number.isFinite(link.firstYear)){firstYear.set(link.source,Math.min(firstYear.get(link.source),link.firstYear));firstYear.set(link.target,Math.min(firstYear.get(link.target),link.firstYear));}});
+    const place=(node,index,total)=>{
+      if(node.id===centerId)return {x:600,y:390,z:0};const angle=index*2.3999632297,unit=(index+.5)/Math.max(1,total),sphereY=1-2*unit,sphereRadius=Math.sqrt(Math.max(0,1-sphereY*sphereY)),radius=245+Math.min(125,Math.sqrt(total)*8);
+      if(state.topology==='coalitions'){const group=node.entityKind==='organization'?0:allies.has(node.id)?1:opponents.has(node.id)?2:3,groupAngle=group*Math.PI/2;return {x:600+Math.cos(groupAngle)*220+Math.cos(angle)*75,y:390+Math.sin(angle)*95,z:Math.sin(groupAngle)*220+Math.sin(angle*1.7)*75};}
+      if(state.topology==='prisoner'){const side=opponents.has(node.id)?1:allies.has(node.id)?-1:index%2?1:-1;return {x:600+side*(170+random()*100),y:390+Math.sin(angle)*210,z:side*95+Math.cos(angle)*125};}
+      if(state.topology==='third-party'){const ranked=ordered.indexOf(node),rad=65+ranked*7;return {x:600+Math.cos(angle)*rad,y:390+(node.degree-Math.sqrt(node.degree))*8-95,z:Math.sin(angle)*rad};}
+      if(state.topology==='pirates'){const rank=ordered.indexOf(node),level=Math.floor(Math.sqrt(rank));return {x:600+Math.cos(angle)*(65+level*32),y:210+level*54,z:Math.sin(angle)*(65+level*32)};}
+      if(state.topology==='temporal'){const year=firstYear.get(node),progress=(year-1946)/(2025-1946);return {x:160+progress*880,y:390+Math.sin(angle)*190,z:Math.cos(angle)*210};}
+      return {x:600+Math.cos(angle)*sphereRadius*radius,y:390+sphereY*radius*.72,z:Math.sin(angle)*sphereRadius*radius*spread};
+    };
+    ordered.forEach((node,index)=>{const point=place(node,index,ordered.length);node.x=point.x;node.y=point.y;node.z=point.z;node.homeX=point.x;node.homeY=point.y;node.homeZ=point.z;node.vx=node.vy=node.vz=0;node.topLabel=index<Math.min(16,nodes.length)||node.id===centerId;});
+    for(let step=0;step<170;step++){
+      const cooling=1-step/170;
       for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
-        const a=nodes[i],b=nodes[j],dx=a.x-b.x||.01,dy=a.y-b.y||.01,dz=a.z-b.z||.01,d=Math.max(12,Math.hypot(dx,dy,dz)),f=7200/(d*d)*cooling,fx=dx/d*f,fy=dy/d*f,fz=dz/d*f;a.vx+=fx;a.vy+=fy;a.vz+=fz;b.vx-=fx;b.vy-=fy;b.vz-=fz;
+        const a=nodes[i],b=nodes[j],dx=a.x-b.x||.01,dy=a.y-b.y||.01,dz=a.z-b.z||.01,d=Math.max(1,Math.hypot(dx,dy,dz)),minimum=nodeRadius(a)+nodeRadius(b)+14,f=(7200/(Math.max(12,d)**2)+(d<minimum?(minimum-d)*.16:0))*cooling,fx=dx/d*f,fy=dy/d*f,fz=dz/d*f;a.vx+=fx;a.vy+=fy;a.vz+=fz;b.vx-=fx;b.vy-=fy;b.vz-=fz;
       }
       model.links.forEach(link=>{const a=byId.get(link.source),b=byId.get(link.target),dx=b.x-a.x,dy=b.y-a.y,dz=b.z-a.z,d=Math.max(8,Math.hypot(dx,dy,dz)),desired=(link.kind==='organization'?95:145)+Math.min(80,link.years*2),f=(d-desired)*.012*cooling,fx=dx/d*f,fy=dy/d*f,fz=dz/d*f;a.vx+=fx;a.vy+=fy;a.vz+=fz;b.vx-=fx;b.vy-=fy;b.vz-=fz;});
-      nodes.forEach(node=>{node.vx+=(600-node.x)*.0007;node.vy+=(390-node.y)*.0007;node.vz-=node.z*.0005;node.vx*=.82;node.vy*=.82;node.vz*=.82;node.x+=node.vx;node.y+=node.vy;node.z+=node.vz;});
+      nodes.forEach(node=>{const anchor=node.id===centerId ? .09 : .008;node.vx+=(node.homeX-node.x)*anchor;node.vy+=(node.homeY-node.y)*anchor;node.vz+=(node.homeZ-node.z)*anchor;node.vx*=.82;node.vy*=.82;node.vz*=.82;node.x+=node.vx;node.y+=node.vy;node.z+=node.vz;});
     }
     const max=Math.max(1,...nodes.map(node=>Math.hypot(node.x-600,(node.y-390)*1.1,node.z*.45)));nodes.forEach(node=>{node.x=600+(node.x-600)*Math.min(1,520/max);node.y=390+(node.y-390)*Math.min(1,330/max);node.z*=Math.min(1,520/max);});
     return byId;
+  }
+
+  function connectionDepths(start,maxDepth=3){
+    const depths=new Map([[start,0]]),queue=[start];while(queue.length){const current=queue.shift(),depth=depths.get(current);if(depth>=maxDepth)continue;(state.adjacency.get(current)||[]).forEach(next=>{if(depths.has(next))return;depths.set(next,depth+1);queue.push(next);});}depths.delete(start);return depths;
   }
 
   function renderSVG(model){
@@ -208,7 +203,7 @@
     const svg=document.createElementNS(ns,'svg');svg.classList.add('global-graph-svg');svg.setAttribute('viewBox','0 0 1200 780');svg.setAttribute('aria-label',`Interactive force-directed ${relationshipLabel()} graph`);
     const viewport=document.createElementNS(ns,'g'),edgeLayer=document.createElementNS(ns,'g'),nodeLayer=document.createElementNS(ns,'g');viewport.append(edgeLayer,nodeLayer);svg.append(viewport);container.append(svg);
     const incident=new Map(model.nodes.map(node=>[node.id,[]]));
-    const edgeElements=model.links.map(link=>{const line=document.createElementNS(ns,'line'),source=byId.get(link.source),target=byId.get(link.target);line.setAttribute('x1',source.x);line.setAttribute('y1',source.y);line.setAttribute('x2',target.x);line.setAttribute('y2',target.y);line.setAttribute('stroke-width',link.kind==='organization'?2.2:link.kind==='synthetic'?1.35:.85+Math.log2(1+link.years)*.3);edgeLayer.append(line);const item={link,line};incident.get(link.source).push(item);incident.get(link.target).push(item);return item;});
+    const edgeElements=model.links.map(link=>{const line=document.createElementNS(ns,'line'),source=byId.get(link.source),target=byId.get(link.target);line.setAttribute('x1',source.x);line.setAttribute('y1',source.y);line.setAttribute('x2',target.x);line.setAttribute('y2',target.y);line.setAttribute('stroke-width',link.kind==='organization'?2.2:.85+Math.log2(1+link.years)*.3);edgeLayer.append(line);const item={link,line};incident.get(link.source).push(item);incident.get(link.target).push(item);return item;});
     const nodeElements=new Map();
     model.nodes.forEach(node=>{const group=document.createElementNS(ns,'g'),title=document.createElementNS(ns,'title'),label=document.createElementNS(ns,'text'),radius=nodeRadius(node);group.classList.add('global-graph-node');group.dataset.nodeId=node.id;group.setAttribute('transform',`translate(${node.x} ${node.y})`);title.textContent=`${node.label} · ${node.degree} displayed connections · ${node.weightedDegree} observed partner-years`;let shapes=[];if(node.entityKind==='organization'){const diamond=document.createElementNS(ns,'polygon');diamond.setAttribute('points',`0,-${radius} ${radius},0 0,${radius} -${radius},0`);group.append(diamond);shapes=[diamond];}else{const top=document.createElementNS(ns,'polygon'),left=document.createElementNS(ns,'polygon'),right=document.createElementNS(ns,'polygon');top.setAttribute('points',`0,-${radius} ${radius*.82},${radius*.5} 0,${radius*.82} -${radius*.82},${radius*.5}`);left.setAttribute('points',`0,-${radius} -${radius*.82},${radius*.5} 0,${radius*.82}`);right.setAttribute('points',`0,-${radius} ${radius*.82},${radius*.5} 0,${radius*.82}`);group.append(top,left,right);shapes=[top,left,right];}group.append(title);label.textContent=node.label;label.setAttribute('y',-(radius+5));label.hidden=!node.topLabel;group.append(label);nodeLayer.append(group);nodeElements.set(node.id,{group,shapes,label,node});});
     const scene={svg,viewport,byId,edgeElements,nodeElements,zoom:.92,panX:0,panY:0,yaw:-.18,pitch:.1,drag:null,moved:false,animation:null,momentumFrame:null};
@@ -219,11 +214,11 @@
     scene.focus=id=>{const node=byId.get(id);if(!node)return;const projected=scene.project(node);scene.zoom=1.35;scene.panX=600-projected.x*scene.zoom;scene.panY=390-projected.y*scene.zoom;scene.transform();};
     scene.fit=()=>{scene.zoom=.92;scene.panX=0;scene.panY=0;scene.yaw=-.18;scene.pitch=.1;scene.transform();scene.draw();};
     scene.optimize=()=>{cancelAnimationFrame(scene.animation);const starts=new Map(model.nodes.map(node=>[node.id,{x:node.x,y:node.y,z:node.z}]));const targetModel={nodes:model.nodes.map(node=>({...node})),links:model.links};const targetById=forceLayout(targetModel,1.25),started=performance.now();scene.zoom=.86;scene.panX=0;scene.panY=0;const tick=timestamp=>{const progress=Math.min(1,(timestamp-started)/1000),eased=1-Math.pow(1-progress,3);model.nodes.forEach(node=>{const from=starts.get(node.id),to=targetById.get(node.id);node.x=from.x+(to.x-from.x)*eased;node.y=from.y+(to.y-from.y)*eased;node.z=from.z+(to.z-from.z)*eased;});scene.transform();scene.draw();if(progress<1)scene.animation=requestAnimationFrame(tick);else scene.update();};scene.animation=requestAnimationFrame(tick);};
-    scene.startMomentum=(node,vx,vy)=>{cancelAnimationFrame(scene.momentumFrame);let speed=Math.hypot(vx,vy);const tick=()=>{if(speed<.15)return;node.x+=vx;node.y+=vy;model.links.forEach(link=>{if(link.source!==node.id&&link.target!==node.id)return;const other=byId.get(link.source===node.id?link.target:link.source);other.x+=(node.x-other.x)*.018;other.y+=(node.y-other.y)*.018;});vx*=.9;vy*=.9;speed=Math.hypot(vx,vy);scene.draw();scene.momentumFrame=requestAnimationFrame(tick);};scene.momentumFrame=requestAnimationFrame(tick);};
+    scene.startMomentum=(node,vx,vy)=>{cancelAnimationFrame(scene.momentumFrame);let speed=Math.hypot(vx,vy);const depths=connectionDepths(node.id);const tick=()=>{if(speed<.15)return;node.x+=vx;node.y+=vy;depths.forEach((depth,id)=>{const other=byId.get(id),factor=[0,.22,.07,.018][depth]||0;if(other){other.x+=vx*factor;other.y+=vy*factor;}});vx*=.9;vy*=.9;speed=Math.hypot(vx,vy);scene.draw();scene.momentumFrame=requestAnimationFrame(tick);};scene.momentumFrame=requestAnimationFrame(tick);};
     const point=event=>{const value=svg.createSVGPoint();value.x=event.clientX;value.y=event.clientY;return value.matrixTransform(viewport.getScreenCTM().inverse());};
     svg.addEventListener('pointerdown',event=>{cancelAnimationFrame(scene.animation);const group=event.target.closest?.('[data-node-id]'),node=group?byId.get(group.dataset.nodeId):null;scene.drag={node,x:event.clientX,y:event.clientY,vx:0,vy:0,mode:!node&&(event.shiftKey||event.altKey)?'rotate':'pan'};scene.moved=false;svg.setPointerCapture(event.pointerId);});
-    svg.addEventListener('pointermove',event=>{if(!scene.drag)return;const dx=event.clientX-scene.drag.x,dy=event.clientY-scene.drag.y;if(Math.abs(dx)+Math.abs(dy)>2)scene.moved=true;if(scene.drag.node){scene.drag.node.x+=dx/scene.zoom;scene.drag.node.y+=dy/scene.zoom;scene.drag.vx=dx/scene.zoom;scene.drag.vy=dy/scene.zoom;}else if(scene.drag.mode==='rotate'){scene.yaw+=dx*.007;scene.pitch=Math.max(-1.15,Math.min(1.15,scene.pitch+dy*.006));}else{scene.panX+=dx;scene.panY+=dy;scene.transform();}scene.drag.x=event.clientX;scene.drag.y=event.clientY;scene.draw();});
-    svg.addEventListener('pointerup',event=>{if(!scene.drag)return;const drag=scene.drag,id=drag.node?.id,moved=scene.moved;scene.drag=null;svg.releasePointerCapture(event.pointerId);if(drag.node&&moved)scene.startMomentum(drag.node,drag.vx,drag.vy);if(!moved)setSelection(id||'');});
+    svg.addEventListener('pointermove',event=>{if(!scene.drag)return;const dx=event.clientX-scene.drag.x,dy=event.clientY-scene.drag.y;if(Math.abs(dx)+Math.abs(dy)>2)scene.moved=true;if(scene.drag.node){const mx=dx/scene.zoom,my=dy/scene.zoom;scene.drag.node.x+=mx;scene.drag.node.y+=my;connectionDepths(scene.drag.node.id).forEach((depth,id)=>{const other=byId.get(id),factor=[0,.34,.12,.035][depth]||0;if(other){other.x+=mx*factor;other.y+=my*factor;}});scene.drag.vx=mx;scene.drag.vy=my;}else if(scene.drag.mode==='rotate'){scene.yaw+=dx*.007;scene.pitch=Math.max(-1.15,Math.min(1.15,scene.pitch+dy*.006));}else{scene.panX+=dx;scene.panY+=dy;scene.transform();}scene.drag.x=event.clientX;scene.drag.y=event.clientY;scene.draw();});
+    svg.addEventListener('pointerup',event=>{if(!scene.drag)return;const drag=scene.drag,id=drag.node?.id,moved=scene.moved;scene.drag=null;svg.releasePointerCapture(event.pointerId);if(drag.node&&moved)scene.startMomentum(drag.node,drag.vx,drag.vy);if(!moved){if(id)focusNation(id);else setSelection('');}});
     svg.addEventListener('click',event=>{if(event.target===svg)setSelection('');});
     svg.addEventListener('wheel',event=>{event.preventDefault();scene.zoom=Math.max(.55,Math.min(3,scene.zoom*Math.exp(-event.deltaY*.001)));scene.transform();},{passive:false});
     state.svgScene=scene;scene.update();scene.fit();
@@ -237,7 +232,7 @@
 
   function renderTimeline(model){
     const container=$('#global-graph'),links=[...model.links].filter(link=>Number.isFinite(link.firstYear)).sort((a,b)=>b.years-a.years||a.firstYear-b.firstYear).slice(0,70),left=250,right=30,top=30,row=24,width=1150,height=top+links.length*row+45,x=year=>left+(year-1946)/(2025-1946)*(width-left-right);
-    if(!links.length){container.innerHTML=`<p class="boundary-note">${state.topology!=='observed'?'Synthetic topology has no historical interval.':'Organization co-membership has no time interval in this layer.'} Choose the Network or Adjacency matrix view.</p>`;return;}
+    if(!links.length){container.innerHTML='<p class="boundary-note">This relationship selection has no historical interval. Choose the Network or Adjacency matrix view.</p>';return;}
     container.innerHTML=`<div class="global-graph-timeline"><svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Timeline of shared-side state relationships"><line class="axis" x1="${left}" x2="${width-right}" y1="${top-10}" y2="${top-10}"></line><text x="${left}" y="${top-17}">1946</text><text x="${width-right-30}" y="${top-17}">2025</text>${links.map((link,index)=>{const selected=state.selected&&(link.source===state.selected||link.target===state.selected);return `<g data-source="${esc(link.source)}" data-target="${esc(link.target)}"><text x="${left-10}" y="${top+index*row+9}" text-anchor="end">${esc(link.source)} · ${esc(link.target)}</text><rect class="bar ${selected?'selected':''}" x="${x(link.firstYear)}" y="${top+index*row}" width="${Math.max(3,x(link.lastYear)-x(link.firstYear))}" height="14" rx="3"><title>${esc(link.source)} · ${esc(link.target)} · ${esc(linkDescription(link))}</title></rect></g>`;}).join('')}</svg></div>`;
     container.querySelectorAll('[data-source]').forEach(item=>item.addEventListener('click',()=>focusNation(item.dataset.source)));
   }
@@ -272,14 +267,17 @@
   $('#graph-relationship').addEventListener('change',event=>{state.relationship=event.target.value;state.selected='';render();});
   document.querySelectorAll('[data-organization]').forEach(input=>input.addEventListener('change',()=>{state.organizations=[...document.querySelectorAll('[data-organization]:checked')].map(item=>item.dataset.organization);if(state.organizations.length){state.relationship='organization';$('#graph-relationship').value='organization';state.selected=state.organizations.includes(input.dataset.organization)?`organization:${input.dataset.organization}`:'';}else{state.relationship='observed';$('#graph-relationship').value='observed';state.selected='';}render();state.svgScene?.focus(state.selected);}));
   $('#graph-include-ungrouped').addEventListener('change',event=>{state.includeUngrouped=event.target.checked;state.selected='';render();});
-  $('#graph-topology').addEventListener('change',event=>{state.topology=event.target.value;state.selected='';render();});
+  $('#graph-topology').addEventListener('change',event=>{state.topology=event.target.value;const selected=state.selected;render();if(selected)state.svgScene?.focus(selected);});
   $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});
   $('#graph-optimize').addEventListener('click',()=>state.svgScene?.optimize());
+  $('#graph-browser').addEventListener('click',()=>{const url=new URL('network-3d.html',location.href);if(state.selected)url.searchParams.set('node',state.selected.startsWith('organization:')?state.selected:`nation:${state.selected}`);url.searchParams.set('topology',state.topology);location.href=url;});
   $('#graph-data').addEventListener('click',viewGraphData);
   $('#graph-help').addEventListener('click',()=>$('#graph-help-dialog').showModal());
   $('#graph-fit').addEventListener('click',()=>state.svgScene?.fit());
   document.addEventListener('keydown',event=>{if(event.key.toLowerCase()!=='o'||event.metaKey||event.ctrlKey||event.altKey||/^(INPUT|SELECT|TEXTAREA)$/.test(event.target.tagName)||event.target.isContentEditable)return;event.preventDefault();state.svgScene?.optimize();});
   $('#theme-toggle').addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('war-maps-theme',theme);}catch(error){}setSelection(state.selected);});
+  const initialNode=new URLSearchParams(location.search).get('node')||'',initialNation=initialNode.startsWith('nation:')?initialNode.slice(7):initialNode;
+  if(profileByName.has(initialNation))state.selected=initialNation;
   render();
 })();
