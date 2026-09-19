@@ -7,7 +7,7 @@
   const sourceStart = Number(data?.coverage?.ged_years?.[0] || 1989);
   const sourceEnd = Math.max(Number(data?.coverage?.ged_years?.[1] || 2024),Number(String(data?.coverage?.candidate_through || '').slice(0,4) || 0));
   const defaultEnd = sourceEnd, defaultStart = Math.max(sourceStart,defaultEnd - 4);
-  const state = {search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, startYear:defaultStart, endYear:defaultEnd, playTimer:null, playIndex:0, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const state = {search:'', selected:null, nation:null, reverseCountries:new Set(), visible:[], worldVisible:[], priceScale:{min:0,max:1}, startYear:defaultStart, endYear:defaultEnd, playTimer:null, playIndex:0, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const playYears = () => data.coverage.play_years || [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024];
   const deathsInRange = (row, startYear=state.startYear, endYear=state.endYear) => {
     if (row.in_ucdp === false) return row.civilians || 0;
@@ -47,8 +47,8 @@
     const values = rows.map(row => deathsInRange(row)).filter(value => value > 0);
     if (!values.length) state.priceScale = {min: 0, max: 1};
     else {
-      const min = Math.min(...values), max = Math.max(...values);
-      state.priceScale = {min, max: max <= min ? min + 1 : max};
+      const max = Math.max(...values);
+      state.priceScale = {min:0,max:Math.max(1,max)};
     }
     const minEl = $('#civ-scale-min'), maxEl = $('#civ-scale-max');
     if (minEl) minEl.textContent = formatCount(state.priceScale.min);
@@ -61,11 +61,11 @@
   function filterRows() {
     state.worldVisible = data.countries.filter(row => deathsInRange(row) > 0 &&
       (!state.search || `${row.name} ${row.admin} ${row.region}`.toLocaleLowerCase().includes(state.search)));
-    state.visible = state.nation ? state.worldVisible.filter(row => row.admin === state.nation) : state.worldVisible;
+    state.visible = state.nation ? state.worldVisible.filter(row => state.reverseCountries.has(row.admin)) : state.worldVisible;
     $('#civ-count').textContent = state.visible.length.toLocaleString();
     $('#civ-list-count').textContent = `${state.visible.length} UCDP countries`;
     if (state.selected && !state.visible.includes(state.selected) && state.selected.in_ucdp !== false) state.selected = null;
-    refreshScale(data.countries.filter(row => deathsInRange(row) > 0));
+    refreshScale([...data.countries.filter(row => deathsInRange(row) > 0),...(data.external || []).filter(externalInRange)]);
     setYearLabel();
     if (!state.nation) $('#civ-view-name').textContent = `CIVILIAN DEATHS · ${rangeLabel()}`;
     drawTowers();
@@ -245,6 +245,9 @@
       state.countryAnchors.push(mesh);
     });
   }
+  const featurePolygons=feature=>feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.type==='MultiPolygon'?feature.geometry.coordinates:[];
+  const boundsFor=(feature,unwrap)=>{const points=featurePolygons(feature).flatMap(rings=>rings[0]||[]),xs=points.map(([lon])=>unwrap(lon)),ys=points.map(([,lat])=>lat);return {minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};};
+  const boundsGap=(a,b)=>Math.hypot(Math.max(0,a.minX-b.maxX,b.minX-a.maxX),Math.max(0,a.minY-b.maxY,b.minY-a.maxY));
   function addNationReverse(country) {
     if (state.reverseGroup) {
       state.reverseGroup.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.();});
@@ -252,25 +255,26 @@
     }
     const feature=geometry.features.find(item=>item.properties.ADMIN===country);
     if(!feature)return;
-    const polygons=feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.type==='MultiPolygon'?feature.geometry.coordinates:[];
     const anchor=Number(feature.properties.LABEL_X)||0;
     const unwrap=lon=>{let delta=lon-anchor;while(delta>180)delta-=360;while(delta<-180)delta+=360;return anchor+delta;};
-    const points=polygons.flatMap(rings=>rings[0]||[]);
-    const xs=points.map(([lon])=>unwrap(lon)),ys=points.map(([,lat])=>lat);
-    const bounds={minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+    const selectedBounds=boundsFor(feature,unwrap),span=Math.hypot(selectedBounds.maxX-selectedBounds.minX,selectedBounds.maxY-selectedBounds.minY),neighborDistance=Math.max(1.25,Math.min(4,span*.35));
+    const regionalFeatures=geometry.features.filter(item=>item.properties.ADMIN!=='Antarctica'&&boundsGap(selectedBounds,boundsFor(item,unwrap))<=neighborDistance);
+    state.reverseCountries=new Set(regionalFeatures.map(item=>item.properties.ADMIN));
+    const featureBounds=regionalFeatures.map(item=>boundsFor(item,unwrap));
+    const bounds={minX:Math.min(...featureBounds.map(item=>item.minX)),maxX:Math.max(...featureBounds.map(item=>item.maxX)),minY:Math.min(...featureBounds.map(item=>item.minY)),maxY:Math.max(...featureBounds.map(item=>item.maxY))};
     const centerX=(bounds.minX+bounds.maxX)/2,centerY=(bounds.minY+bounds.maxY)/2;
     const scale=Math.min(170/Math.max(1,bounds.maxX-bounds.minX),88/Math.max(1,bounds.maxY-bounds.minY),24);
     const project=([lon,lat])=>[(unwrap(lon)-centerX)*scale,(lat-centerY)*scale];
     const reverse=new THREE.Group();state.reverseGroup=reverse;state.plateRoot.add(reverse);
     state.reverseMeshes=[];
-    polygons.forEach(rings=>{
-      const shape=makeShape(rings,project);if(!shape)return;
+    regionalFeatures.forEach(item=>featurePolygons(item).forEach(rings=>{
+      const shape=makeShape(rings,project);if(!shape)return;const selected=item.properties.ADMIN===country;
       const geo=new THREE.ShapeGeometry(shape,1);geo.rotateX(Math.PI/2);
-      const mesh=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:dark()?'#b7ae79':'#e0d39a',side:THREE.DoubleSide,shininess:15,emissive:dark()?'#302a13':'#13130c',emissiveIntensity:.12}));
-      mesh.position.y=-1.76;mesh.userData.country=country;reverse.add(mesh);state.reverseMeshes.push(mesh);
-      const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geo,8),new THREE.LineBasicMaterial({color:'#f9db7b',transparent:true,opacity:.9}));
+      const mesh=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:selected?(dark()?'#b7ae79':'#e0d39a'):(dark()?'#5e6941':'#aaa77e'),side:THREE.DoubleSide,shininess:selected?15:7,emissive:selected?(dark()?'#302a13':'#13130c'):'#10140d',emissiveIntensity:selected?.12:.04}));
+      mesh.position.y=-1.76;mesh.userData.country=item.properties.ADMIN;reverse.add(mesh);state.reverseMeshes.push(mesh);
+      const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geo,8),new THREE.LineBasicMaterial({color:selected?'#f9db7b':'#9e9a70',transparent:true,opacity:selected?.95:.65}));
       edge.position.y=-1.8;reverse.add(edge);
-    });
+    }));
     state.nationProjection={centerX,centerY,scale,unwrap};
     state.reverseTowerGroup=new THREE.Group();reverse.add(state.reverseTowerGroup);
   }
@@ -285,13 +289,13 @@
     state.flipTarget=Math.PI;state.flipping=true;state.controls.enabled=false;
     const nationLabel=(geometry.features.find(item=>item.properties.ADMIN===country)?.properties.NAME||country).toUpperCase();
     $('#civ-view-name').textContent=nationLabel;$('#civ-nation-name').textContent=nationLabel;$('#civ-nation-name').hidden=false;$('#civ-back').hidden=false;
-    $('#civ-stage-hint').innerHTML='CLICK OUTSIDE THE NATION TO RETURN <b>·</b> SELECT A TOWER';
+    $('#civ-stage-hint').innerHTML='SELECT A NEIGHBOR OR TOWER <b>·</b> CLICK OUTSIDE THE REGION TO RETURN';
     $('#civ-tooltip').hidden=true;
     filterRows();
   }
   function flipToWorld() {
     if(!state.nation||state.flipping)return;
-    state.nation=null;state.selected=null;state.flipTarget=0;state.flipping=true;state.controls.enabled=false;
+    state.nation=null;state.reverseCountries=new Set();state.selected=null;state.flipTarget=0;state.flipping=true;state.controls.enabled=false;
     $('#civ-view-name').textContent='WORLD CIVILIAN DEATHS';$('#civ-nation-name').textContent='';$('#civ-nation-name').hidden=true;$('#civ-back').hidden=true;
     $('#civ-stage-hint').innerHTML='CLICK A NATION TO TURN THE MAP <b>·</b> DRAG TO ORBIT';
     $('#civ-tooltip').hidden=true;
@@ -361,7 +365,7 @@
     if(showExternal) externals.filter(externalInRange).forEach(row=>makeTower(row,false));
     if(state.nation&&state.reverseTowerGroup){
       state.visible.forEach(row=>makeTower(row,true));
-      if(state.nation==='Palestine') externals.forEach(row=>makeTower(row,true));
+      externals.filter(row=>externalInRange(row)&&state.reverseCountries.has(row.admin)).forEach(row=>makeTower(row,true));
     }
     state.towers=state.nation?state.reverseTowers:state.worldTowers;
   }
@@ -408,7 +412,7 @@
     renderer.domElement.addEventListener('click',event=>{
       if(state.flipping||!state.pointerDown||Math.hypot(event.clientX-state.pointerDown.x,event.clientY-state.pointerDown.y)>5)return;
       const object=hit(event),row=object?.userData.row,country=object?.userData.country;
-      if(state.nation){if(row)selectRow(row);else if(!country)flipToWorld();}
+      if(state.nation){if(row)selectRow(row);else if(country&&country!==state.nation)flipToNation(country);else if(!country)flipToWorld();}
       else if(row)flipToNation(row.admin,row);
       else if(country)flipToNation(country);
     });
@@ -449,6 +453,8 @@
     $('#theme-toggle').addEventListener('click',()=>{const next=dark()?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('war-maps-theme',next);}catch(error){} window.location.reload();});
     try{initScene();}catch(error){$('#civ-map').innerHTML=`<p class="gas-error">The 3D field could not start: ${esc(error.message)}. The searchable country list remains available.</p>`;}
     filterRows();
+    const requestedCountry=new URLSearchParams(location.search).get('country');
+    if(requestedCountry&&geometry?.features?.some(item=>item.properties.ADMIN===requestedCountry)&&state.plateRoot)setTimeout(()=>flipToNation(requestedCountry,data.countries.find(row=>row.admin===requestedCountry)||null),80);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();

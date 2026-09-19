@@ -657,7 +657,7 @@
     const ns='http://www.w3.org/2000/svg';
     const svg=document.createElementNS(ns,'svg');svg.classList.add('network-svg-3d');svg.setAttribute('aria-label','Rotatable three-dimensional conflict network');
     const edgeLayer=document.createElementNS(ns,'g');const nodeLayer=document.createElementNS(ns,'g');svg.append(edgeLayer,nodeLayer);container.append(svg);
-    const nodes=state.graph.nodes.map(node=>{const point=state.positions.get(node.id);let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;const x=point.x*52,y=point.y*52,z=((Math.abs(hash)%201)-100)*(node.kind==='observation'?1.1:2.1);return {...node,x,y,z,homeX:x,homeY:y,homeZ:z};});
+    const nodes=state.graph.nodes.map(node=>{const point=state.positions.get(node.id),target=state.optimizedPositions.get(node.id);let hash=0;for(const char of node.id)hash=(hash*31+char.charCodeAt(0))|0;const x=point.x*52,y=point.y*52,z=target?.z??((Math.abs(hash)%201)-100)*(node.kind==='observation'?1.1:2.1);return {...node,x,y,z,homeX:x,homeY:y,homeZ:z};});
     const nodeMap=new Map(nodes.map(node=>[node.id,node]));
     const edgeElements=state.graph.edges.map(edge=>{const line=document.createElementNS(ns,'line');line.dataset.source=edge.from;line.dataset.target=edge.to;edgeLayer.append(line);return {edge,line};});
     const radii={conflict:13,side:11,nation:9,location:8,actor:7,observation:3};
@@ -721,8 +721,12 @@
     state.optimizedPositions=optimizedNodePositions(state.graph.nodes);
     state.positions=new Map([...state.optimizedPositions].map(([id,point])=>[id,{x:point.x/52,y:point.y/52}]));
     state.selected='';state.connected=new Set();state.optimized=true;$('#network-optimize')?.setAttribute('aria-pressed','true');
-    if(!window.ForceGraph3D)throw new Error('3D network renderer unavailable');
-    render3D();
+    try{
+      if(window.ForceGraph3D)render3D();
+      else renderSVG3D();
+    }catch(error){
+      renderSVG3D();
+    }
     showSummary(conflict);
     renderNetworkStats(conflict);
     renderWarRegister(conflict);
@@ -1138,6 +1142,7 @@
 
   renderWarDialog();
   const initialParams = new URLSearchParams(location.search);
+  if(model.topologyNames[initialParams.get('topology')]){state.optimizationMethod=initialParams.get('topology');$('#network-topology').value=state.optimizationMethod;}
   const requested = initialParams.get('conflict');
   selectConflict(conflictsById.has(requested) ? requested : (conflictsById.has('ucdp-candidate-16905') ? 'ucdp-candidate-16905' : data.conflicts.at(-1).id), false);
   const requestedNode=initialParams.get('node');

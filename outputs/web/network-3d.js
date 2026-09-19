@@ -1,8 +1,9 @@
 (()=>{
   const start=()=>{
     const data=window.WAR_MAPS_DATA,model=window.WAR_MAPS_NETWORK_MODEL,root=document.querySelector('#navigator');
-    if(!data||!model||!window.ForceGraph3D)return;
+    if(!data||!model)return;
     const params=new URLSearchParams(location.search),conflict=data.conflicts.find(item=>item.id===params.get('conflict'))||data.conflicts.at(-1);
+    if(!window.ForceGraph3D){const fallback=new URL('network.html',location.href);['conflict','through','focal','topology'].forEach(key=>{if(params.has(key))fallback.searchParams.set(key,params.get(key));});location.replace(fallback);return;}
     const nations=new Set(data.nations.flatMap(item=>[item.country,item.map_name])),isolated=new Set();
     const today=new Date().toISOString().slice(0,10),initialDate=params.get('focal')||params.get('through')||(conflict.active_at_source_boundary?today:(conflict.end_date||`${conflict.last_active_year}-12-31`));
     const requestedTopology=params.get('topology'),optimizationMethod=model.topologyNames[requestedTopology]?requestedTopology:'equilibrium';
