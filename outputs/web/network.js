@@ -21,7 +21,7 @@
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const state = {conflictId:'', start:'', end:'', focalDate:'', graph:null,analysis:null,strategy:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',organization:'force',forceGraph:null,forceNodes:new Map(),selected:'',connected:new Set(),isolatedRegimes:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,registerTimer:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
+  const state = {conflictId:'', start:'', end:'', focalDate:'', graph:null,analysis:null,strategy:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',organization:'force',forceGraph:null,forceNodes:new Map(),layoutForce:null,collisionForce:null,selected:'',connected:new Set(),isolatedRegimes:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,registerTimer:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
@@ -428,20 +428,17 @@
 
   function optimizedNodePositions(nodes) {
     const positions=new Map();
-    positions.set(nodeId('conflict',state.conflictId),{x:0,y:-120,z:0});
-    positions.set(nodeId('side','a'),{x:-190,y:-70,z:0});positions.set(nodeId('side','b'),{x:190,y:-70,z:0});
+    positions.set(nodeId('conflict',state.conflictId),{x:0,y:-180,z:0});
+    positions.set(nodeId('side','a'),{x:-270,y:-100,z:0});positions.set(nodeId('side','b'),{x:270,y:-100,z:0});
     const lane=(items,x,startY,spacing)=>items.sort((a,b)=>nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b))).forEach((node,index)=>positions.set(node.id,{x,y:startY+index*spacing,z:0}));
     const sided=side=>nodes.filter(node=>['nation','actor'].includes(node.kind)&&(node.metadata.side===side||node.metadata.sides?.includes(side)));
-    lane(sided('A'),-230,-20,30);lane(sided('B'),230,-20,30);
-    lane(nodes.filter(node=>['nation','actor'].includes(node.kind)&&!(node.metadata.side||node.metadata.sides?.length)),0,-20,30);
+    lane(sided('A'),-310,-20,58);lane(sided('B'),310,-20,58);
+    lane(nodes.filter(node=>['nation','actor'].includes(node.kind)&&!(node.metadata.side||node.metadata.sides?.length)),0,-20,46);
     const locations=nodes.filter(node=>node.kind==='location').sort((a,b)=>nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b)));
-    locations.forEach((node,index)=>positions.set(node.id,{x:0,y:-5+index*34,z:0}));
-    const dates=[...new Set(nodes.filter(node=>node.metadata?.event).map(node=>node.metadata.event.date_start))].sort(),dateIndex=new Map(dates.map((date,index)=>[date,index]));
-    nodes.filter(node=>node.kind==='observation').forEach((node,index)=>{
-      const date=node.metadata.event?.date_start||`${node.metadata.row?.year||''}-01-01`,order=dateIndex.get(date)??index;
-      const role=node.metadata.posture?.role,x=role==='defensive'?-78:role==='offensive'?78:0;
-      positions.set(node.id,{x:x+(index%5-2)*7,y:15+order*11,z:(index%7-3)*5});
-    });
+    locations.forEach((node,index)=>{const column=index%3,row=Math.floor(index/3);positions.set(node.id,{x:(column-1)*112,y:35+row*116,z:(column%2?0:18)});});
+    const eventNodes=nodes.filter(node=>node.metadata?.event).sort((a,b)=>a.metadata.event.date_start.localeCompare(b.metadata.event.date_start)||a.id.localeCompare(b.id)),origin=eventNodes[0]?.metadata.event.date_start||state.start,slots=new Map();
+    eventNodes.forEach(node=>{const event=node.metadata.event,location=displayLocation(event.network_location||event.country||event.place||'Unspecified location'),locationId=nodeId('location',location),anchor=positions.get(locationId)||{x:0,y:40,z:0},slotKey=`${locationId}|${event.date_start}`,slot=slots.get(slotKey)||0;slots.set(slotKey,slot+1);positions.set(node.id,model.weeklyOrbit(event,anchor,origin,slot));});
+    nodes.filter(node=>node.kind==='observation'&&!node.metadata?.event).forEach((node,index)=>{const angle=index*2.399963,radius=46+Math.sqrt(index)*12;positions.set(node.id,{x:Math.cos(angle)*radius,y:60+Math.sin(angle)*radius,z:index*5});});
     nodes.forEach((node,index)=>{if(!positions.has(node.id))positions.set(node.id,{x:(index%2?-1:1)*115,y:index*17,z:0});});
     return positions;
   }
@@ -456,7 +453,7 @@
       nodes.forEach(node=>{
         const from=starts.get(node.id),to=targets.get(node.id);if(!to)return;
         node.x=from.x+(to.x-from.x)*eased;node.y=from.y+(to.y-from.y)*eased;node.z=from.z+(to.z-from.z)*eased;
-        if('fx' in node||state.renderMode==='3d'){node.fx=node.x;node.fy=node.y;node.fz=node.z;}
+        node.fx=null;node.fy=null;node.fz=null;
       });
       draw?.();
       if(progress<1)state.layoutFrame=requestAnimationFrame(tick);
@@ -470,10 +467,11 @@
     noteInteraction();stopMotion();
     state.optimized=true;
     state.optimizedPositions=optimizedNodePositions(state.graph.nodes);
+    state.layoutForce?.targets(state.optimizedPositions);
     $('#network-optimize')?.setAttribute('aria-pressed','true');
     if(state.renderMode==='3d'&&state.forceGraph){
       const nodes=state.forceGraph.graphData().nodes;
-      animateOptimizedLayout(nodes,state.optimizedPositions,()=>state.forceGraph.refresh(),()=>state.forceGraph.zoomToFit(700,90));
+      animateOptimizedLayout(nodes,state.optimizedPositions,()=>state.forceGraph.refresh(),()=>{state.forceGraph.d3ReheatSimulation();state.forceGraph.zoomToFit(700,100);});
       state.forceGraph.linkCurvature?.(link=>.08+(Math.abs([...`${endpointId(link.source)}|${endpointId(link.target)}`].reduce((sum,char)=>sum+char.charCodeAt(0),0))%5)*.025).refresh();
       return;
     }
@@ -565,6 +563,18 @@
     if(id)showNode(id);else showSummary(conflictsById.get(state.conflictId));
   }
 
+  function pullSideNeighborhood(node,translation) {
+    if(node.kind!=='side'||!translation)return;
+    const distance=Math.hypot(translation.x||0,translation.y||0,translation.z||0);if(!distance)return;
+    const depths=model.graphDistances(node.id,state.graph.edges,4);
+    depths.forEach((depth,id)=>{
+      const neighbor=state.forceNodes.get(id),factor=model.dragPullFactor(depth,distance);if(!neighbor||!factor)return;
+      const dx=(translation.x||0)*factor,dy=(translation.y||0)*factor,dz=(translation.z||0)*factor;
+      neighbor.x=(neighbor.x||0)+dx;neighbor.y=(neighbor.y||0)+dy;neighbor.z=(neighbor.z||0)+dz;
+      const target=state.optimizedPositions.get(id);if(target){target.x+=dx;target.y+=dy;target.z+=dz;}
+    });
+  }
+
   function render3D() {
     const container=$('#network-canvas');
     stopAutoRotation();stopNativeLabels();
@@ -580,7 +590,6 @@
       const val=({conflict:14,side:10,nation:8,location:7,actor:5,observation:1.4}[node.kind]||3)*nodeVisualScale(node);
       const factor=state.optimized?52:18,target=state.optimizedPositions.get(node.id);
       const placed={...node,x:position.x*factor,y:position.y*factor,z:state.optimized?(target?.z||0):depth,val};
-      if(state.optimized){placed.fx=placed.x;placed.fy=placed.y;placed.fz=placed.z;}
       return placed;
     });
     const graphLinks=state.graph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
@@ -602,11 +611,11 @@
       .enableNodeDrag(true)
       .enableNavigationControls(true)
       .onNodeClick(node=>selectGraphNode(node.id))
-      .onNodeDrag(()=>noteInteraction())
+      .onNodeDrag((node,translation)=>{noteInteraction();pullSideNeighborhood(node,translation);})
       .onNodeDragEnd(node=>{
-        noteInteraction();node.fx=node.x;node.fy=node.y;node.fz=node.z;
+        noteInteraction();node.fx=null;node.fy=null;node.fz=null;
         state.optimizedPositions.set(node.id,{x:node.x,y:node.y,z:node.z});
-        graph.refresh();
+        state.layoutForce?.targets(state.optimizedPositions);graph.d3ReheatSimulation();graph.refresh();
       })
       .onBackgroundClick(()=>selectGraphNode(''))
       .onNodeHover(node=>{container.style.cursor=node?'pointer':'grab';})
@@ -615,6 +624,10 @@
       .graphData({nodes:graphNodes,links:graphLinks});
     graph.d3Force('charge')?.strength(graphNodes.length>700?-28:-65);
     graph.d3Force('link')?.distance(link=>link.relation.includes('observation')||link.relation==='candidate event'?24:52);
+    state.layoutForce=model.anchorForce(state.optimizedPositions);
+    state.collisionForce=model.collisionForce(model.nodeBuffer,4);
+    graph.d3Force('layout',state.layoutForce);
+    graph.d3Force('collision',state.collisionForce);
     graph.d3AlphaDecay?.(.012);
     graph.d3VelocityDecay?.(.18);
     graph.cameraPosition({x:0,y:0,z:520},{x:0,y:0,z:0},0);
@@ -622,7 +635,7 @@
     let initiallyFitted=false;
     graph.onEngineStop(()=>{if(!initiallyFitted){initiallyFitted=true;graph.zoomToFit(550,120);}});
     state.forceGraph=graph;
-    setTimeout(()=>{if(state.forceGraph===graph)graph.resumeAnimation();},0);
+    setTimeout(()=>{if(state.forceGraph===graph){graph.resumeAnimation();graph.d3ReheatSimulation();}},0);
     state.renderMode='3d';
     const controls=graph.controls();
     controls.enableRotate=true;
@@ -740,12 +753,12 @@
     const nextNodes=nextGraph.nodes.map(node=>{
       const existing=previous.get(node.id);
       if(existing){
-        const position={x:existing.x,y:existing.y,z:existing.z,fx:existing.fx,fy:existing.fy,fz:existing.fz};
+        const position={x:existing.x,y:existing.y,z:existing.z,fx:null,fy:null,fz:null};
         Object.assign(existing,node,position);
         return existing;
       }
       const target=targets.get(node.id)||{x:0,y:0,z:0};
-      return {...node,x:target.x,y:target.y,z:target.z,fx:target.x,fy:target.y,fz:target.z};
+      return {...node,x:target.x,y:target.y,z:target.z,fx:null,fy:null,fz:null};
     });
     nextGraph.nodes=nextNodes;
     state.graph=nextGraph;
@@ -755,6 +768,8 @@
     state.positions=new Map(nextNodes.map(node=>[node.id,{x:node.x/52,y:node.y/52}]));
     const links=nextGraph.edges.map(edge=>({source:edge.from,target:edge.to,relation:edge.relation}));
     graph.graphData({nodes:nextNodes,links}).refresh();
+    state.layoutForce?.targets(state.optimizedPositions);
+    setTimeout(()=>{if(state.forceGraph===graph)graph.d3ReheatSimulation();},0);
     graph.resumeAnimation();
     stopNativeLabels();
     startNativeLabels(graph,$('#network-canvas'),nextNodes);

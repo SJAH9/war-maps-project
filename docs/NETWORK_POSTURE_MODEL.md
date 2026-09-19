@@ -24,7 +24,9 @@ The **structural zero-sum proxy** is the share of non-observation entities conne
 
 ## War Register and focal time
 
-Each interface has a focal date. An active conflict opens through today but discloses its latest observed source date. The War Register lists only dates carrying source records; days without records are absent. Selecting or playing a date rebuilds the cumulative network from the selected start boundary through that focal date. Absence from a date is not evidence that nothing happened.
+Each interface has a focal date. An active conflict opens through today but discloses its latest observed source date. The War Register lists only dates carrying source records; days without records are absent. Selecting or playing a date updates the cumulative network from the selected start boundary through that focal date. Absence from a date is not evidence that nothing happened.
+
+Playback retains the live graph, camera, and user-adjusted coordinates while adding newly reached observations. Event observations occupy seven weekday phases around their recorded location; each successive week advances along the orbit's depth axis, so equal weekdays align from one view and the chronology resolves as a helix from another. Collision buffers are type-sized, with more space reserved for nations and less for individual observations. Dragging a side node transfers motion through its connections with sharply diminishing influence over four graph degrees.
 
 ## Legal-reference boundary
 
