@@ -7,12 +7,13 @@
   <title>Gas Map · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-18-gas">
-  <link rel="stylesheet" href="gas-map.css?v=2026-09-18-g">
+  <link rel="stylesheet" href="gas-map.css?v=2026-09-19-h">
+  <link rel="stylesheet" href="gas-map-layers.css?v=2026-09-19-a">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="assets/world-geometry.js" defer></script>
   <script src="gas-price-data.js" defer></script>
-  <script src="gas-map.js?v=2026-09-18-g" defer></script>
+  <script src="gas-map.js?v=2026-09-19-h" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
@@ -26,7 +27,7 @@
       <p>Pump prices across local, regional, and national reporting boundaries, displayed in USD per U.S. gallon. Click a nation to turn the map over, or select a price tower to see its date, geography, and source.</p>
     </div>
     <div class="gas-controls" aria-label="Gas Map controls">
-      <label>Fuel <select id="gas-fuel"><option value="gasoline">Pump gasoline</option><option value="diesel">Diesel</option></select></label>
+      <fieldset class="gas-fuel-toggles"><legend>Fuel layers</legend><label><input type="checkbox" data-fuel="gasoline" checked><i class="gasoline-swatch"></i> Gasoline</label><label><input type="checkbox" data-fuel="diesel"><i class="diesel-swatch"></i> Diesel</label></fieldset>
       <label>Region <select id="gas-region"><option value="All">All regions</option><option value="United States">United States</option><option value="Europe">Europe</option><option value="Asia">Asia</option><option value="Oceania">Oceania</option><option value="Islands">Islands</option></select></label>
       <label class="gas-find">Find a place <input id="gas-search" type="search" placeholder="Search mapped observations" autocomplete="off"></label>
       <button id="gas-reset" type="button">Reset view</button>
@@ -38,7 +39,7 @@
         <button class="gas-back" id="gas-back" type="button" hidden>↶ World map</button>
         <div class="gas-stage-right">
           <div class="gas-nation-name" id="gas-nation-name" hidden></div>
-          <div class="gas-scale" aria-label="Relative color scale in USD per U.S. gallon"><span>USD / US GALLON · RELATIVE</span><i></i><div><span id="gas-scale-min">lower</span><span id="gas-scale-max">higher</span></div></div>
+          <div class="gas-scale" aria-label="Shared relative height scale in USD per U.S. gallon"><span>USD / US GALLON · SHARED HEIGHT</span><i></i><div><span id="gas-scale-min">lower</span><span id="gas-scale-max">higher</span></div></div>
         </div>
         <div class="gas-country-labels" id="gas-country-labels" aria-hidden="true"></div>
         <div class="gas-price-labels" id="gas-price-labels" aria-hidden="true"></div>
@@ -52,7 +53,7 @@
         <div class="gas-list" id="gas-list"></div>
       </aside>
     </div>
-    <div class="gas-method"><div><h2>Read the boundary</h2><p>These are reported retail observations, not a single worldwide survey. U.S. regular, EU Eurosuper 95, Japanese regular, Australian regular unleaded, New Zealand 91, Taiwan CPC 92, and the Delhi outlet quote are not identical fuels. National, state, prefecture, city, regional, schedule, and outlet prices are not interchangeable.</p></div><div><h2>How to compare</h2><p>All displayed prices use USD per U.S. gallon. The selected-place panel also shows the indicative USD-per-litre conversion. Both use the <span id="gas-fx-date">dated</span> ECB exchange-rate reference (Taiwan uses the central bank’s TWD/USD close). Original source values remain in the data; the snapshot is not a live feed. Missing places are not zero-price places.</p></div></div>
+    <div class="gas-method"><div><h2>Read the boundary</h2><p>Gasoline and diesel can be shown separately or together. When both are active, paired columns stand beside one another: warm colors identify gasoline and blue colors identify diesel. Crowded pairs become half transparent so neither series hides the other. Reported fuel grades and geographic scopes remain source-native and are not interchangeable.</p></div><div><h2>How to compare</h2><p>All displayed prices use USD per U.S. gallon on one shared height scale. The selected-place panel also shows the indicative USD-per-litre conversion. Both use the <span id="gas-fx-date">dated</span> ECB exchange-rate reference (Taiwan uses the central bank’s TWD/USD close). Original source values remain in the data; the snapshot is not a live feed. Missing places are not zero-price places.</p></div></div>
     <div class="gas-source-line" id="gas-source-line"></div>
   </main>
   <footer><a href="about.html">The War Maps Project</a><span>Price observations retain their source boundaries</span><a href="sources.html">Citations</a></footer>

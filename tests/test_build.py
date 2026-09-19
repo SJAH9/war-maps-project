@@ -412,6 +412,12 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("state.plateRoot.rotation.x+=delta*.15", map_source)
         self.assertIn("else if(!country)flipToWorld()", map_source)
         self.assertIn('id="gas-back"', page.read_text(encoding="utf-8"))
+        markup = page.read_text(encoding="utf-8")
+        self.assertIn('data-fuel="gasoline"', markup)
+        self.assertIn('data-fuel="diesel"', markup)
+        self.assertIn("fuels:new Set(['gasoline'])", map_source)
+        self.assertIn("tower.userData.fuel=fuel", map_source)
+        self.assertIn("opacity:transparent?.5:1", map_source)
 
     def test_civilian_casualty_map_uses_ged_civilian_totals(self):
         page = ROOT / "web/civilian-casualties.html"
@@ -442,6 +448,20 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("y >= startYear && y <= endYear", casualty_source)
         self.assertNotIn("deathsThrough", casualty_source)
         self.assertIn("CLICK A NATION", markup)
+        self.assertIn('data-health-layer="mortality"', markup)
+        self.assertIn('data-health-layer="lifeExpectancy"', markup)
+        self.assertIn("life-expectancy-data.js", markup)
+        self.assertIn("healthObservation", casualty_source)
+        self.assertIn("smallTerritory", casualty_source)
+        life_payload = ROOT / "web/life-expectancy-data.js"
+        self.assertTrue(life_payload.exists())
+        life_data = json.loads(life_payload.read_text(encoding="utf-8").removeprefix(
+            "window.LIFE_EXPECTANCY_DATA=").removesuffix(";\n"))
+        self.assertEqual(life_data["coverage"]["start_year"], 1543)
+        self.assertEqual(life_data["coverage"]["end_year"], 2023)
+        self.assertGreaterEqual(life_data["coverage"]["locations"], 230)
+        self.assertEqual(life_data["source"]["sha256"], "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01")
+        self.assertIn("10.1111/j.1728-4457.2005.00083.x", life_data["source"]["peer_reviewed"]["doi"])
         external = {item["id"]: item for item in data.get("external") or []}
         self.assertEqual(external["gaza-ocha-moh"]["in_ucdp"], False)
         self.assertGreater(external["gaza-ocha-moh"]["civilians"], external["gaza-aoav"]["civilians"])

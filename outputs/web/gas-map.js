@@ -4,38 +4,44 @@
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784;
-  const state = {fuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const state = {fuels:new Set(['gasoline']), selectedFuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const dark = () => document.documentElement.dataset.theme === 'dark';
-  const rawPrice = row => row[state.fuel];
-  const usdPerGallon = row => {
-    const raw = rawPrice(row);
+  const activeFuels = () => ['gasoline','diesel'].filter(fuel=>state.fuels.has(fuel));
+  const fuelLabel = fuel => fuel === 'gasoline' ? 'Gasoline' : 'Diesel';
+  const rawPrice = (row,fuel=state.selectedFuel) => row[fuel];
+  const usdPerGallon = (row,fuel=state.selectedFuel) => {
+    const raw = rawPrice(row,fuel);
     if (raw == null) return null;
     const perEur = data.currency_per_eur[row.currency];
     if (!perEur) return null;
     const inUsd = raw * data.usd_per_eur / perEur;
     return row.unit === 'US gallon' ? inUsd : inUsd * GALLON_LITRES;
   };
-  const usdPerLitre = row => { const gallon = usdPerGallon(row); return gallon == null ? null : gallon / GALLON_LITRES; };
+  const usdPerLitre = (row,fuel=state.selectedFuel) => { const gallon = usdPerGallon(row,fuel); return gallon == null ? null : gallon / GALLON_LITRES; };
   const money = (value, currency, digits = 2) => new Intl.NumberFormat('en-US', {style:'currency', currency, minimumFractionDigits:digits, maximumFractionDigits:digits}).format(value);
   const priceFraction = value => {
     const {min, max} = state.priceScale || {min: 0, max: 1};
     return Math.max(0, Math.min(1, (value - min) / Math.max(0.01, max - min)));
   };
-  const priceColor = value => {
+  const priceColor = (value,fuel='gasoline') => {
     const t = priceFraction(value);
+    if(fuel==='diesel')return new THREE.Color('#153d80').lerp(new THREE.Color('#b6e4ff'),t);
     return t < .5
       ? new THREE.Color('#12f0c8').lerp(new THREE.Color('#ffd028'), t * 2)
       : new THREE.Color('#ffd028').lerp(new THREE.Color('#ff140c'), (t - .5) * 2);
   };
-  const tone = value => {
+  const tone = (value,fuel='gasoline') => {
     const t = priceFraction(value);
+    if(fuel==='diesel')return `color-mix(in srgb, #153d80 ${Math.round((1-t)*100)}%, #b6e4ff)`;
     return t < .5 ? `color-mix(in srgb, #12f0c8 ${Math.round((1-t*2)*100)}%, #ffd028)` : `color-mix(in srgb, #ffd028 ${Math.round((2-t*2)*100)}%, #ff140c)`;
   };
   function refreshPriceScale(rows) {
     const values = [];
     for (const row of rows) {
-      const value = usdPerGallon(row);
-      if (value != null) values.push(value);
+      for(const fuel of activeFuels()){
+        const value = usdPerGallon(row,fuel);
+        if (value != null) values.push(value);
+      }
     }
     if (!values.length) {
       state.priceScale = {min: 0, max: 1};
@@ -53,7 +59,7 @@
     : row.source === 'taiwan' ? 'Taiwan' : row.source === 'accc' ? 'Australia'
     : row.source === 'nz' ? 'New Zealand' : row.name;
   function filterRows() {
-    state.worldVisible = data.observations.filter(row => rawPrice(row) != null &&
+    state.worldVisible = data.observations.filter(row => activeFuels().some(fuel=>rawPrice(row,fuel)!=null) &&
       (state.region === 'All' || (state.region === 'Islands' ? row.island : row.region === state.region)) &&
       (!state.search || `${row.name} ${row.region} ${row.scope}`.toLocaleLowerCase().includes(state.search)));
     state.visible = state.nation ? state.worldVisible.filter(row=>countryForRow(row)===state.nation) : state.worldVisible;
@@ -73,13 +79,15 @@
     if (!row) {
       const count = state.visible.length;
       const dated = [...new Set(state.visible.map(item => item.date))].sort();
-      $('#gas-facts').innerHTML = `<div><span>Visible observations</span><strong>${count}</strong></div><div><span>Price dates</span><strong>${dated[0] || '—'}–${dated.at(-1) || '—'}</strong></div><div><span>Fuel</span><strong>${state.fuel === 'gasoline' ? 'Pump gasoline' : 'Diesel'}</strong></div><div><span>Display unit</span><strong>USD / U.S. gallon</strong></div>`;
+      $('#gas-facts').innerHTML = `<div><span>Visible observations</span><strong>${count}</strong></div><div><span>Price dates</span><strong>${dated[0] || '—'}–${dated.at(-1) || '—'}</strong></div><div><span>Fuel layers</span><strong>${esc(activeFuels().map(fuelLabel).join(' + '))}</strong></div><div><span>Display unit</span><strong>USD / U.S. gallon</strong></div>`;
       return;
     }
-    const perL = usdPerLitre(row);
+    const priceCells=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null).flatMap(fuel=>[
+      [`${fuelLabel(fuel)} price`, `${money(usdPerGallon(row,fuel), 'USD')} / U.S. gallon`],
+      [`${fuelLabel(fuel)} indicative conversion`, `${money(usdPerLitre(row,fuel), 'USD', 2)} / litre`],
+    ]);
     const cells = [
-      ['Displayed price', `${money(usdPerGallon(row), 'USD')} / U.S. gallon`],
-      ['Indicative conversion', `${money(perL, 'USD', 2)} / litre`],
+      ...priceCells,
       ['Observation date', row.date],
       ['Reporting geography', row.scope],
       ['Exchange rate date', data.fx_date],
@@ -92,8 +100,9 @@
     const sorted = [...state.visible].sort((a,b) => a.name.localeCompare(b.name) || a.scope.localeCompare(b.scope));
     $('#gas-list').innerHTML = sorted.length ? sorted.map(row => {
       const index = data.observations.indexOf(row);
-      const value = usdPerGallon(row);
-      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(value)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.scope)} · ${esc(row.date)}</small></span><strong>${esc(money(value,'USD'))}</strong></button>`;
+      const prices=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null);
+      const lead=prices[0],value=usdPerGallon(row,lead);
+      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(value,lead)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.scope)} · ${esc(row.date)}</small></span><strong>${prices.map(fuel=>`<small>${fuel==='gasoline'?'G':'D'}</small>${esc(money(usdPerGallon(row,fuel),'USD'))}`).join('')}</strong></button>`;
     }).join('') : `<p class="gas-list-empty">${state.nation ? 'No priced observations are available for this nation and filter. Click outside the nation to return to the world.' : 'No priced observations match these controls. Try another region, fuel, or search.'}</p>`;
   }
   function selectRow(row) {
@@ -276,18 +285,20 @@
     };
     clear(state.towerGroup);if(state.nation)clear(state.reverseTowerGroup);state.worldTowers=[];if(state.nation)state.reverseTowers=[];
     const layer=$('#gas-price-labels'); if(layer) layer.innerHTML='';
-    const makeTower=(row,reverse=false)=>{
-      const price=usdPerGallon(row); if(price==null)return;
+    const closeNeighbors=(row,rows)=>rows.some(other=>other!==row&&Math.hypot(other.lon-row.lon,other.lat-row.lat)<2.2);
+    const makeTower=(row,fuel,reverse=false,index=0,count=1,dense=false)=>{
+      const price=usdPerGallon(row,fuel); if(price==null)return;
       const height=.55+priceFraction(price)*52;
       const radius=row.scope==='country'?1.35:row.scope==='state'||row.scope==='prefecture'?1.05:.78;
       const selected=row===state.selected && reverse===Boolean(state.nation);
-      const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:priceColor(price),emissive:selected?'#f9bf67':'#101a12',emissiveIntensity:selected?.35:.08,shininess:38}));
-      if(reverse){const p=state.nationProjection;tower.position.set((p.unwrap(row.lon)-p.centerX)*p.scale,-1.76-height/2-.3,(row.lat-p.centerY)*p.scale);}
-      else tower.position.set(row.lon*MAP_SCALE,height/2+.3,-row.lat*MAP_SCALE);
-      tower.userData.row=row; tower.userData.towerHeight=height;
+      const transparent=count>1&&dense,offset=count>1?(index-(count-1)/2)*Math.max(1.15,radius*1.15):0;
+      const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:priceColor(price,fuel),emissive:selected?'#f9bf67':fuel==='diesel'?'#07172b':'#101a12',emissiveIntensity:selected?.35:.1,shininess:38,transparent,opacity:transparent?.5:1,depthWrite:!transparent}));
+      if(reverse){const p=state.nationProjection;tower.position.set((p.unwrap(row.lon)-p.centerX)*p.scale+offset,-1.76-height/2-.3,(row.lat-p.centerY)*p.scale);}
+      else tower.position.set(row.lon*MAP_SCALE+offset,height/2+.3,-row.lat*MAP_SCALE);
+      tower.userData.row=row; tower.userData.fuel=fuel; tower.userData.towerHeight=height;
       if(reverse===Boolean(state.nation)){
         const sprite=new THREE.Sprite(new THREE.SpriteMaterial({
-          map: canvasTexture(money(price,'USD'), {
+          map: canvasTexture(`${fuel==='gasoline'?'G':'D'} ${money(price,'USD')}`, {
             w: 256, h: 96,
             font: '700 42px ui-sans-serif, system-ui, sans-serif',
             fill: selected ? '#ffe08a' : '#fff6d8',
@@ -295,6 +306,7 @@
             strokeWidth: 8,
           }),
           transparent: true,
+          opacity: transparent?.72:1,
           depthWrite: false,
         }));
         const sw=3.4, sh=1.25;
@@ -309,8 +321,12 @@
       (reverse?state.reverseTowerGroup:state.towerGroup).add(tower);
       (reverse?state.reverseTowers:state.worldTowers).push(tower);
     };
-    state.worldVisible.forEach(row=>makeTower(row));
-    if(state.nation&&state.reverseTowerGroup)state.visible.forEach(row=>makeTower(row,true));
+    const drawRows=(rows,reverse=false)=>rows.forEach(row=>{
+      const fuels=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null),dense=closeNeighbors(row,rows);
+      fuels.forEach((fuel,index)=>makeTower(row,fuel,reverse,index,fuels.length,dense));
+    });
+    drawRows(state.worldVisible);
+    if(state.nation&&state.reverseTowerGroup)drawRows(state.visible,true);
     state.towers=state.nation?state.reverseTowers:state.worldTowers;
   }
   function hit(event) {
@@ -335,12 +351,12 @@
     new ResizeObserver(resize).observe(container);resize();
     renderer.domElement.addEventListener('pointerdown',event=>{state.pointerDown={x:event.clientX,y:event.clientY};});
     renderer.domElement.addEventListener('pointermove',event=>{
-      const object=state.flipping?null:hit(event),row=object?.userData.row,country=object?.userData.country,tip=$('#gas-tooltip');
+      const object=state.flipping?null:hit(event),row=object?.userData.row,fuel=object?.userData.fuel,country=object?.userData.country,tip=$('#gas-tooltip');
       state.hoveredTower=row?object:null;
       renderer.domElement.style.cursor=state.flipping?'wait':row||(!state.nation&&country)||state.nation?'pointer':'grab';
       if(!object){tip.hidden=true;return;}
       if(row){
-        tip.innerHTML=`<strong>${esc(money(usdPerGallon(row),'USD'))}</strong><em>${esc(row.name)}</em><span>USD / U.S. gallon · ${esc(row.date)}</span>`;
+        tip.innerHTML=`<strong>${esc(money(usdPerGallon(row,fuel),'USD'))}</strong><em>${esc(row.name)} · ${esc(fuelLabel(fuel))}</em><span>USD / U.S. gallon · ${esc(row.date)}</span>`;
       }else{
         tip.innerHTML=`<em>${esc(country)}</em><span>${state.nation?'Click outside this outline to return':'Click to turn the map over'}</span>`;
       }
@@ -353,7 +369,8 @@
     renderer.domElement.addEventListener('pointerleave',()=>{state.hoveredTower=null;$('#gas-tooltip').hidden=true;});
     renderer.domElement.addEventListener('click',event=>{
       if(state.flipping||!state.pointerDown||Math.hypot(event.clientX-state.pointerDown.x,event.clientY-state.pointerDown.y)>5)return;
-      const object=hit(event),row=object?.userData.row,country=object?.userData.country;
+      const object=hit(event),row=object?.userData.row,fuel=object?.userData.fuel,country=object?.userData.country;
+      if(fuel)state.selectedFuel=fuel;
       if(state.nation){if(row)selectRow(row);else if(!country)flipToWorld();}
       else if(row)flipToNation(countryForRow(row),row);
       else if(country)flipToNation(country);
@@ -379,13 +396,18 @@
     $('#gas-fx-date').textContent=data.fx_date;
     const sources=[['AAA','aaa'],['EIA','eia'],['EU Oil Bulletin','eu'],['Japan ANRE','japan_original'],['ACCC','accc'],['MBIE','nz'],['PPAC','india'],['Taiwan CPC','taiwan'],['ECB FX','fx'],['CBC FX','taiwan_fx']];
     $('#gas-source-line').innerHTML=`Sources and methodology: ${sources.map(([name,key])=>`<a href="${esc(data.sources[key])}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a>`).join('')}<a href="${esc(data.sources.geonames)}" target="_blank" rel="noopener noreferrer">GeoNames coordinates ↗</a>`;
-    $('#gas-fuel').addEventListener('change',event=>{state.fuel=event.target.value;filterRows();});
+    document.querySelectorAll('[data-fuel]').forEach(input=>input.addEventListener('change',event=>{
+      const fuel=event.target.dataset.fuel;
+      if(event.target.checked)state.fuels.add(fuel);else if(state.fuels.size>1)state.fuels.delete(fuel);else event.target.checked=true;
+      if(!state.fuels.has(state.selectedFuel))state.selectedFuel=activeFuels()[0];
+      filterRows();
+    }));
     $('#gas-region').addEventListener('change',event=>{if(state.nation)flipToWorld();state.region=event.target.value;filterRows();});
     $('#gas-search').addEventListener('input',event=>{state.search=event.target.value.trim().toLocaleLowerCase();filterRows();});
     $('#gas-list').addEventListener('click',event=>{const button=event.target.closest('[data-index]');if(button)selectRow(data.observations[Number(button.dataset.index)]);});
     $('#gas-back').addEventListener('click',flipToWorld);
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.nation)flipToWorld();});
-    $('#gas-reset').addEventListener('click',()=>{if(state.nation)flipToWorld();state.fuel='gasoline';state.region='All';state.search='';state.selected=null;$('#gas-fuel').value='gasoline';$('#gas-region').value='All';$('#gas-search').value='';if(state.camera){state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();}filterRows();});
+    $('#gas-reset').addEventListener('click',()=>{if(state.nation)flipToWorld();state.fuels=new Set(['gasoline']);state.selectedFuel='gasoline';state.region='All';state.search='';state.selected=null;document.querySelectorAll('[data-fuel]').forEach(input=>{input.checked=input.dataset.fuel==='gasoline';});$('#gas-region').value='All';$('#gas-search').value='';if(state.camera){state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();}filterRows();});
     $('#theme-toggle').addEventListener('click',()=>{const next=dark()?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('war-maps-theme',next);}catch(error){} window.location.reload();});
     try{initScene();}catch(error){$('#gas-map').innerHTML=`<p class="gas-error">The 3D field could not start: ${esc(error.message)}. The searchable price list remains available below.</p>`;}
     filterRows();

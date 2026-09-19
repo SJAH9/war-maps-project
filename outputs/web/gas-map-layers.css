@@ -1,0 +1,35 @@
+.gas-fuel-toggles {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+.gas-fuel-toggles legend {
+  padding: 0 4px;
+  color: var(--muted);
+  font-size: .56rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.gas-controls .gas-fuel-toggles label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--ink);
+  font-size: .66rem;
+  white-space: nowrap;
+  text-transform: none;
+}
+.gas-fuel-toggles input { width: 13px; height: 13px; padding: 0; accent-color: var(--orange); }
+.gas-fuel-toggles i { width: 9px; height: 18px; }
+.gasoline-swatch { background: #ed6547; }
+.diesel-swatch { background: #4198d7; }
+.gas-list strong { display: grid; gap: 2px; text-align: right; }
+.gas-list strong small { font-size: .58rem; text-transform: uppercase; letter-spacing: .05em; }
+.gas-scale i { background: linear-gradient(90deg,#51d7c4,#e3bb55,#ed6547 48%,#153d80 52%,#42a5d9,#b6e4ff); }
+@media (max-width: 760px) { .gas-fuel-toggles { grid-column: 1 / -1; } }

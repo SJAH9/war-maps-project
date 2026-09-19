@@ -73,6 +73,19 @@
       "retrieved": "2026-08-30"
     },
     {
+      "id": "owid-long-run-life-expectancy-2026-09-19",
+      "title": "Life expectancy – long-run data",
+      "publisher": "Our World in Data",
+      "coverage": "Country observations from 1543-2023; post-1950 estimates use UN World Population Prospects 2024",
+      "url": "https://ourworldindata.org/grapher/life-expectancy",
+      "license": "CC BY 4.0 for the compiled data; upstream-source terms apply",
+      "enclosure": "period life expectancy at birth; exact source observations only, never extrapolated",
+      "citation": "Riley (2005); Zijdeman et al. (2015); HMD (2025); UN WPP (2024), with major processing by Our World in Data",
+      "peer_reviewed_source": "https://doi.org/10.1111/j.1728-4457.2005.00083.x",
+      "retrieved": "2026-09-19",
+      "sha256": "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01"
+    },
+    {
       "id": "ihme-gbd-2023-derived-total-fertility",
       "title": "Global Burden of Disease Study 2023 Results, age-specific fertility rates",
       "publisher": "Institute for Health Metrics and Evaluation",

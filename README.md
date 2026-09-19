@@ -69,7 +69,9 @@ The conflict view's [posture and strategic model](docs/NETWORK_POSTURE_MODEL.md)
 
 The web atlas includes dedicated pages for [project background](web/about.html), [map formulation](web/method.html), [conflict data](web/data-conflict.html), [governance data](web/data-governance.html), [population-health data](web/data-health.html), [Gas and Civilian Casualties map sources](web/data-maps.html), [coverage limits](web/coverage.html), [citations](web/sources.html), and the shared [color legend](web/color-legend.html).
 
-The Civilian Casualties map sums UCDP GED <code>deaths_civilians</code> inside an inclusive user-selected year range. It now opens on the latest five calendar years (2022–2026) instead of the complete 1989–2026 accumulation, keeping historical mass-casualty periods from dominating a present-day view. The empty 2025 source year remains empty. Separate Gaza context towers from UN OCHA / Gaza Ministry of Health and AOAV remain outside the UCDP total and are labelled with their incompatible measurement boundaries.
+The Civilian Casualties map sums UCDP GED <code>deaths_civilians</code> inside an inclusive user-selected year range. It opens on the latest five calendar years (2022–2026), keeping historical mass-casualty periods from dominating a present-day view. Independent controls add IHME GBD 2023 all-cause mortality and long-run period life expectancy at birth (Riley 2005; HMD; UN WPP 2024; OWID processing). Life-expectancy observations extend from 1543 through 2023 where a country series supports them. Every health column uses the latest actual observation inside the selected interval and is never extrapolated. The three measures stand beside one another on independent height scales; small or crowded territories use half opacity. Separate Gaza context towers remain outside the UCDP total and retain their incompatible measurement boundaries.
+
+The Gas Map exposes gasoline and diesel as independent layers. Either fuel may be shown alone, or both may be enabled to draw paired columns at each source observation. Every displayed price is converted to USD per U.S. gallon on a shared height scale, while the inspector retains the indicative USD-per-litre conversion. Warm columns identify gasoline, blue columns identify diesel, and crowded pairs use half opacity.
 
 The main world explorer can place IHME all-cause mortality or fertility beneath conflict events for any observed health year from 1980 through 2023. V-Dem regime categories and category transitions can be inspected on the same field. The related-data panel reports descriptive regime-group means and adjacent-year observations around transitions; it does not present these associations as causal estimates. No health data are invented before 1980 or carried beyond 2023.
 
@@ -84,6 +86,7 @@ python3 -m src.generate_life_death_metrics \
   --fertility /path/to/IHME-GBD_2023_fertility.zip
 python3 -m src.generate_crude_birth_rate
 python3 -m src.generate_population
+python3 -m src.generate_life_expectancy
 python3 -m src.generate_web_atlas
 python3 -m src.generate_print_atlas --conflict ucdp-candidate-16905 --size standard
 python3 -m src.generate_print_war_map --map falklands-1982
