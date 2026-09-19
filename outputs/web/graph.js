@@ -175,6 +175,11 @@
     const place=(node,index,total)=>{
       if(node.id===centerId)return {x:600,y:390,z:0};const angle=index*2.3999632297,unit=(index+.5)/Math.max(1,total),sphereY=1-2*unit,sphereRadius=Math.sqrt(Math.max(0,1-sphereY*sphereY)),radius=245+Math.min(125,Math.sqrt(total)*8);
       if(state.topology==='coalitions'){const group=node.entityKind==='organization'?0:allies.has(node.id)?1:opponents.has(node.id)?2:3,groupAngle=group*Math.PI/2;return {x:600+Math.cos(groupAngle)*220+Math.cos(angle)*75,y:390+Math.sin(angle)*95,z:Math.sin(groupAngle)*220+Math.sin(angle*1.7)*75};}
+      if(state.topology==='barabasi'){const rank=ordered.indexOf(node),rad=62+Math.sqrt(rank+1)*38;return {x:600+Math.cos(angle)*rad,y:390+(node.degree-Math.sqrt(node.degree))*8-90,z:Math.sin(angle)*rad};}
+      if(state.topology==='erdos-renyi')return {x:600+(random()-.5)*780,y:390+(random()-.5)*560,z:(random()-.5)*620};
+      if(state.topology==='watts-strogatz'){const ringAngle=index/Math.max(1,total)*Math.PI*2,rad=285+(index%3-1)*18;return {x:600+Math.cos(ringAngle)*rad,y:390+(index%5-2)*28,z:Math.sin(ringAngle)*rad};}
+      if(state.topology==='radial'){const rank=ordered.indexOf(node),ring=1+Math.floor(Math.sqrt(rank)/3),members=ring*8,slot=rank%members,ringAngle=slot/members*Math.PI*2;return {x:600+Math.cos(ringAngle)*ring*88,y:390+(slot%3-1)*22,z:Math.sin(ringAngle)*ring*88};}
+      if(state.topology==='lattice'){const side=Math.ceil(Math.cbrt(total)),x=index%side,y=Math.floor(index/side)%side,z=Math.floor(index/(side*side));return {x:600+(x-(side-1)/2)*82,y:390+(y-(side-1)/2)*82,z:(z-(side-1)/2)*82};}
       if(state.topology==='prisoner'){const side=opponents.has(node.id)?1:allies.has(node.id)?-1:index%2?1:-1;return {x:600+side*(170+random()*100),y:390+Math.sin(angle)*210,z:side*95+Math.cos(angle)*125};}
       if(state.topology==='third-party'){const ranked=ordered.indexOf(node),rad=65+ranked*7;return {x:600+Math.cos(angle)*rad,y:390+(node.degree-Math.sqrt(node.degree))*8-95,z:Math.sin(angle)*rad};}
       if(state.topology==='pirates'){const rank=ordered.indexOf(node),level=Math.floor(Math.sqrt(rank));return {x:600+Math.cos(angle)*(65+level*32),y:210+level*54,z:Math.sin(angle)*(65+level*32)};}

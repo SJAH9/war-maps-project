@@ -8,7 +8,7 @@
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-08-graph-r3">
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="graph.js?v=2026-09-19-r6" defer></script>
+  <script src="graph.js?v=2026-09-19-r7" defer></script>
 </head>
 <body class="global-graph-page">
   <header class="site-header">
@@ -29,7 +29,7 @@
       <label><span>View</span><select id="graph-view"><option value="network">Network</option><option value="matrix">Adjacency matrix</option><option value="timeline">Timeline</option></select></label>
       <label><span>Connections</span><select id="graph-relationship"><option value="observed">Observed same-side participation</option><option value="organization">Organization co-membership</option><option value="combined">Observed + organization</option></select></label>
       <fieldset class="graph-organization-filter"><legend>Organizations</legend><label><input type="checkbox" data-organization="un"> UN</label><label><input type="checkbox" data-organization="nato"> NATO</label><label><input type="checkbox" data-organization="brics"> BRICS</label><label><input type="checkbox" data-organization="eu"> EU</label><label><input type="checkbox" data-organization="asean"> ASEAN</label><label><input type="checkbox" data-organization="wef"> WEF</label><label class="graph-ungrouped-option"><input id="graph-include-ungrouped" type="checkbox"> Include ungrouped nations</label></fieldset>
-      <label><span>Optimization landscape</span><select id="graph-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Connection shells</option><option value="prisoner">Opposing fields</option><option value="third-party">Bridge landscape</option><option value="pirates">Influence hierarchy</option><option value="temporal">Temporal landscape</option></select></label>
+      <label><span>Optimization landscape</span><select id="graph-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Connection shells</option><option value="barabasi">Barabási hub field</option><option value="erdos-renyi">Erdős–Rényi distribution</option><option value="watts-strogatz">Watts–Strogatz ring</option><option value="radial">Degree radial</option><option value="lattice">Cubic lattice</option><option value="prisoner">Opposing fields</option><option value="third-party">Bridge landscape</option><option value="pirates">Influence hierarchy</option><option value="temporal">Temporal landscape</option></select></label>
       <label class="graph-year-control"><span>Through <output id="graph-year-value">2025</output></span><input id="graph-through-year" type="range" min="1946" max="2025" value="2025"></label>
       <button id="graph-reset" type="button">Clear selection</button>
       <button class="graph-optimize" id="graph-optimize" type="button">Optimize</button>
