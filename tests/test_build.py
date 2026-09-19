@@ -106,6 +106,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("strategicModel", network_source)
         network_page = ROOT.joinpath("web/network.html").read_text(encoding="utf-8")
         self.assertIn('id="network-optimize"', network_page)
+        self.assertIn('id="network-topology"', network_page)
         self.assertIn('id="network-data"', network_page)
         self.assertIn("View network data", network_page)
         self.assertIn("networkDataGraphML", network_source)
@@ -143,6 +144,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("anchorForce", shared_model)
         self.assertIn("weeklyOrbit", shared_model)
         self.assertIn("graphDistances", shared_model)
+        self.assertIn("topologyPositions", shared_model)
+        self.assertIn("topologyNames", shared_model)
         navigator_source = ROOT.joinpath("web/network-3d.js").read_text(encoding="utf-8")
         navigator_page = ROOT.joinpath("web/network-3d.html").read_text(encoding="utf-8")
         self.assertIn("navigator-isolate", navigator_source)
@@ -151,6 +154,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("pullSideNeighborhood", navigator_source)
         self.assertIn("strategicModel", navigator_source)
         self.assertIn('id="navigator-register-list"', navigator_page)
+        self.assertIn('id="navigator-topology"', navigator_page)
+        self.assertIn("optimizationMethod", navigator_source)
         self.assertIn('src="network-model.js', navigator_page)
         home_page = ROOT.joinpath("web/index.html").read_text(encoding="utf-8")
         self.assertIn('id="network-canvas"', home_page)
@@ -399,9 +404,17 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertEqual(data["coverage"]["play_years"], list(range(2015, 2025)))
         rwanda_years = {year: deaths for year, deaths in countries["Rwanda"]["years"]}
         self.assertGreater(rwanda_years.get(1994, 0), 500_000)
+        self.assertLess(sum(deaths for year, deaths in countries["Rwanda"]["years"] if 2022 <= year <= 2026), 10)
         self.assertTrue(all(row["civilians"] > 0 and row["lon"] is not None for row in data["countries"]))
         markup = page.read_text(encoding="utf-8")
         self.assertIn("civilian-casualties.js", markup)
+        self.assertIn('id="civ-start"', markup)
+        self.assertIn('id="civ-end"', markup)
+        casualty_source = (ROOT / "web/civilian-casualties.js").read_text(encoding="utf-8")
+        self.assertIn("defaultEnd - 4", casualty_source)
+        self.assertIn("deathsInRange", casualty_source)
+        self.assertIn("y >= startYear && y <= endYear", casualty_source)
+        self.assertNotIn("deathsThrough", casualty_source)
         self.assertIn("CLICK A NATION", markup)
         external = {item["id"]: item for item in data.get("external") or []}
         self.assertEqual(external["gaza-ocha-moh"]["in_ucdp"], False)
@@ -411,7 +424,7 @@ class WarMapsBuildTests(unittest.TestCase):
     def test_information_architecture_and_shared_map_semantics(self):
         pages = {
             "information.html", "about.html", "method.html", "data-conflict.html",
-            "data-governance.html", "data-health.html", "coverage.html", "sources.html",
+            "data-governance.html", "data-health.html", "data-maps.html", "coverage.html", "sources.html",
             "color-legend.html",
         }
         for name in pages:
@@ -433,6 +446,11 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Print War Map temporal range", method)
         self.assertIn("every conflict represented", method)
         self.assertIn("ends before the final victory", method)
+        map_sources = (ROOT / "web/data-maps.html").read_text(encoding="utf-8")
+        self.assertIn("Gas Map sources", map_sources)
+        self.assertIn("Civilian Casualties sources", map_sources)
+        self.assertIn("UCDP Georeferenced Event Dataset 25.1", map_sources)
+        self.assertIn("European Central Bank reference rates", map_sources)
         self.assertIn("latest disclosed source observation", method)
 
     def test_world_map_joins_health_and_governance_without_extrapolation(self):

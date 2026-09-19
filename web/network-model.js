@@ -51,7 +51,7 @@
     };
     force.initialize=value=>{nodes=value||[];};return force;
   };
-  const anchorForce=(initialTargets,strength=node=>node.kind==='observation'?.14:node.kind==='location'?.09:.055)=>{
+  const anchorForce=(initialTargets,strength=node=>node.kind==='observation'?.16:node.kind==='location'?.12:node.kind==='side'?.13:node.kind==='nation'?.11:node.kind==='actor'?.10:.11)=>{
     let nodes=[],targets=initialTargets;
     const force=alpha=>nodes.forEach(node=>{if(node.fx!=null)return;const target=targets.get(node.id);if(!target)return;const pull=strength(node)*Math.max(.12,alpha);node.vx=(node.vx||0)+(target.x-(node.x||0))*pull;node.vy=(node.vy||0)+(target.y-(node.y||0))*pull;node.vz=(node.vz||0)+(target.z-(node.z||0))*pull;});
     force.initialize=value=>{nodes=value||[];};force.targets=value=>{if(value){targets=value;return force;}return targets;};return force;
@@ -59,6 +59,26 @@
   const graphDistances=(start,edges,maxDepth=4)=>{const adjacency=new Map(),id=value=>typeof value==='object'?value.id:value;edges.forEach(edge=>{const a=id(edge.from??edge.source),b=id(edge.to??edge.target);if(!adjacency.has(a))adjacency.set(a,new Set());if(!adjacency.has(b))adjacency.set(b,new Set());adjacency.get(a).add(b);adjacency.get(b).add(a);});const distance=new Map([[start,0]]),queue=[start];while(queue.length){const current=queue.shift(),depth=distance.get(current);if(depth>=maxDepth)continue;(adjacency.get(current)||[]).forEach(next=>{if(distance.has(next))return;distance.set(next,depth+1);queue.push(next);});}distance.delete(start);return distance;};
   const dragPullFactor=(depth,distance)=>{const base=[0,.82,.42,.14,.035][depth]||0,scale=Math.min(1.8,.55+distance/180);return base*scale;};
   const weeklyOrbit=(event,anchor,originDate,slot=0)=>{const day=Math.max(0,Math.round((Date.parse(`${event.date_start}T00:00:00Z`)-Date.parse(`${originDate}T00:00:00Z`))/86400000)),weekday=new Date(`${event.date_start}T00:00:00Z`).getUTCDay(),week=Math.floor(day/7),angle=weekday*Math.PI*2/7+slot*.055,radius=31+Math.min(16,slot*3.5);return {x:anchor.x+Math.cos(angle)*radius,y:anchor.y+Math.sin(angle)*radius,z:anchor.z+week*7+(slot%3-1)*1.7};};
+  const spherePoint=(index,count,radius,center={x:0,y:0,z:0},phase=0)=>{const y=1-2*(index+.5)/Math.max(1,count),radial=Math.sqrt(Math.max(0,1-y*y)),angle=index*2.399963229728653+phase;return {x:center.x+Math.cos(angle)*radial*radius,y:center.y+y*radius,z:center.z+Math.sin(angle)*radial*radius};};
+  const topologyNames={equilibrium:'Equilibrium sphere',coalitions:'Coalition shells',prisoner:"Prisoner's dilemma proxy",'third-party':'Interested third party',pirates:'Pirates allocation proxy',temporal:'Temporal orbits'};
+  const topologyPositions=(nodes,{conflictId,method='equilibrium',originDate=''})=>{
+    if(!topologyNames[method])method='equilibrium';
+    const positions=new Map(),conflict=`conflict:${conflictId}`,centers={A:{x:-255,y:-70,z:0},B:{x:255,y:-70,z:0}};
+    if(method==='prisoner'){centers.A={x:-235,y:-105,z:-105};centers.B={x:235,y:105,z:105};}
+    if(method==='third-party'){centers.A={x:-275,y:-65,z:0};centers.B={x:275,y:-65,z:0};}
+    if(method==='pirates'){centers.A={x:-220,y:-105,z:-55};centers.B={x:220,y:-105,z:55};}
+    if(method==='temporal'){centers.A={x:-255,y:-145,z:0};centers.B={x:255,y:-145,z:0};}
+    positions.set(conflict,{x:0,y:-205,z:0});positions.set('side:a',centers.A);positions.set('side:b',centers.B);
+    const sideOf=node=>node.metadata?.side||node.metadata?.sides?.[0]||'';
+    ['A','B'].forEach(side=>{const members=nodes.filter(node=>['nation','actor'].includes(node.kind)&&sideOf(node)===side),nations=members.filter(node=>node.kind==='nation'),actors=members.filter(node=>node.kind==='actor');nations.forEach((node,index)=>positions.set(node.id,spherePoint(index,nations.length,82,centers[side],side==='A'?.4:Math.PI+.4)));actors.forEach((node,index)=>positions.set(node.id,spherePoint(index,actors.length,54,centers[side],side==='A'?1.1:Math.PI+1.1)));});
+    const unaffiliated=nodes.filter(node=>['nation','actor'].includes(node.kind)&&!sideOf(node));unaffiliated.forEach((node,index)=>positions.set(node.id,spherePoint(index,unaffiliated.length,method==='third-party'?112:72,{x:0,y:-15,z:0},.7)));
+    const locations=nodes.filter(node=>node.kind==='location').sort((a,b)=>a.label.localeCompare(b.label));
+    locations.forEach((node,index)=>{let point=spherePoint(index,locations.length,method==='temporal'?195:165,{x:0,y:72,z:0},.25);if(method==='coalitions'){const angle=index/Math.max(1,locations.length)*Math.PI*2;point={x:Math.cos(angle)*145,y:65+Math.sin(angle)*96,z:Math.sin(angle*2)*80};}if(method==='third-party'){const angle=index/Math.max(1,locations.length)*Math.PI*2;point={x:0,y:70+Math.cos(angle)*145,z:Math.sin(angle)*145};}if(method==='prisoner'){const quadrant=index%4,level=Math.floor(index/4);point={x:(quadrant<2?-1:1)*(75+level*26),y:(quadrant%2?-1:1)*(65+level*20),z:(quadrant===0||quadrant===3?-1:1)*(90+level*18)};}if(method==='pirates'){const rank=Number(node.networkScience?.degree||0),angle=index*2.399963;point={x:Math.cos(angle)*(92+index*8),y:35+rank*5,z:Math.sin(angle)*(92+index*8)};}positions.set(node.id,point);});
+    const events=nodes.filter(node=>node.metadata?.event).sort((a,b)=>a.metadata.event.date_start.localeCompare(b.metadata.event.date_start)||a.id.localeCompare(b.id)),origin=originDate||events[0]?.metadata.event.date_start||'1970-01-01',last=events.at(-1)?.metadata.event.date_start||origin,weeks=Math.max(0,Math.floor((Date.parse(`${last}T00:00:00Z`)-Date.parse(`${origin}T00:00:00Z`))/604800000)),slots=new Map();
+    events.forEach((node,index)=>{const event=node.metadata.event,location=display(event.network_location||event.country||event.place||'Unspecified location'),locationId=`location:${location}`,base=positions.get(locationId)||{x:0,y:55,z:0},key=`${locationId}|${event.date_start}`,slot=slots.get(key)||0;slots.set(key,slot+1);let point=weeklyOrbit(event,{x:base.x,y:base.y,z:base.z-weeks*3.5},origin,slot);if(method==='prisoner'){const reciprocal=node.metadata.posture?.reciprocal,offensive=node.metadata.posture?.role==='offensive';point.x+=(offensive?1:-1)*58;point.z+=(reciprocal?-1:1)*58;}if(method==='pirates'){const angle=index*2.399963,radius=42+Math.sqrt(index)*8;point={x:base.x+Math.cos(angle)*radius,y:base.y+index*2.8,z:base.z+Math.sin(angle)*radius};}positions.set(node.id,point);});
+    const annual=nodes.filter(node=>node.kind==='observation'&&!node.metadata?.event);annual.forEach((node,index)=>positions.set(node.id,spherePoint(index,annual.length,105,{x:0,y:60,z:0},1.3)));
+    nodes.forEach((node,index)=>{if(!positions.has(node.id))positions.set(node.id,spherePoint(index,nodes.length,120,{x:0,y:30,z:0}));});return positions;
+  };
   const strategicModel=graph=>{
     const adjacency=new Map(graph.nodes.map(node=>[node.id,new Set()]));graph.edges.forEach(edge=>{adjacency.get(edge.from)?.add(edge.to);adjacency.get(edge.to)?.add(edge.from);});
     const sideA='side:a',sideB='side:b';let exclusive=0,bilateral=0;
@@ -73,5 +93,5 @@
     }).sort((a,b)=>(b.networkScience?.betweenness||0)-(a.networkScience?.betweenness||0)).slice(0,8);
     return {zeroSumProxy,equilibrium,exclusive,bilateral,disclosure:'Structural proxy: share of side-connected entities attached exclusively to one side. It does not measure utility, intent, legal status, or prove a zero-sum conflict.'};
   };
-  window.WAR_MAPS_NETWORK_MODEL={display,split,regimeCountry,eventPosture,postureColor,warDates,nodeBuffer,collisionForce,anchorForce,graphDistances,dragPullFactor,weeklyOrbit,strategicModel};
+  window.WAR_MAPS_NETWORK_MODEL={display,split,regimeCountry,eventPosture,postureColor,warDates,nodeBuffer,collisionForce,anchorForce,graphDistances,dragPullFactor,weeklyOrbit,spherePoint,topologyNames,topologyPositions,strategicModel};
 })();

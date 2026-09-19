@@ -28,6 +28,21 @@ Each interface has a focal date. An active conflict opens through today but disc
 
 Playback retains the live graph, camera, and user-adjusted coordinates while adding newly reached observations. Event observations occupy seven weekday phases around their recorded location; each successive week advances along the orbit's depth axis, so equal weekdays align from one view and the chronology resolves as a helix from another. Collision buffers are type-sized, with more space reserved for nations and less for individual observations. Dragging a side node transfers motion through its connections with sharply diminishing influence over four graph degrees.
 
+Locations and additional states enter a conflict network only when a conflict-year or event observation inside the selected interval contains them. This prevents the full geographical index from appearing before the dated record supports it. Participants named as the conflict's two sides remain the starting structure.
+
+## Optimization topologies
+
+The optimization menu applies one of six three-dimensional target arrangements while collision and anchoring forces continue to negotiate space around those targets:
+
+- **Equilibrium sphere** places allied participants on spherical shells around their side and distributes observed places through the full 360-degree field.
+- **Coalition shells** emphasizes the two allied groups and a ring of observed places.
+- **Prisoner's dilemma proxy** separates the two sides and offsets reciprocal and asymmetric event observations.
+- **Interested third party** emphasizes the unaligned center and a perpendicular ring of observed places.
+- **Pirates allocation proxy** orders observed places using network degree and distributes events in expanding three-dimensional turns.
+- **Temporal orbits** expands the weekday-and-week event helices around observed locations.
+
+These are comparative visualization topologies, not solved games. They do not infer player utilities, available strategies, bargaining power, legal responsibility, or a Nash equilibrium. The word “equilibrium” describes the physical layout continuously seeking a non-overlapping arrangement under its forces; it is not a claim that the conflict itself is at equilibrium.
+
 ## Legal-reference boundary
 
 The model uses law as an inspectable reference layer, not as a score-generating shortcut:

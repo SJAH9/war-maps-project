@@ -210,7 +210,7 @@ def build() -> dict:
             "ged_years": [1989, 2024],
             "play_years": list(range(2015, 2025)),
             "candidate_through": "2026-07-31",
-            "note": "UCDP GED 25.1 covers 1989-2024. Candidate events add 2026 through July. 2025 is not in these releases. Play steps through cumulative totals for 2015–2024.",
+            "note": "UCDP GED 25.1 covers 1989-2024. Candidate events add 2026 through July. 2025 is not in these releases. The map defaults to the inclusive 2022-2026 range; a blank year remains blank rather than being interpolated.",
         },
         "world_total": sum(item["civilians"] for item in countries),
         "country_count": len(countries),

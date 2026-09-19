@@ -21,7 +21,7 @@
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  const state = {conflictId:'', start:'', end:'', focalDate:'', graph:null,analysis:null,strategy:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',organization:'force',forceGraph:null,forceNodes:new Map(),layoutForce:null,collisionForce:null,selected:'',connected:new Set(),isolatedRegimes:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,registerTimer:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
+  const state = {conflictId:'', start:'', end:'', focalDate:'', graph:null,analysis:null,strategy:null,nodeMap:new Map(),positions:new Map(),nodeType:'all',organization:'force',optimizationMethod:'equilibrium',forceGraph:null,forceNodes:new Map(),layoutForce:null,collisionForce:null,selected:'',connected:new Set(),isolatedRegimes:new Set(),resizeObserver:null,svgScene:null,renderMode:'2d',rotationTimer:null,rotationFrame:null,momentumFrame:null,layoutFrame:null,labelFrame:null,registerTimer:null,autoRotating:false,optimized:false,optimizedPositions:new Map(),inspectorView:'overview',similarEra:'all',corpusIndex:null};
   const AUTO_ROTATE_IDLE_MS = 8000;
   const SVG_ROTATION_RATE = .00004;
   const nodeColors = {
@@ -103,8 +103,6 @@
 
     conflict.parties_a.flatMap(splitParties).forEach(name => addActor(name, 'A'));
     conflict.parties_b.flatMap(splitParties).forEach(name => addActor(name, 'B'));
-    (conflict.network_locations || conflict.plot_locations).forEach(addLocation);
-
     const rows = (yearsByConflict.get(conflict.id) || []).filter(row => inRange(`${row.year}-01-01`, `${row.year}-12-31`, range));
     rows.forEach((row, index) => {
       splitParties(row.side_a).forEach(name => addActor(name, 'A'));
@@ -427,20 +425,7 @@
   }
 
   function optimizedNodePositions(nodes) {
-    const positions=new Map();
-    positions.set(nodeId('conflict',state.conflictId),{x:0,y:-180,z:0});
-    positions.set(nodeId('side','a'),{x:-270,y:-100,z:0});positions.set(nodeId('side','b'),{x:270,y:-100,z:0});
-    const lane=(items,x,startY,spacing)=>items.sort((a,b)=>nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b))).forEach((node,index)=>positions.set(node.id,{x,y:startY+index*spacing,z:0}));
-    const sided=side=>nodes.filter(node=>['nation','actor'].includes(node.kind)&&(node.metadata.side===side||node.metadata.sides?.includes(side)));
-    lane(sided('A'),-310,-20,58);lane(sided('B'),310,-20,58);
-    lane(nodes.filter(node=>['nation','actor'].includes(node.kind)&&!(node.metadata.side||node.metadata.sides?.length)),0,-20,46);
-    const locations=nodes.filter(node=>node.kind==='location').sort((a,b)=>nodeDisplayLabel(a).localeCompare(nodeDisplayLabel(b)));
-    locations.forEach((node,index)=>{const column=index%3,row=Math.floor(index/3);positions.set(node.id,{x:(column-1)*112,y:35+row*116,z:(column%2?0:18)});});
-    const eventNodes=nodes.filter(node=>node.metadata?.event).sort((a,b)=>a.metadata.event.date_start.localeCompare(b.metadata.event.date_start)||a.id.localeCompare(b.id)),origin=eventNodes[0]?.metadata.event.date_start||state.start,slots=new Map();
-    eventNodes.forEach(node=>{const event=node.metadata.event,location=displayLocation(event.network_location||event.country||event.place||'Unspecified location'),locationId=nodeId('location',location),anchor=positions.get(locationId)||{x:0,y:40,z:0},slotKey=`${locationId}|${event.date_start}`,slot=slots.get(slotKey)||0;slots.set(slotKey,slot+1);positions.set(node.id,model.weeklyOrbit(event,anchor,origin,slot));});
-    nodes.filter(node=>node.kind==='observation'&&!node.metadata?.event).forEach((node,index)=>{const angle=index*2.399963,radius=46+Math.sqrt(index)*12;positions.set(node.id,{x:Math.cos(angle)*radius,y:60+Math.sin(angle)*radius,z:index*5});});
-    nodes.forEach((node,index)=>{if(!positions.has(node.id))positions.set(node.id,{x:(index%2?-1:1)*115,y:index*17,z:0});});
-    return positions;
+    return model.topologyPositions(nodes,{conflictId:state.conflictId,method:state.optimizationMethod,originDate:state.start});
   }
 
   function animateOptimizedLayout(nodes,targets,draw,complete) {
@@ -1024,7 +1009,7 @@
     $('#node-meta').innerHTML = [['Side nodes',2],['Composite nations',counts('nation')],['Locations',counts('location')],['Observations',counts('observation')],['Actors',counts('actor')],['Structural zero-sum proxy',`${(state.strategy.zeroSumProxy*100).toFixed(1)}%`],['Equilibrium candidates',state.strategy.equilibrium.length],['Peak degree',analysis.maxDegree]].map(([label,value])=>`<div><span>${label}</span><strong>${typeof value==='number'?value.toLocaleString():esc(value)}</strong></div>`).join('');
     const observedEnd=graph.events.map(event=>event.date_end||event.date_start).filter(Boolean).sort().at(-1)||state.end;
     const staleDays=Math.max(0,Math.floor((Date.now()-new Date(`${observedEnd}T00:00:00Z`).getTime())/86400000));
-    $('#node-overview').innerHTML = `<div class="node-record"><h3>Layer scope</h3><p>${esc(conflict.layer_scope||'UCDP records for the selected conflict')}</p><small>${esc(conflict.excluded_fronts||'Other conflict records are outside this graph.')} Fatality totals are not computed because candidate observations may overlap.</small></div><div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through focal date ${esc(state.focalDate)}</p><small>Observed through ${esc(observedEnd)}.${staleDays>30?` Source boundary is ${staleDays.toLocaleString()} days behind the export clock.`:''}</small></div><div class="node-record"><h3>Strategic balance</h3><p>Structural zero-sum proxy: ${(state.strategy.zeroSumProxy*100).toFixed(1)}%. Potential equilibrium bridges: ${esc(state.strategy.equilibrium.map(node=>node.label).join('; ')||'none in this view')}.</p><small>${esc(state.strategy.disclosure)}</small></div><div class="node-record"><h3>Law and rights lens</h3><p>International humanitarian law distinguishes civilians and civilian objects from military objectives and separately requires proportionality and feasible precautions. The UN Charter rules on force and self-defense operate at a different legal level.</p><small>The map's posture score does not decide any of those questions. See Method for the legal-reference boundary.</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}.</small></div>`;
+    $('#node-overview').innerHTML = `<div class="node-record"><h3>Layer scope</h3><p>${esc(conflict.layer_scope||'UCDP records for the selected conflict')}</p><small>${esc(conflict.excluded_fronts||'Other conflict records are outside this graph.')} Fatality totals are not computed because candidate observations may overlap.</small></div><div class="node-record"><h3>Temporal enclosure</h3><p>${esc(state.start)} through focal date ${esc(state.focalDate)}</p><small>Observed through ${esc(observedEnd)}.${staleDays>30?` Source boundary is ${staleDays.toLocaleString()} days behind the export clock.`:''}</small></div><div class="node-record"><h3>Strategic balance</h3><p>Structural zero-sum proxy: ${(state.strategy.zeroSumProxy*100).toFixed(1)}%. Potential equilibrium bridges: ${esc(state.strategy.equilibrium.map(node=>node.label).join('; ')||'none in this view')}.</p><small>${esc(state.strategy.disclosure)}</small></div><div class="node-record"><h3>Optimization topology</h3><p>${esc(model.topologyNames[state.optimizationMethod])}</p><small>The selected topology rearranges encoded relationships as an analytical proxy. It does not calculate payoffs, strategies, responsibility, or a Nash equilibrium.</small></div><div class="node-record"><h3>Law and rights lens</h3><p>International humanitarian law distinguishes civilians and civilian objects from military objectives and separately requires proportionality and feasible precautions. The UN Charter rules on force and self-defense operate at a different legal level.</p><small>The map's posture score does not decide any of those questions. See Method for the legal-reference boundary.</small></div><div class="node-record"><h3>Network-science reading</h3><p>Node size responds to observed degree. Hub marks the top degree decile; bottleneck marks the top positive betweenness decile.</p><small>${esc(analysis.engine)} · Betweenness scope: ${esc(analysis.betweennessScope)}.</small></div>`;
     state.inspectorView='overview';
     state.selected='';
     $('[data-inspector-view="similar"]').disabled=true;
@@ -1101,6 +1086,7 @@
   $('#network-start').addEventListener('change',event=>{state.start=event.target.value;if(state.start>state.end){state.end=state.start;$('#network-end').value=state.end;}renderGraph();});
   $('#network-end').addEventListener('change',event=>{state.end=event.target.value;state.focalDate=state.end;if(state.end<state.start){state.start=state.end;$('#network-start').value=state.start;}renderGraph();});
   $('#network-optimize').addEventListener('click',optimizeView);
+  $('#network-topology').addEventListener('change',event=>{state.optimizationMethod=event.target.value;optimizeView();if(!state.selected)showSummary(conflictsById.get(state.conflictId));});
   $('#network-data').addEventListener('click',viewNetworkData);
   $('#war-register-list').addEventListener('click',event=>{const button=event.target.closest('[data-register-date]');if(button)setFocalDate(button.dataset.registerDate);});
   $('#war-register-play').addEventListener('click',playWarRegister);
@@ -1112,6 +1098,7 @@
     stopAutoRotation();stopMotion();
     const url=new URL('network-3d.html',location.href);url.searchParams.set('conflict',state.conflictId);
     url.searchParams.set('through',state.end);url.searchParams.set('focal',state.focalDate);
+    url.searchParams.set('topology',state.optimizationMethod);
     navigatorWindow=window.open(url.toString(),'war-maps-conflict-3d','popup=yes,width=1600,height=1000');
     clearInterval(navigatorPoll);
     navigatorPoll=setInterval(()=>{
