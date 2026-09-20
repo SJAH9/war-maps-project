@@ -14,7 +14,7 @@
   <script src="civilian-casualty-data.js?v=2026-09-19-d" defer></script>
   <script src="life-death-data.js?v=2026-09-19-health" defer></script>
   <script src="life-expectancy-data.js?v=2026-09-19-long-run" defer></script>
-  <script src="civilian-casualties.js?v=2026-09-19-f" defer></script>
+  <script src="civilian-casualties.js?v=2026-09-19-g" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
@@ -33,7 +33,7 @@
       <label>Through <select id="civ-end" aria-label="Casualty range end year"></select></label>
       <button id="civ-play" type="button" aria-pressed="false">Play years</button>
       <output id="civ-year" for="civ-start civ-end">2022–2026</output>
-      <fieldset class="civ-health-toggles"><legend>Health layers</legend><label><input type="checkbox" data-health-layer="mortality" checked><i class="civ-mortality"></i> Mortality</label><label><input type="checkbox" data-health-layer="lifeExpectancy" checked><i class="civ-life-expectancy"></i> Life expectancy</label></fieldset>
+      <fieldset class="civ-health-toggles"><legend>Optional health layers</legend><label><input type="checkbox" data-health-layer="mortality"><i class="civ-mortality"></i> Mortality</label><label><input type="checkbox" data-health-layer="lifeExpectancy"><i class="civ-life-expectancy"></i> Life expectancy</label></fieldset>
       <button id="civ-reset" type="button">Reset view</button>
     </div>
     <div class="gas-workspace">

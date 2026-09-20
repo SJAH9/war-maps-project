@@ -3,7 +3,7 @@
   const data = window.GAS_PRICE_DATA;
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784, PRICE_CEILING = 10, MAX_TOWER_HEIGHT = 26;
+  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784, PRICE_CEILING = 10, MAX_TOWER_HEIGHT = 13;
   const state = {fuels:new Set(['gasoline']), selectedFuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:PRICE_CEILING}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const dark = () => document.documentElement.dataset.theme === 'dark';
   const activeFuels = () => ['gasoline','diesel'].filter(fuel=>state.fuels.has(fuel));
@@ -23,6 +23,7 @@
     const {min, max} = state.priceScale || {min: 0, max: 1};
     return Math.max(0, Math.min(1, (value - min) / Math.max(0.01, max - min)));
   };
+  const footprintScale = value => .28 + Math.pow(priceFraction(value),3) * 1.72;
   const priceColor = (value,fuel='gasoline') => {
     const t = priceFraction(value);
     if(fuel==='diesel')return new THREE.Color('#153d80').lerp(new THREE.Color('#b6e4ff'),t);
@@ -276,7 +277,8 @@
     const makeTower=(row,fuel,reverse=false,index=0,count=1,dense=false)=>{
       const price=usdPerGallon(row,fuel); if(price==null)return;
       const height=Math.max(.08,Math.min(price,PRICE_CEILING)/PRICE_CEILING*MAX_TOWER_HEIGHT);
-      const radius=row.scope==='country'?1.35:row.scope==='state'||row.scope==='prefecture'?1.05:.78;
+      const baseRadius=row.scope==='country'?1.35:row.scope==='state'||row.scope==='prefecture'?1.05:.78;
+      const radius=baseRadius*footprintScale(price);
       const selected=row===state.selected && reverse===Boolean(state.nation);
       const transparent=count>1&&dense,offset=count>1?(index-(count-1)/2)*Math.max(1.15,radius*1.15):0;
       const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:priceColor(price,fuel),emissive:selected?'#f9bf67':fuel==='diesel'?'#07172b':'#101a12',emissiveIntensity:selected?.35:.1,shininess:38,transparent,opacity:transparent?.5:1,depthWrite:!transparent}));

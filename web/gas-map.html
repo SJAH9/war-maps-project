@@ -13,7 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="assets/world-geometry.js" defer></script>
   <script src="gas-price-data.js" defer></script>
-  <script src="gas-map.js?v=2026-09-19-i" defer></script>
+  <script src="gas-map.js?v=2026-09-19-j" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
@@ -39,7 +39,7 @@
         <button class="gas-back" id="gas-back" type="button" hidden>↶ World map</button>
         <div class="gas-stage-right">
           <div class="gas-nation-name" id="gas-nation-name" hidden></div>
-          <div class="gas-scale" aria-label="Global linear height scale from zero to ten USD per U.S. gallon"><span>USD / US GALLON · GLOBAL LINEAR</span><i></i><div><span id="gas-scale-min">$0</span><span id="gas-scale-max">$10 ceiling</span></div></div>
+          <div class="gas-scale" aria-label="Global linear height and emphasized footprint scale from zero to ten USD per U.S. gallon"><span>HEIGHT LINEAR · WIDTH EMPHASIS</span><i></i><div><span id="gas-scale-min">$0</span><span id="gas-scale-max">$10 ceiling</span></div></div>
         </div>
         <div class="gas-country-labels" id="gas-country-labels" aria-hidden="true"></div>
         <div class="gas-price-labels" id="gas-price-labels" aria-hidden="true"></div>
@@ -53,7 +53,7 @@
         <div class="gas-list" id="gas-list"></div>
       </aside>
     </div>
-    <div class="gas-method"><div><h2>Read the boundary</h2><p>Gasoline and diesel can be shown separately or together. When both are active, paired columns stand beside one another: warm colors identify gasoline and blue colors identify diesel. Crowded pairs become half transparent so neither series hides the other. Reported fuel grades and geographic scopes remain source-native and are not interchangeable.</p></div><div><h2>How to compare</h2><p>All displayed prices use one fixed global linear scale from $0 to a $10-per-U.S.-gallon ceiling. A $5 tower is exactly half the height of a $10 tower, regardless of filters, fuel selection, or geography; observations above $10 meet the ceiling while their exact price remains inspectable. The selected-place panel also shows the indicative USD-per-litre conversion using the <span id="gas-fx-date">dated</span> exchange-rate reference.</p></div></div>
+    <div class="gas-method"><div><h2>Read the boundary</h2><p>Gasoline and diesel can be shown separately or together. Warm colors identify gasoline and blue colors identify diesel. Height remains strictly proportional to price; footprint supplies additional fixed global contrast, making low-price towers narrow and high-price towers broad without recalculating the range for a selected country.</p></div><div><h2>How to compare</h2><p>All displayed prices use one fixed global linear height scale from $0 to a $10-per-U.S.-gallon ceiling. A $5 tower is exactly half the height of a $10 tower in every filter and geography. Tower width uses one disclosed global cubic emphasis over that same scale, not a local minimum and maximum. Observations above $10 meet the ceiling while their exact price remains inspectable.</p></div></div>
     <div class="gas-source-line" id="gas-source-line"></div>
   </main>
   <footer><a href="about.html">The War Maps Project</a><span>Price observations retain their source boundaries</span><a href="sources.html">Citations</a></footer>
