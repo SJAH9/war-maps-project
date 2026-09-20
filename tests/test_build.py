@@ -419,6 +419,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("tower.userData.fuel=fuel", map_source)
         self.assertIn("opacity:transparent?.5:1", map_source)
         self.assertIn("PRICE_CEILING = 10", map_source)
+        self.assertIn("MAX_TOWER_HEIGHT = 26", map_source)
         self.assertIn("priceScale:{min:0,max:PRICE_CEILING}", map_source)
         self.assertIn("Math.min(price,PRICE_CEILING)/PRICE_CEILING*MAX_TOWER_HEIGHT", map_source)
         self.assertIn("$5 tower is exactly half the height of a $10 tower", markup)

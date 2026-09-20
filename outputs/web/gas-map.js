@@ -3,7 +3,7 @@
   const data = window.GAS_PRICE_DATA;
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784, PRICE_CEILING = 10, MAX_TOWER_HEIGHT = 52;
+  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784, PRICE_CEILING = 10, MAX_TOWER_HEIGHT = 26;
   const state = {fuels:new Set(['gasoline']), selectedFuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:PRICE_CEILING}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const dark = () => document.documentElement.dataset.theme === 'dark';
   const activeFuels = () => ['gasoline','diesel'].filter(fuel=>state.fuels.has(fuel));
