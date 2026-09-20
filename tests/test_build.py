@@ -418,6 +418,10 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("fuels:new Set(['gasoline'])", map_source)
         self.assertIn("tower.userData.fuel=fuel", map_source)
         self.assertIn("opacity:transparent?.5:1", map_source)
+        self.assertIn("PRICE_CEILING = 10", map_source)
+        self.assertIn("priceScale:{min:0,max:PRICE_CEILING}", map_source)
+        self.assertIn("Math.min(price,PRICE_CEILING)/PRICE_CEILING*MAX_TOWER_HEIGHT", map_source)
+        self.assertIn("$5 tower is exactly half the height of a $10 tower", markup)
 
     def test_civilian_casualty_map_uses_ged_civilian_totals(self):
         page = ROOT / "web/civilian-casualties.html"

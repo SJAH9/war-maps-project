@@ -3,8 +3,8 @@
   const data = window.GAS_PRICE_DATA;
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784;
-  const state = {fuels:new Set(['gasoline']), selectedFuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:1}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784, PRICE_CEILING = 10, MAX_TOWER_HEIGHT = 52;
+  const state = {fuels:new Set(['gasoline']), selectedFuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:PRICE_CEILING}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
   const dark = () => document.documentElement.dataset.theme === 'dark';
   const activeFuels = () => ['gasoline','diesel'].filter(fuel=>state.fuels.has(fuel));
   const fuelLabel = fuel => fuel === 'gasoline' ? 'Gasoline' : 'Diesel';
@@ -35,24 +35,11 @@
     if(fuel==='diesel')return `color-mix(in srgb, #153d80 ${Math.round((1-t)*100)}%, #b6e4ff)`;
     return t < .5 ? `color-mix(in srgb, #12f0c8 ${Math.round((1-t*2)*100)}%, #ffd028)` : `color-mix(in srgb, #ffd028 ${Math.round((2-t*2)*100)}%, #ff140c)`;
   };
-  function refreshPriceScale(rows) {
-    const values = [];
-    for (const row of rows) {
-      for(const fuel of activeFuels()){
-        const value = usdPerGallon(row,fuel);
-        if (value != null) values.push(value);
-      }
-    }
-    if (!values.length) {
-      state.priceScale = {min: 0, max: 1};
-    } else {
-      const min = Math.min(...values);
-      const max = Math.max(...values);
-      state.priceScale = {min, max: max <= min ? min + 0.01 : max};
-    }
+  function refreshPriceScale() {
+    state.priceScale = {min:0,max:PRICE_CEILING};
     const minEl = $('#gas-scale-min'), maxEl = $('#gas-scale-max');
     if (minEl) minEl.textContent = money(state.priceScale.min, 'USD');
-    if (maxEl) maxEl.textContent = money(state.priceScale.max, 'USD');
+    if (maxEl) maxEl.textContent = `${money(state.priceScale.max, 'USD')} ceiling`;
   }
   const countryForRow = row => row.region === 'United States' ? 'United States of America'
     : row.source === 'japan' ? 'Japan' : row.source === 'india' ? 'India'
@@ -288,7 +275,7 @@
     const closeNeighbors=(row,rows)=>rows.some(other=>other!==row&&Math.hypot(other.lon-row.lon,other.lat-row.lat)<2.2);
     const makeTower=(row,fuel,reverse=false,index=0,count=1,dense=false)=>{
       const price=usdPerGallon(row,fuel); if(price==null)return;
-      const height=.55+priceFraction(price)*52;
+      const height=Math.max(.08,Math.min(price,PRICE_CEILING)/PRICE_CEILING*MAX_TOWER_HEIGHT);
       const radius=row.scope==='country'?1.35:row.scope==='state'||row.scope==='prefecture'?1.05:.78;
       const selected=row===state.selected && reverse===Boolean(state.nation);
       const transparent=count>1&&dense,offset=count>1?(index-(count-1)/2)*Math.max(1.15,radius*1.15):0;
