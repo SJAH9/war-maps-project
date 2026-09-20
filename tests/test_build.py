@@ -494,6 +494,16 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Sid J.A. Hubbard", about)
         self.assertIn("MIT License", about)
         self.assertIn("github.com/SJAH9/war-maps-project", about)
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        for statement in (
+            "The atlas does not appoint itself responsible for truth.",
+            "Sid J.A. Hubbard is the Principal Investigator",
+            "written, directed, and engineered by its Principal Investigator",
+            "Books and other authored publications linked above are not relicensed",
+            "Causality and Attraction research record",
+            "War Maps Project. (2026).",
+        ):
+            self.assertIn(statement, readme)
         legend = (ROOT / "web/color-legend.html").read_text(encoding="utf-8")
         self.assertIn("Side A", legend)
         self.assertIn("Side B", legend)

@@ -1,6 +1,6 @@
 # The War Maps Project
 
-The War Maps Project is an open, reproducible atlas of organized armed conflict from 1946 to the present. It applies Nested Causal Modelling as a filter for reality: observations, claims, and source accounts remain attached to their enclosures instead of being collapsed into a single authorized narrative or suppressed because they conflict.
+The War Maps Project is an open, reproducible atlas for navigating organized armed conflict from 1946 to the present source boundary. It applies Nested Causal Modelling as a filter for reality: observations, claims, and source accounts remain attached to source, actor, time, place, coding method, unresolved questions, and their enclosing causal structure instead of being collapsed into a single authorized narrative or suppressed because they conflict.
 
 The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Conflict Dataset 26.1 (1946-2025), adds the latest available current-event layer from the UCDP Candidate Events Dataset through July 2026, and nests those conflict-years inside the state conditions observed in V-Dem. The official candidate files were revalidated on 9 September 2026 and were unchanged. The first current focal centre is the Iran-Israel-United States conflict recorded by UCDP as conflict `16905` in its candidate data.
 
@@ -20,6 +20,27 @@ The current release is therefore an operational foundation, not a claim that eve
 - [Civilian Casualties](https://sjah9.github.io/war-maps-project/outputs/web/civilian-casualties.html)
 - [Project information and methods](https://sjah9.github.io/war-maps-project/outputs/web/information.html)
 - [About the War Maps Project](https://sjah9.github.io/war-maps-project/outputs/web/about.html)
+
+## About and project governance
+
+War Maps originates in the causal framework developed in *Causality and Attraction, Volume I* and *Nested Causal Modelling*. It applies nested causal modelling to the documented structure surrounding armed conflict and is intended to develop into navigable nested causal models of every organized conflict for which peer-reviewed or institutionally maintained data are available.
+
+The atlas does not appoint itself responsible for truth. It makes sources, transformations, coverage, units, dates, evidentiary boundaries, and methods explicit so a reader can inspect what a map supports, what it does not support, and which question remains open. War Maps joins conflict, governance, population-health, fuel-price, and civilian-casualty observations without hiding the differences between those measurements.
+
+Sid J.A. Hubbard is the Principal Investigator of the War Maps Project. At this stage, the entirety of the atlas is written, directed, and engineered by its Principal Investigator with the assistance of AI and data-science tools. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator.
+
+- [Causality and Attraction research record](https://doi.org/10.5281/zenodo.19468550)
+- [Nested Causal Modelling on Amazon](https://www.amazon.com/dp/B0H8K4C3S6)
+- [Nested Causal Modelling on ElevenReader](https://elevenreader.io/audiobooks/nested-causal-modelling-audiobook/8Mj5lsaUYs3WwjKAn1Xu)
+- [Sid J.A. Hubbard](https://sidhubbard.com/)
+- [Research and interventions](https://sidhubbard.com/#interventions)
+- [LinkedIn](https://www.linkedin.com/in/sid-hubbard/)
+
+War Maps software and original project documentation are published under the MIT License. Upstream datasets retain their own licenses and citation requirements. Books and other authored publications linked above are not relicensed by the repository license.
+
+Suggested citation:
+
+> War Maps Project. (2026). *War Maps: An Atlas of Organized Armed Conflict* [Data set, software, and interactive atlas]. Sid J.A. Hubbard, Principal Investigator. https://github.com/SJAH9/war-maps-project
 
 ## Ternary enclosure
 
@@ -128,6 +149,6 @@ A separately sourced context layer records selected U.S. overseas-base and acces
 
 ## Attribution and license
 
-Project code and original presentation are MIT licensed. UCDP data is CC BY 4.0 and must retain its own attribution. See `docs/SOURCES.md` and `data/SOURCES.json`.
+Project code and original documentation are MIT licensed. UCDP data is CC BY 4.0 and must retain its own attribution; every other upstream dataset retains its stated license and citation requirements. Books and linked authored publications are not relicensed by this repository. See `docs/SOURCES.md` and `data/SOURCES.json`.
 
-The project is produced by the RTLDI Atlas Project and Sid J.A. Hubbard, with AI and data-science tools used in research and engineering. The project takes the side of accurately enclosed evidence and human life; it does not participate in prosecution of war for any belligerent.
+The project is written, directed, and engineered by Sid J.A. Hubbard, Principal Investigator, with AI and data-science tools used in research and engineering. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator. The project takes the side of accurately enclosed evidence and human life; it does not participate in prosecution of war for any belligerent.
