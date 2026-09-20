@@ -1,22 +1,21 @@
 # Security Policy
 
-## Supported Versions
+## Supported version
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
+Security updates are applied to the current `main` branch and the deployed War Maps Project atlas.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+## Reporting a vulnerability
 
-## Reporting a Vulnerability
+Please report suspected security vulnerabilities privately by emailing [research@sidhubbard.com](mailto:research@sidhubbard.com).
 
-Use this section to tell people how to report a vulnerability.
+When you can safely correct the issue, the preferred response is to implement a focused fix, add or update relevant tests, and submit a pull request. If publishing the pull request would expose an active exploit, credentials, private data, or another immediate risk, email the address above first so disclosure and the pull request can be coordinated.
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
-Sid is going to do this now 
+Include, when available:
+
+- the affected page, file, feature, or dependency;
+- steps required to reproduce the issue;
+- the potential impact;
+- relevant logs, screenshots, or proof-of-concept material; and
+- any suggested mitigation.
+
+Please do not disclose an unresolved, exploitable vulnerability in a public issue. Project data corrections, source questions, non-security bugs, and security fixes that can be reviewed safely in public may use the public issue and pull-request workflow.
