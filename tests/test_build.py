@@ -445,7 +445,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn('id="civ-start"', markup)
         self.assertIn('id="civ-end"', markup)
         casualty_source = (ROOT / "web/civilian-casualties.js").read_text(encoding="utf-8")
-        self.assertIn("defaultEnd - 4", casualty_source)
+        self.assertIn("defaultEnd - 9", casualty_source)
         self.assertIn("deathsInRange", casualty_source)
         self.assertIn("filter(externalInRange)", casualty_source)
         self.assertIn("state.priceScale = {min:0", casualty_source)

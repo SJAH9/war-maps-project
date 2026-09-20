@@ -8,7 +8,7 @@
   const MAP_SCALE = .63, MAP_Y = 9, MAX_TOWER_HEIGHT = 13;
   const sourceStart = Math.min(Number(data?.coverage?.ged_years?.[0] || 1989),Number(life?.coverage?.start_year || 1989));
   const sourceEnd = Math.max(Number(data?.coverage?.ged_years?.[1] || 2024),Number(String(data?.coverage?.candidate_through || '').slice(0,4) || 0));
-  const defaultEnd = sourceEnd, defaultStart = Math.max(sourceStart,defaultEnd - 4);
+  const defaultEnd = sourceEnd, defaultStart = Math.max(sourceStart,defaultEnd - 9);
   const aliases={'Bahamas':'The Bahamas','Bolivia (Plurinational State of)':'Bolivia','Brunei Darussalam':'Brunei','Cabo Verde':'Cape Verde','Congo':'Republic of the Congo',"Côte d'Ivoire":'Ivory Coast',"Democratic People's Republic of Korea":'North Korea','Eswatini':'eSwatini','Iran (Islamic Republic of)':'Iran',"Lao People's Democratic Republic":'Laos','Republic of Korea':'South Korea','Republic of Moldova':'Moldova','Russian Federation':'Russia','Serbia':'Republic of Serbia','Syrian Arab Republic':'Syria','Timor-Leste':'East Timor','Türkiye':'Turkey','United States':'United States of America','Venezuela (Bolivarian Republic of)':'Venezuela','Viet Nam':'Vietnam'};
   const geometryByCode=new Map(),featureByAdmin=new Map();
   (geometry?.features||[]).forEach(feature=>{const props=feature.properties||{};featureByAdmin.set(props.ADMIN,feature);[props.ISO_A3,props.ADM0_A3,props.WB_A3,props.GU_A3].filter(code=>code&&code!=='-99').forEach(code=>geometryByCode.set(code,props.ADMIN));});
