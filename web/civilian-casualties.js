@@ -5,7 +5,7 @@
   const life = window.LIFE_EXPECTANCY_DATA;
   const geometry = window.WAR_MAPS_GEOMETRY;
   const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-  const MAP_SCALE = .63, MAP_Y = 9;
+  const MAP_SCALE = .63, MAP_Y = 9, MAX_TOWER_HEIGHT = 13;
   const sourceStart = Math.min(Number(data?.coverage?.ged_years?.[0] || 1989),Number(life?.coverage?.start_year || 1989));
   const sourceEnd = Math.max(Number(data?.coverage?.ged_years?.[1] || 2024),Number(String(data?.coverage?.candidate_through || '').slice(0,4) || 0));
   const defaultEnd = sourceEnd, defaultStart = Math.max(sourceStart,defaultEnd - 4);
@@ -361,7 +361,7 @@
     clear(state.towerGroup);if(state.nation)clear(state.reverseTowerGroup);state.worldTowers=[];if(state.nation)state.reverseTowers=[];
     const addTower=(row,{reverse=false,metric='casualty',value,lon=row.lon,lat=row.lat,offset=0,dense=false}={})=>{
       if(value==null||value<=0)return;
-      const fraction=metric==='casualty'?priceFraction(value):healthFraction(metric,value),height=.55+fraction*52;
+      const fraction=metric==='casualty'?priceFraction(value):healthFraction(metric,value),height=Math.max(.08,fraction*MAX_TOWER_HEIGHT);
       const external=row.in_ucdp===false,radius=metric==='casualty'?(external?1.45:1.2):1.05;
       const selected=row===state.selected&&reverse===Boolean(state.nation);
       const color=metric==='mortality'?'#273849':metric==='lifeExpectancy'?'#33c8c7':external?'#5eb3d4':priceColor(value);

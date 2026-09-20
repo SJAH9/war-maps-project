@@ -462,6 +462,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("life-expectancy-data.js", markup)
         self.assertIn("healthObservation", casualty_source)
         self.assertIn("smallTerritory", casualty_source)
+        self.assertIn("MAX_TOWER_HEIGHT = 13", casualty_source)
+        self.assertIn("fraction*MAX_TOWER_HEIGHT", casualty_source)
         life_payload = ROOT / "web/life-expectancy-data.js"
         self.assertTrue(life_payload.exists())
         life_data = json.loads(life_payload.read_text(encoding="utf-8").removeprefix(
