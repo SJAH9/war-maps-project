@@ -142,7 +142,8 @@
     let token = 0;
     let hls = null;
     const previewPlayers = new Map();
-    let muted = false;
+    // Start muted so browsers allow the stream to autoplay on page load.
+    let muted = true;
     let panelOpen = localStorage.getItem("newsboob.panel") !== "0";
     let dragging = false;
     let dragIndex = index;
@@ -855,4 +856,5 @@
 
     setPanel(panelOpen);
     setPointer(index);
-    setStatus("off", "Power on, then turn the dial.");
+    setStatus("off", "Starting the selected channel…");
+    go(index);

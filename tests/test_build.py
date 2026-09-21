@@ -575,6 +575,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("NEWSBOOB — world news tuner", standalone)
         self.assertIn('src="hls.min.js"', standalone)
         self.assertIn('src="player.js', standalone)
+        self.assertIn('<video id="hlsVideo" autoplay muted playsinline>', standalone)
+        self.assertIn('go(index);', (player.parent / "player.js").read_text(encoding="utf-8"))
 
     def test_world_map_joins_health_and_governance_without_extrapolation(self):
         page = (ROOT / "web/map.html").read_text(encoding="utf-8")
