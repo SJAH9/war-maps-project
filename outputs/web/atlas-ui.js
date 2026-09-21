@@ -108,4 +108,12 @@
     section.innerHTML = `<div><p class="eyebrow">Question this view can answer</p><h2>${context.question}</h2><p>${context.read}</p></div><div class="evidence-key"><span><i class="evidence-source"></i>Source record</span><span><i class="evidence-transform"></i>Project transformation</span><span><i class="evidence-inference"></i>Inference</span><strong>${context.status}</strong></div><nav aria-label="Sources for this view">${context.sources.map(([label, href]) => `<a href="${href}">${label}</a>`).join('')}</nav>`;
     main.prepend(section);
   }
+
+  document.querySelectorAll('footer').forEach((footer) => {
+    if (footer.querySelector('.project-support')) return;
+    const support = document.createElement('div');
+    support.className = 'project-support';
+    support.innerHTML = '<a href="donate.html">Support this project</a> · <a href="donate.html">1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr</a><br><small>Support is welcome, never obligatory. This project was produced through the time and energy of its principal investigator and over a billion tokens. It satisfied the gnawing need to do something about the state of the world without taking a side or making futile sacrifices. It feels good to work on; it would not feel bad to contribute to it.</small>';
+    footer.append(support);
+  });
 })();
