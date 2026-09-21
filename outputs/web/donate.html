@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Support the independent public-interest tools behind The War Maps Project.">
+  <title>Support the project · The War Maps Project</title>
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-donate-r1">
+  <script src="atlas-ui.js?v=2026-09-21-donate-r1" defer></script>
+  <style>
+    .donate-page{min-height:100vh;background:var(--paper)}.donate-wrap{max-width:920px;margin:0 auto;padding:clamp(42px,8vw,100px) clamp(20px,5vw,64px)}.donate-wrap h1{max-width:720px;margin:8px 0 18px;font:700 clamp(2.8rem,7vw,6.8rem)/.9 Georgia,serif;letter-spacing:-.055em}.donate-lede{max-width:650px;color:var(--muted);font-size:1.05rem}.donate-card{display:grid;grid-template-columns:240px minmax(0,1fr);gap:32px;align-items:center;margin-top:42px;padding:28px;border:1px solid var(--line);background:var(--surface)}.donate-qr{width:240px;height:240px;padding:12px;background:#fff}.donate-card h2{margin:0 0 10px;font:700 1.8rem Georgia,serif}.donate-card p{color:var(--muted);font-size:.86rem}.donate-address{display:block;overflow-wrap:anywhere;margin:18px 0;padding:12px;border:1px solid var(--line);background:var(--paper);font:700 .78rem ui-monospace,SFMono-Regular,Menlo,monospace}.donate-actions{display:flex;flex-wrap:wrap;gap:10px}.donate-actions a,.donate-actions button{min-height:42px;padding:0 14px;border:1px solid var(--line);background:transparent;color:var(--ink);font:800 .78rem inherit;text-decoration:none;cursor:pointer}.donate-actions a:first-child{border-color:var(--orange);background:var(--orange);color:var(--black)}.donate-note{margin-top:28px;color:var(--muted);font-size:.78rem}.donate-back{display:inline-block;margin-top:34px;color:var(--teal);font-size:.8rem;font-weight:800}@media(max-width:640px){.donate-card{grid-template-columns:1fr;padding:18px}.donate-qr{width:min(240px,100%);height:auto;justify-self:center}}
+  </style>
+</head>
+<body class="landing-page donate-page">
+  <header class="site-header"><a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a><nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="newsmedia.html">NewsMedia</a></nav><button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button></header>
+  <main class="donate-wrap">
+    <p class="eyebrow">Keep independent tools available</p>
+    <h1>Support the work.</h1>
+    <p class="donate-lede">The War Maps Project, RTLDI Atlas, NewsBoob, and SidHubbard.com are independent projects. If they are useful to you, you can support their continued development with bitcoin.</p>
+    <section class="donate-card" aria-labelledby="bitcoin-title">
+      <img class="donate-qr" src="assets/bitcoin-donation.svg" alt="QR code for a bitcoin donation">
+      <div><h2 id="bitcoin-title">Donate bitcoin</h2><p>Scan the QR code with a mobile wallet, or tap the button to open a compatible wallet. No amount is prefilled, so you choose what to give.</p><code class="donate-address">1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr</code><div class="donate-actions"><a href="bitcoin:1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr?message=Support%20independent%20research%20and%20public%20tools">Open in bitcoin wallet</a><button type="button" id="copy-address">Copy address</button></div><p class="donate-note" id="copy-status" aria-live="polite">Verify the address in your wallet before confirming any payment.</p></div>
+    </section>
+    <a class="donate-back" href="./">← Return to The War Maps Project</a>
+  </main>
+  <script>document.getElementById('copy-address').addEventListener('click',async()=>{try{await navigator.clipboard.writeText('1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr');document.getElementById('copy-status').textContent='Address copied.';}catch(_){document.getElementById('copy-status').textContent='Copy is unavailable; select the address above.';}});</script>
+</body>
+</html>

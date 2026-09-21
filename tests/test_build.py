@@ -578,6 +578,12 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn('<video id="hlsVideo" autoplay muted playsinline>', standalone)
         self.assertIn('go(index);', (player.parent / "player.js").read_text(encoding="utf-8"))
 
+    def test_donation_page_exposes_a_wallet_link_and_qr(self):
+        page = (ROOT / "web/donate.html").read_text(encoding="utf-8")
+        self.assertIn("bitcoin:1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr", page)
+        self.assertIn('src="assets/bitcoin-donation.svg"', page)
+        self.assertTrue((ROOT / "web/assets/bitcoin-donation.svg").exists())
+
     def test_world_map_joins_health_and_governance_without_extrapolation(self):
         page = (ROOT / "web/map.html").read_text(encoding="utf-8")
         source = (ROOT / "web/app.js").read_text(encoding="utf-8")
