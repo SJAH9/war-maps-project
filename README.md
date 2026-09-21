@@ -4,7 +4,9 @@ The War Maps Project is an open, reproducible interface to publicly available ev
 
 War Maps does not collect conflict observations, conduct surveillance, advise combatants, or argue for any party. It combines records maintained by named public and institutional sources so relationships hidden by isolated datasets and daily reporting can be inspected in context. Its hope is that clearer public understanding can make avoidable conflict harder to sustain and its human cost harder to disregard.
 
-The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Conflict Dataset 26.1 (1946-2025), adds the latest available current-event layer from the UCDP Candidate Events Dataset through August 2026, and nests those conflict-years inside the state conditions observed in V-Dem. The official candidate files were revalidated on 20 September 2026. The first current focal centre is the Iran-Israel-United States conflict recorded by UCDP as conflict `16905` in its candidate data.
+The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Conflict Dataset 26.1 (1946-2025), adds the latest available current-event layer from the UCDP Candidate Events Dataset through August 2026, and nests those conflict-years inside the state conditions observed in V-Dem. The official candidate files were revalidated on 21 September 2026. The first current focal centre is the Iran-Israel-United States conflict recorded by UCDP as conflict `16905` in its candidate data.
+
+The top-level **NewsMedia** section embeds the maintained standalone [NewsBoob](https://github.com/SJAH9/newsboob) player for comparing live international coverage. It is a contextual surface, not a data-ingestion path: broadcaster output is not promoted into a War Maps observation, and the project does not rank or endorse channels.
 
 ## First public release
 
@@ -21,6 +23,7 @@ The current release is therefore an operational foundation, not a claim that eve
 - [Conflict and living conditions](https://sjah9.github.io/war-maps-project/outputs/web/life-death.html)
 - [Fuel Prices](https://sjah9.github.io/war-maps-project/outputs/web/gas-map.html)
 - [Recorded Civilian Deaths](https://sjah9.github.io/war-maps-project/outputs/web/civilian-casualties.html)
+- [NewsMedia](https://sjah9.github.io/war-maps-project/outputs/web/newsmedia.html)
 - [Project information and methods](https://sjah9.github.io/war-maps-project/outputs/web/information.html)
 - [About the War Maps Project](https://sjah9.github.io/war-maps-project/outputs/web/about.html)
 
@@ -44,6 +47,8 @@ Four statuses remain distinct throughout the interface:
 Interactive graphics retain a text inspector, register, list, table, or downloadable data path wherever the representation allows it. Semantic color is paired with labels, position, or shape; keyboard focus is visible; controls reflow for narrow screens; and reduced-motion preferences are honored by the shared interface layer. War Maps uses no analytics, tracking, or cookies. Local storage is used only to remember the reader's light/dark theme choice.
 
 The complete interface rules and publication checklist are documented in [Public-understanding interface](docs/PUBLIC_UNDERSTANDING_DESIGN.md).
+
+The latest source-by-source audit is [Data refresh · 21 September 2026](docs/DATA_REFRESH_2026-09-21.md). It records updated, unchanged, and access-limited sources separately.
 
 Sid J.A. Hubbard is the Principal Investigator of the War Maps Project. At this stage, the entirety of the atlas is written, directed, and engineered by its Principal Investigator with the assistance of AI and data-science tools. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator.
 

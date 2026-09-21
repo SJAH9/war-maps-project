@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Compare live international news coverage in the NewsBoob world-news tuner, presented as context beside the War Maps evidence record.">
+  <title>NewsMedia · The War Maps Project</title>
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-newsmedia-r1">
+  <script src="atlas-ui.js?v=2026-09-21-newsmedia-r1" defer></script>
+</head>
+<body class="newsmedia-page">
+  <header class="site-header">
+    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"></nav>
+    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
+  </header>
+  <main class="newsmedia-main">
+    <section class="newsmedia-heading">
+      <div><p class="eyebrow">Live coverage · multiple national sources</p><h1>NewsMedia</h1></div>
+      <p>NewsBoob places international live-news channels in one tuner so differences in selection, timing, and framing can be compared. Broadcasts are context, not verified War Maps evidence, and a channel’s presence is not an endorsement.</p>
+    </section>
+    <section class="newsmedia-player" aria-labelledby="player-title">
+      <div class="newsmedia-player-head"><h2 id="player-title">NewsBoob world news tuner</h2><a href="newsmedia-player/newsboob.html">Open the standalone player ↗</a></div>
+      <iframe src="newsmedia-player/newsboob.html" title="NewsBoob international live-news player" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </section>
+    <section class="newsmedia-boundaries" aria-label="How to read live media">
+      <article><p class="eyebrow">Source boundary</p><h2>The broadcasters control the streams.</h2><p>NewsBoob supplies the interface and requests the selected publisher’s HLS stream. Availability, captions, program content, and transmission quality remain properties of each broadcaster or delivery network.</p></article>
+      <article><p class="eyebrow">Privacy boundary</p><h2>No War Maps analytics.</h2><p>This project adds no analytics, advertising profile, account, or tracking cookie. Playing a channel makes network requests to that broadcaster and its content-delivery providers, which operate under their own policies.</p></article>
+      <article><p class="eyebrow">Evidence boundary</p><h2>Coverage is not confirmation.</h2><p>Use live reporting to identify questions and compare public narratives. Use the linked source records and methods elsewhere in War Maps to establish what the project’s datasets actually support.</p></article>
+    </section>
+  </main>
+  <footer><a href="about.html">The War Maps Project</a><span>Live media remains distinct from the evidence record</span><a href="sources.html">Citations</a></footer>
+</body>
+</html>

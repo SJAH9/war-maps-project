@@ -8,7 +8,21 @@
       "url": "https://ucdp.uu.se/downloads/ucdpprio/ucdp-prio-acd-261-csv.zip",
       "license": "CC BY 4.0",
       "enclosure": "reviewed-academic-conflict-dataset",
-      "retrieved": "2026-08-28"
+      "retrieved": "2026-08-28",
+      "verified": "2026-09-21",
+      "sha256": "2aea044f1bcae7b050bb6c79fb796743e787edeed3b90e74e146cfc4e5b05447",
+      "refresh_status": "Official downloads page still lists v26.1 as current"
+    },
+    {
+      "id": "ucdp-ged-26.1",
+      "title": "UCDP Georeferenced Event Dataset version 26.1",
+      "publisher": "Uppsala Conflict Data Program",
+      "coverage": "1989-2025 event observations; civilian-death field used by the Human cost view",
+      "url": "https://ucdp.uu.se/downloads/ged/ged261-csv.zip",
+      "license": "CC BY 4.0",
+      "enclosure": "reviewed-academic-georeferenced-event-dataset",
+      "retrieved": "2026-09-21",
+      "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667"
     },
     {
       "id": "ucdp-candidate-ged-2026-06",
@@ -44,24 +58,26 @@
       "sha256": "2ad6e0b2bfdbaa31873716a3455096923a8539519d69d96aeeea2d0f44a34593"
     },
     {
-      "id": "vdem-core-v15-rtldi",
-      "title": "V-Dem Country-Year Core v15, RTLDI retained fields",
+      "id": "vdem-core-v16",
+      "title": "V-Dem Country-Year v16, War Maps retained fields",
       "publisher": "V-Dem Institute",
-      "coverage": "Country-year protection conditions used by the RTLDI Atlas pipeline",
-      "url": "https://v-dem.net/data/the-v-dem-dataset/",
-      "license": "V-Dem dataset terms",
+      "coverage": "Country-year protection conditions through 2025",
+      "url": "https://github.com/vdeminstitute/vdemdata/releases/tag/V16",
+      "license": "CC BY-SA 4.0",
       "enclosure": "country-year state-condition dataset",
-      "retrieved": "2026-08-02"
+      "retrieved": "2026-09-21",
+      "sha256": "c3ebb286b5eac4cdbfdc5c51b67e9d8d7248dc4729d7b52debec35d989befa4c"
     },
     {
-      "id": "vdem-regimes-of-the-world-v15",
-      "title": "V-Dem Country-Year v15, Regimes of the World",
+      "id": "vdem-regimes-of-the-world-v16",
+      "title": "V-Dem Country-Year v16, Regimes of the World",
       "publisher": "V-Dem Institute",
-      "coverage": "Country-year v2x_regime and v2x_regime_amb classifications retained from the local official v15 archive",
-      "url": "https://www.v-dem.net/data/dataset-archive/",
+      "coverage": "Country-year v2x_regime and v2x_regime_amb classifications through 2025",
+      "url": "https://github.com/vdeminstitute/vdemdata/releases/tag/V16",
       "license": "CC BY-SA 4.0",
       "enclosure": "country-year regime classification",
-      "retrieved": "2026-08-29"
+      "retrieved": "2026-09-21",
+      "sha256": "765d5dfed77f7f328fb887f7e23eebe0cc7f8c0221c846e94d0371c1473cf764"
     },
     {
       "id": "natural-earth-110m-geometry",
@@ -71,7 +87,10 @@
       "url": "https://www.naturalearthdata.com/",
       "license": "Public domain",
       "enclosure": "map geometry",
-      "retrieved": "2026-08-28"
+      "retrieved": "2026-08-28",
+      "verified": "2026-09-21",
+      "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+      "refresh_status": "Verified unchanged"
     },
     {
       "id": "ihme-gbd-2023-all-cause-mortality",
@@ -81,7 +100,9 @@
       "url": "https://vizhub.healthdata.org/gbd-results/",
       "license": "IHME GBD Results terms",
       "enclosure": "modeled country-year population health rate; not a conflict fatality count",
-      "retrieved": "2026-08-30"
+      "retrieved": "2026-08-30",
+      "verified": "2026-09-21",
+      "refresh_status": "GBD 2023 remains the loaded release; source export requires IHME access"
     },
     {
       "id": "owid-long-run-life-expectancy-2026-09-19",
@@ -94,6 +115,8 @@
       "citation": "Riley (2005); Zijdeman et al. (2015); HMD (2025); UN WPP (2024), with major processing by Our World in Data",
       "peer_reviewed_source": "https://doi.org/10.1111/j.1728-4457.2005.00083.x",
       "retrieved": "2026-09-19",
+      "verified": "2026-09-21",
+      "refresh_status": "Official CSV unchanged",
       "sha256": "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01"
     },
     {
@@ -104,7 +127,9 @@
       "url": "https://vizhub.healthdata.org/gbd-results/",
       "license": "IHME GBD Results terms",
       "enclosure": "derived period total fertility rate; not a birth count",
-      "retrieved": "2026-08-30"
+      "retrieved": "2026-08-30",
+      "verified": "2026-09-21",
+      "refresh_status": "GBD 2023 remains the loaded release; source export requires IHME access"
     },
     {
       "id": "world-bank-wdi-crude-birth-rate",
@@ -114,7 +139,8 @@
       "url": "https://data.worldbank.org/indicator/SP.DYN.CBRT.IN",
       "license": "CC BY 4.0",
       "enclosure": "annual demographic rate; distinct from total fertility rate and from a birth count",
-      "retrieved": "2026-09-03"
+      "retrieved": "2026-09-21",
+      "sha256": "be0810c5ca67942fbc1be8e2d6b07b6135bc88cb37ecf3fc91136af738d6f16f"
     },
     {
       "id": "world-bank-wdi-total-population",
@@ -124,17 +150,20 @@
       "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
       "license": "CC BY 4.0",
       "enclosure": "de facto mid-year population estimate; not a conflict exposure or casualty measure",
-      "retrieved": "2026-09-03"
+      "retrieved": "2026-09-21",
+      "sha256": "21816454b5ea6e6b7a602aa7e1b10d8d275bf2bb59f38f882477e4d1ed3b09ab",
+      "refresh_status": "Official API response unchanged"
     },
     {
-      "id": "celestrak-iceye-sar-2026-08-29",
+      "id": "celestrak-iceye-sar-2026-09-21",
       "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
       "publisher": "CelesTrak",
-      "coverage": "Frozen 2026-08-29 orbital-element snapshot for 49 publicly catalogued ICEYE objects",
+      "coverage": "Frozen 2026-09-21 orbital-element snapshot for 52 active publicly catalogued ICEYE objects",
       "url": "https://celestrak.org/NORAD/documentation/gp-data-formats.php",
       "license": "Public orbital data; CelesTrak usage and attribution terms apply",
       "enclosure": "public orbit geometry; not evidence of conflict participation",
-      "retrieved": "2026-08-29"
+      "retrieved": "2026-09-21",
+      "sha256": "f624c9c15644d4093e8f2f262dc28fb4acc76c79ad1d557c26421204052ea411"
     },
     {
       "id": "iceye-ukraine-support-2026",
@@ -144,7 +173,8 @@
       "url": "https://www.iceye.com/newsroom/press-releases/ukraine-expands-partnership-with-iceye",
       "license": "Source statement; linked for attribution",
       "enclosure": "documented constellation relation; not individual satellite attribution",
-      "retrieved": "2026-08-29"
+      "retrieved": "2026-08-29",
+      "verified": "2026-09-21"
     },
     {
       "id": "un-member-states-2026",
@@ -154,7 +184,8 @@
       "url": "https://www.un.org/about-us/member-states",
       "license": "United Nations attribution and use terms",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21",
+      "refresh_status": "Verified against the official 193-member roster"
     },
     {
       "id": "nato-member-countries",
@@ -164,7 +195,8 @@
       "url": "https://www.nato.int/cps/en/natohq/nato_countries.htm",
       "license": "NATO website terms",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21",
+      "refresh_status": "Verified at 32 members"
     },
     {
       "id": "brics-about-the-brics",
@@ -174,7 +206,8 @@
       "url": "https://brics.br/en/about-the-brics",
       "license": "Source attribution",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21",
+      "refresh_status": "Verified at 11 full members"
     },
     {
       "id": "eu-member-states",
@@ -184,7 +217,8 @@
       "url": "https://european-union.europa.eu/principles-countries-history/country-profiles_en",
       "license": "European Union source terms",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21",
+      "refresh_status": "Verified at 27 member states"
     },
     {
       "id": "asean-member-states",
@@ -194,7 +228,8 @@
       "url": "https://asean.org/member-states/",
       "license": "ASEAN source terms",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21",
+      "refresh_status": "Verified at 11 member states including Timor-Leste"
     },
     {
       "id": "wef-membership-and-partners",
@@ -204,7 +239,8 @@
       "url": "https://www.weforum.org/communities/partnership-institutional-membership/",
       "license": "World Economic Forum source terms",
       "enclosure": "non-state organization membership and partnership records",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21",
+      "refresh_status": "Selected entity list revalidated against the current institutional-membership directory"
     }
   ]
 }

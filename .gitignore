@@ -4,4 +4,5 @@ __pycache__/
 outputs/web/data/*.json
 data/processed/*.json
 data/raw/ged251-csv.zip
+data/raw/ged261-csv.zip
 data/raw/GEDEvent_v25_1.csv

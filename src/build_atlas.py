@@ -19,10 +19,10 @@ CURRENT_SOURCES = (
 CANDIDATE_BOUNDARY = "2026-08-31"
 CANDIDATE_LABEL = "August 2026"
 LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-08"
-VDEM = ROOT / "data/raw/V-Dem-CY-Core-v15.csv"
-VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v15.csv"
+VDEM = ROOT / "data/raw/V-Dem-CY-Core-v16.csv"
+VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v16.csv"
 GEOMETRY = ROOT / "data/raw/ne_110m_admin_0_countries.geojson"
-SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-08-29.json"
+SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-09-21.json"
 SATELLITE_RELATIONS = ROOT / "data/curated/satellite_relations.json"
 CLAIMS = ROOT / "data/curated/claims.json"
 PROJECTIONS = ROOT / "data/curated/projections.json"
@@ -358,7 +358,7 @@ def vdem_state_conditions() -> list[dict]:
                 "year": year,
                 "conditions": {field: as_float(row[field]) for field in VDEM_FIELDS},
                 "regime": regimes.get((row["country_text_id"], year), {"code": None, "name": None, "ambiguity_code": None}),
-                "source_id": "vdem-core-v15-rtldi",
+                "source_id": "vdem-core-v16",
                 "enclosure": {
                     "outer": "V-Dem country-year measurement and coding model",
                     "active": f"observed state conditions for {row['country_name']} in {year}",

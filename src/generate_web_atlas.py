@@ -20,6 +20,7 @@ def generate() -> Path:
     for name in (*pages, "styles.css", "gas-map.css", "gas-map-layers.css", "civilian-casualties.css", "atlas-ui.js", "app.js", "nation.js", "network-model.js", "network.js", "network-3d.js", "graph.js", "life-death.js", "life-death-data.js", "life-expectancy-data.js", "crude-birth-rate-data.js", "population-data.js", "information.js", "gas-map.js", "gas-price-data.js", "civilian-casualties.js", "civilian-casualty-data.js"):
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
+    shutil.copytree(SOURCE / "newsmedia-player", OUTPUT / "newsmedia-player", dirs_exist_ok=True)
     shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")
     geometry_payload = GEOMETRY.read_text(encoding="utf-8")
     (OUTPUT / "assets/world-geometry.js").write_text(

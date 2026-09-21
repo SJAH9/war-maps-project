@@ -67,7 +67,7 @@ def generate(indicator_json: Path, country_json: Path, output: Path) -> Path:
             "indicator": INDICATOR,
             "url": "https://data.worldbank.org/indicator/SP.DYN.CBRT.IN",
             "license": "CC BY 4.0",
-            "retrieved": "2026-09-03",
+            "retrieved": "2026-09-21",
         },
         "locations": locations,
     }

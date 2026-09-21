@@ -15,7 +15,7 @@
   const mortalityByAdmin=new Map((health?.locations||[]).map(location=>[aliases[location.name]||location.name,new Map((location.mortality||[]).map(row=>[row[0],row[1]]))]));
   const lifeByAdmin=new Map((life?.locations||[]).map(location=>[geometryByCode.get(location.iso3)||aliases[location.name]||location.name,new Map((location.life_expectancy||[]).map(row=>[row[0],row[1]]))]));
   const state = {search:'', selected:null, nation:null, reverseCountries:new Set(), visible:[], worldVisible:[], priceScale:{min:0,max:1}, healthScale:{mortality:{min:0,max:1},lifeExpectancy:{min:0,max:1}}, activeHealth:new Set(), startYear:defaultStart, endYear:defaultEnd, playTimer:null, playIndex:0, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
-  const playYears = () => data.coverage.play_years || [2015,2016,2017,2018,2019,2020,2021,2022,2023,2024];
+  const playYears = () => data.coverage.play_years || [2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
   const deathsInRange = (row, startYear=state.startYear, endYear=state.endYear) => {
     if (row.in_ucdp === false) return row.civilians || 0;
     let total = 0;

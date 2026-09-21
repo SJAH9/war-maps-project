@@ -10,15 +10,15 @@ UCDP datasets are licensed CC BY 4.0. The War Maps Project does not relicense th
 
 ## UCDP Candidate Events 2026
 
-The live layer combines the January-June 2026 quarterly release with the July and August 2026 monthly releases, the latest file listed by UCDP when revalidated on 20 September 2026. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping earlier row. The generated data retains the resulting unique observations and candidate conflict clusters and makes them navigable in the atlas.
+The live layer combines the January-June 2026 quarterly release with the July and August 2026 monthly releases, the latest file listed by UCDP when revalidated on 21 September 2026. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping earlier row. The generated data retains the resulting unique observations and candidate conflict clusters and makes them navigable in the atlas.
 
 Candidate observations are provisional. `code_status`, source count, source office, source headline, date precision, location precision, dyad identifiers, violence type, and low/best/high fatality estimates are retained. A `Clear` event is not transformed into an unrestricted fact; it remains clear within the candidate UCDP enclosure.
 
 ## V-Dem country-year conditions
 
-The first project build uses the V-Dem v15 country-year core retained by the RTLDI Atlas pipeline. Its nine protection fields are nested around Uppsala conflict-years as observed state conditions. V-Dem supplies conditions; it is not used as an external authority that closes the projection.
+The current build uses the official V-Dem v16 country-year dataset through 2025. Its nine protection fields are nested around Uppsala conflict-years as observed state conditions. V-Dem supplies conditions; it is not used as an external authority that closes the projection.
 
-The government-type overlay uses the V-Dem v15 Regimes of the World field `v2x_regime`, retained with `v2x_regime_amb` from the official local country-year archive. The displayed values preserve the source categories: Closed Autocracy, Electoral Autocracy, Electoral Democracy, and Liberal Democracy. They are country-year observations, not permanent descriptions of a country.
+The government-type overlay uses the V-Dem v16 Regimes of the World field `v2x_regime`, retained with `v2x_regime_amb` from the official `vdemdata` release. The displayed values preserve the source categories: Closed Autocracy, Electoral Autocracy, Electoral Democracy, and Liberal Democracy. They are country-year observations, not permanent descriptions of a country.
 
 ## Relationship and casualty boundaries
 
@@ -66,7 +66,7 @@ Implementation reference: Graphology standard library, <https://graphology.githu
 
 ## Public satellite geometry
 
-The optional satellite layer uses a frozen 2026-08-29 subset of CelesTrak's public SAR general-perturbations catalog. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
+The optional satellite layer uses a frozen 2026-09-21 subset of CelesTrak's active public general-perturbations catalog filtered to ICEYE objects. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
 
 The initial relationship is supported by ICEYE's statement that it expanded the Ukrainian Ministry of Defence's access to the ICEYE SAR satellite constellation. That is a constellation-level relationship. It does not establish that every publicly catalogued ICEYE spacecraft supplied imagery to a particular operation. The generated atlas preserves that boundary in `individual_asset_boundary` and keeps the orbit records free of conflict identifiers.
 

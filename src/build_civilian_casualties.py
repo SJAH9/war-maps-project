@@ -13,12 +13,15 @@ from pathlib import Path
 from src.build_atlas import GEOMETRY, LOCATION_ALIASES, ROOT
 
 GED_ZIP_CANDIDATES = (
+    ROOT / "data/raw/ged261-csv.zip",
+    Path("/tmp/ucdp-ged/ged261-csv.zip"),
     ROOT / "data/raw/ged251-csv.zip",
     Path("/tmp/ucdp-ged/ged251-csv.zip"),
 )
 CANDIDATE_SOURCES = (
     (ROOT / "data/raw/GEDEvent_v26_01_26_06.csv", "ucdp-candidate-ged-2026-06"),
     (ROOT / "data/raw/GEDEvent_v26_0_7.csv", "ucdp-candidate-ged-2026-07"),
+    (ROOT / "data/raw/GEDEvent_v26_0_8.csv", "ucdp-candidate-ged-2026-08"),
 )
 OUTPUT = ROOT / "web/civilian-casualty-data.js"
 
@@ -161,7 +164,7 @@ def find_ged_zip() -> Path:
         if path.exists():
             return path
     raise FileNotFoundError(
-        "UCDP GED 25.1 zip not found. Place ged251-csv.zip in data/raw or /tmp/ucdp-ged."
+        "UCDP GED 26.1 zip not found. Place ged261-csv.zip in data/raw or /tmp/ucdp-ged."
     )
 
 
@@ -170,7 +173,7 @@ def build() -> dict:
     totals = defaultdict(empty_record)
     unmatched = defaultdict(int)
     ged_zip = find_ged_zip()
-    unmatched_hist = accumulate(read_ged_rows(ged_zip), lookup, totals, "ucdp-ged-25.1")
+    unmatched_hist = accumulate(read_ged_rows(ged_zip), lookup, totals, "ucdp-ged-26.1")
     for key, count in unmatched_hist.items():
         unmatched[key] += count
     for path, label in CANDIDATE_SOURCES:
@@ -202,15 +205,15 @@ def build() -> dict:
         })
     countries.sort(key=lambda item: (-item["civilians"], item["name"]))
     return {
-        "snapshot": "2026-09-18",
+        "snapshot": "2026-09-21",
         "metric": "deaths_civilians",
         "unit": "reported civilian deaths",
         "coverage": {
-            "ged_version": "25.1",
-            "ged_years": [1989, 2024],
-            "play_years": list(range(2015, 2025)),
-            "candidate_through": "2026-07-31",
-            "note": "UCDP GED 25.1 covers 1989-2024. Candidate events add 2026 through July. 2025 is not in these releases. The map defaults to the inclusive 2022-2026 range; a blank year remains blank rather than being interpolated.",
+            "ged_version": "26.1",
+            "ged_years": [1989, 2025],
+            "play_years": list(range(2017, 2027)),
+            "candidate_through": "2026-08-31",
+            "note": "UCDP GED 26.1 covers 1989-2025. Candidate events add provisional observations through August 2026. The map defaults to the latest ten calendar years; a blank year remains blank rather than being interpolated.",
         },
         "world_total": sum(item["civilians"] for item in countries),
         "country_count": len(countries),

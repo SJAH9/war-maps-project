@@ -265,9 +265,9 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertEqual(by_id["asean"]["member_count"], 11)
         self.assertEqual(by_id["wef"]["member_count"], 0)
         self.assertGreaterEqual(by_id["wef"]["entity_member_count"], 20)
-        self.assertIn("Microsoft", by_id["wef"]["entity_members"])
-        self.assertEqual(by_id["wef"]["entity_nation_count"], 7)
-        self.assertEqual(by_id["wef"]["entity_member_nations"]["Microsoft"], "United States of America")
+        self.assertIn("OpenAI", by_id["wef"]["entity_members"])
+        self.assertGreaterEqual(by_id["wef"]["entity_nation_count"], 10)
+        self.assertEqual(by_id["wef"]["entity_member_nations"]["OpenAI"], "United States of America")
         source_ids = {source["id"] for source in self.data["sources"]}
         self.assertTrue({item["source_id"] for item in organizations}.issubset(source_ids))
         self.assertTrue(all(item["membership_status"] in {"explicit", "derived"} for item in organizations))
@@ -452,7 +452,7 @@ class WarMapsBuildTests(unittest.TestCase):
         countries = {row["admin"]: row for row in data["countries"]}
         self.assertGreaterEqual(data["world_total"], 1_000_000)
         self.assertGreater(countries["Rwanda"]["civilians"], 500_000)
-        self.assertEqual(data["coverage"]["play_years"], list(range(2015, 2025)))
+        self.assertEqual(data["coverage"]["play_years"], list(range(2017, 2027)))
         rwanda_years = {year: deaths for year, deaths in countries["Rwanda"]["years"]}
         self.assertGreater(rwanda_years.get(1994, 0), 500_000)
         self.assertLess(sum(deaths for year, deaths in countries["Rwanda"]["years"] if 2022 <= year <= 2026), 10)
@@ -533,7 +533,7 @@ class WarMapsBuildTests(unittest.TestCase):
         map_sources = (ROOT / "web/data-maps.html").read_text(encoding="utf-8")
         self.assertIn("Gas Map sources", map_sources)
         self.assertIn("Civilian Casualties sources", map_sources)
-        self.assertIn("UCDP Georeferenced Event Dataset 25.1", map_sources)
+        self.assertIn("UCDP Georeferenced Event Dataset 26.1", map_sources)
         self.assertIn("European Central Bank reference rates", map_sources)
         self.assertIn("latest disclosed source observation", method)
 
@@ -543,7 +543,7 @@ class WarMapsBuildTests(unittest.TestCase):
         styles = (ROOT / "web/styles.css").read_text(encoding="utf-8")
         for page in (
             "network.html", "graph.html", "map.html", "life-death.html",
-            "gas-map.html", "civilian-casualties.html", "nation.html",
+            "gas-map.html", "civilian-casualties.html", "newsmedia.html", "nation.html",
         ):
             markup = (ROOT / "web" / page).read_text(encoding="utf-8")
             self.assertIn('src="atlas-ui.js', markup, page)
@@ -558,6 +558,20 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn(".skip-link", styles)
         self.assertIn("prefers-reduced-motion", styles)
         self.assertIn("focus-visible", styles)
+
+    def test_newsmedia_embeds_the_maintained_standalone_player(self):
+        page = (ROOT / "web/newsmedia.html").read_text(encoding="utf-8")
+        player = ROOT / "web/newsmedia-player/newsboob.html"
+        self.assertIn('src="newsmedia-player/newsboob.html"', page)
+        self.assertIn('allow="autoplay; fullscreen; picture-in-picture"', page)
+        self.assertIn("Broadcasts are context, not verified War Maps evidence", page)
+        self.assertTrue(player.exists())
+        self.assertTrue((player.parent / "player.js").exists())
+        self.assertTrue((player.parent / "hls.min.js").exists())
+        standalone = player.read_text(encoding="utf-8")
+        self.assertIn("NEWSBOOB — world news tuner", standalone)
+        self.assertIn('src="hls.min.js"', standalone)
+        self.assertIn('src="player.js', standalone)
 
     def test_world_map_joins_health_and_governance_without_extrapolation(self):
         page = (ROOT / "web/map.html").read_text(encoding="utf-8")

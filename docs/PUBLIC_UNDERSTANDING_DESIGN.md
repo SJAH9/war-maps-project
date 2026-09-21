@@ -13,7 +13,7 @@ The start page asks questions before naming visualization types:
 5. What wider living conditions surround the record?
 6. How do source-dated fuel prices differ?
 
-Primary navigation then uses stable subject labels: Start, Conflict network, World map, Relationships, Human cost, Living conditions, Fuel prices, and Evidence guide. Specialist controls remain inside the view that uses them.
+Primary navigation then uses stable subject labels: Start, Conflict network, World map, Relationships, Human cost, Living conditions, Fuel prices, NewsMedia, and Evidence guide. Specialist controls remain inside the view that uses them. NewsMedia is top-level but explicitly contextual: publisher broadcasts never enter the War Maps evidence field merely because they are visible beside it.
 
 ## Evidence states
 

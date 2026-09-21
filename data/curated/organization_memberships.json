@@ -7,7 +7,7 @@
       "entity_kind": "intergovernmental_organization",
       "relation_type": "member",
       "member_basis": "explicit",
-      "as_of": "2026-04-30",
+      "as_of": "2026-09-21",
       "source_id": "un-member-states-2026",
       "members": [
         "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Antigua and Barbuda", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan",
@@ -37,7 +37,7 @@
         "Romania", "Slovakia", "Slovenia", "Spain", "Sweden", "Netherlands",
         "Türkiye", "United Kingdom", "United States"
       ],
-      "as_of": "2026-09-11",
+      "as_of": "2026-09-21",
       "source_id": "nato-member-countries"
     },
     {
@@ -50,7 +50,7 @@
         "Brazil", "China", "Egypt", "Ethiopia", "India", "Indonesia",
         "Iran", "Russia", "Saudi Arabia", "South Africa", "United Arab Emirates"
       ],
-      "as_of": "2026-09-11",
+      "as_of": "2026-09-21",
       "source_id": "brics-about-the-brics"
     },
     {
@@ -62,7 +62,7 @@
       "members": [
         "Austria", "Belgium", "Bulgaria", "Croatia", "Cyprus", "Czechia", "Denmark", "Estonia", "Finland", "France", "Germany", "Greece", "Hungary", "Ireland", "Italy", "Latvia", "Lithuania", "Luxembourg", "Malta", "Netherlands", "Poland", "Portugal", "Romania", "Slovakia", "Slovenia", "Spain", "Sweden"
       ],
-      "as_of": "2026-09-11",
+      "as_of": "2026-09-21",
       "source_id": "eu-member-states"
     },
     {
@@ -74,7 +74,7 @@
       "members": [
         "Brunei", "Cambodia", "Indonesia", "Laos", "Malaysia", "Myanmar", "Philippines", "Singapore", "Thailand", "Timor-Leste", "Vietnam"
       ],
-      "as_of": "2026-09-11",
+      "as_of": "2026-09-21",
       "source_id": "asean-member-states"
     },
     {
@@ -84,14 +84,14 @@
       "relation_type": "partner",
       "member_basis": "explicit_entities",
       "members": [
-        "ABB", "Accenture", "Amazon", "Apple", "Aramco", "AstraZeneca", "BlackRock", "Citi", "Cisco", "Coca-Cola Company", "Deloitte", "Google", "Goldman Sachs", "IBM", "JPMorganChase", "Mastercard", "McKinsey & Company", "Microsoft", "Nestlé", "Palantir Technologies", "PepsiCo", "Pfizer", "Salesforce", "SAP", "Siemens", "Sony Group", "UBS", "Unilever", "Visa", "Volkswagen Group"
+        "Apple", "Asian Development Bank", "Baidu", "BHP", "bp", "Cargill", "CrowdStrike", "Daimler Truck", "Databricks", "DTEK", "ExxonMobil", "Lockheed Martin", "New York Times", "OpenAI", "Oracle", "Shell", "Siemens Energy", "State Grid Corporation of China", "Stripe", "Tata Sons", "TotalEnergies", "Walmart", "Zoom"
       ],
       "entity_nations": {
-        "ABB": "Switzerland", "Accenture": "Ireland", "Amazon": "United States of America", "Apple": "United States of America", "Aramco": "Saudi Arabia", "AstraZeneca": "United Kingdom", "BlackRock": "United States of America", "Citi": "United States of America", "Cisco": "United States of America", "Coca-Cola Company": "United States of America", "Deloitte": "United Kingdom", "Google": "United States of America", "Goldman Sachs": "United States of America", "IBM": "United States of America", "JPMorganChase": "United States of America", "Mastercard": "United States of America", "McKinsey & Company": "United States of America", "Microsoft": "United States of America", "Nestlé": "Switzerland", "Palantir Technologies": "United States of America", "PepsiCo": "United States of America", "Pfizer": "United States of America", "Salesforce": "United States of America", "SAP": "Germany", "Siemens": "Germany", "Sony Group": "Japan", "UBS": "Switzerland", "Unilever": "United Kingdom", "Visa": "United States of America", "Volkswagen Group": "Germany"
+        "Apple": "United States of America", "Asian Development Bank": "Philippines", "Baidu": "China", "BHP": "Australia", "bp": "United Kingdom", "Cargill": "United States of America", "CrowdStrike": "United States of America", "Daimler Truck": "Germany", "Databricks": "United States of America", "DTEK": "Ukraine", "ExxonMobil": "United States of America", "Lockheed Martin": "United States of America", "New York Times": "United States of America", "OpenAI": "United States of America", "Oracle": "United States of America", "Shell": "United Kingdom", "Siemens Energy": "Germany", "State Grid Corporation of China": "China", "Stripe": "Ireland", "Tata Sons": "India", "TotalEnergies": "France", "Walmart": "United States of America", "Zoom": "United States of America"
       },
-      "as_of": "2026-09-11",
+      "as_of": "2026-09-21",
       "source_id": "wef-membership-and-partners",
-      "note": "The Forum's membership and partner communities are primarily companies and other stakeholders. The entity_nations field is a disclosed home-nation resolution for graph placement, not WEF state membership and not evidence that a nation participated through the company."
+      "note": "Selected entities revalidated against the Forum's published institutional-membership directory on 2026-09-21. The directory is not a state roster. entity_nations is a disclosed headquarters/home-nation resolution for graph placement, not evidence that a nation participated through the entity."
     }
   ],
   "sources": [
@@ -101,7 +101,7 @@
       "publisher": "United Nations",
       "url": "https://www.un.org/about-us/member-states",
       "coverage": "Current UN member-state roster; admission dates supplied by the UN",
-      "retrieved": "2026-09-11",
+      "retrieved": "2026-09-21",
       "license": "United Nations attribution and use terms"
     },
     {
@@ -110,7 +110,7 @@
       "publisher": "North Atlantic Treaty Organization",
       "url": "https://www.nato.int/cps/en/natohq/nato_countries.htm",
       "coverage": "NATO member countries and accession years",
-      "retrieved": "2026-09-11",
+      "retrieved": "2026-09-21",
       "license": "NATO website terms"
     },
     {
@@ -119,7 +119,7 @@
       "publisher": "BRICS Brazil",
       "url": "https://brics.br/en/about-the-brics",
       "coverage": "BRICS member-country roster and stated institutional scope",
-      "retrieved": "2026-09-11",
+      "retrieved": "2026-09-21",
       "license": "Source attribution"
     },
     {
@@ -130,7 +130,7 @@
       "url": "https://european-union.europa.eu/principles-countries-history/country-profiles_en",
       "license": "European Union source terms",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21"
     },
     {
       "id": "asean-member-states",
@@ -140,7 +140,7 @@
       "url": "https://asean.org/member-states/",
       "license": "ASEAN source terms",
       "enclosure": "organization membership roster",
-      "retrieved": "2026-09-11"
+      "retrieved": "2026-09-21"
     },
     {
       "id": "wef-membership-and-partners",
@@ -148,7 +148,7 @@
       "publisher": "World Economic Forum",
       "url": "https://www.weforum.org/communities/partnership-institutional-membership/",
       "coverage": "Institutional membership and partner-community semantics; not a state roster",
-      "retrieved": "2026-09-11",
+      "retrieved": "2026-09-21",
       "license": "World Economic Forum source terms"
     }
   ]

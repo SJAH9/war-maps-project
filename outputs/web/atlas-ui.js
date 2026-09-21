@@ -8,6 +8,7 @@
     ['civilian-casualties.html', 'Human cost'],
     ['life-death.html', 'Living conditions'],
     ['gas-map.html', 'Fuel prices'],
+    ['newsmedia.html', 'NewsMedia'],
     ['information.html', 'Evidence guide']
   ];
   const documentationPages = new Set(['information.html', 'about.html', 'method.html', 'data-conflict.html', 'data-governance.html', 'data-health.html', 'data-maps.html', 'coverage.html', 'sources.html', 'color-legend.html']);
@@ -85,6 +86,12 @@
       read: 'Choose an inclusive date range. Towers total the civilian-death field for events coded in each country; they are not a complete accounting of war deaths, indirect deaths, or every victim.',
       status: 'Recorded event deaths · incomplete by definition',
       sources: [['UCDP GED', 'https://ucdp.uu.se/downloads/'], ['Casualty boundaries', 'data-maps.html#civilian-casualties'], ['Coverage', 'coverage.html']]
+    },
+    'newsmedia.html': {
+      question: 'How are current events being presented across national news sources?',
+      read: 'Compare live coverage without treating a broadcast as a verified observation. Channel selection and framing are publisher decisions; War Maps does not transcribe, rank, or endorse them.',
+      status: 'Live publisher streams · contextual, not evidentiary',
+      sources: [['NewsBoob source', 'https://github.com/SJAH9/newsboob'], ['Evidence guide', 'information.html'], ['Project method', 'method.html']]
     },
     'nation.html': {
       question: 'What does the loaded record contain about one country over time?',
