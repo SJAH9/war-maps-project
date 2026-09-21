@@ -285,7 +285,7 @@
   $('#graph-through-year').addEventListener('input',event=>{$('#graph-year-value').textContent=event.target.value;state.throughYear=Number(event.target.value);state.selected='';render();});
   $('#graph-reset').addEventListener('click',()=>{setSelection('');$('#graph-search').value='';state.svgScene?.fit();});
   $('#graph-optimize').addEventListener('click',()=>state.svgScene?.optimize());
-  $('#graph-browser').addEventListener('click',()=>{const url=new URL('network-3d.html',location.href);if(state.selected)url.searchParams.set('node',state.selected.startsWith('organization:')?state.selected:`nation:${state.selected}`);url.searchParams.set('topology',state.topology);location.href=url;});
+  $('#graph-browser').addEventListener('click',()=>{const url=new URL('network-3d.html',location.href),hub=[...state.nodes.values()].sort(nodePriority)[0]?.id||'';url.searchParams.set('source','graph');url.searchParams.set('node',(state.selected||hub).startsWith('organization:')?state.selected||hub:`nation:${state.selected||hub}`);url.searchParams.set('topology',state.topology);url.searchParams.set('through',String(state.throughYear));url.searchParams.set('minYears',String(state.minYears));url.searchParams.set('relationship',state.relationship);if(state.organizations.length)url.searchParams.set('organizations',state.organizations.join(','));if(state.includeUngrouped)url.searchParams.set('includeUngrouped','1');location.href=url;});
   $('#graph-data').addEventListener('click',viewGraphData);
   $('#graph-help').addEventListener('click',()=>$('#graph-help-dialog').showModal());
   $('#graph-fit').addEventListener('click',()=>state.svgScene?.fit());
