@@ -8,7 +8,7 @@
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
   <link rel="stylesheet" href="styles.css?v=2026-09-19-network-language-r1">
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="graph.js?v=2026-09-19-r8" defer></script>
+  <script src="graph.js?v=2026-09-21-graph-r1" defer></script>
 </head>
 <body class="global-graph-page">
   <header class="site-header">
@@ -41,7 +41,7 @@
       </aside>
       <div class="global-graph-stage">
         <div id="global-graph" role="img" aria-label="Force-directed global network of nations joined by same-side conflict participation"></div>
-        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Central node</span><span><i class="graph-ally"></i>Direct connection</span><span><i class="graph-bridge"></i>Mutual bridge</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Circle: nation</span><span>Diamond: organization</span><span>Click: recenter and follow connections</span></div>
+        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Central node</span><span><i class="graph-ally"></i>Direct connection</span><span><i class="graph-bridge"></i>Mutual bridge</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Ellipse: nation or organization</span><span>Drag empty space: rotate</span><span>Click: recenter and follow connections</span></div>
       </div>
     </section>
     <section class="global-graph-summary" id="global-graph-summary"></section>
@@ -50,7 +50,7 @@
   <dialog class="graph-help-dialog" id="graph-help-dialog" aria-labelledby="graph-help-title">
     <form method="dialog" class="dialog-heading"><div><p class="eyebrow">Graph controls</p><h2 id="graph-help-title">How to navigate</h2></div><button class="icon-button" value="cancel" aria-label="Close graph instructions">×</button></form>
     <div class="graph-help-content">
-      <p><strong>Pan:</strong> drag empty space. <strong>Rotate:</strong> hold Shift or Alt while dragging empty space. <strong>Zoom:</strong> scroll or use the fit button.</p>
+      <p><strong>Rotate:</strong> click and drag empty space. <strong>Zoom:</strong> scroll or use the fit button.</p>
       <p><strong>Move a node:</strong> drag it; release to give it momentum. Connected nodes follow gradually. <strong>Optimize:</strong> lays the selected network out in 3D, with connected nodes grouped around hubs.</p>
       <p><strong>Selection:</strong> selecting a node makes it central and loads all of its immediate recorded connections. Select any connected node to continue through the archive. Search and organization checkboxes can start a new path.</p>
       <p><strong>Optimization landscapes:</strong> each arrangement emphasizes a different structural feature while retaining the same observed edges. No optimization fabricates a relationship.</p>
