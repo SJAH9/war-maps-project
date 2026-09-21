@@ -238,6 +238,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("nodePriority", source)
         self.assertIn("createElementNS(ns,'ellipse')", source)
         self.assertIn("mode:!node?'rotate':'node'", source)
+        self.assertIn("suppressClick", source)
         self.assertIn("Drag empty space: rotate", page)
         self.assertNotIn("const diamond=document.createElementNS", source)
         self.assertNotIn("const top=document.createElementNS", source)
