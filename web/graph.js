@@ -5,7 +5,7 @@
   if(!data?.nations){$('#global-graph').innerHTML='<p class="boundary-note network-error">The global atlas relationship data is unavailable.</p>';return;}
   const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
   const profileByName=new Map(data.nations.map(profile=>[profile.country,profile]));
-  const MAX_GRAPH_NODES=120;
+  const MAX_GRAPH_NODES=72;
   const state={minYears:1,throughYear:2025,view:'network',relationship:'observed',organizations:[],includeUngrouped:false,topology:'equilibrium',selected:'',nodes:new Map(),links:[],model:null,adjacency:new Map(),opponents:new Map(),bridges:new Map(),svgScene:null,omittedNodes:0};
   const colors={base:'#7b8051',isolated:'#4e5145',selected:'#ffd500',ally:'#8b989b',bridge:'#ff8a1f',opponent:'#8f2f27',dim:'#34372f'};
   const relationshipLabel=()=>state.relationship==='observed'?'same-side participation':state.relationship==='organization'?'organization co-membership':'displayed relationship';

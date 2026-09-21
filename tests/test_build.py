@@ -233,7 +233,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("minYears", source)
         self.assertIn("includeUngrouped", source)
         self.assertIn("Math.sqrt(node.degree)", source)
-        self.assertIn("MAX_GRAPH_NODES=120", source)
+        self.assertIn("MAX_GRAPH_NODES=72", source)
         self.assertIn("state.omittedNodes", source)
         self.assertIn("nodePriority", source)
         self.assertIn("createElementNS(ns,'ellipse')", source)
