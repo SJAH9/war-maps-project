@@ -425,6 +425,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("addAtmosphere();state.plateRoot", map_source)
         self.assertIn("function flipToNation(country,selected=null)", map_source)
         self.assertIn("function flipToWorld()", map_source)
+        self.assertIn("const fxDate=$('#gas-fx-date');if(fxDate)fxDate.textContent=data.fx_date", map_source)
         self.assertIn("state.plateRoot.rotation.x+=delta*.15", map_source)
         self.assertIn("else if(!country)flipToWorld()", map_source)
         self.assertIn('id="gas-back"', page.read_text(encoding="utf-8"))
