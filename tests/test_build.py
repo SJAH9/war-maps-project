@@ -22,13 +22,14 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Government of Iran", focal["parties_a"])
 
     def test_all_current_events_and_conflicts_are_available(self):
-        self.assertEqual(self.data["coverage"]["candidate_through"], "2026-07-31")
-        self.assertEqual(self.data["summary"]["candidate_events_2026"], 11867)
-        self.assertEqual(self.data["summary"]["candidate_conflicts"], 485)
+        self.assertEqual(self.data["coverage"]["candidate_through"], "2026-08-31")
+        self.assertEqual(self.data["summary"]["candidate_events_2026"], 13659)
+        self.assertEqual(self.data["summary"]["candidate_conflicts"], 510)
         conflict_ids = {item["id"] for item in self.data["conflicts"]}
         self.assertTrue(all(event["conflict_id"] in conflict_ids for event in self.data["events"]))
         self.assertEqual(len({event["id"] for event in self.data["events"]}), len(self.data["events"]))
         self.assertIn("ucdp-candidate-ged-2026-07", {event["source_id"] for event in self.data["events"]})
+        self.assertIn("ucdp-candidate-ged-2026-08", {event["source_id"] for event in self.data["events"]})
 
     def test_candidate_quality_boundaries_are_machine_readable(self):
         bad_range = next(event for event in self.data["events"] if event["id"] == "625182")
@@ -47,7 +48,7 @@ class WarMapsBuildTests(unittest.TestCase):
         ))
         focal = next(item for item in self.data["conflicts"] if item["id"] == "ucdp-candidate-16905")
         self.assertIn("not a comprehensive regional casualty ledger", focal["layer_scope"])
-        self.assertEqual(focal["observed_through"], "2026-07-30")
+        self.assertEqual(focal["observed_through"], "2026-08-30")
 
     def test_conflict_temporal_bounds_support_network_models(self):
         current = next(item for item in self.data["conflicts"] if item["id"] == "ucdp-candidate-16905")
@@ -282,9 +283,9 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertEqual(spec["template"], "current-regional")
         self.assertEqual(spec["conflict_id"], "ucdp-candidate-16905")
         self.assertEqual(spec["window_start"], "2026-02-28")
-        self.assertEqual(spec["window_end"], "2026-07-30")
+        self.assertEqual(spec["window_end"], "2026-08-31")
         events = [event for event in self.data["events"] if event["conflict_id"] == spec["conflict_id"]]
-        self.assertEqual(len(events), 125)
+        self.assertEqual(len(events), 126)
         self.assertEqual(len({event["country"] for event in events}), 12)
         gcc = {"Bahrain", "Kuwait", "Oman", "Saudi Arabia", "United Arab Emirates"}
         self.assertEqual(sum(event["country"] in gcc for event in events), 25)

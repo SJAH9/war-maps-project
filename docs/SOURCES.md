@@ -10,7 +10,7 @@ UCDP datasets are licensed CC BY 4.0. The War Maps Project does not relicense th
 
 ## UCDP Candidate Events 2026
 
-The live layer combines the January-June 2026 quarterly release with the July 2026 monthly release, the latest files listed by UCDP when revalidated on 9 September 2026. Fresh downloads matched the committed files byte for byte. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping quarterly row. The resulting 11,867 unique observations and all 485 candidate conflict clusters are retained in the generated data and made navigable in the atlas.
+The live layer combines the January-June 2026 quarterly release with the July and August 2026 monthly releases, the latest file listed by UCDP when revalidated on 20 September 2026. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping earlier row. The generated data retains the resulting unique observations and candidate conflict clusters and makes them navigable in the atlas.
 
 Candidate observations are provisional. `code_status`, source count, source office, source headline, date precision, location precision, dyad identifiers, violence type, and low/best/high fatality estimates are retained. A `Clear` event is not transformed into an unrestricted fact; it remains clear within the candidate UCDP enclosure.
 

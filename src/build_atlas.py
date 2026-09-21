@@ -14,10 +14,11 @@ HISTORICAL = ROOT / "data/raw/UcdpPrioConflict_v26_1.csv"
 CURRENT_SOURCES = (
     (ROOT / "data/raw/GEDEvent_v26_01_26_06.csv", "ucdp-candidate-ged-2026-06"),
     (ROOT / "data/raw/GEDEvent_v26_0_7.csv", "ucdp-candidate-ged-2026-07"),
+    (ROOT / "data/raw/GEDEvent_v26_0_8.csv", "ucdp-candidate-ged-2026-08"),
 )
-CANDIDATE_BOUNDARY = "2026-07-31"
-CANDIDATE_LABEL = "July 2026"
-LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-07"
+CANDIDATE_BOUNDARY = "2026-08-31"
+CANDIDATE_LABEL = "August 2026"
+LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-08"
 VDEM = ROOT / "data/raw/V-Dem-CY-Core-v15.csv"
 VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v15.csv"
 GEOMETRY = ROOT / "data/raw/ne_110m_admin_0_countries.geojson"

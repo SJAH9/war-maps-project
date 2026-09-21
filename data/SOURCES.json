@@ -33,6 +33,17 @@
       "sha256": "9fc2c6dd85eee91845512e8ef1055281d9fd028fb98748a6f2a27c6e8aa8c562"
     },
     {
+      "id": "ucdp-candidate-ged-2026-08",
+      "title": "UCDP Candidate Events Dataset, August 2026",
+      "publisher": "Uppsala Conflict Data Program",
+      "coverage": "Provisional global event observations for August 2026, reconciled over the January-July releases by event ID",
+      "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_8.csv",
+      "license": "CC BY 4.0",
+      "enclosure": "candidate-academic-event-dataset",
+      "retrieved": "2026-09-20",
+      "sha256": "2ad6e0b2bfdbaa31873716a3455096923a8539519d69d96aeeea2d0f44a34593"
+    },
+    {
       "id": "vdem-core-v15-rtldi",
       "title": "V-Dem Country-Year Core v15, RTLDI retained fields",
       "publisher": "V-Dem Institute",

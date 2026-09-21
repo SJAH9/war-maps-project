@@ -5,7 +5,7 @@
     "title": "The Iran War Map",
     "subtitle": "The unresolved regional event field",
     "window_start": "2026-02-28",
-    "window_end": "2026-07-30",
+    "window_end": "2026-08-31",
     "focal_date": "2026-02-28",
     "focal_label": "Candidate event field opens",
     "selection_note": "This current-war proof cannot identify a retrospectively decisive movement because the outcome is unresolved. It therefore encloses the complete observed candidate-event interval and treats 28 February only as the opening departure in the loaded record. The frame ends at the latest observed event, not at the present and not at a conflict endpoint.",
@@ -38,7 +38,7 @@
     },
     "sources": {
       "ucdp-candidate": {
-        "title": "UCDP Candidate Events Dataset, June and July 2026 snapshots",
+        "title": "UCDP Candidate Events Dataset, June through August 2026 snapshots",
         "url": "https://ucdp.uu.se/downloads/"
       },
       "vdem": {
