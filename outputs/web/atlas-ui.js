@@ -113,7 +113,7 @@
     if (footer.querySelector('.project-support')) return;
     const support = document.createElement('div');
     support.className = 'project-support';
-    support.innerHTML = '<a href="donate.html">Support this project</a> · <a href="donate.html">1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr</a><br><small>Support is welcome, never obligatory. This project was produced through the time and energy of its principal investigator and over a billion tokens. It satisfied the gnawing need to do something about the state of the world without taking a side or making futile sacrifices. It feels good to work on; it would not feel bad to contribute to it.</small>';
+    support.innerHTML = '<a href="donate.html">Support this project</a> · <a href="donate.html">1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr</a>';
     footer.append(support);
   });
 })();
