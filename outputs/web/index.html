@@ -3,90 +3,64 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
-  <title>Conflict Network · The War Maps Project</title>
+  <meta name="description" content="Explore public evidence about organized conflict—who is involved, where events are recorded, how relationships change, and what the human costs are.">
+  <title>The War Maps Project · Public evidence, connected</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-19-network-language-r1">
-  <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
-  <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="network-model.js?v=2026-09-19-r4" defer></script>
-  <script src="network.js?v=2026-09-19-r10" defer></script>
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
+  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
-<body class="network-page">
+<body class="landing-page">
   <header class="site-header">
-    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./" aria-current="page">Network</a><a href="graph.html">Graph</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="gas-map.html">Gas Map</a><a href="civilian-casualties.html">Casualties</a><a href="information.html">Information</a></nav>
-    <button class="header-command" id="war-dialog-open" type="button"><span aria-hidden="true">⌕</span> Select war</button>
+    <a class="identity" href="./" aria-current="page"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
+    <nav aria-label="Primary navigation"></nav>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
 
-  <main>
-    <section class="network-section" id="network">
-      <div class="network-title">
-        <div><p class="eyebrow">Interactive network model</p><h1 id="network-title">Conflict network</h1></div>
-        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="./">Conflict record</a></div>
+  <main id="main-content" class="landing-main">
+    <section class="landing-hero">
+      <div>
+        <p class="eyebrow">Public evidence · connected without taking sides</p>
+        <h1>See past the fog of war.</h1>
+        <p class="landing-lede">News reports show moments. War Maps helps you see the conflict around them: the people and organizations involved, the places and dates in the public record, the relationships among them, and the human conditions that headlines leave outside the frame.</p>
+        <div class="landing-actions"><a class="primary-action" href="network.html">Explore a conflict</a><a href="civilian-casualties.html">Begin with human cost</a></div>
       </div>
+      <aside class="landing-boundary" aria-label="Project boundary">
+        <p class="eyebrow">What this is</p>
+        <p><strong>An interface to public data.</strong> The project does not collect conflict observations. It connects records from named public and institutional sources and shows the transformations used to make them comparable.</p>
+        <p><strong>What this is not.</strong> It is not intelligence, targeting support, a prediction engine, or an argument for any party. Absence from the data is never treated as proof that nothing happened.</p>
+        <a href="method.html">Read the method and limits</a>
+      </aside>
+    </section>
 
-      <div class="network-controls network-command-deck" aria-label="Network visualization controls">
-        <div class="network-command"><span>Scope</span><button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select conflict</button></div>
-        <div class="network-command"><span>Time</span><label><span>From</span><input id="network-start" type="date"></label><label><span>Through</span><input id="network-end" type="date"></label></div>
-        <label class="network-command"><span>Search</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
-        <label class="network-command"><span>Filter</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
-        <div class="network-command"><span>Layout</span><select id="network-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Coalition shells</option><option value="prisoner">Prisoner's dilemma proxy</option><option value="third-party">Interested third party</option><option value="pirates">Pirates allocation proxy</option><option value="temporal">Temporal orbits</option></select><button class="network-optimize" id="network-optimize" type="button">Arrange</button></div>
-        <div class="network-command"><span>View</span><button class="network-fit" id="network-fit" type="button">Fit</button><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D Browser</button></div>
-        <div class="network-command"><span>Evidence</span><button class="network-data" id="network-data" type="button">View network data</button></div>
+    <section class="landing-path" aria-labelledby="path-title">
+      <header><p class="eyebrow">A path from headline to context</p><h2 id="path-title">Start with the question you have.</h2></header>
+      <div class="question-grid">
+        <a href="map.html"><span>01 · Where and when</span><h3>What happened here?</h3><p>Locate recorded conflicts and events across a time window, then open the source-bounded record behind the map.</p><b>Open the world map →</b></a>
+        <a href="network.html"><span>02 · Participants and events</span><h3>Who is part of this conflict?</h3><p>Follow one conflict through sides, states, actors, locations, and dated observations without turning proximity into blame.</p><b>Open a conflict network →</b></a>
+        <a href="graph.html"><span>03 · Relationships</span><h3>How are these parties connected?</h3><p>Inspect recorded same-side participation and sourced organization membership. Every line has a disclosed rule.</p><b>Follow relationships →</b></a>
+        <a href="civilian-casualties.html"><span>04 · Human cost</span><h3>What do the casualty records show?</h3><p>Compare reported civilian deaths by place and time while keeping incomplete coverage and incompatible estimates visible.</p><b>View civilian deaths →</b></a>
+        <a href="life-death.html"><span>05 · Living conditions</span><h3>What wider conditions surround conflict?</h3><p>Place conflict observations beside population, mortality, life expectancy, fertility, and birth-rate records—never as a causal shortcut.</p><b>Compare living conditions →</b></a>
+        <a href="gas-map.html"><span>06 · Material context</span><h3>How do fuel prices differ?</h3><p>Compare source-dated gasoline and diesel prices with consistent units, fixed scales, local resolution, and linked publishers.</p><b>Compare pump prices →</b></a>
       </div>
+    </section>
 
-      <div class="network-workspace">
-        <div class="network-stage">
-          <div id="network-locale-map" class="network-locale-map" aria-hidden="true"></div>
-          <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
-          <div class="network-legend" aria-label="Network node legend">
-            <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Side A</span><span><i class="side-b"></i> Side B</span><span><i class="nation"></i> Nation + regime</span><span><i class="actor"></i> Actor</span><span><i class="location"></i> Location</span><span><i class="defensive"></i> Defensive casualty role</span><span><i class="offensive"></i> Offensive casualty role</span><span>Events: weekday orbit · week depth</span><span>Size: degree · candidate fatalities</span>
-          </div>
-        </div>
-        <aside class="network-inspector" aria-label="Selected node inspector" aria-live="polite">
-          <div class="network-inspector-head"><p class="eyebrow" id="node-type">Network extent</p><h2 id="node-title">Selected conflict</h2></div>
-          <div class="network-node-meta" id="node-meta"></div>
-          <div class="inspector-tabs" role="tablist" aria-label="Node inspector views">
-            <button type="button" role="tab" data-inspector-view="overview" aria-selected="true">Overview</button>
-            <button type="button" role="tab" data-inspector-view="similar" aria-selected="false" disabled>Similar nodes</button>
-          </div>
-          <section id="node-overview" role="tabpanel"></section>
-          <section id="node-similar" role="tabpanel" hidden>
-            <div class="similar-controls" aria-label="Similar node period">
-              <button type="button" data-similar-era="all" aria-pressed="true">All time</button>
-              <button type="button" data-similar-era="historical" aria-pressed="false">Historical</button>
-              <button type="button" data-similar-era="present" aria-pressed="false">Present</button>
-            </div>
-            <div id="node-similar-list"></div>
-          </section>
-        </aside>
-        <aside class="war-register" aria-label="War Register">
-          <header><p class="eyebrow">Focal-date record</p><h2>War Register</h2><strong id="war-register-date">Today</strong></header>
-          <div class="war-register-actions"><button id="war-register-play" type="button">▶ Play</button><button id="war-register-latest" type="button">Latest record</button></div>
-          <p class="war-register-boundary" id="war-register-boundary"></p>
-          <div class="war-register-list" id="war-register-list"></div>
-        </aside>
+    <section class="landing-trust" aria-labelledby="trust-title">
+      <div><p class="eyebrow">How to read every view</p><h2 id="trust-title">Observation, transformation, and inference stay distinct.</h2></div>
+      <div class="trust-grid">
+        <article><i class="evidence-source"></i><h3>Source record</h3><p>A value or relationship present in a named upstream dataset. The producer, version, date, unit, and coverage boundary should be inspectable.</p></article>
+        <article><i class="evidence-transform"></i><h3>Project transformation</h3><p>A disclosed join, total, conversion, layout, or visual scale created by War Maps from source records.</p></article>
+        <article><i class="evidence-inference"></i><h3>Inference</h3><p>An explicitly labelled analytical interpretation. It can organize questions, but it does not become a sourced fact or legal conclusion.</p></article>
+        <article><i class="evidence-unknown"></i><h3>Unknown or missing</h3><p>A gap stays a gap. The interface does not silently interpolate missing years, infer motives, or turn no record into no event.</p></article>
       </div>
+    </section>
 
-      <div class="network-summary" id="network-summary"></div>
+    <section class="landing-register" aria-labelledby="register-title">
+      <div><p class="eyebrow">Current loaded boundary</p><h2 id="register-title">A reproducible record, not a live claim of completeness.</h2></div>
+      <dl><div><dt>Historical conflict spine</dt><dd>1946–2025</dd></div><div><dt>Provisional event boundary</dt><dd>Through August 2026</dd></div><div><dt>Candidate conflict clusters</dt><dd>510</dd></div><div><dt>Candidate observations</dt><dd>13,659</dd></div></dl>
+      <p>These counts describe the current repository build. They do not describe all wars or all events in the world. <a href="coverage.html">Inspect coverage and missingness</a> or <a href="sources.html">open the complete source guide</a>.</p>
     </section>
   </main>
 
-  <dialog class="war-dialog" id="war-dialog" aria-labelledby="war-dialog-title">
-    <form method="dialog" class="dialog-heading"><div><p class="eyebrow">Complete conflict register</p><h2 id="war-dialog-title">Select war</h2></div><button class="icon-button" value="cancel" aria-label="Close war selector" title="Close war selector">×</button></form>
-    <div class="dialog-controls">
-      <label><span>Find war</span><input id="war-dialog-search" type="search" placeholder="Conflict, territory, state, or party" autocomplete="off"></label>
-      <label><span>Region</span><select id="war-dialog-region"><option value="all">All regions</option><option>Europe</option><option>Middle East</option><option>Asia</option><option>Africa</option><option>Americas</option><option>Other</option></select></label>
-    </div>
-    <div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946-August 2026 source boundary</span></div>
-    <div class="war-dialog-list" id="war-dialog-list"></div>
-  </dialog>
-
-  <footer><a href="about.html">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><a href="method.html">Method and source boundaries</a></footer>
+  <footer><a href="about.html">Purpose and authorship</a><span>No cookies · no tracking · no strategic service to any side</span><a href="https://github.com/SJAH9/war-maps-project">Code, data, and revision history</a></footer>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # Network visualization language
 
-The War Maps Project uses one interaction language across the Conflict Network, Network Graph, and 3D Network Browser. A view should expose five to nine primary information chunks; seven is the default. This is an interface limit, not a limit on the underlying evidence.
+The War Maps Project uses one interaction language across the Conflict Network, Relationship Browser, and 3D Relationship Browser. A view should expose five to nine primary information chunks; seven is the default. This is an interface limit, not a limit on the underlying evidence.
 
 ## Stable vocabulary
 
@@ -27,7 +27,7 @@ The War Maps Project uses one interaction language across the Conflict Network, 
 | View | Seven primary chunks |
 | --- | --- |
 | Conflict Network | Scope, Time, Search, Filter, Layout, View, Evidence |
-| Network Graph | Search, Scope, Filter, Connections, View, Layout, Actions |
+| Relationship Browser | Search, Scope, Filter, Connections, View, Layout, Actions |
 | 3D Network Browser | Search, Filter, Layout, Arrange, Path, Reset, Exit |
 
 The labels may become shorter on small screens, but their meaning and order should remain stable.

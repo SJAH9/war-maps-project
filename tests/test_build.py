@@ -129,7 +129,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("download.download=filename", network_source)
         self.assertIn("Download GraphML", network_source)
         self.assertNotIn("metadata_json", network_source)
-        self.assertIn("candidate fatalities", network_page)
+        self.assertIn("candidate fatality value", network_page)
         self.assertIn('class="conflict"', network_page)
         self.assertIn('class="actor"', network_page)
         self.assertIn("graphology-library", network_page)
@@ -139,11 +139,12 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn('class="war-register"', network_page)
         self.assertIn('src="network-model.js', network_page)
         index_page = ROOT.joinpath("web/index.html").read_text(encoding="utf-8")
-        self.assertIn('src="network-model.js', index_page)
-        self.assertIn('network.js?v=2026-09-19-r10', index_page)
-        self.assertEqual(index_page.count('class="network-command"'), 7)
-        self.assertIn('id="network-topology"', index_page)
-        self.assertIn('id="war-register-list"', index_page)
+        self.assertIn("See past the fog of war", index_page)
+        self.assertIn('href="network.html"', index_page)
+        self.assertIn('href="civilian-casualties.html"', index_page)
+        self.assertIn("Source record", index_page)
+        self.assertIn("Project transformation", index_page)
+        self.assertIn('src="atlas-ui.js', index_page)
         shared_model = ROOT.joinpath("web/network-model.js").read_text(encoding="utf-8")
         self.assertIn("LAND_WEIGHT=.70", shared_model)
         self.assertIn("ASYMMETRY_BONUS=.15", shared_model)
@@ -181,9 +182,8 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("Barabási hub field", navigator_page)
         self.assertIn('src="network-model.js', navigator_page)
         home_page = ROOT.joinpath("web/index.html").read_text(encoding="utf-8")
-        self.assertIn('id="network-canvas"', home_page)
         self.assertIn('href="map.html"', home_page)
-        self.assertIn('src="network.js', home_page)
+        self.assertIn("question you have", home_page)
 
     def test_global_graph_uses_only_same_side_edges(self):
         page = ROOT.joinpath("web/graph.html").read_text(encoding="utf-8")
@@ -513,7 +513,7 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("github.com/SJAH9/war-maps-project", about)
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         for statement in (
-            "The atlas does not appoint itself responsible for truth.",
+            "The atlas makes sources, transformations, coverage, units, dates, evidentiary boundaries, and methods explicit",
             "Sid J.A. Hubbard is the Principal Investigator",
             "written, directed, and engineered by its Principal Investigator",
             "Books and other authored publications linked above are not relicensed",
@@ -536,6 +536,28 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("UCDP Georeferenced Event Dataset 25.1", map_sources)
         self.assertIn("European Central Bank reference rates", map_sources)
         self.assertIn("latest disclosed source observation", method)
+
+    def test_public_understanding_layer_is_source_adjacent_and_accessible(self):
+        guide = (ROOT / "web/atlas-ui.js").read_text(encoding="utf-8")
+        landing = (ROOT / "web/index.html").read_text(encoding="utf-8")
+        styles = (ROOT / "web/styles.css").read_text(encoding="utf-8")
+        for page in (
+            "network.html", "graph.html", "map.html", "life-death.html",
+            "gas-map.html", "civilian-casualties.html", "nation.html",
+        ):
+            markup = (ROOT / "web" / page).read_text(encoding="utf-8")
+            self.assertIn('src="atlas-ui.js', markup, page)
+        for phrase in (
+            "Question this view can answer", "Source record",
+            "Project transformation", "Inference", "Coverage",
+        ):
+            self.assertIn(phrase, guide)
+        self.assertIn("See past the fog of war", landing)
+        self.assertIn("Unknown or missing", landing)
+        self.assertIn("no cookies", landing.lower())
+        self.assertIn(".skip-link", styles)
+        self.assertIn("prefers-reduced-motion", styles)
+        self.assertIn("focus-visible", styles)
 
     def test_world_map_joins_health_and_governance_without_extrapolation(self):
         page = (ROOT / "web/map.html").read_text(encoding="utf-8")

@@ -9,18 +9,19 @@
     try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}
     catch(error){document.documentElement.dataset.theme='dark';}
   </script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-07-network-r2">
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
   <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
   <script src="app.js?v=2026-09-07-map-r1" defer></script>
+  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body>
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
     <nav aria-label="Primary navigation">
-      <a href="./">Network</a><a href="graph.html">Graph</a><a href="map.html" aria-current="page">Map</a><a href="life-death.html">Life and Death</a><a href="gas-map.html">Gas Map</a><a href="civilian-casualties.html">Casualties</a><a href="information.html">Information</a>
+      <a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html" aria-current="page">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a>
     </nav>
     <button class="header-command" id="war-dialog-open" type="button">Select war</button>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
@@ -30,10 +31,10 @@
     <section class="explorer" id="explore">
       <div class="title-band">
         <div>
-          <p class="eyebrow">Organized armed conflict · 1946-present</p>
-          <h1>War Maps</h1>
+          <p class="eyebrow">Public conflict records · 1946 to source boundary</p>
+          <h1>Conflict Map</h1>
         </div>
-        <p class="scope">Claims remain nested inside source, actor, time, place, and coding conditions. Map color indicates recorded conflict activity under the disclosed source methods.</p>
+        <p class="scope">Map color counts records that meet the current filters. It does not show territorial control, danger, military strength, responsibility, or a complete count of harm.</p>
       </div>
 
       <div class="controls" aria-label="Map controls">

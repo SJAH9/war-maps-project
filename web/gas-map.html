@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="A source-dated, isometric map of local pump gasoline and diesel prices across the United States, Europe, Asia, Oceania, and islands.">
-  <title>Gas Map · The War Maps Project</title>
+  <title>Fuel Prices · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-18-gas">
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
   <link rel="stylesheet" href="gas-map.css?v=2026-09-19-h">
   <link rel="stylesheet" href="gas-map-layers.css?v=2026-09-19-a">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
@@ -14,16 +14,17 @@
   <script src="assets/world-geometry.js" defer></script>
   <script src="gas-price-data.js" defer></script>
   <script src="gas-map.js?v=2026-09-21-k" defer></script>
+  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body class="gas-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./">Network</a><a href="graph.html">Graph</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="gas-map.html" aria-current="page">Gas Map</a><a href="civilian-casualties.html">Casualties</a><a href="information.html">Information</a></nav>
+    <nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a href="gas-map.html" aria-current="page">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
   <main class="gas-main">
     <div class="gas-heading">
-      <div><p class="eyebrow">Fuel · Place · Price</p><h1>Gas Map</h1></div>
+      <div><p class="eyebrow">Fuel · place · source date</p><h1>Fuel Prices</h1></div>
       <p>Pump prices across local, regional, and national reporting boundaries, displayed in USD per U.S. gallon. Click a nation to turn the map over, or select a price tower to see its date, geography, and source.</p>
     </div>
     <div class="gas-controls" aria-label="Gas Map controls">

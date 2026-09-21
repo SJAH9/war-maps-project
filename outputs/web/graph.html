@@ -4,23 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="Connection-following graph of states and organizations joined by observed relationships in the War Maps archive.">
-  <title>Network Graph · The War Maps Project</title>
+  <title>Relationship Browser · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-19-network-language-r1">
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
   <script src="data.js?v=2026-09-09-r1" defer></script>
   <script src="graph.js?v=2026-09-21-graph-r2" defer></script>
+  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body class="global-graph-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./">Network</a><a href="graph.html" aria-current="page">Graph</a><a href="map.html">Map</a><a href="life-death.html">Life and Death</a><a href="gas-map.html">Gas Map</a><a href="civilian-casualties.html">Casualties</a><a href="information.html">Information</a></nav>
+    <nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html" aria-current="page">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
 
   <main class="global-graph-main">
     <section class="global-graph-title">
-      <div><p class="eyebrow">Connection-following field · 1946 to source boundary</p><h1 id="graph-page-title">Network Graph</h1></div>
-      <p id="graph-rule-description">Every line is a recorded same-side state participation. Historic opponents appear through the alliance paths that connect them, never as fabricated direct ties.</p>
+      <div><p class="eyebrow">Recorded participation · 1946 to source boundary</p><h1 id="graph-page-title">Relationship Browser</h1></div>
+      <p id="graph-rule-description">Every observed line joins states recorded on the same side of at least one conflict-year. Historical opponents appear only in the inspector; the view does not invent a direct relationship between them.</p>
     </section>
 
     <section class="global-graph-controls network-command-deck" aria-label="Network visualization controls">

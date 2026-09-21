@@ -1,5 +1,7 @@
 # War Maps Project 0.10.0 — conflict topology and map-data boundaries
 
+> Historical release note. The current interface now defaults to the latest ten calendar years (2017–2026); this file preserves the five-year default shipped in 0.10.0.
+
 This release expands the conflict-specific 3D network, introduces a bounded Civilian Casualties time view, and brings the Gas Map and casualty-map sources into the atlas Information section.
 
 ## Conflict-network changes

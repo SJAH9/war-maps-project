@@ -4,7 +4,7 @@
     const data=window.WAR_MAPS_DATA,model=window.WAR_MAPS_NETWORK_MODEL,root=document.querySelector('#navigator');
     if(!data||!model||!root)return;
     const $=selector=>document.querySelector(selector),esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
-    if(!window.ForceGraph3D){root.innerHTML='<p class="navigator-loading">The 3D renderer is unavailable. <a href="graph.html">Open the accessible Network Graph</a>.</p>';return;}
+    if(!window.ForceGraph3D){root.innerHTML='<p class="navigator-loading">The 3D renderer is unavailable. <a href="graph.html">Open the accessible Relationship Browser</a>.</p>';return;}
     const params=new URLSearchParams(location.search),catalog=new Map(),edgeIndex=new Map(),adjacency=new Map(),nationNames=new Set();
     const kindLabel={nation:'Nation',conflict:'Conflict',event:'Event',human:'Human',organization:'Organization',location:'Place'};
     const kindColor={nation:'#7e914b',conflict:'#f07800',event:'#d8c58f',human:'#58a7b8',organization:'#b56d4d',location:'#8d79a8'};
@@ -148,7 +148,7 @@
     $('#navigator-fit').addEventListener('click',()=>state.graph?.zoomToFit(650,90));$('#navigator-optimize').addEventListener('click',()=>optimize());$('#navigator-topology').addEventListener('change',event=>{state.topology=event.target.value;optimize();updateConnections();});$('#navigator-type').addEventListener('change',event=>{state.type=event.target.value;state.graph?.nodeColor(nodeColor).refresh();updateLabels();});
     $('#navigator-search').addEventListener('keydown',event=>{if(event.key!=='Enter')return;const query=event.currentTarget.value.trim().toLowerCase();if(!query)return;const matches=[...catalog.values()].filter(node=>state.type==='all'||node.kind===state.type).sort((a,b)=>{const ax=a.label.toLowerCase()===query?0:a.label.toLowerCase().startsWith(query)?1:2,bx=b.label.toLowerCase()===query?0:b.label.toLowerCase().startsWith(query)?1:2;return ax-bx||globalDegree(b.id)-globalDegree(a.id);}),match=matches.find(node=>node.label.toLowerCase().includes(query));if(match)focus(match.id);});
     $('#navigator-close').addEventListener('click',()=>{if(history.length>1)history.back();else location.href='graph.html';});
-    try{renderGraph();}catch(error){const fallback=new URL('graph.html',location.href),center=catalog.get(state.center);if(center?.kind==='nation')fallback.searchParams.set('node',center.label);root.innerHTML=`<p class="navigator-loading">The browser could not create a WebGL context. <a href="${fallback.href}">Continue through this node in the Network Graph</a>.</p>`;$('#navigator-title').textContent='3D Network Browser unavailable';$('#navigator-status').textContent=error.message;updateInspector();updateConnections();}
+    try{renderGraph();}catch(error){const fallback=new URL('graph.html',location.href),center=catalog.get(state.center);if(center?.kind==='nation')fallback.searchParams.set('node',center.label);root.innerHTML=`<p class="navigator-loading">The browser could not create a WebGL context. <a href="${fallback.href}">Continue through this node in the Relationship Browser</a>.</p>`;$('#navigator-title').textContent='3D Network Browser unavailable';$('#navigator-status').textContent=error.message;updateInspector();updateConnections();}
   };
   window.addEventListener('load',start,{once:true});
 })();

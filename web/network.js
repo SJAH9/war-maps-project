@@ -1055,7 +1055,7 @@
     $('#network-end').value = bounds.end;
     $('#network-title').textContent = conflict.title;
     $('#network-status').textContent = bounds.current ? `${bounds.start} through present · observed through ${bounds.observedEnd}` : `${bounds.start} through ${bounds.end}`;
-    $('#conflict-record-link').href = `map.html?conflict=${encodeURIComponent(id)}#detail`;
+      $('#conflict-record-link').href = `map.html?conflict=${encodeURIComponent(id)}#detail`;
     if (updateUrl) history.replaceState(null,'',`?conflict=${encodeURIComponent(id)}`);
     renderGraph();
   }

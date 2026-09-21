@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="An isometric comparison of conflict observations, population, all-cause mortality, total fertility, and crude birth rate.">
-  <title>Life and Death · The War Maps Project</title>
+  <title>Conflict and Living Conditions · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-03-r3">
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
@@ -15,18 +15,19 @@
   <script src="population-data.js?v=2026-09-03-r2" defer></script>
   <script src="assets/world-geometry.js?v=2026-09-07-r1" defer></script>
   <script src="life-death.js?v=2026-09-09-r1" defer></script>
+  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body class="life-death-page">
   <header class="site-header">
     <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="./">Network</a><a href="graph.html">Graph</a><a href="map.html">Map</a><a href="life-death.html" aria-current="page">Life and Death</a><a href="gas-map.html">Gas Map</a><a href="civilian-casualties.html">Casualties</a><a href="information.html">Information</a></nav>
+    <nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html" aria-current="page">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
     <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
   </header>
 
   <main>
     <section class="mortality-section">
       <div class="mortality-title">
-        <div><p class="eyebrow">Conflict and population health</p><h1>Life and Death</h1></div>
+        <div><p class="eyebrow">Conflict beside population health</p><h1>Living Conditions</h1></div>
         <p>Compare UCDP candidate-observation density with population, age-standardized all-cause mortality, total fertility, and crude birth rate. Candidate casualty estimates are not summed because records may overlap.</p>
       </div>
 

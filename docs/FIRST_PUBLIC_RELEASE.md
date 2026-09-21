@@ -15,7 +15,7 @@ Peer-reviewed data availability defines the expansion field. Every imported data
 The first public release provides:
 
 - the complete UCDP/PRIO state-based conflict-year register from 1946 through 2025;
-- 11,867 unique UCDP Candidate observations through July 2026, reconciled by stable event ID;
+- 13,659 unique UCDP Candidate observations through August 2026, reconciled by stable event ID;
 - 485 navigable candidate conflict clusters across state-based, non-state, and one-sided violence;
 - V-Dem country-year conditions and Regimes of the World classifications;
 - world, conflict, and nation exploration with Date, All time, and Raw data views;

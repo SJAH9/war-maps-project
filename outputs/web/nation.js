@@ -7,7 +7,7 @@
   const nation = data.nations.find(item => item.country === requested || item.map_name === requested);
   if (!nation) {
     $('#nation-name').textContent = 'Nation not found';
-    $('#nation-summary').innerHTML = '<a href="./">Return to the world map</a>';
+    $('#nation-summary').innerHTML = '<a href="map.html">Return to the world map</a>';
     return;
   }
 
@@ -147,7 +147,7 @@
     ];
     $('#nation-year-stats').innerHTML=stats.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
     const records=roles.conflictIds.map(id=>conflictsById.get(id)).filter(Boolean);
-    $('#nation-year-records').innerHTML=records.length?records.map(item=>`<a class="record-link" href="index.html?conflict=${encodeURIComponent(item.id)}#detail"><strong>${esc(item.title)}</strong><span>${esc(item.type)} · ${esc(item.incompatibility)}</span></a>`).join(''):'<p class="boundary-note">No conflict-profile record occupies this nation-year. Candidate source rows may still appear in Raw data.</p>';
+    $('#nation-year-records').innerHTML=records.length?records.map(item=>`<a class="record-link" href="network.html?conflict=${encodeURIComponent(item.id)}"><strong>${esc(item.title)}</strong><span>${esc(item.type)} · ${esc(item.incompatibility)}</span></a>`).join(''):'<p class="boundary-note">No conflict-profile record occupies this nation-year. Candidate source rows may still appear in Raw data.</p>';
   }
 
   function renderTimeline() {
