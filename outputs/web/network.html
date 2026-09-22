@@ -6,14 +6,14 @@
   <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
   <title>Explore a Conflict · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r3">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="network-model.js?v=2026-09-19-r4" defer></script>
-  <script src="network.js?v=2026-09-19-r10" defer></script>
+  <script src="network-model.js?v=2026-09-21-r5" defer></script>
+  <script src="network.js?v=2026-09-21-r11" defer></script>
   <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body class="network-page">
@@ -36,7 +36,7 @@
         <div class="network-command"><span>Time</span><label><span>From</span><input id="network-start" type="date"></label><label><span>Through</span><input id="network-end" type="date"></label></div>
         <label class="network-command"><span>Search</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
         <label class="network-command"><span>Filter</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
-        <div class="network-command"><span>Layout</span><select id="network-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Coalition shells</option><option value="prisoner">Prisoner's dilemma proxy</option><option value="third-party">Interested third party</option><option value="pirates">Pirates allocation proxy</option><option value="temporal">Temporal orbits</option></select><button class="network-optimize" id="network-optimize" type="button">Arrange</button></div>
+        <div class="network-command"><span>Layout</span><select id="network-topology"><option value="equilibrium">Balanced relationships</option><option value="coalitions">Group by side</option><option value="prisoner">Opposing fields</option><option value="third-party">Emphasize bridges</option><option value="pirates">Influence hierarchy</option><option value="temporal">Arrange by time</option></select><button class="network-optimize" id="network-optimize" type="button">Arrange</button></div>
         <div class="network-command"><span>View</span><button class="network-fit" id="network-fit" type="button">Fit</button><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D Browser</button></div>
         <div class="network-command"><span>Evidence</span><button class="network-data" id="network-data" type="button">View network data</button></div>
       </div>

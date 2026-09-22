@@ -206,8 +206,7 @@
     $('#related-title').textContent=regime?regime.name:'World conflict field';
     const regimeWindow=state.healthLayer!=='none'?`health observation year ${state.healthYear}`:state.start>vdemBoundaryYear?`latest available classification (${vdemBoundaryYear}), carried to the map boundary`:`at least once in ${state.start}-${Math.min(state.end,vdemBoundaryYear)}`;
     $('#related-note').textContent=regime?`Nations classified by V-Dem as ${regime.name.toLowerCase()} using the ${regimeWindow}.`:'Statistics describe nations and conflict records visible in the current map enclosure.';
-    const satelliteRelation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);
-    const stats=[['Highlighted nations',nations.length],['Unique conflicts',conflictIds.size],['Interstate conflicts',relevant.filter(item=>item.type==='interstate').length],['Territorial incompatibilities',relevant.filter(item=>item.incompatibility==='territory').length],['Candidate observations',candidateEvents.length],['Candidate casualty roll-up','Not computed; observations may overlap'],['Public satellite paths',state.satellites&&satelliteRelation?`${satelliteRelation.object_count} approximate tracks`:'Layer off'],['Military spending','Not available in UCDP/V-Dem']];
+    const stats=[['Highlighted nations',nations.length],['Unique conflicts',conflictIds.size],['Interstate conflicts',relevant.filter(item=>item.type==='interstate').length],['Territorial incompatibilities',relevant.filter(item=>item.incompatibility==='territory').length],['Candidate observations',candidateEvents.length],['Candidate casualty roll-up','Not computed; observations may overlap'],['Military spending','Not available in UCDP/V-Dem']];
     $('#related-stats').innerHTML=stats.map(([label,value])=>`<div><span>${esc(label)}</span><strong>${esc(value)}</strong></div>`).join('');
     renderRegimeHealth();
   }

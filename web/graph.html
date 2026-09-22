@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Connection-following graph of states and organizations joined by observed relationships in the War Maps archive.">
+  <meta name="description" content="Connection-following browser for nations, organizations, and conflicts joined by sourced relationships in the War Maps archive.">
   <title>Relationship Browser · The War Maps Project</title>
   <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
+  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r3">
   <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="graph.js?v=2026-09-21-graph-r2" defer></script>
+  <script src="graph.js?v=2026-09-21-graph-r3" defer></script>
   <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body class="global-graph-page">
@@ -21,29 +21,34 @@
   <main class="global-graph-main">
     <section class="global-graph-title">
       <div><p class="eyebrow">Recorded participation · 1946 to source boundary</p><h1 id="graph-page-title">Relationship Browser</h1></div>
-      <p id="graph-rule-description">Every observed line joins states recorded on the same side of at least one conflict-year. Historical opponents appear only in the inspector; the view does not invent a direct relationship between them.</p>
+      <p id="graph-rule-description">Follow source-bounded connections among nations, organizations, and conflicts. The selected layout changes their arrangement, never the underlying evidence.</p>
     </section>
 
     <section class="global-graph-controls network-command-deck" aria-label="Network visualization controls">
       <label class="network-command"><span>Search</span><input id="graph-search" type="search" placeholder="Nation or organization"></label>
       <div class="network-command"><span>Scope</span><label class="graph-year-control"><span>Through <output id="graph-year-value">2025</output></span><input id="graph-through-year" type="range" min="1946" max="2025" value="2025"></label></div>
       <details class="network-command network-command-menu"><summary><span>Filter</span><strong>Organizations</strong></summary><fieldset class="graph-organization-filter"><legend>Organization membership</legend><label><input type="checkbox" data-organization="un"> UN</label><label><input type="checkbox" data-organization="nato"> NATO</label><label><input type="checkbox" data-organization="brics"> BRICS</label><label><input type="checkbox" data-organization="eu"> EU</label><label><input type="checkbox" data-organization="asean"> ASEAN</label><label><input type="checkbox" data-organization="wef"> WEF</label><label class="graph-ungrouped-option"><input id="graph-include-ungrouped" type="checkbox"> Include ungrouped nations</label></fieldset></details>
-      <div class="network-command"><span>Connections</span><select id="graph-relationship" aria-label="Connection evidence"><option value="observed">Observed participation</option><option value="organization">Organization membership</option><option value="combined">Observed + organization</option></select><select id="graph-min-years" aria-label="Minimum shared years"><option value="1">1+ shared year</option><option value="2">2+ shared years</option><option value="5">5+ shared years</option><option value="10">10+ shared years</option></select></div>
+      <div class="network-command"><span>Connections</span><select id="graph-relationship" aria-label="Connection evidence"><option value="combined" selected>Conflicts + organizations</option><option value="participation">Nation ↔ conflict</option><option value="organization">Nation ↔ organization</option><option value="observed">Nation co-participation</option></select><select id="graph-min-years" aria-label="Minimum observed years"><option value="1">1+ observed year</option><option value="2">2+ observed years</option><option value="5">5+ observed years</option><option value="10">10+ observed years</option></select></div>
       <label class="network-command"><span>View</span><select id="graph-view"><option value="network">Network</option><option value="matrix">Adjacency matrix</option><option value="timeline">Timeline</option></select></label>
-      <div class="network-command"><span>Layout</span><select id="graph-topology"><option value="equilibrium">Equilibrium sphere</option><option value="coalitions">Connection shells</option><option value="barabasi">Barabási hub field</option><option value="erdos-renyi">Erdős–Rényi distribution</option><option value="watts-strogatz">Watts–Strogatz ring</option><option value="radial">Degree radial</option><option value="lattice">Cubic lattice</option><option value="prisoner">Opposing fields</option><option value="third-party">Bridge landscape</option><option value="pirates">Influence hierarchy</option><option value="temporal">Temporal landscape</option></select><button class="graph-optimize" id="graph-optimize" type="button">Arrange</button></div>
+      <div class="network-command"><span>Layout</span><select id="graph-topology"><option value="equilibrium">Balanced relationships</option><option value="coalitions">Group by connection</option><option value="barabasi">Emphasize hubs</option><option value="radial">Degree rings</option><option value="third-party">Emphasize bridges</option><option value="pirates">Influence hierarchy</option><option value="temporal">Arrange by time</option><option value="watts-strogatz">Ring comparison</option><option value="lattice">Grid comparison</option><option value="erdos-renyi">Random comparison</option><option value="prisoner">Opposing fields</option></select><button class="graph-optimize" id="graph-optimize" type="button">Arrange</button></div>
       <details class="network-command network-command-menu network-command-actions"><summary><span>Actions</span><strong>Open tools</strong></summary><div><button class="graph-fit" id="graph-fit" type="button">Fit network</button><button id="graph-reset" type="button">Reset view</button><button id="graph-browser" type="button">Open 3D Browser</button><button id="graph-data" type="button">View data</button><button id="graph-help" type="button">Navigation help</button></div></details>
     </section>
 
-    <section class="global-graph-workspace">
-      <aside class="global-graph-inspector" aria-live="polite">
+    <section class="global-graph-workspace network-workspace relationship-workspace">
+      <aside class="global-graph-inspector network-inspector" aria-live="polite">
         <div class="global-graph-inspector-head"><p class="eyebrow" id="graph-node-type">Global field</p><h2 id="graph-node-title">All participating states</h2></div>
         <div class="global-graph-metrics" id="graph-node-metrics"></div>
         <div id="graph-node-detail"></div>
       </aside>
-      <div class="global-graph-stage">
-        <div id="global-graph" role="img" aria-label="Force-directed global network of nations joined by same-side conflict participation"></div>
-        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Central node</span><span><i class="graph-ally"></i>Direct connection</span><span><i class="graph-bridge"></i>Mutual bridge</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Ellipse: nation or organization</span><span>Drag empty space: rotate</span><span>Click: recenter and follow connections</span></div>
+      <div class="global-graph-stage network-stage">
+        <div id="global-graph" role="img" aria-label="Interactive relationship network of nations, organizations, and conflicts"></div>
+        <div class="global-graph-legend" aria-label="Graph legend"><span><i class="graph-selected"></i>Central node</span><span><i class="graph-ally"></i>Direct connection</span><span><i class="graph-bridge"></i>Mutual bridge</span><span><i class="graph-opponent"></i>Historic opponent</span><span>Olive: nation</span><span>Orange: organization</span><span>Clay circle: conflict</span><span>Drag empty space: rotate</span><span>Click: recenter and follow connections</span></div>
       </div>
+      <aside class="war-register relationship-register" aria-label="Connection Register">
+        <header><p class="eyebrow">Sourced neighborhood</p><h2>Connection Register</h2><strong id="relationship-register-title">Highest-reach nodes</strong></header>
+        <p class="war-register-boundary">Select an entry to center it while retaining nearby context.</p>
+        <div class="war-register-list" id="relationship-register-list"></div>
+      </aside>
     </section>
     <section class="global-graph-summary" id="global-graph-summary"></section>
   </main>
@@ -53,7 +58,7 @@
     <div class="graph-help-content">
       <p><strong>Rotate:</strong> click and drag empty space. <strong>Zoom:</strong> scroll or use the fit button.</p>
       <p><strong>Move a node:</strong> drag it; release to give it momentum. Connected nodes follow gradually. <strong>Optimize:</strong> lays the selected network out in 3D, with connected nodes grouped around hubs.</p>
-      <p><strong>Selection:</strong> selecting a node makes it central and loads all of its immediate recorded connections. Select any connected node to continue through the archive. Search and organization checkboxes can start a new path.</p>
+      <p><strong>Selection:</strong> selecting a node makes it central and retains up to two degrees of recorded context. Select any connected node to continue through the archive. Search and organization checkboxes can start a new path.</p>
       <p><strong>Optimization landscapes:</strong> each arrangement emphasizes a different structural feature while retaining the same observed edges. No optimization fabricates a relationship.</p>
     </div>
   </dialog>

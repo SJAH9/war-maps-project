@@ -60,7 +60,7 @@
   const dragPullFactor=(depth,distance)=>{const base=[0,.82,.42,.14,.035][depth]||0,scale=Math.min(1.8,.55+distance/180);return base*scale;};
   const weeklyOrbit=(event,anchor,originDate,slot=0)=>{const day=Math.max(0,Math.round((Date.parse(`${event.date_start}T00:00:00Z`)-Date.parse(`${originDate}T00:00:00Z`))/86400000)),weekday=new Date(`${event.date_start}T00:00:00Z`).getUTCDay(),week=Math.floor(day/7),angle=weekday*Math.PI*2/7+slot*.055,radius=31+Math.min(16,slot*3.5);return {x:anchor.x+Math.cos(angle)*radius,y:anchor.y+Math.sin(angle)*radius,z:anchor.z+week*7+(slot%3-1)*1.7};};
   const spherePoint=(index,count,radius,center={x:0,y:0,z:0},phase=0)=>{const y=1-2*(index+.5)/Math.max(1,count),radial=Math.sqrt(Math.max(0,1-y*y)),angle=index*2.399963229728653+phase;return {x:center.x+Math.cos(angle)*radial*radius,y:center.y+y*radius,z:center.z+Math.sin(angle)*radial*radius};};
-  const topologyNames={equilibrium:'Equilibrium sphere',coalitions:'Coalition shells',prisoner:"Prisoner's dilemma proxy",'third-party':'Interested third party',pirates:'Pirates allocation proxy',temporal:'Temporal orbits'};
+  const topologyNames={equilibrium:'Balanced relationships',coalitions:'Group by conflict side',prisoner:'Opposing fields', 'third-party':'Emphasize bridges and intermediaries',pirates:'Influence hierarchy',temporal:'Arrange observations by time'};
   const topologyPositions=(nodes,{conflictId,method='equilibrium',originDate=''})=>{
     if(!topologyNames[method])method='equilibrium';
     const positions=new Map(),conflict=`conflict:${conflictId}`,centers={A:{x:-255,y:-70,z:0},B:{x:255,y:-70,z:0}};

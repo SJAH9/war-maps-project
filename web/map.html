@@ -11,10 +11,9 @@
   </script>
   <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
   <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js" defer></script>
   <script src="data.js?v=2026-09-09-r1" defer></script>
   <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
-  <script src="app.js?v=2026-09-07-map-r1" defer></script>
+  <script src="app.js?v=2026-09-21-map-r2" defer></script>
   <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
 </head>
 <body>
@@ -52,7 +51,7 @@
       </div>
       <div class="map-workspace">
         <div class="map-stage">
-          <div class="satellite-toolbar">
+          <div class="satellite-toolbar" hidden aria-hidden="true" data-feature-status="temporarily-disabled">
             <label><input id="satellite-toggle" type="checkbox"><span>Satellite paths</span></label>
             <select id="satellite-constellation" aria-label="Satellite constellation"><option value="iceye-ukraine-support">ICEYE SAR · Ukraine support</option></select>
             <span id="satellite-note">Frozen public orbit snapshot · constellation relation</span>
