@@ -646,6 +646,10 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("plausible_alternative_history", classes)
 
     def test_satellite_geometry_is_separate_from_conflict_relation(self):
+        map_page = ROOT.joinpath("web/map.html").read_text(encoding="utf-8")
+        styles = ROOT.joinpath("web/styles.css").read_text(encoding="utf-8")
+        self.assertIn('class="satellite-toolbar" hidden', map_page)
+        self.assertIn(".satellite-toolbar[hidden]{display:none!important}", styles)
         relation = next(item for item in self.data["satellite_constellations"] if item["constellation_id"] == "iceye-ukraine-support")
         self.assertGreaterEqual(relation["object_count"], 40)
         self.assertEqual(relation["relation_class"], "documented_constellation_support")
