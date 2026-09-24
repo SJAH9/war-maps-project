@@ -203,11 +203,13 @@
       "title": "About the BRICS",
       "publisher": "BRICS Brazil",
       "coverage": "BRICS member-country roster and institutional scope",
-      "url": "https://brics.br/en/about-the-brics",
+      "url": "https://sjah9.github.io/war-maps-project/outputs/web/sources.html#brics-source",
       "license": "Source attribution",
       "enclosure": "organization membership roster",
       "retrieved": "2026-09-21",
-      "refresh_status": "Verified at 11 full members"
+      "refresh_status": "Verified at 11 full members",
+      "original_url": "https://brics.br/en/about-the-brics",
+      "availability_note": "The original BRICS Brazil roster was retrieved on 2026-09-21. Its host failed DNS resolution on 2026-09-23; the public link opens the provenance note and Library of Congress source guide. Membership observations are unchanged."
     },
     {
       "id": "eu-member-states",

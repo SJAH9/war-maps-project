@@ -117,7 +117,9 @@
       "id": "brics-about-the-brics",
       "title": "About the BRICS",
       "publisher": "BRICS Brazil",
-      "url": "https://brics.br/en/about-the-brics",
+      "url": "https://sjah9.github.io/war-maps-project/outputs/web/sources.html#brics-source",
+      "original_url": "https://brics.br/en/about-the-brics",
+      "availability_note": "The original BRICS Brazil roster was retrieved on 2026-09-21. Its host failed DNS resolution on 2026-09-23; the public link opens the provenance note and Library of Congress source guide. Membership observations are unchanged.",
       "coverage": "BRICS member-country roster and stated institutional scope",
       "retrieved": "2026-09-21",
       "license": "Source attribution"
