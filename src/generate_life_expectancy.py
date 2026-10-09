@@ -58,7 +58,7 @@ def generate(source: Path, output: Path) -> Path:
                 "doi": "https://doi.org/10.1111/j.1728-4457.2005.00083.x",
             },
             "post_1950": "United Nations World Population Prospects 2024",
-            "retrieved": "2026-09-19",
+            "retrieved": next(s["retrieved"] for s in json.loads((ROOT / "data/SOURCES.json").read_text())["sources"] if s["id"] == "owid-long-run-life-expectancy-2026-09-19"),
             "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
         },
         "locations": locations,

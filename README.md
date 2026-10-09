@@ -48,7 +48,7 @@ Interactive graphics retain a text inspector, register, list, table, or download
 
 The complete interface rules and publication checklist are documented in [Public-understanding interface](docs/PUBLIC_UNDERSTANDING_DESIGN.md).
 
-The latest source-by-source audit is [Data refresh · 21 September 2026](docs/DATA_REFRESH_2026-09-21.md). It records updated, unchanged, and access-limited sources separately.
+The latest source-by-source audit is [Data refresh · 8 October 2026](docs/DATA_REFRESH_2026-10-08.md). It records updated, unchanged, and retained sources separately. Official conflict downloads remain unchanged; the World Bank crude birth-rate response has been refreshed.
 
 Sid J.A. Hubbard is the Principal Investigator of the War Maps Project. At this stage, the entirety of the atlas is written, directed, and engineered by its Principal Investigator with the assistance of AI and data-science tools. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator.
 

@@ -9,9 +9,9 @@
       "license": "CC BY 4.0",
       "enclosure": "reviewed-academic-conflict-dataset",
       "retrieved": "2026-08-28",
-      "verified": "2026-09-21",
+      "verified": "2026-10-08",
       "sha256": "2aea044f1bcae7b050bb6c79fb796743e787edeed3b90e74e146cfc4e5b05447",
-      "refresh_status": "Official downloads page still lists v26.1 as current"
+      "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
       "id": "ucdp-ged-26.1",
@@ -22,7 +22,9 @@
       "license": "CC BY 4.0",
       "enclosure": "reviewed-academic-georeferenced-event-dataset",
       "retrieved": "2026-09-21",
-      "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667"
+      "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
+      "verified": "2026-10-08",
+      "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
       "id": "ucdp-candidate-ged-2026-06",
@@ -33,7 +35,9 @@
       "license": "CC BY 4.0",
       "enclosure": "candidate-academic-event-dataset",
       "retrieved": "2026-09-09",
-      "sha256": "68dd3d363b8edf4808bd6bf6f5d0412c3c722ffb1db367aeb8eff48bab80589a"
+      "sha256": "68dd3d363b8edf4808bd6bf6f5d0412c3c722ffb1db367aeb8eff48bab80589a",
+      "verified": "2026-10-08",
+      "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
       "id": "ucdp-candidate-ged-2026-07",
@@ -44,7 +48,9 @@
       "license": "CC BY 4.0",
       "enclosure": "candidate-academic-event-dataset",
       "retrieved": "2026-09-09",
-      "sha256": "9fc2c6dd85eee91845512e8ef1055281d9fd028fb98748a6f2a27c6e8aa8c562"
+      "sha256": "9fc2c6dd85eee91845512e8ef1055281d9fd028fb98748a6f2a27c6e8aa8c562",
+      "verified": "2026-10-08",
+      "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
       "id": "ucdp-candidate-ged-2026-08",
@@ -55,7 +61,9 @@
       "license": "CC BY 4.0",
       "enclosure": "candidate-academic-event-dataset",
       "retrieved": "2026-09-20",
-      "sha256": "2ad6e0b2bfdbaa31873716a3455096923a8539519d69d96aeeea2d0f44a34593"
+      "sha256": "2ad6e0b2bfdbaa31873716a3455096923a8539519d69d96aeeea2d0f44a34593",
+      "verified": "2026-10-08",
+      "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
       "id": "vdem-core-v16",
@@ -66,7 +74,9 @@
       "license": "CC BY-SA 4.0",
       "enclosure": "country-year state-condition dataset",
       "retrieved": "2026-09-21",
-      "sha256": "c3ebb286b5eac4cdbfdc5c51b67e9d8d7248dc4729d7b52debec35d989befa4c"
+      "sha256": "c3ebb286b5eac4cdbfdc5c51b67e9d8d7248dc4729d7b52debec35d989befa4c",
+      "verified": "2026-10-08",
+      "refresh_status": "Official release page still lists v16 as latest; retained extracts, no fresh full-archive comparison"
     },
     {
       "id": "vdem-regimes-of-the-world-v16",
@@ -77,7 +87,9 @@
       "license": "CC BY-SA 4.0",
       "enclosure": "country-year regime classification",
       "retrieved": "2026-09-21",
-      "sha256": "765d5dfed77f7f328fb887f7e23eebe0cc7f8c0221c846e94d0371c1473cf764"
+      "sha256": "765d5dfed77f7f328fb887f7e23eebe0cc7f8c0221c846e94d0371c1473cf764",
+      "verified": "2026-10-08",
+      "refresh_status": "Official release page still lists v16 as latest; retained extracts, no fresh full-archive comparison"
     },
     {
       "id": "natural-earth-110m-geometry",
@@ -106,7 +118,7 @@
     },
     {
       "id": "owid-long-run-life-expectancy-2026-09-19",
-      "title": "Life expectancy – long-run data",
+      "title": "Life expectancy \u2013 long-run data",
       "publisher": "Our World in Data",
       "coverage": "Country observations from 1543-2023; post-1950 estimates use UN World Population Prospects 2024",
       "url": "https://ourworldindata.org/grapher/life-expectancy",
@@ -115,8 +127,8 @@
       "citation": "Riley (2005); Zijdeman et al. (2015); HMD (2025); UN WPP (2024), with major processing by Our World in Data",
       "peer_reviewed_source": "https://doi.org/10.1111/j.1728-4457.2005.00083.x",
       "retrieved": "2026-09-19",
-      "verified": "2026-09-21",
-      "refresh_status": "Official CSV unchanged",
+      "verified": "2026-10-08",
+      "refresh_status": "Official download unchanged; see dated refresh audit",
       "sha256": "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01"
     },
     {
@@ -139,8 +151,10 @@
       "url": "https://data.worldbank.org/indicator/SP.DYN.CBRT.IN",
       "license": "CC BY 4.0",
       "enclosure": "annual demographic rate; distinct from total fertility rate and from a birth count",
-      "retrieved": "2026-09-21",
-      "sha256": "be0810c5ca67942fbc1be8e2d6b07b6135bc88cb37ecf3fc91136af738d6f16f"
+      "retrieved": "2026-10-08",
+      "sha256": "925bb606867f5ac01c15feb3f40bd3f758831eec3a3720c14a01c3b4ceb27571",
+      "verified": "2026-10-08",
+      "refresh_status": "Official download updated; see dated refresh audit"
     },
     {
       "id": "world-bank-wdi-total-population",
@@ -152,7 +166,8 @@
       "enclosure": "de facto mid-year population estimate; not a conflict exposure or casualty measure",
       "retrieved": "2026-09-21",
       "sha256": "21816454b5ea6e6b7a602aa7e1b10d8d275bf2bb59f38f882477e4d1ed3b09ab",
-      "refresh_status": "Official API response unchanged"
+      "refresh_status": "Official download unchanged; see dated refresh audit",
+      "verified": "2026-10-08"
     },
     {
       "id": "celestrak-iceye-sar-2026-09-21",

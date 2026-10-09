@@ -67,7 +67,7 @@ def generate(indicator_json: Path, country_json: Path, output: Path) -> Path:
             "indicator": INDICATOR,
             "url": "https://data.worldbank.org/indicator/SP.DYN.CBRT.IN",
             "license": "CC BY 4.0",
-            "retrieved": "2026-09-21",
+            "retrieved": next(s["retrieved"] for s in json.loads((ROOT / "data/SOURCES.json").read_text())["sources"] if s["id"] == "world-bank-wdi-crude-birth-rate"),
         },
         "locations": locations,
     }
