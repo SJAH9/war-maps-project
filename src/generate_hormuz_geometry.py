@@ -8,7 +8,7 @@ URL='https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojs
 
 def clip(ring):
     points=ring
-    for axis,bound,lower in [(0,52,True),(0,61,False),(1,22,True),(1,30,False)]:
+    for axis,bound,lower in [(0,40,True),(0,61,False),(1,10,True),(1,30,False)]:
         output=[]
         for a,b in zip(points,points[1:]+points[:1]):
             inside_a=a[axis]>=bound if lower else a[axis]<=bound
@@ -30,7 +30,7 @@ def main():
             outer=clip(polygon[0])
             if len(outer)>=4:retained.append([outer]+[h for r in polygon[1:] if len(h:=clip(r))>=4])
         if retained:features.append({'type':'Feature','properties':{'name':f['properties']['ADMIN']},'geometry':{'type':'MultiPolygon','coordinates':retained}})
-    payload={'type':'FeatureCollection','features':features,'source':{'url':URL,'sha256':hashlib.sha256(content).hexdigest(),'resolution':'Natural Earth 1:10m','window':[52,22,61,30],'license':'Public domain'}}
+    payload={'type':'FeatureCollection','features':features,'source':{'url':URL,'sha256':hashlib.sha256(content).hexdigest(),'resolution':'Natural Earth 1:10m','window':[40,10,61,30],'license':'Public domain'}}
     (ROOT/'web/assets/hormuz-land.json').write_text(json.dumps(payload,separators=(',',':'))+'\n')
     print(len(features),'regional country features')
 

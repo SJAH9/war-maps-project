@@ -12,6 +12,7 @@ class TerrainTests(unittest.TestCase):
     def test_grid(self):
         d=json.loads((Path(__file__).resolve().parents[1]/'web/assets/hormuz-terrain.json').read_text())
         self.assertEqual(len(d['metres']),d['width']*d['height'])
-        self.assertEqual(d['bounds'],[52,22,61,30])
+        self.assertEqual(d['bounds'],[40,10,61,30])
+        self.assertEqual((d['width'],d['height']),(421,401))
         self.assertGreater(max(d['metres']),3000)
         self.assertTrue(all(-11000<v<9000 for v in d['metres']))

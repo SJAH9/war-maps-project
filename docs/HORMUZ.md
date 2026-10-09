@@ -21,3 +21,13 @@ Attribution: Mapzen Terrain Tiles; SRTM and GMTED2010 data courtesy of the U.S. 
 The same signed DEM now supplies seabed depths below the regional sea-level plane; a translucent water surface exposes the relief. Land and seabed share the labelled 20× vertical exaggeration. Bathymetry is a coarse reference, not a current survey or navigational chart. This supersedes the land-only display described above.
 
 Each ship is a constant-size block with its bottom at sea level. Overlapping horizontal marker footprints are assigned successively higher levels in provider-ID order, retaining their reported horizontal coordinates. Stack height encodes visual separation only, not ship altitude or dimensions. Blocks use reported flag-state colours, with a below-map legend of currently visible flag counts. Unknown flags remain grey; flag state is not ownership or crew nationality.
+
+## Yemen and Bab el-Mandeb extension
+
+The continuous geographic window is 40–61° E, 10–30° N. It includes Yemen,
+Bab el-Mandeb, the southern Red Sea and Gulf of Aden. Natural Earth 1:10m
+coastlines and zoom-7 Mapzen terrain retain the same 0.05° sampling and 20×
+vertical exaggeration as the Hormuz map. Focus controls move the camera;
+they do not change data resolution. Land and seabed are reference terrain,
+not navigation charts. Vessel positions and daily crossing counts remain
+Hormuz-only. No Bab el-Mandeb live vessel coverage is claimed.
