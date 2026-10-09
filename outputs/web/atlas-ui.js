@@ -7,6 +7,7 @@
     ['graph.html', 'Relationships'],
     ['civilian-casualties.html', 'Human cost'],
     ['life-death.html', 'Living conditions'],
+    ['hormuz.html', 'Hormuz shipping'],
     ['gas-map.html', 'Fuel prices'],
     ['newsmedia.html', 'NewsMedia'],
     ['information.html', 'Evidence guide']

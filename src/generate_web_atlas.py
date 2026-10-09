@@ -19,6 +19,8 @@ def generate() -> Path:
     pages = sorted(path.name for path in SOURCE.glob("*.html"))
     for name in (*pages, "styles.css", "gas-map.css", "gas-map-layers.css", "civilian-casualties.css", "atlas-ui.js", "app.js", "nation.js", "network-model.js", "network.js", "network-3d.js", "graph.js", "life-death.js", "life-death-data.js", "life-expectancy-data.js", "crude-birth-rate-data.js", "population-data.js", "information.js", "gas-map.js", "gas-price-data.js", "civilian-casualties.js", "civilian-casualty-data.js"):
         shutil.copy2(SOURCE / name, OUTPUT / name)
+    for name in ("hormuz.js", "hormuz.css"):
+        shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     shutil.copytree(SOURCE / "newsmedia-player", OUTPUT / "newsmedia-player", dirs_exist_ok=True)
     shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")
