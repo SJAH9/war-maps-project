@@ -1,6 +1,7 @@
 /* Reported geographic positions; no simulated movement or route interpolation. */
 (()=>{'use strict';
 const $=id=>document.getElementById(id),canvas=$('ship-map'),ctx=canvas.getContext('2d');
+let map3d=null;try{map3d=window.createHormuz3D?.(canvas,s=>select(s));}catch(error){console.warn('3D map unavailable; retaining geographic canvas',error);}
 let land,geo,ships=[],visible=[],hits=[],snapshot=0,selected=null,track=[],days=[],failed=false;
 const date=t=>new Date(t).toLocaleString(),color=s=>s.category==='tanker'?'#f2c76c':s.category==='cargo'?'#7ecdd1':'#d4b4d8';
 const valid=p=>Number.isFinite(p.lon)&&Number.isFinite(p.lat)&&p.lon>=52&&p.lon<=61&&p.lat>=22&&p.lat<=30;
@@ -8,7 +9,7 @@ async function get(url){const r=await fetch(url,{signal:AbortSignal.timeout(1200
 function project(lon,lat,z=0){const x=(lon-56.5)*.9,y=26-lat,w=canvas.clientWidth,h=canvas.clientHeight,s=Math.min(w/12,h/7);return [w/2+(x-y)*s*.72,h*.49+(x+y)*s*.36-z];}
 function path(points,z=0){ctx.beginPath();points.forEach((p,i)=>{const q=project(...p,z);i?ctx.lineTo(...q):ctx.moveTo(...q);});}
 function resize(c){const d=Math.min(devicePixelRatio||1,2);c.width=c.clientWidth*d;c.height=c.clientHeight*d;c.getContext('2d').setTransform(d,0,0,d,0,0);}
-function draw(){resize(canvas);const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#c5a65d33';ctx.lineWidth=1;
+function draw(){if(map3d){map3d.update({land,geo,ships:visible,selected,track});return;}resize(canvas);const w=canvas.clientWidth,h=canvas.clientHeight;ctx.clearRect(0,0,w,h);ctx.strokeStyle='#c5a65d33';ctx.lineWidth=1;
 for(let x=52;x<=61;x+=.25){path([[x,22],[x,30]]);ctx.stroke();}for(let y=22;y<=30;y+=.25){path([[52,y],[61,y]]);ctx.stroke();}
 if(land)for(const f of land.features)for(const poly of f.geometry.coordinates){for(const ring of poly){path(ring,0);ctx.fillStyle='#756f4b';ctx.fill();}ctx.beginPath();for(const ring of poly){const pts=ring.map(p=>project(...p,10));pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();}ctx.fillStyle='#a49d6b';ctx.fill('evenodd');ctx.strokeStyle='#d3c68d';ctx.stroke();}
 if(geo)for(const f of geo.features)if(f.properties.kind==='gate'){path(f.geometry.coordinates);ctx.strokeStyle='#ffffff';ctx.setLineDash([5,4]);ctx.stroke();ctx.setLineDash([]);}
