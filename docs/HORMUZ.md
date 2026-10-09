@@ -9,3 +9,9 @@ Snapshots supply report age rather than original report timestamps. Their estima
 Daily AIS crossing totals and IMF PortWatch figures are separate series. Daily resolution does not guarantee daily publication. Partial latest days and coverage gaps should not be interpreted as complete traffic. Source attribution and limitations appear beside the view. Natural Earth geometry is public domain; hormuz.now data is CC BY 4.0; IMF-derived series retains IMF provenance.
 
 Build: `python3 -m src.generate_web_atlas`. Entry card is on the War Maps landing page. Existing maps and their data are unchanged.
+
+## Land elevations
+
+Mapzen Terrain Tiles on AWS supplies regional DEM data, sampled from zoom-7 Terrarium tiles to a 0.05° grid. `python3 -m src.generate_hormuz_terrain` records tile URLs, hashes, retrieval time, and actual heights in metres. Terrarium decoding follows the provider's documented RGB formula. Land triangles are subdivided and bilinearly sampled from this grid; the detailed Natural Earth coastline remains the geographic clipping boundary. Negative elevations are clamped to the sea-level reference for this land-only display. No bathymetry is displayed. Heights are exaggerated 20× relative to the regional latitude-distance scale, prominently labelled and switchable; elevations are not live measurements or navigational data.
+
+Attribution: Mapzen Terrain Tiles; SRTM and GMTED2010 data courtesy of the U.S. Geological Survey; global ETOPO1 terrain data courtesy of NOAA. [Complete provider attribution](https://github.com/tilezen/joerd/blob/master/docs/attribution.md).

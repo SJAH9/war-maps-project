@@ -1,0 +1,9 @@
+# Iranian drone toggle in the existing conflict network
+
+Use `network.html?conflict=ucdp-candidate-16905&events=iranian-drones`, or select “Iranian drones only” in the existing view. The setting passes to its existing 3D Browser: `network-3d.html?conflict=ucdp-candidate-16905&events=iranian-drones`. Both use their existing renderer, controls, layouts and inspectors. No separate drone-map renderer exists.
+
+The USA–Iran–Israel conflict frame and its recorded participant structure remain. Candidate events are replaced, not augmented. The 3D browser starts with all selected drone records visible; countries and target categories connect to these event nodes. Normal browsing and three-degree retention still apply after following a node. Turning the toggle off restores the original candidate layer. Drone records are not recoded as UCDP observations, nor are incident-location countries assumed to be opposing belligerents. A supplemental link to the focal conflict is a project thematic association, not an upstream UCDP conflict assignment.
+
+Data: Iran Attacks Map structured register, CC BY 4.0, retaining original source articles, wording, attack types, categories and confidence. `src.generate_drone_layer` records retrieval time and SHA-256. A disclosed text screen selects drone-specific reports with an explicit Iran/IRGC mention and excludes mixed weapons, named proxies and suspected records. Initial selection: 54 reports. This limited current-conflict subset is not a full historical census or independent verification of attribution. Interceptions, debris and claims are retained as described, not all promoted to successful impacts. The asset's selection method is downloadable at `assets/drone-event-layer.json`.
+
+No original audio, books, UCDP candidate files, or other visualization pages are changed by this overlay.

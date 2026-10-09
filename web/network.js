@@ -130,8 +130,9 @@
       event.side_b_states.forEach(name => addNation(name, 'B', location));
       const id = nodeId('observation', event.id);
       const place = event.place || event.country || 'Unspecified place';
-      addNode(id, `${event.date_start} · ${place}`, 'observation', 'observation', {recordType:'candidate-event',event,posture:model.eventPosture(event)});
-      addEdge(locationId, id, 'candidate event');
+      addNode(id, `${event.date_start} · ${place}`, 'observation', 'observation', {recordType:event.drone_report?'drone-report':'candidate-event',event,posture:model.eventPosture(event)});
+      addEdge(locationId, id, event.drone_report?'drone report':'candidate event');
+      if(event.drone_report){const category=nodeId('location','target-category:'+event.target_class);addNode(category,event.target_class.replaceAll('_',' '),'location','location',{location:event.target_class,targetCategory:true});addEdge(id,category,'reported target / affected-place category');addEdge(nodeId('nation','Iran'),id,'reported attribution');}
     });
 
     nodes.forEach(node => {
@@ -965,6 +966,9 @@
       const nations = connected.filter(item=>item.kind==='nation').length;
       const actors = connected.filter(item=>item.kind==='actor').length;
       meta = [['Side',node.metadata.side],['Nations',nations],['Actors',actors]];
+    } else if (node.kind === 'observation' && node.metadata.recordType === 'drone-report') {
+      const r=node.metadata.event.drone_report;meta=[['Date',r.date],['Country',r.country],['Place',r.locationName],['Reported weapon / outcome',r.attackType],['Target / affected place',r.targetCategory.replaceAll('_',' ')],['Source confidence',r.sourceConfidence]];
+      content=`<div class="node-record"><h3>${esc(r.title)}</h3><p>${esc(r.summary)}</p><a href="${esc(/^https?:\/\//.test(r.primaryArticleUrl)?r.primaryArticleUrl:'#')}" target="_blank" rel="noopener">Open source article</a><p>Iran Attacks Map · CC BY 4.0. Source-attributed report, not independently established launch responsibility. Interceptions and claims are not automatically successful hits.</p></div>`;
     } else if (node.kind === 'observation' && node.metadata.recordType === 'candidate-event') {
       const event = node.metadata.event;
       const posture=node.metadata.posture;
@@ -1033,7 +1037,7 @@
       ['Betweenness', graph.nodes.filter(node=>(node.networkScience?.betweenness||0)>0).length.toLocaleString(), 'betweenness'],
       ['Bottlenecks', state.analysis.bottleneckCount.toLocaleString(), 'bottlenecks'],
       ['Conflict-year rows', graph.rows.length.toLocaleString()],
-      ['Candidate events', graph.events.length.toLocaleString()]
+      [droneEnabled?'Drone reports':'Candidate events', graph.events.length.toLocaleString()]
     ];
     $('#network-summary').innerHTML = stats.map(([label,value,focus])=>focus
       ? `<button type="button" class="network-metric" data-science-focus="${focus}" aria-pressed="${state.scienceFocus===focus}"><span>${esc(label)}</span><strong>${esc(value)}</strong><small>Highlight in network</small></button>`
@@ -1120,6 +1124,7 @@
     if(state.forceGraph?.pauseAnimation)state.forceGraph.pauseAnimation();
     stopAutoRotation();stopMotion();
     const url=new URL('network-3d.html',location.href);url.searchParams.set('conflict',state.conflictId);
+    if(droneEnabled)url.searchParams.set('events','iranian-drones');
     url.searchParams.set('through',state.end);url.searchParams.set('focal',state.focalDate);
     url.searchParams.set('topology',state.optimizationMethod);
     navigatorWindow=window.open(url.toString(),'war-maps-conflict-3d','popup=yes,width=1600,height=1000');
@@ -1159,11 +1164,17 @@
     if(state.conflictId)renderGraph();
   });
 
+  let droneEnabled=false;const originalIranEvents=eventsByConflict.get('ucdp-candidate-16905')||[];
+  const droneLabel=document.createElement('label');droneLabel.className='network-command';const droneCheck=document.createElement('input');droneCheck.type='checkbox';droneCheck.style.width='auto';droneLabel.append(droneCheck,document.createTextNode('Iranian drones only'));$('.network-controls').append(droneLabel);
+  droneCheck.onchange=async()=>{droneCheck.disabled=true;try{if(droneCheck.checked){const layer=await window.WarDroneLayer.load();eventsByConflict.set('ucdp-candidate-16905',layer.events);droneEnabled=true;}else{eventsByConflict.set('ucdp-candidate-16905',originalIranEvents);droneEnabled=false;}
+    if(state.conflictId==='ucdp-candidate-16905')updateFocalGraph(conflictsById.get(state.conflictId));else selectConflict('ucdp-candidate-16905',false);
+    const u=new URL(location.href);u.searchParams.set('conflict','ucdp-candidate-16905');droneEnabled?u.searchParams.set('events','iranian-drones'):u.searchParams.delete('events');history.replaceState(null,'',u);if(droneEnabled){$('#network-status').textContent+=' · Iranian drone reports only';const note=document.createElement('p');note.textContent='Drone overlay: Iran Attacks Map, CC BY 4.0. Limited source-attributed subset; includes interceptions and claims, excludes mixed weapons and named proxies.';$('#node-overview').prepend(note);}}catch(error){droneCheck.checked=false;$('#network-status').textContent='Drone layer unavailable; original event layer retained.';}finally{droneCheck.disabled=false;}};
   renderWarDialog();
   const initialParams = new URLSearchParams(location.search);
   if(model.topologyNames[initialParams.get('topology')]){state.optimizationMethod=initialParams.get('topology');$('#network-topology').value=state.optimizationMethod;}
   const requested = initialParams.get('conflict');
   selectConflict(conflictsById.has(requested) ? requested : (conflictsById.has('ucdp-candidate-16905') ? 'ucdp-candidate-16905' : data.conflicts.at(-1).id), false);
+  if(initialParams.get('events')==='iranian-drones'){droneCheck.checked=true;droneCheck.onchange();}
   const requestedNode=initialParams.get('node');
   if(requestedNode&&state.nodeMap.has(requestedNode)){
     selectGraphNode(requestedNode);
