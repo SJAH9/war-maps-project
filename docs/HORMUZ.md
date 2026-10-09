@@ -15,3 +15,9 @@ Build: `python3 -m src.generate_web_atlas`. Entry card is on the War Maps landin
 Mapzen Terrain Tiles on AWS supplies regional DEM data, sampled from zoom-7 Terrarium tiles to a 0.05° grid. `python3 -m src.generate_hormuz_terrain` records tile URLs, hashes, retrieval time, and actual heights in metres. Terrarium decoding follows the provider's documented RGB formula. Land triangles are subdivided and bilinearly sampled from this grid; the detailed Natural Earth coastline remains the geographic clipping boundary. Negative elevations are clamped to the sea-level reference for this land-only display. No bathymetry is displayed. Heights are exaggerated 20× relative to the regional latitude-distance scale, prominently labelled and switchable; elevations are not live measurements or navigational data.
 
 Attribution: Mapzen Terrain Tiles; SRTM and GMTED2010 data courtesy of the U.S. Geological Survey; global ETOPO1 terrain data courtesy of NOAA. [Complete provider attribution](https://github.com/tilezen/joerd/blob/master/docs/attribution.md).
+
+## Seabed and vessel blocks
+
+The same signed DEM now supplies seabed depths below the regional sea-level plane; a translucent water surface exposes the relief. Land and seabed share the labelled 20× vertical exaggeration. Bathymetry is a coarse reference, not a current survey or navigational chart. This supersedes the land-only display described above.
+
+Each ship is a constant-size block with its bottom at sea level. Overlapping horizontal marker footprints are assigned successively higher levels in provider-ID order, retaining their reported horizontal coordinates. Stack height encodes visual separation only, not ship altitude or dimensions. Blocks use reported flag-state colours, with a below-map legend of currently visible flag counts. Unknown flags remain grey; flag state is not ownership or crew nationality.
