@@ -92,6 +92,8 @@
       }
     ];
 
+    STATIONS.push({id: "i24en", label: "i24NEWS English", name: "i24NEWS English", nation: "Israel", timeZone: "Asia/Jerusalem", tickerOnly: true, hls: ["https://hlspackager.akamaized.net/live/DB/i24_ENGLISH/HLS/i24_ENGLISH.m3u8"], site: "https://video.i24news.tv/"});
+
     function face(station) {
       return station.nation || station.label;
     }
@@ -161,6 +163,7 @@
     let needle = index * STEP;
 
     STATIONS.forEach((s, i) => {
+      if (!s.tickerOnly) {
       const tick = document.createElement("div");
       tick.className = "tick";
       tick.style.transform = `rotate(${i * STEP}deg)`;
@@ -171,9 +174,10 @@
         go(i);
       });
       el.ticks.appendChild(tick);
+      }
       const tickerButton = document.createElement("button");
       tickerButton.type = "button";
-      tickerButton.textContent = face(s);
+      tickerButton.textContent = s.tickerOnly ? s.label : face(s);
       tickerButton.dataset.stationIndex = String(i);
       tickerButton.setAttribute("aria-label", "Select " + face(s));
       tickerButton.addEventListener("click", () => go(i));
