@@ -1,4 +1,13 @@
-War Maps v0.12.0 publication handoff
+War Maps v0.12.0 publication record
+
+PUBLISHED: https://github.com/SJAH9/war-maps-project/releases/tag/v0.12.0
+All fourteen PDF assets were verified against GitHub's SHA-256 digests.
+The manifest is the fifteenth release asset. The cleaned publication commit
+is ddef762; the post-release homepage feature is committed as 12db4bf.
+Withheld Ephemeris files and the original unpublished commits were retained
+locally, not included in the outgoing public history. No force push was used.
+
+The earlier handoff notes below document preparation, not current blockers.
 
 Publication selection: data/curated/print-release-selection.json.
 Do not restore removed release candidates. Do not publish the Ephemeris,
