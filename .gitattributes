@@ -1,0 +1,8 @@
+# Print artifacts are binary even when their PDF encoding resembles text.
+*.pdf binary
+*.zip binary
+*.gz binary
+*.xlsx binary
+
+# Preserve upstream snapshots byte-for-byte for provenance hashes.
+data/raw/** -whitespace

@@ -1,0 +1,56 @@
+[
+  {
+    "source": "aaa",
+    "status": "unchanged",
+    "observation_date": "2026-10-19",
+    "observations": 51
+  },
+  {
+    "source": "eia",
+    "status": "unchanged",
+    "observation_date": "2026-10-12",
+    "observations": 10
+  },
+  {
+    "source": "eu",
+    "status": "unchanged",
+    "observation_date": "2026-10-12",
+    "observations": 27
+  },
+  {
+    "source": "japan",
+    "status": "unchanged",
+    "observation_date": "2026-10-05",
+    "observations": 47
+  },
+  {
+    "source": "india",
+    "status": "unchanged",
+    "observation_date": "2026-10-19",
+    "observations": 1
+  },
+  {
+    "source": "taiwan",
+    "status": "unchanged",
+    "observation_date": "2026-10-19",
+    "observations": 1
+  },
+  {
+    "source": "ecb",
+    "status": "verified",
+    "observation_date": "2026-10-19",
+    "taiwan_fx_date": "2026-10-19"
+  },
+  {
+    "source": "accc",
+    "status": "retained",
+    "observation_date": "2026-10-14",
+    "note": "No replacement imported; see capture audit and publisher release check."
+  },
+  {
+    "source": "nz",
+    "status": "retained",
+    "observation_date": "2026-09-27",
+    "note": "No replacement imported; see capture audit and publisher release check."
+  }
+]

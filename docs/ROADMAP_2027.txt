@@ -1,0 +1,24 @@
+War Maps - next development cycle
+
+1. Network science and cybersecurity ebook
+   Explain network measurements, dependency structures, resilience, cyber incidents
+   and conflict-related infrastructure using explicit, attributed observations.
+   Distinguish reported relationships from analytical inference.
+
+2. Network interface and visual language
+   Improve dense event-network navigation, grouping, hubs, legends and print views.
+   Avoid presenting trivial two-node diagrams as a sufficient view of rich event data.
+   Revisit the network studies withheld from the 2026 release after these improvements.
+
+3. Data-source upgrades
+   Add version-aware ingestion and source refresh audits; retain original records,
+   deduplicate overlapping releases and keep deaths and injuries in separate fields.
+
+4. Scoped data almanac
+   Keep the Ephemeris unpublished until its scope, size and reading workflow are resolved.
+
+5. Offline usability
+   Extend intentionally selected offline datasets without implying that installation
+   downloads the full atlas or makes external live services available offline.
+
+The 0.12.0 print/app release is the last meaningful release planned for 2026.

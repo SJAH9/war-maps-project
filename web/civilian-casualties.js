@@ -138,6 +138,7 @@
         ['Source', `<a href="${esc(row.url)}" target="_blank" rel="noopener noreferrer">${esc(row.source)} ↗</a>`],
         ['As of', row.as_of],
         ['Period', row.period],
+        ...(row.reported_injuries == null ? [] : [['Reported injuries (not deaths)', formatCount(row.reported_injuries)], ['Injuries as of', row.injuries_as_of]]),
         ['UCDP datasets', 'Excluded. Shown beside GED, not added to the world total.'],
         ...healthFacts(row.admin),
       ].map(([label, value]) => `<div><span>${esc(label)}</span><strong>${label === 'Source' ? value : esc(value)}</strong></div>`).join('');

@@ -18,6 +18,11 @@
     return row.unit === 'US gallon' ? inUsd : inUsd * GALLON_LITRES;
   };
   const usdPerLitre = (row,fuel=state.selectedFuel) => { const gallon = usdPerGallon(row,fuel); return gallon == null ? null : gallon / GALLON_LITRES; };
+  const taxInfo = (row,fuel) => GasPriceModel.tax(data,row,fuel);
+  function taxSummary(row,fuel) {
+    const t=taxInfo(row,fuel);
+    return t.known?`Before tax ${money(t.net,'USD')} · taxes ${money(t.amount,'USD')} (${(t.share*100).toFixed(1)}%)`:'Taxes included · amount not separately available';
+  }
   const money = (value, currency, digits = 2) => new Intl.NumberFormat('en-US', {style:'currency', currency, minimumFractionDigits:digits, maximumFractionDigits:digits}).format(value);
   const priceFraction = value => {
     const {min, max} = state.priceScale || {min: 0, max: 1};
@@ -64,6 +69,7 @@
     $('#gas-kicker').textContent = row ? `${row.region} / ${row.scope}` : state.nation ? `Nation view / ${data.snapshot}` : `Snapshot ${data.snapshot}`;
     $('#gas-selected').textContent = row ? row.name : state.nation || 'A geography of pump prices';
     $('#gas-selected-sub').textContent = row ? row.detail : state.nation ? 'Click a price tower to inspect it. Click outside the nation to turn the map back.' : 'Choose a tower or a location below.';
+    $('#gas-tax-details').innerHTML='';
     if (!row) {
       const count = state.visible.length;
       const dated = [...new Set(state.visible.map(item => item.date))].sort();
@@ -77,12 +83,19 @@
     const cells = [
       ...priceCells,
       ['Observation date', row.date],
+      ['Tax treatment', row.tax_included?'Included in pump price':'Not specified by source'],
       ['Reporting geography', row.scope],
-      ['Exchange rate date', data.fx_date],
+      ['Exchange rate date', row.currency==='TWD'?(data.taiwan_fx_date||data.fx_date):data.fx_date],
       ['Exchange source', `<a href="${esc(data.sources[row.currency === 'TWD' ? 'taiwan_fx' : 'fx'])}" target="_blank" rel="noopener noreferrer">${row.currency === 'TWD' ? 'CBC TWD/USD' : 'ECB daily rates'} ↗</a>`],
       ['Original source', `<a href="${esc(data.sources[row.source])}" target="_blank" rel="noopener noreferrer">Open ${esc(row.source.toUpperCase())} ↗</a>`],
     ];
     $('#gas-facts').innerHTML = cells.map(([label,value]) => `<div><span>${esc(label)}</span><strong>${label === 'Original source' || label === 'Exchange source' ? value : esc(value)}</strong></div>`).join('');
+    $('#gas-tax-details').innerHTML=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null).map(fuel=>{
+      const t=taxInfo(row,fuel),total=usdPerGallon(row,fuel);
+      if(!t.known)return `<section class="gas-tax-card"><h3>${esc(fuelLabel(fuel))} · tax amount unavailable</h3><p>Taxes are included in this pump price. No full, source-matched breakdown is available, so this column is not split. This does not mean the price is tax-free.</p></section>`;
+      const share=t.share*100;
+      return `<section class="gas-tax-card"><h3>${esc(fuelLabel(fuel))} · total ${esc(money(total,'USD'))}/gal</h3><div class="gas-tax-bar" role="img" aria-label="${esc(taxSummary(row,fuel))} per U.S. gallon"><i style="width:${100-share}%"></i><i class="gas-tax-swatch" style="width:${share}%"></i></div><dl><div><dt>Before taxes</dt><dd>${esc(money(t.net,'USD'))}/gal</dd></div><div class="gas-tax-value"><dt>Included taxes · ${share.toFixed(1)}%</dt><dd>${esc(money(t.amount,'USD'))}/gal</dd></div></dl><p>${esc(t.method)} · ${esc(t.date)}. <a href="${esc(data.sources[t.source])}" target="_blank" rel="noopener noreferrer">Tax source ↗</a>${total>PRICE_CEILING?' Tower clipped at $10; amounts above are complete.':''}</p></section>`;
+    }).join('')+(row.refresh_note?`<p class="gas-stale-note">${esc(row.refresh_note)}</p>`:'');
   }
   function renderList() {
     const sorted = [...state.visible].sort((a,b) => a.name.localeCompare(b.name) || a.scope.localeCompare(b.scope));
@@ -90,7 +103,8 @@
       const index = data.observations.indexOf(row);
       const prices=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null);
       const lead=prices[0],value=usdPerGallon(row,lead);
-      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i style="background:${tone(value,lead)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.scope)} · ${esc(row.date)}</small></span><strong>${prices.map(fuel=>`<small>${fuel==='gasoline'?'G':'D'}</small>${esc(money(usdPerGallon(row,fuel),'USD'))}`).join('')}</strong></button>`;
+      const split=prices.some(fuel=>taxInfo(row,fuel).known);
+      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i class="${split?'has-tax-split':''}" style="background:${tone(value,lead)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.scope)} · ${esc(row.date)}${row.refresh_status==='last_verified'?' · last verified':''}</small><small class="${split?'gas-tax-value':''}">${split?'Tax breakdown available':'Tax amount not split'}</small></span><strong>${prices.map(fuel=>`<small>${fuel==='gasoline'?'G':'D'}</small>${esc(money(usdPerGallon(row,fuel),'USD'))}`).join('')}</strong></button>`;
     }).join('') : `<p class="gas-list-empty">${state.nation ? 'No priced observations are available for this nation and filter. Click outside the nation to return to the world.' : 'No priced observations match these controls. Try another region, fuel, or search.'}</p>`;
   }
   function selectRow(row) {
@@ -258,6 +272,11 @@
     const lattice=new THREE.BufferGeometry();lattice.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
     state.scene.add(new THREE.LineSegments(lattice,new THREE.LineBasicMaterial({color:'#c9a34b',transparent:true,opacity:dark()?.17:.21,depthWrite:false})));
   }
+  let taxPatternCanvas=null;
+  function taxPatternTexture(){
+    if(!taxPatternCanvas){taxPatternCanvas=document.createElement('canvas');taxPatternCanvas.width=taxPatternCanvas.height=32;const c=taxPatternCanvas.getContext('2d');c.fillStyle='#f59bdf';c.fillRect(0,0,32,32);c.strokeStyle='#972673';c.lineWidth=6;for(let i=-32;i<64;i+=16){c.beginPath();c.moveTo(i,0);c.lineTo(i+32,32);c.stroke();}}
+    const texture=new THREE.CanvasTexture(taxPatternCanvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);return texture;
+  }
   function drawTowers() {
     if (!state.towerGroup) return;
     const clear=group=>{
@@ -277,14 +296,22 @@
     const makeTower=(row,fuel,reverse=false,index=0,count=1,dense=false)=>{
       const price=usdPerGallon(row,fuel); if(price==null)return;
       const height=Math.max(.08,Math.min(price,PRICE_CEILING)/PRICE_CEILING*MAX_TOWER_HEIGHT);
+      const taxes=taxInfo(row,fuel),split=GasPriceModel.heights(price,taxes.net,PRICE_CEILING,MAX_TOWER_HEIGHT),taxHeight=taxes.known?split.tax:0,baseHeight=height-taxHeight;
       const baseRadius=row.scope==='country'?1.35:row.scope==='state'||row.scope==='prefecture'?1.05:.78;
       const radius=baseRadius*footprintScale(price);
       const selected=row===state.selected && reverse===Boolean(state.nation);
       const transparent=count>1&&dense,offset=count>1?(index-(count-1)/2)*Math.max(1.15,radius*1.15):0;
-      const tower=new THREE.Mesh(new THREE.CylinderGeometry(radius*.72,radius,height,6),new THREE.MeshPhongMaterial({color:priceColor(price,fuel),emissive:selected?'#f9bf67':fuel==='diesel'?'#07172b':'#101a12',emissiveIntensity:selected?.35:.1,shininess:38,transparent,opacity:transparent?.5:1,depthWrite:!transparent}));
+      const boundaryRadius=radius*(1-.28*baseHeight/height),baseGeometry=new THREE.CylinderGeometry(boundaryRadius,radius,Math.max(.0001,baseHeight),6);baseGeometry.translate(0,-taxHeight/2,0);if(reverse)baseGeometry.rotateX(Math.PI);
+      const tower=new THREE.Mesh(baseGeometry,new THREE.MeshPhongMaterial({color:priceColor(price,fuel),emissive:selected?'#f9bf67':fuel==='diesel'?'#07172b':'#101a12',emissiveIntensity:selected?.35:.1,shininess:38,transparent,opacity:transparent?.5:1,depthWrite:!transparent}));
       if(reverse){const p=state.nationProjection;tower.position.set((p.unwrap(row.lon)-p.centerX)*p.scale+offset,-1.76-height/2-.3,(row.lat-p.centerY)*p.scale);}
       else tower.position.set(row.lon*MAP_SCALE+offset,height/2+.3,-row.lat*MAP_SCALE);
       tower.userData.row=row; tower.userData.fuel=fuel; tower.userData.towerHeight=height;
+      tower.userData.taxHeight=taxHeight;
+      if(taxHeight>.00001){
+        const capGeometry=new THREE.CylinderGeometry(radius*.72,boundaryRadius,taxHeight,6);if(reverse)capGeometry.rotateX(Math.PI);
+        const cap=new THREE.Mesh(capGeometry,new THREE.MeshPhongMaterial({color:'#ffffff',map:taxPatternTexture(),emissive:'#3d082e',emissiveIntensity:.15,shininess:16,transparent,opacity:transparent?.68:1,depthWrite:!transparent}));
+        cap.position.y=(reverse?-1:1)*baseHeight/2;cap.userData={row,fuel,component:'tax',tower};tower.add(cap);
+      }
       if(reverse===Boolean(state.nation)){
         const sprite=new THREE.Sprite(new THREE.SpriteMaterial({
           map: canvasTexture(`${fuel==='gasoline'?'G':'D'} ${money(price,'USD')}`, {
@@ -323,7 +350,7 @@
     state.pointer.set((event.clientX-box.left)/box.width*2-1,-(event.clientY-box.top)/box.height*2+1);
     state.raycaster.setFromCamera(state.pointer,state.camera);
     const targets=state.nation?[...state.reverseTowers,...state.reverseMeshes]:[...state.worldTowers,...state.worldMeshes];
-    return state.raycaster.intersectObjects(targets,false)[0]?.object || null;
+    return state.raycaster.intersectObjects(targets,true).find(hit=>hit.object.userData.row||hit.object.userData.country)?.object || null;
   }
   function initScene() {
     if (!window.THREE || !geometry || !THREE.OrbitControls) throw new Error('The 3D renderer or map geometry did not load.');
@@ -341,11 +368,11 @@
     renderer.domElement.addEventListener('pointerdown',event=>{state.pointerDown={x:event.clientX,y:event.clientY};});
     renderer.domElement.addEventListener('pointermove',event=>{
       const object=state.flipping?null:hit(event),row=object?.userData.row,fuel=object?.userData.fuel,country=object?.userData.country,tip=$('#gas-tooltip');
-      state.hoveredTower=row?object:null;
+      state.hoveredTower=row?(object.userData.tower||object):null;
       renderer.domElement.style.cursor=state.flipping?'wait':row||(!state.nation&&country)||state.nation?'pointer':'grab';
       if(!object){tip.hidden=true;return;}
       if(row){
-        tip.innerHTML=`<strong>${esc(money(usdPerGallon(row,fuel),'USD'))}</strong><em>${esc(row.name)} · ${esc(fuelLabel(fuel))}</em><span>USD / U.S. gallon · ${esc(row.date)}</span>`;
+        tip.innerHTML=`<strong>${esc(money(usdPerGallon(row,fuel),'USD'))}</strong><em>${esc(row.name)} · ${esc(fuelLabel(fuel))}${object.userData.component==='tax'?' · tax segment':''}</em><span>USD / U.S. gallon · ${esc(row.date)}</span><span>${esc(taxSummary(row,fuel))}</span>`;
       }else{
         tip.innerHTML=`<em>${esc(country)}</em><span>${state.nation?'Click outside this outline to return':'Click to turn the map over'}</span>`;
       }
@@ -383,6 +410,9 @@
   function init() {
     if (!data?.observations?.length) {$('#gas-map').innerHTML='<p class="gas-error">The price snapshot did not load. Reload the page and check the data asset.</p>';return;}
     const fxDate=$('#gas-fx-date');if(fxDate)fxDate.textContent=data.fx_date;
+    const splitCount=data.observations.filter(row=>['gasoline','diesel'].some(fuel=>taxInfo(row,fuel).known)).length;
+    $('#gas-tax-coverage').textContent=`${splitCount} of ${data.observations.length} places have a full tax split`;
+    $('#gas-refresh-note').textContent=`Refreshed ${data.snapshot}. Observation dates vary by source; FX ${data.fx_date}. New Zealand: last verified ${data.source_updates?.nz?.observation_date||'date unavailable'}; current source retrieval unavailable.`;
     const sources=[['AAA','aaa'],['EIA','eia'],['EU Oil Bulletin','eu'],['Japan ANRE','japan_original'],['ACCC','accc'],['MBIE','nz'],['PPAC','india'],['Taiwan CPC','taiwan'],['ECB FX','fx'],['CBC FX','taiwan_fx']];
     $('#gas-source-line').innerHTML=`Sources and methodology: ${sources.map(([name,key])=>`<a href="${esc(data.sources[key])}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a>`).join('')}<a href="${esc(data.sources.geonames)}" target="_blank" rel="noopener noreferrer">GeoNames coordinates ↗</a>`;
     document.querySelectorAll('[data-fuel]').forEach(input=>input.addEventListener('change',event=>{

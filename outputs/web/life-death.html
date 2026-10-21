@@ -1,70 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="An isometric comparison of conflict observations, population, all-cause mortality, total fertility, and crude birth rate.">
-  <title>Conflict and Living Conditions · The War Maps Project</title>
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
-  <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="life-death-data.js?v=2026-08-30-r1" defer></script>
-  <script src="crude-birth-rate-data.js?v=2026-09-03-r1" defer></script>
-  <script src="population-data.js?v=2026-09-03-r2" defer></script>
-  <script src="assets/world-geometry.js?v=2026-09-07-r1" defer></script>
-  <script src="life-death.js?v=2026-09-09-r1" defer></script>
-  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="An isometric comparison of conflict observations, population, all-cause mortality, total fertility, and crude birth rate." name="description"/>
+<title>Conflict and Living Conditions · The War Maps Project</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+<link href="styles.css?v=2026-09-21-understanding-r2" rel="stylesheet"/>
+<script defer="" src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script defer="" src="data.js?v=2026-10-19-refresh"></script>
+<script defer="" src="life-death-data.js?v=2026-08-30-r1"></script>
+<script defer="" src="crude-birth-rate-data.js?v=2026-09-03-r1"></script>
+<script defer="" src="population-data.js?v=2026-10-19-refresh"></script>
+<script defer="" src="assets/world-geometry.js?v=2026-09-07-r1"></script>
+<script defer="" src="life-death.js?v=2026-09-09-r1"></script>
+<script defer="" src="atlas-ui.js?v=2026-09-21-understanding-r1"></script>
+<link href="manifest.webmanifest" rel="manifest"/><link href="assets/compass-rose.svg" rel="icon"/><link href="assets/compass-192.png" rel="apple-touch-icon"/><link href="brand.css" rel="stylesheet"/><meta content="#10110e" name="theme-color"/><script defer="" src="pwa.js"></script></head>
 <body class="life-death-page">
-  <header class="site-header">
-    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html" aria-current="page">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
-    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
-  </header>
-
-  <main>
-    <section class="mortality-section">
-      <div class="mortality-title">
-        <div><p class="eyebrow">Conflict beside population health</p><h1>Living Conditions</h1></div>
-        <p>Compare UCDP candidate-observation density with population, age-standardized all-cause mortality, total fertility, and crude birth rate. Candidate casualty estimates are not summed because records may overlap.</p>
-      </div>
-
-      <div class="mortality-controls" aria-label="Life and Death map controls">
-        <label><span>Find state</span><input id="mortality-search" type="search" placeholder="State or territory" list="mortality-country-list" autocomplete="off"><datalist id="mortality-country-list"></datalist></label>
-        <fieldset class="metric-toggles"><legend>Visible metrics</legend><div><label><input type="checkbox" data-metric="conflict" checked><i class="metric-conflict"></i><span>Conflict</span></label><label><input type="checkbox" data-metric="population" checked><i class="metric-population"></i><span>Population</span></label><label><input type="checkbox" data-metric="mortality" checked><i class="metric-mortality"></i><span>Mortality</span></label><label><input type="checkbox" data-metric="fertility" checked><i class="metric-fertility"></i><span>Fertility</span></label><label><input type="checkbox" data-metric="birth" checked><i class="metric-birth"></i><span>Birth rate</span></label></div></fieldset>
-        <label><span>Measure year</span><input id="health-year" type="range" min="1960" max="2025" value="2023"><output id="health-year-output">2023</output></label>
-        <label><span>From</span><input id="mortality-start" type="date"></label>
-        <label><span>Through</span><input id="mortality-end" type="date"></label>
-        <button id="mortality-reset" type="button">Reset view</button>
-      </div>
-
-      <div class="mortality-workspace">
-        <div class="mortality-stage">
-          <div id="mortality-map" role="img" aria-label="Isometric world map with vertical stacks representing conflict observations and population-health measures"></div>
-          <div class="mortality-scale" aria-hidden="true"><span id="scale-maximum">18 × φ</span><i></i><span>1</span></div>
-          <div class="mortality-tooltip" id="mortality-tooltip" hidden></div>
-          <div class="mortality-legend"><span><i class="metric-conflict"></i> conflict observations</span><span><i class="metric-population"></i> population</span><span><i class="metric-mortality"></i> mortality rate</span><span><i class="metric-fertility"></i> total fertility</span><span><i class="metric-birth"></i> crude birth rate</span><span>Phi-accelerated blocks · drag to rotate · scroll to zoom</span></div>
-        </div>
-        <aside class="mortality-inspector" aria-live="polite">
-          <div class="mortality-inspector-head"><p class="eyebrow" id="mortality-kicker">Selected boundary</p><h2 id="mortality-selection">Global event field</h2></div>
-          <div class="mortality-metrics" id="mortality-metrics"></div>
-          <div class="mortality-ranking"><h3 id="ranking-title">Highest enabled values</h3><div id="mortality-ranking"></div></div>
-          <div class="mortality-disclosure"><h3>Measurement boundary</h3><p id="mortality-boundary"></p><a href="data-health.html">Open source disclosures</a></div>
-        </aside>
-      </div>
-    </section>
-  </main>
-
-  <div class="data-playback" aria-label="Measure year playback">
-    <output id="playback-date" aria-live="polite">2023</output>
-    <div>
-      <label><output id="playback-speed-output">1×</output><input id="playback-speed" type="range" min="0.25" max="4" step="0.25" value="1" aria-label="Playback speed"></label>
-      <button id="playback-toggle" type="button" title="Play through measure years" aria-label="Play through measure years" aria-pressed="false">▶</button>
-    </div>
-  </div>
-
-  <footer><a href="about.html">The War Maps Project</a><span>UCDP conflict data · IHME health data · World Bank / UN demographic data</span><a href="sources.html">Citations</a></footer>
+<header class="site-header">
+<a class="identity" href="./"><span aria-hidden="true" class="identity-mark"><img alt="" src="assets/compass-rose.svg"/></span><span>The War Maps Project</span></a>
+<nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a aria-current="page" href="life-death.html">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
+<button aria-label="Toggle day and night mode" class="icon-button" id="theme-toggle" title="Toggle day and night mode" type="button">◐</button>
+</header>
+<main>
+<section class="mortality-section">
+<div class="mortality-title">
+<div><p class="eyebrow">Conflict beside population health</p><h1>Living Conditions</h1></div>
+<p>Compare UCDP candidate-observation density with population, age-standardized all-cause mortality, total fertility, and crude birth rate. Candidate casualty estimates are not summed because records may overlap.</p>
+</div>
+<div aria-label="Life and Death map controls" class="mortality-controls">
+<label><span>Find state</span><input autocomplete="off" id="mortality-search" list="mortality-country-list" placeholder="State or territory" type="search"/><datalist id="mortality-country-list"></datalist></label>
+<fieldset class="metric-toggles"><legend>Visible metrics</legend><div><label><input checked="" data-metric="conflict" type="checkbox"/><i class="metric-conflict"></i><span>Conflict</span></label><label><input checked="" data-metric="population" type="checkbox"/><i class="metric-population"></i><span>Population</span></label><label><input checked="" data-metric="mortality" type="checkbox"/><i class="metric-mortality"></i><span>Mortality</span></label><label><input checked="" data-metric="fertility" type="checkbox"/><i class="metric-fertility"></i><span>Fertility</span></label><label><input checked="" data-metric="birth" type="checkbox"/><i class="metric-birth"></i><span>Birth rate</span></label></div></fieldset>
+<label><span>Measure year</span><input id="health-year" max="2025" min="1960" type="range" value="2023"/><output id="health-year-output">2023</output></label>
+<label><span>From</span><input id="mortality-start" type="date"/></label>
+<label><span>Through</span><input id="mortality-end" type="date"/></label>
+<button id="mortality-reset" type="button">Reset view</button>
+</div>
+<div class="mortality-workspace">
+<div class="mortality-stage">
+<div aria-label="Isometric world map with vertical stacks representing conflict observations and population-health measures" id="mortality-map" role="img"></div>
+<div aria-hidden="true" class="mortality-scale"><span id="scale-maximum">18 × φ</span><i></i><span>1</span></div>
+<div class="mortality-tooltip" hidden="" id="mortality-tooltip"></div>
+<div class="mortality-legend"><span><i class="metric-conflict"></i> conflict observations</span><span><i class="metric-population"></i> population</span><span><i class="metric-mortality"></i> mortality rate</span><span><i class="metric-fertility"></i> total fertility</span><span><i class="metric-birth"></i> crude birth rate</span><span>Phi-accelerated blocks · drag to rotate · scroll to zoom</span></div>
+</div>
+<aside aria-live="polite" class="mortality-inspector">
+<div class="mortality-inspector-head"><p class="eyebrow" id="mortality-kicker">Selected boundary</p><h2 id="mortality-selection">Global event field</h2></div>
+<div class="mortality-metrics" id="mortality-metrics"></div>
+<div class="mortality-ranking"><h3 id="ranking-title">Highest enabled values</h3><div id="mortality-ranking"></div></div>
+<div class="mortality-disclosure"><h3>Measurement boundary</h3><p id="mortality-boundary"></p><a href="data-health.html">Open source disclosures</a></div>
+</aside>
+</div>
+</section>
+</main>
+<div aria-label="Measure year playback" class="data-playback">
+<output aria-live="polite" id="playback-date">2023</output>
+<div>
+<label><output id="playback-speed-output">1×</output><input aria-label="Playback speed" id="playback-speed" max="4" min="0.25" step="0.25" type="range" value="1"/></label>
+<button aria-label="Play through measure years" aria-pressed="false" id="playback-toggle" title="Play through measure years" type="button">▶</button>
+</div>
+</div>
+<footer><a href="about.html">The War Maps Project</a><span>UCDP conflict data · IHME health data · World Bank / UN demographic data</span><a href="sources.html">Citations</a></footer>
 </body>
 </html>

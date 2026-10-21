@@ -1,1 +1,8 @@
 fpdf2==2.8.7
+openpyxl==3.1.5
+beautifulsoup4==4.15.0
+networkx==3.5
+numpy==2.3.4
+reportlab==4.4.4
+pypdf==6.1.1
+pillow==13.0.0

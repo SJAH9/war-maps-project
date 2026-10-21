@@ -1,62 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="A source-dated, isometric map of local pump gasoline and diesel prices across the United States, Europe, Asia, Oceania, and islands.">
-  <title>Fuel Prices · The War Maps Project</title>
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
-  <link rel="stylesheet" href="gas-map.css?v=2026-09-19-h">
-  <link rel="stylesheet" href="gas-map-layers.css?v=2026-09-19-a">
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js" defer></script>
-  <script src="assets/world-geometry.js" defer></script>
-  <script src="gas-price-data.js" defer></script>
-  <script src="gas-map.js?v=2026-09-21-k" defer></script>
-  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="A source-dated, isometric map of local pump gasoline and diesel prices across the United States, Europe, Asia, Oceania, and islands." name="description"/>
+<title>Fuel Prices · The War Maps Project</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+<link href="styles.css?v=2026-09-21-understanding-r2" rel="stylesheet"/>
+<link href="gas-map.css?v=2026-09-19-h" rel="stylesheet"/>
+<link href="gas-map-layers.css?v=2026-10-16-tax-1" rel="stylesheet"/>
+<script defer="" src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script defer="" src="assets/world-geometry.js"></script>
+<script defer="" src="gas-price-data.js?v=2026-10-19-refresh"></script>
+<script defer="" src="gas-price-model.js?v=2026-10-16-tax-1"></script>
+<script defer="" src="gas-map.js?v=2026-10-16-tax-1"></script>
+<script defer="" src="atlas-ui.js?v=2026-09-21-understanding-r1"></script>
+<link href="manifest.webmanifest" rel="manifest"/><link href="assets/compass-rose.svg" rel="icon"/><link href="assets/compass-192.png" rel="apple-touch-icon"/><link href="brand.css" rel="stylesheet"/><meta content="#10110e" name="theme-color"/><script defer="" src="pwa.js"></script></head>
 <body class="gas-page">
-  <header class="site-header">
-    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a href="gas-map.html" aria-current="page">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
-    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
-  </header>
-  <main class="gas-main">
-    <div class="gas-heading">
-      <div><p class="eyebrow">Fuel · place · source date</p><h1>Fuel Prices</h1></div>
-      <p>Pump prices across local, regional, and national reporting boundaries, displayed in USD per U.S. gallon. Click a nation to turn the map over, or select a price tower to see its date, geography, and source.</p>
-    </div>
-    <div class="gas-controls" aria-label="Gas Map controls">
-      <fieldset class="gas-fuel-toggles"><legend>Fuel layers</legend><label><input type="checkbox" data-fuel="gasoline" checked><i class="gasoline-swatch"></i> Gasoline</label><label><input type="checkbox" data-fuel="diesel"><i class="diesel-swatch"></i> Diesel</label></fieldset>
-      <label>Region <select id="gas-region"><option value="All">All regions</option><option value="United States">United States</option><option value="Europe">Europe</option><option value="Asia">Asia</option><option value="Oceania">Oceania</option><option value="Islands">Islands</option></select></label>
-      <label class="gas-find">Find a place <input id="gas-search" type="search" placeholder="Search mapped observations" autocomplete="off"></label>
-      <button id="gas-reset" type="button">Reset view</button>
-    </div>
-    <div class="gas-workspace">
-      <div class="gas-stage">
-        <div id="gas-map" aria-label="Interactive isometric fuel-price map. Click a country to turn the map over; click outside its outline to return. Drag to rotate; scroll to zoom."></div>
-        <div class="gas-stage-label"><span id="gas-view-name">WORLD PRICE FIELD</span><strong id="gas-count">—</strong><span>mapped observations</span></div>
-        <button class="gas-back" id="gas-back" type="button" hidden>↶ World map</button>
-        <div class="gas-stage-right">
-          <div class="gas-nation-name" id="gas-nation-name" hidden></div>
-          <div class="gas-scale" aria-label="Global linear height and emphasized footprint scale from zero to ten USD per U.S. gallon"><span>HEIGHT LINEAR · WIDTH EMPHASIS</span><i></i><div><span id="gas-scale-min">$0</span><span id="gas-scale-max">$10 ceiling</span></div></div>
-        </div>
-        <div class="gas-country-labels" id="gas-country-labels" aria-hidden="true"></div>
-        <div class="gas-price-labels" id="gas-price-labels" aria-hidden="true"></div>
-        <div class="gas-tooltip" id="gas-tooltip" hidden></div>
-        <div class="gas-stage-foot" id="gas-stage-hint">CLICK A NATION TO TURN THE MAP <b>·</b> DRAG TO ORBIT</div>
-      </div>
-      <aside class="gas-aside" aria-live="polite">
-        <div class="gas-aside-head"><p class="eyebrow" id="gas-kicker">Source-dated snapshot</p><h2 id="gas-selected">A geography of pump prices</h2><p id="gas-selected-sub">Choose a tower or a location below.</p></div>
-        <div class="gas-facts" id="gas-facts"></div>
-        <div class="gas-list-head"><h3>Places in view</h3><span id="gas-list-count"></span></div>
-        <div class="gas-list" id="gas-list"></div>
-      </aside>
-    </div>
-    <div class="gas-method"><div><h2>Read the boundary</h2><p>Gasoline and diesel can be shown separately or together. Warm colors identify gasoline and blue colors identify diesel. Height remains strictly proportional to price; footprint supplies additional fixed global contrast, making low-price towers narrow and high-price towers broad without recalculating the range for a selected country.</p></div><div><h2>How to compare</h2><p>All displayed prices use one fixed global linear height scale from $0 to a $10-per-U.S.-gallon ceiling. A $5 tower is exactly half the height of a $10 tower in every filter and geography. Tower width uses one disclosed global cubic emphasis over that same scale, not a local minimum and maximum. Observations above $10 meet the ceiling while their exact price remains inspectable.</p></div></div>
-    <div class="gas-source-line" id="gas-source-line"></div>
-  </main>
-  <footer><a href="about.html">The War Maps Project</a><span>Price observations retain their source boundaries</span><a href="sources.html">Citations</a></footer>
+<header class="site-header">
+<a class="identity" href="./"><span aria-hidden="true" class="identity-mark"><img alt="" src="assets/compass-rose.svg"/></span><span>The War Maps Project</span></a>
+<nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a aria-current="page" href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
+<button aria-label="Toggle day and night mode" class="icon-button" id="theme-toggle" title="Toggle day and night mode" type="button">◐</button>
+</header>
+<main class="gas-main">
+<div class="gas-heading">
+<div><p class="eyebrow">Fuel · place · source date</p><h1>Fuel Prices</h1></div>
+<p>Pump prices across local, regional, and national reporting boundaries, displayed in USD per U.S. gallon. Click a nation to turn the map over, or select a price tower to see its date, geography, and source.</p>
+</div>
+<div aria-label="Gas Map controls" class="gas-controls">
+<fieldset class="gas-fuel-toggles"><legend>Fuel layers</legend><label><input checked="" data-fuel="gasoline" type="checkbox"/><i class="gasoline-swatch"></i> Gasoline</label><label><input data-fuel="diesel" type="checkbox"/><i class="diesel-swatch"></i> Diesel</label></fieldset>
+<label>Region <select id="gas-region"><option value="All">All regions</option><option value="United States">United States</option><option value="Europe">Europe</option><option value="Asia">Asia</option><option value="Oceania">Oceania</option><option value="Islands">Islands</option></select></label>
+<label class="gas-find">Find a place <input autocomplete="off" id="gas-search" placeholder="Search mapped observations" type="search"/></label>
+<button id="gas-reset" type="button">Reset view</button>
+</div>
+<div aria-label="Price composition legend" class="gas-tax-legend"><span><i class="gas-base-swatch"></i> Fuel before taxes, where known</span><span><i class="gas-tax-swatch"></i> Included taxes</span><span id="gas-tax-coverage"></span><p>Unsplit columns include taxes but the amount is unavailable—not zero. Heights still show the total pump price.</p></div>
+<p class="gas-refresh-note" id="gas-refresh-note"></p>
+<div class="gas-workspace">
+<div class="gas-stage">
+<div aria-label="Interactive isometric fuel-price map. Click a country to turn the map over; click outside its outline to return. Drag to rotate; scroll to zoom." id="gas-map"></div>
+<div class="gas-stage-label"><span id="gas-view-name">WORLD PRICE FIELD</span><strong id="gas-count">—</strong><span>mapped observations</span></div>
+<button class="gas-back" hidden="" id="gas-back" type="button">↶ World map</button>
+<div class="gas-stage-right">
+<div class="gas-nation-name" hidden="" id="gas-nation-name"></div>
+<div aria-label="Global linear height and emphasized footprint scale from zero to ten USD per U.S. gallon" class="gas-scale"><span>HEIGHT LINEAR · WIDTH EMPHASIS</span><i></i><div><span id="gas-scale-min">$0</span><span id="gas-scale-max">$10 ceiling</span></div></div>
+</div>
+<div aria-hidden="true" class="gas-country-labels" id="gas-country-labels"></div>
+<div aria-hidden="true" class="gas-price-labels" id="gas-price-labels"></div>
+<div class="gas-tooltip" hidden="" id="gas-tooltip"></div>
+<div class="gas-stage-foot" id="gas-stage-hint">CLICK A NATION TO TURN THE MAP <b>·</b> DRAG TO ORBIT</div>
+</div>
+<aside aria-live="polite" class="gas-aside">
+<div class="gas-aside-head"><p class="eyebrow" id="gas-kicker">Source-dated snapshot</p><h2 id="gas-selected">A geography of pump prices</h2><p id="gas-selected-sub">Choose a tower or a location below.</p></div>
+<div class="gas-facts" id="gas-facts"></div>
+<div class="gas-tax-details" id="gas-tax-details"></div>
+<div class="gas-list-head"><h3>Places in view</h3><span id="gas-list-count"></span></div>
+<div class="gas-list" id="gas-list"></div>
+</aside>
+</div>
+<div class="gas-method"><div><h2>Read the boundary</h2><p>Gasoline and diesel can be shown separately or together. Warm colors identify gasoline and blue colors identify diesel. Striped magenta caps separate included taxes when a full breakdown is available. EU taxes are the difference between same-date inclusive and exclusive published prices; Australian taxes are calculated from the report-confirmed excise plus GST. Other observations remain unsplit because their sources do not supply a comparable full tax amount. Price dates remain individual to each source.</p></div><div><h2>How to compare</h2><p>All displayed prices use one fixed global linear height scale from $0 to a $10-per-U.S.-gallon ceiling. A $5 tower is exactly half the height of a $10 tower in every filter and geography. Tower width uses one disclosed global cubic emphasis over that same scale, not a local minimum and maximum. Observations above $10 meet the ceiling while their exact price remains inspectable. Tax caps above the ceiling are clipped, not rescaled; the inspector's amounts and composition bars show the complete price.</p></div></div>
+<div class="gas-source-line" id="gas-source-line"></div>
+</main>
+<footer><a href="about.html">The War Maps Project</a><span>Price observations retain their source boundaries</span><a href="sources.html">Citations</a></footer>
 </body>
 </html>

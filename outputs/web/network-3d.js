@@ -13,6 +13,7 @@
     const kindSize={nation:7.5,conflict:11,event:2.6,human:5.5,organization:6.5,location:5};
     const addNode=(id,label,kind,metadata={})=>{if(!catalog.has(id))catalog.set(id,{id,label,kind,metadata});else Object.assign(catalog.get(id).metadata,metadata);return catalog.get(id);};
     const endpoint=value=>typeof value==='object'?value.id:value;
+    const shownLink=link=>!state.hiddenHubs?.has(endpoint(link.source))&&!state.hiddenHubs?.has(endpoint(link.target));
     const addEdge=(source,target,relation,metadata={})=>{
       if(!source||!target||source===target||!catalog.has(source)||!catalog.has(target))return;
       const key=`${[source,target].sort().join('\u0000')}\u0000${relation}`;
@@ -78,6 +79,9 @@
     const relationToCenter=id=>(adjacency.get(state.center)?.get(id)||[])[0]||null;
     const seeded=value=>{let seed=0;for(const char of String(value))seed=(seed*31+char.charCodeAt(0))>>>0;return ()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};};
     function localPositions(){
+      if(state.graph)applyLinkFilter();
+      if(state.imported&&state.topology==='saved')return new Map(state.nodes.map(n=>[n.id,{x:Number(n.metadata.x),y:Number(n.metadata.y),z:Number(n.metadata.z)}]));
+      if(state.topology==='barabasi')return hubPositions();
       const positions=new Map([[state.center,{x:0,y:0,z:0}]]),neighbors=state.nodes.filter(node=>node.id!==state.center).sort((a,b)=>a.kind.localeCompare(b.kind)||a.label.localeCompare(b.label)),count=Math.max(1,neighbors.length),random=seeded(`${state.center}|${state.topology}`),sphere=(index,total,radius,center={x:0,y:0,z:0},phase=0)=>model.spherePoint(index,total,radius,center,phase);
       if(state.topology==='coalitions'){
         const groups=[...new Set(neighbors.map(node=>node.kind))];groups.forEach((kind,groupIndex)=>{const members=neighbors.filter(node=>node.kind===kind),angle=groupIndex/Math.max(1,groups.length)*Math.PI*2,center={x:Math.cos(angle)*205,y:Math.sin(angle)*90,z:Math.sin(angle)*205};members.forEach((node,index)=>positions.set(node.id,sphere(index,members.length,Math.min(105,34+Math.sqrt(members.length)*8),center,groupIndex)));});
@@ -111,13 +115,24 @@
     function pruneDistant(){const distances=globalDistances(state.center,3);state.visibleIds.forEach(id=>{if(!distances.has(id))state.visibleIds.delete(id);});state.visibleIds.add(state.center);}
     function visibleGraph(){const nodes=[...state.visibleIds].map(nodeId=>catalog.get(nodeId)).filter(Boolean).map(node=>({...node,metadata:node.metadata})),links=[...edgeIndex.values()].filter(edge=>state.visibleIds.has(endpoint(edge.source))&&state.visibleIds.has(endpoint(edge.target))).map(edge=>({...edge,source:endpoint(edge.source),target:endpoint(edge.target),metadata:edge.metadata}));return {nodes,links};}
     function analyzeVisible(){
+      if(state.imported){
+        state.nodes.forEach(node=>{const degree=globalDegree(node.id),degreeShare=degree/Math.max(1,catalog.size-1),b=Number(node.metadata.betweenness),betweenness=Number.isFinite(b)&&b>=0?b:0;node.networkMetrics={degree,degreeShare,betweenness,magnetism:.2+degreeShare*1.8+betweenness*4};});
+        return; // Imported weighted metrics are not replaced with local unweighted estimates.
+      }
       const ids=state.nodes.map(node=>node.id),local=new Map(ids.map(id=>[id,new Set()]));state.links.forEach(link=>{const a=endpoint(link.source),b=endpoint(link.target);local.get(a)?.add(b);local.get(b)?.add(a);});const between=new Map(ids.map(id=>[id,0]));
       ids.forEach(source=>{const stack=[],predecessors=new Map(ids.map(id=>[id,[]])),sigma=new Map(ids.map(id=>[id,0])),distance=new Map(ids.map(id=>[id,-1])),queue=[source];sigma.set(source,1);distance.set(source,0);while(queue.length){const vertex=queue.shift();stack.push(vertex);local.get(vertex)?.forEach(next=>{if(distance.get(next)<0){queue.push(next);distance.set(next,distance.get(vertex)+1);}if(distance.get(next)===distance.get(vertex)+1){sigma.set(next,sigma.get(next)+sigma.get(vertex));predecessors.get(next).push(vertex);}});}const dependency=new Map(ids.map(id=>[id,0]));while(stack.length){const target=stack.pop();predecessors.get(target).forEach(previous=>dependency.set(previous,dependency.get(previous)+(sigma.get(previous)/Math.max(1,sigma.get(target)))*(1+dependency.get(target))));if(target!==source)between.set(target,between.get(target)+dependency.get(target));}});
       const normalizer=Math.max(1,(ids.length-1)*(ids.length-2));state.nodes.forEach(node=>{const degree=local.get(node.id)?.size||0,degreeShare=degree/Math.max(1,ids.length-1),betweenness=between.get(node.id)/normalizer;node.networkMetrics={degree,degreeShare,betweenness,magnetism:.2+degreeShare*1.8+betweenness*4};});
     }
-    function magneticForce(){let nodes=[];const force=alpha=>{const byId=new Map(nodes.map(node=>[node.id,node]));state.links.forEach(link=>{const a=byId.get(endpoint(link.source)),b=byId.get(endpoint(link.target));if(!a||!b)return;const dx=(b.x||0)-(a.x||0),dy=(b.y||0)-(a.y||0),dz=(b.z||0)-(a.z||0),distance=Math.max(1,Math.hypot(dx,dy,dz)),pull=.0045*alpha/distance,am=a.networkMetrics?.magnetism||.2,bm=b.networkMetrics?.magnetism||.2;a.vx=(a.vx||0)+dx*pull*bm;a.vy=(a.vy||0)+dy*pull*bm;a.vz=(a.vz||0)+dz*pull*bm;b.vx=(b.vx||0)-dx*pull*am;b.vy=(b.vy||0)-dy*pull*am;b.vz=(b.vz||0)-dz*pull*am;});};force.initialize=value=>{nodes=value||[];};return force;}
+    function magneticForce(){let nodes=[];const force=alpha=>{const byId=new Map(nodes.map(node=>[node.id,node]));state.links.forEach(link=>{if(!shownLink(link))return;const a=byId.get(endpoint(link.source)),b=byId.get(endpoint(link.target));if(!a||!b)return;const dx=(b.x||0)-(a.x||0),dy=(b.y||0)-(a.y||0),dz=(b.z||0)-(a.z||0),distance=Math.max(1,Math.hypot(dx,dy,dz)),pull=.0045*alpha/distance,am=a.networkMetrics?.magnetism||.2,bm=b.networkMetrics?.magnetism||.2;a.vx=(a.vx||0)+dx*pull*bm;a.vy=(a.vy||0)+dy*pull*bm;a.vz=(a.vz||0)+dz*pull*bm;b.vx=(b.vx||0)-dx*pull*am;b.vy=(b.vy||0)-dy*pull*am;b.vz=(b.vz||0)-dz*pull*am;});};force.initialize=value=>{nodes=value||[];};return force;}
     const nodeValue=node=>(kindSize[node.kind]||4)+Math.sqrt(node.networkMetrics?.degree||0)*1.8+Math.sqrt(node.networkMetrics?.betweenness||0)*22;
     function updateInspector(){
+      if(state.imported){
+        const node=catalog.get(state.center);if(!node)return;
+        $('#navigator-kind').textContent=kindLabel[node.kind]||node.kind;$('#navigator-selected').textContent=node.label;
+        const fields=Object.entries(node.metadata).filter(([k])=>k!=='source_record');
+        $('#navigator-inspector-content').innerHTML=`<p>${esc(state.imported)} · all ${state.nodes.length.toLocaleString()} nodes retained, including disconnected components.</p><p>Distinct neighbors: ${globalDegree(node.id)}. Betweenness is the file-supplied value; missing values are not calculated.</p>${fields.map(([k,v])=>`<p><b>${esc(k)}</b>: ${esc(String(v).slice(0,1800))}</p>`).join('')}<small>Layout changes positions only, never connections. Directed edge flags remain in imported metadata; layout treats connectivity as undirected.</small>`;
+        return;
+      }
       const center=catalog.get(state.center),allNeighbors=adjacency.get(state.center)||new Map(),loaded=[...allNeighbors.keys()].filter(id=>state.visibleIds.has(id)),counts={};loaded.forEach(id=>{const kind=catalog.get(id)?.kind||'other';counts[kind]=(counts[kind]||0)+1;});
       $('#navigator-kind').textContent=kindLabel[center.kind]||center.kind;$('#navigator-selected').textContent=center.label;
       let detail='';if(center.kind==='nation')detail=`${center.metadata.profile?.conflict_count||0} recorded conflicts`;else if(center.kind==='conflict')detail=`${center.metadata.conflict?.first_active_year||''}–${center.metadata.conflict?.active_at_source_boundary?'present':center.metadata.conflict?.last_active_year||''}`;else if(center.kind==='event'){const event=center.metadata.event;detail=`${event.date_start} · ${event.fatalities?.best||0} best-estimate fatalities`;}else if(center.kind==='organization')detail=center.metadata.organization?.note||'Recorded organization or conflict actor';else if(center.kind==='human')detail='Named human reference in a source record';else detail='Recorded place connection';
@@ -132,15 +147,28 @@
     function nodeColor(node){if(node.id===state.center)return '#ffd500';if(state.type!=='all'&&node.kind!==state.type)return '#18201d';return kindColor[node.kind]||'#8a8a72';}
     function nodeLabel(node){const direct=[...new Set((adjacency.get(state.center)?.get(node.id)||[]).map(edge=>edge.relation))].join(' · '),depth=globalDistances(state.center,3).get(node.id),degree=depth===1?'First':depth===2?'Second':depth===3?'Third':'',metrics=node.networkMetrics||{};const relation=node.id===state.center?'Central node':direct||`${degree}-degree retained connection`;return `<div style="font-size:17px"><b>${esc(node.label)}</b></div><small style="font-size:13px;color:${kindColor[node.kind]||'#aaa'}">${esc(kindLabel[node.kind]||node.kind)} · ${esc(relation)}</small><br><small>degree ${metrics.degree||0} · betweenness ${(metrics.betweenness||0).toFixed(3)}</small>`;}
     function fitCamera(duration=650){if(droneMode){const radius=Math.max(200,...state.nodes.map(n=>Math.hypot(n.x||0,n.y||0,n.z||0)));state.graph?.cameraPosition({x:radius*1.7,y:radius*.9,z:radius*3.4},{x:0,y:0,z:0},duration);}else state.graph?.zoomToFit(duration,90);}
-    function optimize(duration=900){state.positions=localPositions();state.nodes.forEach(node=>{const point=state.positions.get(node.id)||{x:0,y:0,z:0};node.fx=null;node.fy=null;node.fz=null;node.x=point.x;node.y=point.y;node.z=point.z;});state.layoutForce?.targets(state.positions);state.graph?.graphData({nodes:state.nodes,links:state.links}).refresh();setTimeout(()=>{state.graph?.d3ReheatSimulation();fitCamera(duration);},50);}
+    function restoreViewport(){
+      const view=state.savedViewport;if(!view)return;
+      const camera=state.graph.camera(),controls=state.graph.controls();
+      camera.position.set(...view.position);camera.up.set(...view.up);controls.target.set(...view.target);
+      controls.autoRotate=false;clearTimeout(state.idleTimer);controls.update();
+      camera.quaternion.set(...view.quaternion);camera.zoom=view.zoom||1;if(Number.isFinite(view.fov)&&view.fov>0&&view.fov<180)camera.fov=view.fov;camera.updateProjectionMatrix();
+    }
+    function optimize(duration=900){state.positions=localPositions();state.nodes.forEach(node=>{const point=state.positions.get(node.id)||{x:0,y:0,z:0};node.fx=state.topology==='saved'?point.x:null;node.fy=state.topology==='saved'?point.y:null;node.fz=state.topology==='saved'?point.z:null;node.x=point.x;node.y=point.y;node.z=point.z;node.vx=node.vy=node.vz=0;});state.layoutForce?.targets(state.positions);state.graph?.graphData({nodes:state.nodes,links:state.links}).refresh();setTimeout(()=>{state.graph?.d3ReheatSimulation();if(state.topology==='saved'&&state.savedViewport)restoreViewport();else fitCamera(duration);},50);}
     function pullNeighborhood(node,translation){const distance=Math.hypot(translation.x||0,translation.y||0,translation.z||0);if(!distance)return;model.graphDistances(node.id,state.links,3).forEach((depth,id)=>{const neighbor=state.nodes.find(item=>item.id===id),factor=model.dragPullFactor(depth,distance);if(!neighbor||!factor)return;const dx=(translation.x||0)*factor,dy=(translation.y||0)*factor,dz=(translation.z||0)*factor;neighbor.x=(neighbor.x||0)+dx;neighbor.y=(neighbor.y||0)+dy;neighbor.z=(neighbor.z||0)+dz;const target=state.positions.get(id);if(target){target.x+=dx;target.y+=dy;target.z+=dz;}});}
     function focus(id,{remember=true,expand=true}={}){
+      if(state.imported){
+        if(!catalog.has(id))return;
+        if(remember&&state.center!==id)state.history.push(state.center);
+        state.center=id;state.graph?.nodeColor(nodeColor).refresh();
+        updateInspector();updateConnections();syncLabels();return;
+      }
       if(!catalog.has(id))return;if(remember&&state.center&&state.center!==id)state.history.push(state.center);state.center=id;state.visibleIds.add(id);if(expand)expandTen(id);pruneDistant();const local=visibleGraph();state.nodes=local.nodes;state.links=local.links;analyzeVisible();state.positions=localPositions();state.nodes.forEach(node=>Object.assign(node,state.positions.get(node.id)||{}));
       if(!state.graph){renderGraph();return;}state.layoutForce=model.anchorForce(state.positions);state.collisionForce=model.collisionForce(node=>node.id===state.center?34:({nation:24,conflict:28,event:7,human:14,organization:17,location:15}[node.kind]||12),5);state.magneticForce=magneticForce();
       state.graph.graphData({nodes:state.nodes,links:state.links}).d3Force('layout',state.layoutForce).d3Force('collision',state.collisionForce).d3Force('magnetism',state.magneticForce).nodeColor(nodeColor).nodeVal(nodeValue).refresh();state.graph.d3Force('link')?.strength(link=>.04+Math.max(link.source.networkMetrics?.magnetism||.2,link.target.networkMetrics?.magnetism||.2)*.12);$('#navigator-title').textContent=centerTitle();$('#navigator-status').textContent=statusText();updateInspector();updateConnections();syncLabels();setTimeout(()=>{state.graph.d3ReheatSimulation();state.graph.zoomToFit(850,90);},30);
     }
     const centerTitle=()=>`${catalog.get(state.center)?.label||'Network'} · Network Browser`,statusText=()=>`${state.nodes.length.toLocaleString()} retained nodes · ${state.links.length.toLocaleString()} observed relations · click center again for 10 more`;
-    function markInteraction(){if(!state.graph)return;state.graph.controls().autoRotate=false;clearTimeout(state.idleTimer);state.idleTimer=setTimeout(()=>{if(!state.graph)return;state.graph.controls().autoRotate=true;state.graph.resumeAnimation();},6000);}
+    function markInteraction(){if(!state.graph)return;state.graph.controls().autoRotate=false;clearTimeout(state.idleTimer);if(state.topology==='saved')return;state.idleTimer=setTimeout(()=>{if(!state.graph)return;state.graph.controls().autoRotate=true;state.graph.resumeAnimation();},6000);}
     function syncLabels(){let layer=$('#navigator-node-labels');if(!layer){layer=document.createElement('div');layer.id='navigator-node-labels';layer.className='navigator-node-labels';document.body.append(layer);}const ranked=[...state.nodes].sort((a,b)=>nodeValue(b)-nodeValue(a)),shown=new Set([state.center,...ranked.slice(0,39).map(node=>node.id)]);layer.innerHTML=state.nodes.filter(node=>shown.has(node.id)).map(node=>`<span class="navigator-node-label ${node.id===state.center?'central':''}" data-label-node="${esc(node.id)}">${esc(node.label)}</span>`).join('');updateLabels();}
     function updateLabels(){if(!state.graph)return;document.querySelectorAll('[data-label-node]').forEach(label=>{const node=state.nodes.find(item=>item.id===label.dataset.labelNode);if(!node||!Number.isFinite(node.x)){label.hidden=true;return;}const point=state.graph.graph2ScreenCoords(node.x,node.y,node.z),filtered=state.type!=='all'&&node.kind!==state.type;label.hidden=filtered||point.x<0||point.y<0||point.x>innerWidth-290||point.y>innerHeight;label.style.left=`${point.x}px`;label.style.top=`${point.y}px`;});}
     function renderGraph(){
@@ -151,13 +179,107 @@
     state.root=catalog.has(requestedConflict)?requestedConflict:catalog.has(requestedNode)?requestedNode:defaultConflict;state.center=state.root;state.visibleIds.add(state.root);expandTen(state.root);const initial=visibleGraph();state.nodes=initial.nodes;state.links=initial.links;analyzeVisible();state.positions=localPositions();state.nodes.forEach(node=>Object.assign(node,state.positions.get(node.id)||{}));
     if(droneMode){for(const e of data.events){state.visibleIds.add(`event:${e.id}`);state.visibleIds.add(nationId(e.country));state.visibleIds.add('nation:Iran');state.visibleIds.add('nation:Israel');state.visibleIds.add('nation:United States of America');state.visibleIds.add(`location:target-category:${e.target_class}`);}const full=visibleGraph();state.nodes=full.nodes;state.links=full.links;analyzeVisible();state.positions=localPositions();state.nodes.forEach(node=>Object.assign(node,state.positions.get(node.id)||{}));}
     const mode=document.createElement('label');mode.className='navigator-command';const check=document.createElement('input');check.type='checkbox';check.checked=droneMode;check.style.width='auto';mode.append(check,document.createTextNode('Iranian drones only'));$('.navigator-controls').append(mode);check.onchange=()=>{const u=new URL(location.href);u.searchParams.set('conflict','ucdp-candidate-16905');check.checked?u.searchParams.set('events','iranian-drones'):u.searchParams.delete('events');location.href=u;};
+    const loadBox=document.createElement('div');loadBox.className='navigator-command';
+    const loadButton=document.createElement('button');loadButton.type='button';loadButton.id='navigator-load-graph';loadButton.textContent='Load a graph';loadBox.append(loadButton);$('.navigator-controls').append(loadBox);
+    const fileInput=$('#navigator-graphml-file');loadButton.onclick=()=>fileInput.click();
+    const cutBox=document.createElement('label');cutBox.className='navigator-command';
+    const cutCheck=document.createElement('input');cutCheck.type='checkbox';cutCheck.id='navigator-cut-hubs';cutCheck.style.width='auto';cutCheck.checked=state.topology==='barabasi';
+    cutBox.title='Hide incident links when a node connects to strictly more than 60% of the other loaded nodes. Nodes and source edges are retained.';
+    cutBox.append(cutCheck,document.createTextNode('Hide >60% hub links'));$('.navigator-controls').append(cutBox);
+    const filterNote=document.createElement('small');filterNote.id='navigator-hub-filter-status';cutBox.append(filterNote);
+    function applyLinkFilter(){
+      const neighbors=new Map(state.nodes.map(n=>[n.id,new Set()]));
+      state.links.forEach(e=>{const a=endpoint(e.source),b=endpoint(e.target);if(a!==b&&neighbors.has(a)&&neighbors.has(b)){neighbors.get(a).add(b);neighbors.get(b).add(a);}});
+      state.hiddenHubs=new Set(cutCheck.checked?[...neighbors].filter(([,ns])=>ns.size/Math.max(1,state.nodes.length-1)>.6).map(([id])=>id):[]);
+      const hidden=state.links.filter(e=>!shownLink(e)).length;
+      filterNote.textContent=`${state.hiddenHubs.size} hubs · ${hidden} links hidden`;
+      state.graph?.linkVisibility(shownLink);
+      state.graph?.d3Force('link')?.strength(link=>shownLink(link)?.08:0);
+      state.graph?.d3ReheatSimulation();
+    }
+    function hubPositions(){
+      // Degree-ranked hub-and-spoke groups on observed edges, not synthetic BA edges.
+      const local=new Map(state.nodes.map(n=>[n.id,new Set()]));
+      state.links.filter(shownLink).forEach(e=>{const a=endpoint(e.source),b=endpoint(e.target);if(a!==b){local.get(a)?.add(b);local.get(b)?.add(a);}});
+      const ranked=[...local.keys()].sort((a,b)=>local.get(b).size-local.get(a).size||a.localeCompare(b));
+      const assigned=new Set(),groups=[];
+      for(const hub of ranked){if(assigned.has(hub))continue;assigned.add(hub);const members=[...local.get(hub)].filter(id=>!assigned.has(id));members.forEach(id=>assigned.add(id));groups.push([hub,...members]);}
+      const positions=new Map();groups.forEach((group,i)=>{
+        const radius=i?180+Math.sqrt(i)*180:0,angle=i*2.399963,c={x:Math.cos(angle)*radius,y:(i%3-1)*110,z:Math.sin(angle)*radius};
+        positions.set(group[0],c);group.slice(1).forEach((id,j)=>positions.set(id,model.spherePoint(j,group.length-1,65+Math.sqrt(group.length)*12,c,0)));
+      });return positions;
+    }
+    cutCheck.onchange=()=>{applyLinkFilter();optimize();};
+    const hubOption=$('#navigator-topology option[value="barabasi"]');hubOption.textContent='Barabási · hub-and-spoke';topologyNames.barabasi=hubOption.textContent;
+    $('#navigator-topology').addEventListener('change',event=>{if(event.target.value==='barabasi')cutCheck.checked=true;applyLinkFilter();});
+    const labelBox=document.createElement('label');labelBox.className='navigator-command';
+    const labelsCheck=document.createElement('input');labelsCheck.type='checkbox';labelsCheck.id='navigator-show-labels';labelsCheck.checked=true;labelsCheck.style.width='auto';
+    labelBox.append(labelsCheck,document.createTextNode('Show labels'));$('.navigator-controls').append(labelBox);
+    labelsCheck.onchange=()=>{const layer=$('#navigator-node-labels');if(layer)layer.hidden=!labelsCheck.checked;state.graph?.nodeLabel(labelsCheck.checked?nodeLabel:()=> '');};
+    const exportBox=document.createElement('div');exportBox.className='navigator-command';const exportButton=document.createElement('button');exportButton.type='button';exportButton.id='navigator-export-viewport';exportButton.textContent='Export viewport graph';exportBox.append(exportButton);$('.navigator-controls').append(exportBox);
+    exportButton.onclick=()=>{
+      const camera=state.graph.camera(),controls=state.graph.controls();
+      const viewport={position:camera.position.toArray(),quaternion:camera.quaternion.toArray(),up:camera.up.toArray(),target:controls.target.toArray(),zoom:camera.zoom,fov:camera.fov,width:innerWidth,height:innerHeight,showLabels:labelsCheck.checked,hideHighDegreeLinks:cutCheck.checked,hubThreshold:.6,hiddenHubIds:[...(state.hiddenHubs||[])]};
+      const content=window.WarGraphML.stringify({nodes:state.nodes,links:state.links,metadata:{...state.importedMetadata,title:state.imported||centerTitle(),layout:state.topology,selected_node:state.center,viewport:JSON.stringify(viewport),position_units:'3d-force-graph world units',viewport_version:1}});
+      const url=URL.createObjectURL(new Blob([content],{type:'application/graphml+xml'})),a=document.createElement('a');a.href=url;a.download='war-maps-viewport-'+state.topology+'.graphml';a.click();setTimeout(()=>URL.revokeObjectURL(url),10000);
+    };
+    fileInput.addEventListener('change',async()=>{
+      const file=fileInput.files[0];if(!file)return;
+      loadButton.disabled=true;
+      try{
+        if(file.size>40*1024*1024)throw Error('GraphML exceeds the 40 MB limit.');
+        // Parse and validate before touching the current graph.
+        const imported=window.WarGraphML.parse(await file.text());
+        let savedViewport=null;
+        if(imported.metadata.viewport){
+          const v=JSON.parse(imported.metadata.viewport);
+          if(!['position','up','target','quaternion'].every(k=>Array.isArray(v[k])&&v[k].length===(k==='quaternion'?4:3)&&v[k].every(Number.isFinite))||!Number.isFinite(v.zoom)||v.zoom<=0)throw Error('Invalid saved camera data.');
+          savedViewport=v;
+        }
+        const savedPositions=imported.nodes.every(n=>['x','y','z'].every(k=>Number.isFinite(n.metadata[k])));
+        state.graph.graphData({nodes:[],links:[]});catalog.clear();edgeIndex.clear();adjacency.clear();
+        nationNames.clear();organizationsByNation.clear();state.positions.clear();state.batchOffsets.clear();state.history=[];
+        imported.nodes.forEach(node=>catalog.set(node.id,node));
+        imported.links.forEach((edge,i)=>{
+          edgeIndex.set(`import-${i}`,edge);
+          for(const [a,b] of [[edge.source,edge.target],[edge.target,edge.source]]){
+            if(!adjacency.has(a))adjacency.set(a,new Map());
+            if(!adjacency.get(a).has(b))adjacency.get(a).set(b,[]);
+            adjacency.get(a).get(b).push(edge);
+          }
+        });
+        state.imported=file.name;state.visibleIds=new Set(catalog.keys());state.nodes=imported.nodes;state.links=imported.links;
+        state.savedViewport=savedViewport;state.importedMetadata=imported.metadata;
+        if(savedViewport){labelsCheck.checked=savedViewport.showLabels!==false;cutCheck.checked=savedViewport.hideHighDegreeLinks===true;labelsCheck.onchange();}
+        $('#navigator-topology option[value="saved"]')?.remove();
+        if(savedPositions){const option=document.createElement('option');option.value='saved';option.textContent='Saved viewport positions';$('#navigator-topology').append(option);topologyNames.saved='Saved viewport positions';state.topology='saved';}
+        else if(state.topology==='saved')state.topology='equilibrium';
+        $('#navigator-topology').value=state.topology;
+        state.center=catalog.has(imported.metadata.selected_node)?imported.metadata.selected_node:[...catalog.keys()].sort((a,b)=>globalDegree(b)-globalDegree(a)||a.localeCompare(b))[0];state.root=state.center;state.type='all';
+        const kinds=[...new Set(state.nodes.map(n=>n.kind))].sort();
+        const palette={event:'#b8312c',place:'#3c8994',date:'#65783f',method:'#8c65a1'};
+        kinds.forEach(kind=>{kindColor[kind]=palette[kind]||kindColor[kind]||'#8d9fa8';});
+        $('#navigator-type').innerHTML='<option value="all">All nodes</option>'+kinds.map(k=>`<option value="${esc(k)}">${esc(k)}</option>`).join('');
+        $('.navigator-legend').innerHTML=kinds.map(k=>`<span><i class="navigator-dot" style="--dot:${kindColor[k]}"></i>${esc(k)}</span>`).join('')+'<span>Imported graph · all components retained</span>';
+        $('.navigator-evidence').textContent='Local GraphML file. No upload. Layout choices reposition the same nodes and edges.';
+        check.disabled=true;analyzeVisible();state.positions=localPositions();
+        state.layoutForce=model.anchorForce(state.positions);state.graph.d3Force('layout',state.layoutForce);
+        state.graph.graphData({nodes:state.nodes,links:state.links}).nodeColor(nodeColor).nodeVal(nodeValue);
+        state.graph.d3Force('link')?.strength(link=>{const weight=Number(link.metadata.weight);return Number.isFinite(weight)&&weight>0?Math.min(.7,.04+.08*Math.log1p(weight)):.08;});
+        state.graph.d3Force('charge')?.strength(-32);
+        $('#navigator-title').textContent=file.name;
+        $('#navigator-status').textContent=`${state.nodes.length.toLocaleString()} nodes · ${state.links.length.toLocaleString()} imported edges · all components retained`;
+        updateInspector();updateConnections();syncLabels();optimize();
+      }catch(error){$('#navigator-status').textContent=`Could not load graph: ${error.message}`;}
+      finally{loadButton.disabled=false;fileInput.value='';}
+    });
     if(droneMode){$('.navigator-evidence').innerHTML='<a href="https://iranattacks.com/data">Drone report source · CC BY 4.0</a> · Interceptions and claims remain in source wording; incomplete source-attributed subset, not all historical strikes.';}
-    const resetToRoot=()=>{state.history=[];state.visibleIds=new Set([state.root]);state.batchOffsets=new Map();focus(state.root,{remember:false});};
+    const resetToRoot=()=>{state.history=[];state.visibleIds=new Set(state.imported?catalog.keys():[state.root]);state.batchOffsets=new Map();focus(state.root,{remember:false});};
     $('#navigator-topology').value=state.topology;$('#navigator-register-list').addEventListener('click',event=>{const button=event.target.closest('[data-node]');if(button){markInteraction();focus(button.dataset.node);}});$('#navigator-back').addEventListener('click',()=>{const id=state.history.pop();if(id)focus(id,{remember:false,expand:false});});$('#navigator-root').addEventListener('click',resetToRoot);$('#navigator-clear').addEventListener('click',resetToRoot);
     $('#navigator-fit').addEventListener('click',()=>state.graph?.zoomToFit(650,90));$('#navigator-optimize').addEventListener('click',()=>optimize());$('#navigator-topology').addEventListener('change',event=>{state.topology=event.target.value;optimize();updateConnections();});$('#navigator-type').addEventListener('change',event=>{state.type=event.target.value;state.graph?.nodeColor(nodeColor).refresh();updateLabels();});
     $('#navigator-search').addEventListener('keydown',event=>{if(event.key!=='Enter')return;const query=event.currentTarget.value.trim().toLowerCase();if(!query)return;const matches=[...catalog.values()].filter(node=>state.type==='all'||node.kind===state.type).sort((a,b)=>{const ax=a.label.toLowerCase()===query?0:a.label.toLowerCase().startsWith(query)?1:2,bx=b.label.toLowerCase()===query?0:b.label.toLowerCase().startsWith(query)?1:2;return ax-bx||globalDegree(b.id)-globalDegree(a.id);}),match=matches.find(node=>node.label.toLowerCase().includes(query));if(match)focus(match.id);});
     $('#navigator-close').addEventListener('click',()=>{if(history.length>1)history.back();else location.href='graph.html';});
     try{renderGraph();}catch(error){const fallback=new URL('graph.html',location.href),center=catalog.get(state.center);if(center?.kind==='nation')fallback.searchParams.set('node',center.label);root.innerHTML=`<p class="navigator-loading">The browser could not create a WebGL context. <a href="${fallback.href}">Continue through this node in the Relationship Browser</a>.</p>`;$('#navigator-title').textContent='3D Network Browser unavailable';$('#navigator-status').textContent=error.message;updateInspector();updateConnections();}
   };
-  window.addEventListener('load',start,{once:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();

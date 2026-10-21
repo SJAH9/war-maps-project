@@ -1,4 +1,13 @@
 __pycache__/
+/cred.delete
+/deleteafteruse.me
+tmp/pdfs/
+outputs/withheld/
+outputs/print/war-ephemeris*
+outputs/print/war-maps-conflict-networks-2026.pdf
+outputs/print/war-maps-conflict-networks-top-5.pdf
+outputs/release-candidate/
+tmp/
 *.pyc
 .DS_Store
 outputs/web/data/*.json

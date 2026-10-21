@@ -1,0 +1,18 @@
+{
+  "status": "User-selected release; Ephemeris and removed network studies withheld",
+  "version": "0.12.0",
+  "pdfs": {
+    "war-maps-mortality-2024.pdf": "outputs/print/war-maps-mortality-2024.pdf",
+    "war-maps-mortality-2025.pdf": "outputs/print/war-maps-mortality-2025.pdf",
+    "war-maps-mortality-2026.pdf": "outputs/print/war-maps-mortality-2026.pdf",
+    "war-maps-russia-ukraine-deaths-2024-circle.pdf": "outputs/print/war-maps-russia-ukraine-deaths-2024-circle.pdf",
+    "war-maps-russia-ukraine-deaths-2025-circle.pdf": "outputs/print/war-maps-russia-ukraine-deaths-2025-circle.pdf",
+    "war-maps-russia-ukraine-deaths-2026-circle.pdf": "outputs/print/war-maps-russia-ukraine-deaths-2026-circle.pdf",
+    "war-maps-russia-ukraine-two-views-2026.pdf": "outputs/print/maps-event-hubs-russia-ukraine-2026-lattice-hybrid.pdf",
+    "war-maps-event-networks-2026.pdf": "outputs/print/war-maps-event-networks-2026.pdf",
+    "war-maps-event-networks-all-time.pdf": "outputs/print/war-maps-event-networks-all-time.pdf",
+    "war-maps-conflict-networks-top-10-mortality.pdf": "outputs/print/war-maps-conflict-networks-top-10-mortality.pdf",
+    "war-maps-afterimages-network.pdf": "outputs/print/war-maps-afterimages-art-poster-white-memorial-double-border.pdf",
+    "war-maps-afterimages-network-artist-edit.pdf": "data/curated/release-inputs/afterimages-artist-edit.pdf"
+  }
+}

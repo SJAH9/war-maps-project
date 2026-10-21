@@ -1,0 +1,61 @@
+{
+  "snapshot": "2026-10-16",
+  "source_updates": {
+    "aaa": {
+      "observation_date": "2026-10-16",
+      "observations": 51,
+      "checked_on": "2026-10-16"
+    },
+    "eia": {
+      "observation_date": "2026-10-12",
+      "observations": 10,
+      "checked_on": "2026-10-16"
+    },
+    "eu": {
+      "observation_date": "2026-10-12",
+      "observations": 27,
+      "checked_on": "2026-10-16"
+    },
+    "japan": {
+      "observation_date": "2026-10-05",
+      "observations": 47,
+      "checked_on": "2026-10-16"
+    },
+    "accc": {
+      "observation_date": "2026-10-14",
+      "observations": 195,
+      "checked_on": "2026-10-16"
+    },
+    "india": {
+      "observation_date": "2026-10-16",
+      "observations": 1,
+      "checked_on": "2026-10-16"
+    },
+    "taiwan": {
+      "observation_date": "2026-10-12",
+      "observations": 1,
+      "checked_on": "2026-10-16"
+    },
+    "nz": {
+      "observation_date": "2026-09-27",
+      "observations": 1,
+      "checked_on": "2026-10-16",
+      "status": "last_verified",
+      "note": "Last verified official MBIE board-price publication: week ending 27 September 2026. The upstream page and CSV returned HTTP 403 during the 16 October refresh; a newer observation could not be verified. This is not a current-week price."
+    }
+  },
+  "captures": {
+    "fx.html": "4422161311c3c02cf2d1571db07bdf9884b3f42fdeb16a4926903236ae6ab42d",
+    "eia.html": "4ae2c4312f56e1c05d1159ae04ddb7c04e41a84af2e59dfb899db6db5e6d726b",
+    "cbc.html": "3b0720354131a83841c36b766f0bd9684fdd47944700f19c41fced47595f01e7",
+    "eu.html": "151c29dadff228524457fb9ef82f5965c24f77e449f572ee8dd8965be12e6821",
+    "eu-without.xlsx": "f9062ef9c9010b89c8b56059aeab3ba6cb22b39b59c81c04a7f8d38e21ef23b5",
+    "aaa.html": "759359a3e390bdde7d0cecd510039a6b894033124961867d335d9adfce3a7398",
+    "eu-with.xlsx": "e52e8447f875228b6a7a68cb92cb1f3a9769c96818bd458904846b03946dfebc",
+    "source-notes.json": "367044bbd298fe5b4e40121052d8d6f690cf6270467463e39c685104a5bf57c8",
+    "india.html": "f39c482026cb113a330aa98354f9f713b46636b100ace5b48d72f13b50cffa40",
+    "japan.html": "02ab6e2d265181a31404545406421c390522f479cc5d91d4496b373321fa6721",
+    "taiwan.html": "62486becc4d5dc24a1c3129df5854dd19ef8a89de582b2913bfdbf7590b5cd6b",
+    "accc-web-extract.txt": "a6ac7caa270e00b060260dac35104db12439ffaed313b5ca811b0943ec76386e"
+  }
+}

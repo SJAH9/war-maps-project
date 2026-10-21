@@ -939,7 +939,7 @@ def add_current_life_death(pdf: AtlasPDF, spec: dict, events: list[dict], health
     for x, country in zip(columns, countries):
         pdf.set_xy(x, 61); pdf.set_font("Helvetica", "B", 8.5); pdf.set_text_color(*(OXBLOOD if country == "Iran" else SLATE)); pdf.cell(87, 5, latin(country.upper()), align="C")
     metrics = []
-    metrics.append(("Geocoded candidate observations", "28 Feb-30 Jul 2026", OXBLOOD, {country: (2026, float(totals.get(country, {}).get("events", 0))) for country in countries}))
+    metrics.append(("Geocoded candidate observations", f"{spec['window_start']} - {spec['window_end']}", OXBLOOD, {country: (int(spec['window_end'][:4]), float(totals.get(country, {}).get("events", 0))) for country in countries}))
     metrics.append(("Population", "latest source observation", MANILA, {country: metric_value_for(population, current_aliases(country, "world-bank"), "population") for country in countries}))
     metrics.append(("All-cause mortality", "deaths per 100,000", (39, 56, 73), {country: metric_value_for(health, current_aliases(country, "health"), "mortality") for country in countries}))
     metrics.append(("Total fertility", "births per woman", (75, 48, 69), {country: metric_value_for(health, current_aliases(country, "health"), "fertility") for country in countries}))
@@ -1079,7 +1079,7 @@ def generate(key: str) -> Path:
             and event["date_start"] <= spec["window_end"]
             and event["date_end"] >= spec["window_start"]
         ]
-        pdf.footer_text = "IRAN REGIONAL FIELD  |  OBSERVED 28 FEB-30 JUL 2026  |  UCDP CANDIDATE"
+        pdf.footer_text = f"IRAN REGIONAL FIELD  |  OBSERVED {spec['window_start']} - {spec['window_end']}  |  UCDP CANDIDATE"
         add_current_cover(pdf, spec, events)
         add_current_principle(pdf, spec)
         add_current_range(pdf, events)

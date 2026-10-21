@@ -10,6 +10,38 @@ The top-level **NewsMedia** section embeds the maintained standalone [NewsBoob](
 
 ## First public release
 
+### Additional humanitarian context and offline refresh
+
+The print-only `War Networks` Letter report is rebuilt with
+`python -m src.generate_war_networks` and included in the full print generator.
+It writes `outputs/print/war-networks.pdf` and a companion graph/audit JSON.
+All loaded 2026 focal events remain, irrespective of disclosed motives.
+Chronology-derived response-compatible links are labelled inferences; source
+statements, including future explicit denials, annotate rather than gate events.
+Cross-region comparisons use declared graph measures and a civilian-node
+sensitivity check. Health-attack graphs retain injury and death measures separately.
+
+The oPt Health Cluster / WHO Unified Health Dashboard is now ingested from its
+public aggregate queries, not screenshot estimates. Refresh explicitly with
+`python -m src.import_health_dashboard --refresh`; rebuild without network access
+with `python -m src.import_health_dashboard`. The frozen response is
+`data/raw/opt-health-dashboard.json`. `python -m src.generate_web_atlas` rebuilds
+the separate Human cost context and publishes `outputs/web/opt-health-dashboard.json`.
+It includes the Gaza/West Bank fatality and injury series, Gaza demographic
+tables (including proportions, not counts, in `GAd_by_Years`), and health-attack
+records. No personal/contact tables are requested. Public access does not imply
+an unrestricted reuse license; publisher terms and attribution still apply.
+
+The initial capture has 1,099 casualty-date rows, 3,188 demographic rows, four
+period-share rows and 2,069 health-attack records. The 9 October 2026 figures are
+74,370 Gaza fatalities and 175,371 injuries; West Bank 1,216 fatalities and
+13,473 injuries. The previous Gaza context was 73,470 fatalities on 2 September:
+the difference of 900 is a snapshot revision/change, not an assigned interval
+death count. Its original provenance remains attached to the replacement record.
+Gaza and West Bank totals remain outside UCDP; health-attack losses overlap them.
+Never sum cumulative daily rows, infer combatant status from age/sex, combine
+injuries with deaths, or treat zero/missing values as interchangeable.
+
 The first public release establishes the reproducible observed field, the interactive world and nation explorers, configurable print volumes, and the ternary enclosure grammar. The project horizon is broader: **to produce navigable nested causal models of every organized conflict for which suitable peer-reviewed datasets are available**. The project identifies every data source, discloses its methods and transformations, and preserves the boundaries of each observation.
 
 The current release is therefore an operational foundation, not a claim that every conflict already has a complete causal model. Each conflict begins at its available source boundary and can deepen through recursively addressed decisions, actors, conditions, claims, economic relations, alternatives, and consequences without erasing uncertainty or source context. See [First Public Release](docs/FIRST_PUBLIC_RELEASE.md).
@@ -48,7 +80,7 @@ Interactive graphics retain a text inspector, register, list, table, or download
 
 The complete interface rules and publication checklist are documented in [Public-understanding interface](docs/PUBLIC_UNDERSTANDING_DESIGN.md).
 
-The latest source-by-source audit is [Data refresh · 8 October 2026](docs/DATA_REFRESH_2026-10-08.md). It records updated, unchanged, and retained sources separately. Official conflict downloads remain unchanged; the World Bank crude birth-rate response has been refreshed.
+The latest source-by-source audit is [Data refresh · 19 October 2026](docs/DATA_REFRESH_2026-10-19.md). It records updated, unchanged, and retained sources separately. Fuel observations, exchange rates, the ICEYE orbit snapshot, and the World Bank population response were refreshed; official conflict downloads remain unchanged.
 
 Sid J.A. Hubbard is the Principal Investigator of the War Maps Project. At this stage, the entirety of the atlas is written, directed, and engineered by its Principal Investigator with the assistance of AI and data-science tools. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator.
 
@@ -83,7 +115,7 @@ Every mapped nation opens a nation-centred record with three views. **Date** com
 
 The world map accepts a movable 1, 10, 25, 50, or all-time window. Its government-type selector uses V-Dem's `v2x_regime` vocabulary: Closed Autocracy, Electoral Autocracy, Electoral Democracy, and Liberal Democracy. "Totalitarian dictatorship" is not substituted for an official V-Dem category.
 
-The experimental satellite-path control is temporarily hidden while the map's public evidence model is revised. Its frozen source records and implementation remain separate from conflict relationships so the feature can return without treating orbit geometry as proof of participation.
+The World map offers an optional **Satellite paths** control for the ICEYE constellation. Turn it on to view approximate paths and snapshot positions calculated from the frozen CelesTrak record dated 2026-10-19. These are archived reference geometry, not live positions. Orbit records remain separate from conflict relationships; constellation access does not establish individual satellite tasking. The toolbar links to CelesTrak, and [the source notes](docs/SOURCES.md#public-satellite-geometry) explain the snapshot and relationship boundaries.
 
 ## Conflict network exploration
 
@@ -115,7 +147,7 @@ The web atlas includes dedicated pages for [project background](web/about.html),
 
 The Civilian Casualties map sums UCDP GED <code>deaths_civilians</code> inside an inclusive user-selected year range. It opens on the latest ten calendar years (currently 2017–2026), keeping the initial view recent while exposing a full decade. Independent controls add IHME GBD 2023 all-cause mortality and long-run period life expectancy at birth (Riley 2005; HMD; UN WPP 2024; OWID processing). Life-expectancy observations extend from 1543 through 2023 where a country series supports them. Every health column uses the latest actual observation inside the selected interval and is never extrapolated. The three measures stand beside one another on independent height scales; small or crowded territories use half opacity. Separate Gaza context towers remain outside the UCDP total and retain their incompatible measurement boundaries.
 
-The Gas Map exposes gasoline and diesel as independent layers. Either fuel may be shown alone, or both may be enabled to draw paired columns at each source observation. Every displayed price is converted to USD per U.S. gallon on a fixed global linear $0–$10 height scale: $5 is exactly half the height of $10 in every view, while observations above $10 meet the ceiling and retain their exact inspectable value. A fixed global cubic footprint emphasis makes smaller price differences visible without recalculating a local range: low-price towers are narrow and high-price towers broad. The inspector also retains the indicative USD-per-litre conversion. Warm columns identify gasoline, blue columns identify diesel, and crowded pairs use half opacity.
+The Gas Map exposes gasoline and diesel as independent layers. Either fuel may be shown alone, or both may be enabled to draw paired columns at each source observation. Every displayed price is converted to USD per U.S. gallon on a fixed global linear $0–$10 height scale: $5 is exactly half the height of $10 in every view, while observations above $10 meet the ceiling and retain their exact inspectable value. A fixed global cubic footprint emphasis makes smaller price differences visible without recalculating a local range: low-price towers are narrow and high-price towers broad. The inspector also retains the indicative USD-per-litre conversion. Warm columns identify gasoline, blue columns identify diesel, and crowded pairs use half opacity. The October refresh adds striped magenta tax caps for source-matched EU price pairs and calculated Australian excise plus GST. The inspector shows the complete before-tax/tax split, including amounts above the height ceiling. Unknown tax amounts remain explicitly unquantified, never zero. Each location retains its own observation date; New Zealand is flagged as last-verified because its current official feed could not be retrieved. See [fuel methodology and refresh audit](docs/GAS_MAP.md).
 
 The main world explorer can place IHME all-cause mortality or fertility beneath conflict events for any observed health year from 1980 through 2023. V-Dem regime categories and category transitions can be inspected on the same field. The related-data panel reports descriptive regime-group means and adjacent-year observations around transitions; it does not present these associations as causal estimates. No health data are invented before 1980 or carried beyond 2023.
 
@@ -175,3 +207,40 @@ A separately sourced context layer records selected U.S. overseas-base and acces
 Project code and original documentation are MIT licensed. UCDP data is CC BY 4.0 and must retain its own attribution; every other upstream dataset retains its stated license and citation requirements. Books and linked authored publications are not relicensed by this repository. See `docs/SOURCES.md` and `data/SOURCES.json`.
 
 The project is written, directed, and engineered by Sid J.A. Hubbard, Principal Investigator, with AI and data-science tools used in research and engineering. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator. The project takes the side of accurately enclosed evidence and human life; it does not participate in prosecution of war for any belligerent.
+
+## Print-only conflict networks and War Ephemeris
+
+Run `python3 -m src.generate_network_print` to build ten 18 x 24 inch
+network-science posters ranked by summed reported mortality, two complete
+event-network posters (2026 and all available years), a one-dot-per-death
+2024-2026 mortality poster series at a shared dot scale, a Letter atlas of full recorded networks active in
+2026, and the attributed War Ephemeris with an embedded recovery capsule.
+See [print methods and recovery instructions](docs/PRINT_NETWORKS.md).
+
+## Selected 2026 print collection
+
+The release selection is explicit in `data/curated/print-release-selection.json`.
+The Ephemeris and unselected network studies are **not published** in this collection.
+`outputs/release/war_posters.pdf` contains the large-format edition;
+`outputs/release/warmaps.pdf` contains the same posters scaled to US Letter,
+with website About and Sources front matter, clickable links and QR codes.
+
+After installing `requirements.txt` and restoring the data described above:
+
+```sh
+python -m src.generate_death_circle
+python -m src.generate_web_atlas
+python -m src.generate_publications
+python -m unittest discover -s tests
+```
+
+The publication generator packages only the selected inputs, preserving the
+artist-edited PDF as a hashed source. It does not restore manually removed
+release candidates. Source-poster regeneration commands remain documented in
+`docs/PRINT_NETWORKS.md`; the manifest records each selected input and checksum.
+The web generator includes the shared compass branding and installable app shell.
+Offline access covers core reading pages and recently cached small resources,
+not the full atlas or print downloads. See the site's Install page.
+
+See `docs/RELEASE_0_12_0.txt` and `docs/ROADMAP_2027.txt` for the print release and
+next-year network-science, cybersecurity and data-source plans.

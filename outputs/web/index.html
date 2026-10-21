@@ -1,68 +1,64 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Explore public evidence about organized conflict—who is involved, where events are recorded, how relationships change, and what the human costs are.">
-  <title>The War Maps Project · Public evidence, connected</title>
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r2">
-  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Explore public evidence about organized conflict—who is involved, where events are recorded, how relationships change, and what the human costs are." name="description"/>
+<title>The War Maps Project · Public evidence, connected</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+<link href="styles.css?v=2026-09-21-understanding-r2" rel="stylesheet"/>
+<script defer="" src="atlas-ui.js?v=2026-09-21-understanding-r1"></script>
+<link href="manifest.webmanifest" rel="manifest"/><link href="assets/compass-rose.svg" rel="icon"/><link href="assets/compass-192.png" rel="apple-touch-icon"/><link href="brand.css" rel="stylesheet"/><meta content="#10110e" name="theme-color"/><script defer="" src="pwa.js"></script></head>
 <body class="landing-page">
-  <header class="site-header">
-    <a class="identity" href="./" aria-current="page"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"></nav>
-    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
-  </header>
-
-  <main id="main-content" class="landing-main">
-    <section class="landing-hero">
-      <div>
-        <p class="eyebrow">Public evidence · connected without taking sides</p>
-        <h1>See past the fog of war.</h1>
-        <p class="landing-lede">News reports show moments. War Maps helps you see the conflict around them: the people and organizations involved, the places and dates in the public record, the relationships among them, and the human conditions that headlines leave outside the frame.</p>
-        <div class="landing-actions"><a class="primary-action" href="network.html">Explore a conflict</a><a href="civilian-casualties.html">Begin with human cost</a></div>
-      </div>
-      <aside class="landing-boundary" aria-label="Project boundary">
-        <p class="eyebrow">What this is</p>
-        <p><strong>An interface to public data.</strong> The project does not collect conflict observations. It connects records from named public and institutional sources and shows the transformations used to make them comparable.</p>
-        <p><strong>What this is not.</strong> It is not intelligence, targeting support, a prediction engine, or an argument for any party. Absence from the data is never treated as proof that nothing happened.</p>
-        <a href="method.html">Read the method and limits</a>
-      </aside>
-    </section>
-
-    <section class="landing-path" aria-labelledby="path-title">
-      <header><p class="eyebrow">A path from headline to context</p><h2 id="path-title">Start with the question you have.</h2></header>
-      <div class="question-grid">
-        <a href="map.html"><span>01 · Where and when</span><h3>What happened here?</h3><p>Locate recorded conflicts and events across a time window, then open the source-bounded record behind the map.</p><b>Open the world map →</b></a>
-        <a href="network.html"><span>02 · Participants and events</span><h3>Who is part of this conflict?</h3><p>Follow one conflict through sides, states, actors, locations, and dated observations without turning proximity into blame.</p><b>Open a conflict network →</b></a>
-        <a href="graph.html"><span>03 · Relationships</span><h3>How are these parties connected?</h3><p>Inspect recorded same-side participation and sourced organization membership. Every line has a disclosed rule.</p><b>Follow relationships →</b></a>
-        <a href="civilian-casualties.html"><span>04 · Human cost</span><h3>What do the casualty records show?</h3><p>Compare reported civilian deaths by place and time while keeping incomplete coverage and incompatible estimates visible.</p><b>View civilian deaths →</b></a>
-        <a href="life-death.html"><span>05 · Living conditions</span><h3>What wider conditions surround conflict?</h3><p>Place conflict observations beside population, mortality, life expectancy, fertility, and birth-rate records—never as a causal shortcut.</p><b>Compare living conditions →</b></a>
-        <a href="hormuz.html"><span>06 · Hormuz shipping</span><h3>Which ships are crossing the Strait?</h3><p>Reported vessel positions on an isometric map, sampled tracks and separately dated daily crossing counts.</p><b>View shipping →</b></a>
-        <a href="gas-map.html"><span>06 · Material context</span><h3>How do fuel prices differ?</h3><p>Compare source-dated gasoline and diesel prices with consistent units, fixed scales, local resolution, and linked publishers.</p><b>Compare pump prices →</b></a>
-        <a href="newsmedia.html"><span>07 · Live coverage</span><h3>How is this being reported now?</h3><p>Compare international live-news coverage while keeping broadcasts separate from verified records and project inference.</p><b>Open NewsMedia →</b></a>
-      </div>
-    </section>
-
-    <section class="landing-trust" aria-labelledby="trust-title">
-      <div><p class="eyebrow">How to read every view</p><h2 id="trust-title">Observation, transformation, and inference stay distinct.</h2></div>
-      <div class="trust-grid">
-        <article><i class="evidence-source"></i><h3>Source record</h3><p>A value or relationship present in a named upstream dataset. The producer, version, date, unit, and coverage boundary should be inspectable.</p></article>
-        <article><i class="evidence-transform"></i><h3>Project transformation</h3><p>A disclosed join, total, conversion, layout, or visual scale created by War Maps from source records.</p></article>
-        <article><i class="evidence-inference"></i><h3>Inference</h3><p>An explicitly labelled analytical interpretation. It can organize questions, but it does not become a sourced fact or legal conclusion.</p></article>
-        <article><i class="evidence-unknown"></i><h3>Unknown or missing</h3><p>A gap stays a gap. The interface does not silently interpolate missing years, infer motives, or turn no record into no event.</p></article>
-      </div>
-    </section>
-
-    <section class="landing-register" aria-labelledby="register-title">
-      <div><p class="eyebrow">Current loaded boundary</p><h2 id="register-title">A reproducible record, not a live claim of completeness.</h2></div>
-      <dl><div><dt>Historical conflict spine</dt><dd>1946–2025</dd></div><div><dt>Provisional event boundary</dt><dd>Through August 2026</dd></div><div><dt>Candidate conflict clusters</dt><dd>510</dd></div><div><dt>Candidate observations</dt><dd>13,659</dd></div></dl>
-      <p>These counts describe the current repository build. They do not describe all wars or all events in the world. <a href="coverage.html">Inspect coverage and missingness</a> or <a href="sources.html">open the complete source guide</a>.</p>
-    </section>
-  </main>
-
-  <footer><a href="about.html">Purpose and authorship</a><a href="donate.html">Support the project</a><span>No cookies · no tracking · no strategic service to any side</span><a href="https://github.com/SJAH9/war-maps-project">Code, data, and revision history</a></footer>
+<header class="site-header">
+<a aria-current="page" class="identity" href="./"><span aria-hidden="true" class="identity-mark"><img alt="" src="assets/compass-rose.svg"/></span><span>The War Maps Project</span></a>
+<nav aria-label="Primary navigation"></nav>
+<button aria-label="Toggle day and night mode" class="icon-button" id="theme-toggle" title="Toggle day and night mode" type="button">◐</button>
+</header>
+<main class="landing-main" id="main-content">
+<section class="landing-hero">
+<div>
+<p class="eyebrow">Public evidence · connected without taking sides</p>
+<h1>See past the fog of war.</h1>
+<p class="landing-lede">News reports show moments. War Maps helps you see the conflict around them: the people and organizations involved, the places and dates in the public record, the relationships among them, and the human conditions that headlines leave outside the frame.</p>
+<div class="landing-actions"><a class="primary-action" href="network.html">Explore a conflict</a><a href="civilian-casualties.html">Begin with human cost</a></div>
+</div>
+<aside aria-label="Project boundary" class="landing-boundary">
+<p class="eyebrow">What this is</p>
+<p><strong>An interface to public data.</strong> The project does not collect conflict observations. It connects records from named public and institutional sources and shows the transformations used to make them comparable.</p>
+<p><strong>What this is not.</strong> It is not intelligence, targeting support, a prediction engine, or an argument for any party. Absence from the data is never treated as proof that nothing happened.</p>
+<a href="method.html">Read the method and limits</a>
+</aside>
+</section>
+<section aria-labelledby="path-title" class="landing-path">
+<header><p class="eyebrow">A path from headline to context</p><h2 id="path-title">Start with the question you have.</h2></header>
+<div class="question-grid">
+<a href="map.html"><span>01 · Where and when</span><h3>What happened here?</h3><p>Locate recorded conflicts and events across a time window, then open the source-bounded record behind the map.</p><b>Open the world map →</b></a>
+<a href="network.html"><span>02 · Participants and events</span><h3>Who is part of this conflict?</h3><p>Follow one conflict through sides, states, actors, locations, and dated observations without turning proximity into blame.</p><b>Open a conflict network →</b></a>
+<a href="graph.html"><span>03 · Relationships</span><h3>How are these parties connected?</h3><p>Inspect recorded same-side participation and sourced organization membership. Every line has a disclosed rule.</p><b>Follow relationships →</b></a>
+<a href="civilian-casualties.html"><span>04 · Human cost</span><h3>What do the casualty records show?</h3><p>Compare reported civilian deaths by place and time while keeping incomplete coverage and incompatible estimates visible.</p><b>View civilian deaths →</b></a>
+<a href="life-death.html"><span>05 · Living conditions</span><h3>What wider conditions surround conflict?</h3><p>Place conflict observations beside population, mortality, life expectancy, fertility, and birth-rate records—never as a causal shortcut.</p><b>Compare living conditions →</b></a>
+<a href="hormuz.html"><span>06 · Hormuz shipping</span><h3>Which ships are crossing the Strait?</h3><p>Reported vessel positions on an isometric map, sampled tracks and separately dated daily crossing counts.</p><b>View shipping →</b></a>
+<a href="gas-map.html"><span>06 · Material context</span><h3>How do fuel prices differ?</h3><p>Compare source-dated gasoline and diesel prices with consistent units, fixed scales, local resolution, and linked publishers.</p><b>Compare pump prices →</b></a>
+<a href="newsmedia.html"><span>07 · Live coverage</span><h3>How is this being reported now?</h3><p>Compare international live-news coverage while keeping broadcasts separate from verified records and project inference.</p><b>Open NewsMedia →</b></a>
+</div>
+</section>
+<section aria-labelledby="trust-title" class="landing-trust">
+<div><p class="eyebrow">How to read every view</p><h2 id="trust-title">Observation, transformation, and inference stay distinct.</h2></div>
+<div class="trust-grid">
+<article><i class="evidence-source"></i><h3>Source record</h3><p>A value or relationship present in a named upstream dataset. The producer, version, date, unit, and coverage boundary should be inspectable.</p></article>
+<article><i class="evidence-transform"></i><h3>Project transformation</h3><p>A disclosed join, total, conversion, layout, or visual scale created by War Maps from source records.</p></article>
+<article><i class="evidence-inference"></i><h3>Inference</h3><p>An explicitly labelled analytical interpretation. It can organize questions, but it does not become a sourced fact or legal conclusion.</p></article>
+<article><i class="evidence-unknown"></i><h3>Unknown or missing</h3><p>A gap stays a gap. The interface does not silently interpolate missing years, infer motives, or turn no record into no event.</p></article>
+</div>
+</section>
+<section aria-labelledby="register-title" class="landing-register">
+<div><p class="eyebrow">Current loaded boundary</p><h2 id="register-title">A reproducible record, not a live claim of completeness.</h2></div>
+<dl><div><dt>Historical conflict spine</dt><dd>1946–2025</dd></div><div><dt>Provisional event boundary</dt><dd>Through August 2026</dd></div><div><dt>Candidate conflict clusters</dt><dd>510</dd></div><div><dt>Candidate observations</dt><dd>13,659</dd></div></dl>
+<p>These counts describe the current repository build. They do not describe all wars or all events in the world. <a href="coverage.html">Inspect coverage and missingness</a> or <a href="sources.html">open the complete source guide</a>.</p>
+</section>
+</main>
+<footer><a href="about.html">Purpose and authorship</a><a href="donate.html">Support the project</a><span>No cookies · no tracking · no strategic service to any side</span><a href="https://github.com/SJAH9/war-maps-project">Code, data, and revision history</a></footer>
 </body>
 </html>

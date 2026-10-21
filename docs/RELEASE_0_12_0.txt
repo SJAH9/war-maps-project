@@ -1,0 +1,47 @@
+War Maps 0.12.0 - A solid first year
+
+This is the last meaningful War Maps release planned for 2026: a solid first year of connecting public evidence about organized conflict and making its human cost visible.
+
+PRINT, READ, MAKE
+
+Two 29-page ebooks bring the selected print work together:
+- war_posters.pdf: large-format 18 x 24 inch pages.
+- warmaps.pdf: an 8.5 x 11 inch mini-poster edition of the same collection.
+
+Both open with the website's About and Sources content, installation guidance and links to the atlas and repository. The 12 selected standalone PDFs contain 21 poster pages, including the ten-poster mortality-ranked network collection. Every poster has prominent, clickable QR codes for the deployed site and GitHub repository. The PDFs retain vector dots and graphs for close inspection at high zoom.
+
+The Russia-Ukraine death-circle series now covers 2024, 2025 and 2026. One dot represents one recorded death: Ukrainian-side dots occupy the top of the circle and Russian-side dots the bottom, with civilian and unknown-status deaths outside it. Full-year totals are 102,120 for 2024 and 94,741 for 2025; the January-August 2026 total is 57,840. Year and source coverage remain attached to each poster. The 2026 source rows and side-field totals were checked against the original CSVs; the preserved files exactly matched the publisher downloads.
+
+The selection also includes the global mortality posters, event networks, the two-view Russia-Ukraine network, and two Afterimages art editions selected by the author. The artist-edited edition is preserved as an explicit build input. The Ephemeris and withdrawn network studies are not release assets and are not included in either ebook.
+
+ONE IDENTITY, WEB AND PRINT
+
+The vector-equilibrium compass rose now carries the War Maps identity across the website, print collection and app icons. The tighter wordmark keeps the website's documentary visual language while giving the project a recognizable compass emblem.
+
+INSTALLABLE, PARTLY OFFLINE
+
+A new progressive web app wrapper makes War Maps installable on supported mobile and desktop browsers. On Android or desktop, use the browser's Install app option or the in-page install button when available. On iPhone and iPad, use Safari's Share > Add to Home Screen.
+
+After a successful online visit, the core start, About, Sources, installation and publications pages are available offline. A bounded runtime cache can retain small, visited same-origin resources. The entire atlas is not downloaded: external maps, libraries, live video, large datasets and PDFs need connectivity or separate downloads. Installation is not an App Store distribution.
+
+CLONE, REBUILD, EXPLORE
+
+git clone https://github.com/SJAH9/war-maps-project.git
+cd war-maps-project
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m src.generate_publications
+python -m src.generate_web_atlas
+
+The explicit selection in data/curated/print-release-selection.json controls publication. Rebuilding from the included source posters does not require live upstream access. Outputs and SHA-256 checksums are written to outputs/release/. For regenerating the historical circles from raw data, restore the documented GED 26.1 input first; the code does not silently fetch a different version.
+
+Use these publications in art, media, education and general awareness of where and how people die in organized conflict. Keep source attribution, dates and units with excerpts. Inspect the generator and source records, adapt the presentation, and share your own work.
+
+NEXT YEAR
+
+The roadmap prioritizes a network-science and cybersecurity-focused ebook; richer, clearer network interfaces and visual language that make use of dense event data; and data-source upgrades with version-aware refreshes. Small two-node diagrams are not the destination for a project with this much evidence.
+
+Project: https://sjah9.github.io/war-maps-project/
+Code and data: https://github.com/SJAH9/war-maps-project
+Principal Investigator: Sid J.A. Hubbard

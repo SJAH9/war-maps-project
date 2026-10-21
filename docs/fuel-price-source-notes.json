@@ -1,0 +1,11 @@
+{
+  "accc": {"observation_date":"2026-10-14","excise_per_litre":0.537,"excise_verified_from_current_report":true,"evidence":"16 October 2026 report, page 3: full fuel excise restored to 53.7 cents/litre on 3 August; tables 6 and 7 contain prices to 14 October. GST is 1/11 of the inclusive retail price."},
+  "nz": {"observation_date":"2026-09-27","gasoline":3.38,"note":"Last verified official MBIE board-price publication: week ending 27 September 2026. The upstream page and CSV returned HTTP 403 during the 16 October refresh; a newer observation could not be verified. This is not a current-week price.","evidence":"Official MBIE Price for fuel response support indexed page, last updated 30 September 2026: 91 Regular, Board, 27 September 2026, NZ$3.38/litre."},
+  "sources": {
+    "eu_with_tax":"https://energy.ec.europa.eu/document/download/264c2d0f-f161-4ea3-a777-78faae59bea0_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20with%20Taxes%20-%202026-09-21.xlsx",
+    "eu_before_tax":"https://energy.ec.europa.eu/document/download/78311f92-68f8-4b82-b5cf-1293beeaae77_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20without%20taxes%20-%202024-02-19.xlsx",
+    "accc":"https://www.accc.gov.au/system/files/weekly-fuel-price-monitoring-report-16-october-2026.pdf",
+    "accc_tax":"https://www.accc.gov.au/consumers/petrol-and-fuel/what-affects-fuel-prices",
+    "japan_tax":"https://www.enecho.meti.go.jp/statistics/petroleum_and_lpgas/pl007/results.html"
+  }
+}

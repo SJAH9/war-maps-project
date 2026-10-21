@@ -1,0 +1,159 @@
+{
+  "version": "0.12.0",
+  "status": "User-selected release; Ephemeris and removed network studies withheld",
+  "publications": [
+    {
+      "file": "war-maps-mortality-2024.pdf",
+      "source": "outputs/print/war-maps-mortality-2024.pdf",
+      "pages": 1,
+      "source_sha256": "5d80c4167a0cc3e236427462ff5a97df2cfcd2ea3ba7f63bb7ab138c3b645d01"
+    },
+    {
+      "file": "war-maps-mortality-2025.pdf",
+      "source": "outputs/print/war-maps-mortality-2025.pdf",
+      "pages": 1,
+      "source_sha256": "0b72f897119a151e4c0a8cc2473718e8953f60da64db866d95667ea6f1d52eb3"
+    },
+    {
+      "file": "war-maps-mortality-2026.pdf",
+      "source": "outputs/print/war-maps-mortality-2026.pdf",
+      "pages": 1,
+      "source_sha256": "c892fcdc7d28c929df319d63922ac9033a0ecf136b198be0d10505211c8416ac"
+    },
+    {
+      "file": "war-maps-russia-ukraine-deaths-2024-circle.pdf",
+      "source": "outputs/print/war-maps-russia-ukraine-deaths-2024-circle.pdf",
+      "pages": 1,
+      "source_sha256": "05663106d2884953646aef87c4b7a1d63fcb3c49f793bc277506bc70e5c85662"
+    },
+    {
+      "file": "war-maps-russia-ukraine-deaths-2025-circle.pdf",
+      "source": "outputs/print/war-maps-russia-ukraine-deaths-2025-circle.pdf",
+      "pages": 1,
+      "source_sha256": "40a2c2b3e61860d8c12ae3bee8dcfb94376c44280d08ecf8916eac1e0861c3bb"
+    },
+    {
+      "file": "war-maps-russia-ukraine-deaths-2026-circle.pdf",
+      "source": "outputs/print/war-maps-russia-ukraine-deaths-2026-circle.pdf",
+      "pages": 1,
+      "source_sha256": "b9e4a37f66939bd1ccdbda6c3ec1c82bf0b55b5bf5d87a6cfb81bac94cd566d6"
+    },
+    {
+      "file": "war-maps-russia-ukraine-two-views-2026.pdf",
+      "source": "outputs/print/maps-event-hubs-russia-ukraine-2026-lattice-hybrid.pdf",
+      "pages": 1,
+      "source_sha256": "71501743d411c1e183b2591c1980c7c2d0c1445e754ba6ac2f6e65d2d5007193"
+    },
+    {
+      "file": "war-maps-event-networks-2026.pdf",
+      "source": "outputs/print/war-maps-event-networks-2026.pdf",
+      "pages": 1,
+      "source_sha256": "eac301f2a363ba39e25df0445ef5e4979c1ed71eea20f883b2def88b5b0af95d"
+    },
+    {
+      "file": "war-maps-event-networks-all-time.pdf",
+      "source": "outputs/print/war-maps-event-networks-all-time.pdf",
+      "pages": 1,
+      "source_sha256": "609be10ddc57ad67b6c4a96180040c961d2141b6d9b9a03f95e74d3cec0e86e3"
+    },
+    {
+      "file": "war-maps-conflict-networks-top-10-mortality.pdf",
+      "source": "outputs/print/war-maps-conflict-networks-top-10-mortality.pdf",
+      "pages": 10,
+      "source_sha256": "e3d694ebfcba27903f51bbba6fb62fccbe75c350ade5552f5aea6a53682d499b"
+    },
+    {
+      "file": "war-maps-afterimages-network.pdf",
+      "source": "outputs/print/war-maps-afterimages-art-poster-white-memorial-double-border.pdf",
+      "pages": 1,
+      "source_sha256": "f2e90eae62f1a25cf0707d9b9eea4ab50736f1bebb1eecec6ca9ee5d04636373"
+    },
+    {
+      "file": "war-maps-afterimages-network-artist-edit.pdf",
+      "source": "data/curated/release-inputs/afterimages-artist-edit.pdf",
+      "pages": 1,
+      "source_sha256": "a79bc1db05fe567389528bff548f86c405b56a2acd81651648487029f66e12ef"
+    }
+  ],
+  "files": [
+    {
+      "file": "war-maps-mortality-2024.pdf",
+      "bytes": 7671557,
+      "sha256": "b69b198c2ee57bb35f9752b8f5fd42489057485a046b73995639eb0e8580e025"
+    },
+    {
+      "file": "war-maps-mortality-2025.pdf",
+      "bytes": 9968740,
+      "sha256": "efc80541a9c531b361c974665c1a25c8caada0584351c38ddbe1e73dd5e4c09f"
+    },
+    {
+      "file": "war-maps-mortality-2026.pdf",
+      "bytes": 5146948,
+      "sha256": "8d8d8fde3ad06269f013e1d22c1d66b12ab5bd43a24cc611aea50cfe592623cd"
+    },
+    {
+      "file": "war-maps-russia-ukraine-deaths-2024-circle.pdf",
+      "bytes": 5260842,
+      "sha256": "13b3ca91dbb4a69574502340a6a2b295126493143dcca563288bc75a703e474c"
+    },
+    {
+      "file": "war-maps-russia-ukraine-deaths-2025-circle.pdf",
+      "bytes": 4997168,
+      "sha256": "fb585b516cffefca012564bc6e61f84191f9afc19ffcd7394fa4c8b03016829e"
+    },
+    {
+      "file": "war-maps-russia-ukraine-deaths-2026-circle.pdf",
+      "bytes": 3039515,
+      "sha256": "81d6758ae8e556c98f5185c70d04755506390292ac9930e17b26737d81de9071"
+    },
+    {
+      "file": "war-maps-russia-ukraine-two-views-2026.pdf",
+      "bytes": 537117,
+      "sha256": "b817be0e1a081f08a358f67c9d9f8d685de8f82d1e9034dad185cf830a3dc16e"
+    },
+    {
+      "file": "war-maps-event-networks-2026.pdf",
+      "bytes": 1390819,
+      "sha256": "57b321b9b2d7fedace66868151228988176095f6b217af52a2ceadd1951a2dfd"
+    },
+    {
+      "file": "war-maps-event-networks-all-time.pdf",
+      "bytes": 36705561,
+      "sha256": "9ace14bede2fa15972f2925871b23f5e7aafe8a0888ecb2edc2d5114263eea77"
+    },
+    {
+      "file": "war-maps-conflict-networks-top-10-mortality.pdf",
+      "bytes": 792303,
+      "sha256": "90173b8e9c7286c735460bc6f900b92fa2dd558a135490f33ffa1b0198726dd4"
+    },
+    {
+      "file": "war-maps-afterimages-network.pdf",
+      "bytes": 1238074,
+      "sha256": "b82605a6c1c4c8add97d721ee175d2ccfcbebb736506a0cb3e4afa33761de653"
+    },
+    {
+      "file": "war-maps-afterimages-network-artist-edit.pdf",
+      "bytes": 1238074,
+      "sha256": "7a8caf868d519f420a7484976289be85a43da0588238563bba85b0fe2d4c374e"
+    },
+    {
+      "file": "war_posters.pdf",
+      "bytes": 78074062,
+      "sha256": "54a5cb626e648c132ed630077d417d4c6f2a27177b34c978c7a0c681b8eaed48"
+    },
+    {
+      "file": "warmaps.pdf",
+      "bytes": 78074983,
+      "sha256": "c5184b20bf37dd57928b3020b8fdd2f5097e2f3fac3f215f2455b7830f5334d4"
+    }
+  ],
+  "frontmatter_sources": {
+    "about.html": "83d94fdd73f3781db925009e7e7c37a67ba73c53782df14a86c3bca609780ab7",
+    "sources.html": "53ceedef570c6029018cd9923a158f5939f97223e55eabbb4a7cdbde9364cc54"
+  },
+  "rebuild": "python -m src.generate_publications",
+  "excluded": [
+    "Ephemeris",
+    "unselected network studies"
+  ]
+}

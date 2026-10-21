@@ -1,94 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Interactive conflict networks connecting belligerents, nations, locations, and source observations.">
-  <title>Explore a Conflict · The War Maps Project</title>
-  <script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
-  <link rel="stylesheet" href="styles.css?v=2026-09-21-understanding-r3">
-  <script src="https://cdn.plot.ly/plotly-3.1.0.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js" defer></script>
-  <script src="data.js?v=2026-09-09-r1" defer></script>
-  <script src="network-model.js?v=2026-09-21-r5" defer></script>
-  <script src="drone-event-layer.js" defer></script>
-  <script src="network.js?v=2026-10-09-drone-layer" defer></script>
-  <script src="atlas-ui.js?v=2026-09-21-understanding-r1" defer></script>
-</head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<meta content="Interactive conflict networks connecting belligerents, nations, locations, and source observations." name="description"/>
+<title>Explore a Conflict · The War Maps Project</title>
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('war-maps-theme')||'dark';}catch(error){document.documentElement.dataset.theme='dark';}</script>
+<link href="styles.css?v=2026-09-21-understanding-r3" rel="stylesheet"/>
+<script defer="" src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.78.4/dist/3d-force-graph.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/graphology@0.26.0/dist/graphology.umd.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/graphology-library@0.8.0/dist/graphology-library.min.js"></script>
+<script defer="" src="data.js?v=2026-10-19-refresh"></script>
+<script defer="" src="network-model.js?v=2026-09-21-r5"></script>
+<script defer="" src="drone-event-layer.js"></script>
+<script defer="" src="network.js?v=2026-10-09-drone-layer"></script>
+<script defer="" src="atlas-ui.js?v=2026-09-21-understanding-r1"></script>
+<link href="manifest.webmanifest" rel="manifest"/><link href="assets/compass-rose.svg" rel="icon"/><link href="assets/compass-192.png" rel="apple-touch-icon"/><link href="brand.css" rel="stylesheet"/><meta content="#10110e" name="theme-color"/><script defer="" src="pwa.js"></script></head>
 <body class="network-page">
-  <header class="site-header">
-    <a class="identity" href="./"><span class="identity-mark" aria-hidden="true"></span><span>The War Maps Project</span></a>
-    <nav aria-label="Primary navigation"><a href="index.html">Start</a><a href="network.html" aria-current="page">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
-    <button class="header-command" id="war-dialog-open" type="button"><span aria-hidden="true">⌕</span> Select war</button>
-    <button class="icon-button" id="theme-toggle" type="button" title="Toggle day and night mode" aria-label="Toggle day and night mode">◐</button>
-  </header>
-
-  <main>
-    <section class="network-section" id="network">
-      <div class="network-title">
-        <div><p class="eyebrow">Participants · places · dated observations</p><h1 id="network-title">Explore a conflict</h1></div>
-        <div class="network-title-meta"><span id="network-status">Loading conflict record</span><a id="conflict-record-link" href="map.html">Conflict record</a></div>
-      </div>
-
-      <div class="network-controls network-command-deck" aria-label="Network visualization controls">
-        <div class="network-command"><span>Scope</span><button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select conflict</button></div>
-        <div class="network-command"><span>Time</span><label><span>From</span><input id="network-start" type="date"></label><label><span>Through</span><input id="network-end" type="date"></label></div>
-        <label class="network-command"><span>Search</span><input id="network-search" type="search" placeholder="Nation, place, actor, observation"></label>
-        <label class="network-command"><span>Filter</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
-        <div class="network-command"><span>Layout</span><select id="network-topology"><option value="equilibrium">Balanced relationships</option><option value="coalitions">Group by side</option><option value="prisoner">Opposing fields</option><option value="third-party">Emphasize bridges</option><option value="pirates">Influence hierarchy</option><option value="temporal">Arrange by time</option></select><button class="network-optimize" id="network-optimize" type="button">Arrange</button></div>
-        <div class="network-command"><span>View</span><button class="network-fit" id="network-fit" type="button">Fit</button><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D Browser</button></div>
-        <div class="network-command"><span>Evidence</span><button class="network-data" id="network-data" type="button">View network data</button></div>
-      </div>
-
-      <div class="network-workspace">
-        <div class="network-stage">
-          <div id="network-locale-map" class="network-locale-map" aria-hidden="true"></div>
-          <div id="network-canvas" role="img" aria-label="Network connecting conflict sides, participants, nations, locations, and observations"></div>
-          <div class="network-legend" aria-label="Network node legend">
-            <span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Source-coded Side A</span><span><i class="side-b"></i> Source-coded Side B</span><span><i class="nation"></i> Nation + government</span><span><i class="actor"></i> Participant</span><span><i class="location"></i> Recorded place</span><span><i class="defensive"></i> Defensive-posture inference</span><span><i class="offensive"></i> Offensive-posture inference</span><span>Events: weekday orbit · week depth</span><span>Size: connections · candidate fatality value</span>
-          </div>
-        </div>
-        <aside class="network-inspector" aria-label="Selected node inspector" aria-live="polite">
-          <div class="network-inspector-head"><p class="eyebrow" id="node-type">Network extent</p><h2 id="node-title">Selected conflict</h2></div>
-          <div class="network-node-meta" id="node-meta"></div>
-          <div class="inspector-tabs" role="tablist" aria-label="Node inspector views">
-            <button type="button" role="tab" data-inspector-view="overview" aria-selected="true">Overview</button>
-            <button type="button" role="tab" data-inspector-view="similar" aria-selected="false" disabled>Similar nodes</button>
-          </div>
-          <section id="node-overview" role="tabpanel"></section>
-          <section id="node-similar" role="tabpanel" hidden>
-            <div class="similar-controls" aria-label="Similar node period">
-              <button type="button" data-similar-era="all" aria-pressed="true">All time</button>
-              <button type="button" data-similar-era="historical" aria-pressed="false">Historical</button>
-              <button type="button" data-similar-era="present" aria-pressed="false">Present</button>
-            </div>
-            <div id="node-similar-list"></div>
-          </section>
-        </aside>
-        <aside class="war-register" aria-label="War Register">
-          <header><p class="eyebrow">Focal-date record</p><h2>War Register</h2><strong id="war-register-date">Today</strong></header>
-          <div class="war-register-actions"><button id="war-register-play" type="button">▶ Play</button><button id="war-register-latest" type="button">Latest record</button></div>
-          <p class="war-register-boundary" id="war-register-boundary"></p>
-          <div class="war-register-list" id="war-register-list"></div>
-        </aside>
-      </div>
-
-      <div class="network-summary" id="network-summary"></div>
-    </section>
-  </main>
-
-  <dialog class="war-dialog" id="war-dialog" aria-labelledby="war-dialog-title">
-    <form method="dialog" class="dialog-heading"><div><p class="eyebrow">Complete conflict register</p><h2 id="war-dialog-title">Select war</h2></div><button class="icon-button" value="cancel" aria-label="Close war selector" title="Close war selector">×</button></form>
-    <div class="dialog-controls">
-      <label><span>Find war</span><input id="war-dialog-search" type="search" placeholder="Conflict, territory, state, or party" autocomplete="off"></label>
-      <label><span>Region</span><select id="war-dialog-region"><option value="all">All regions</option><option>Europe</option><option>Middle East</option><option>Asia</option><option>Africa</option><option>Americas</option><option>Other</option></select></label>
-    </div>
-    <div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946-August 2026 source boundary</span></div>
-    <div class="war-dialog-list" id="war-dialog-list"></div>
-  </dialog>
-
-  <footer><a href="about.html">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><a href="method.html">Method and source boundaries</a></footer>
+<header class="site-header">
+<a class="identity" href="./"><span aria-hidden="true" class="identity-mark"><img alt="" src="assets/compass-rose.svg"/></span><span>The War Maps Project</span></a>
+<nav aria-label="Primary navigation"><a href="index.html">Start</a><a aria-current="page" href="network.html">Conflict network</a><a href="map.html">World map</a><a href="graph.html">Relationships</a><a href="civilian-casualties.html">Human cost</a><a href="life-death.html">Living conditions</a><a href="gas-map.html">Fuel prices</a><a href="information.html">Evidence guide</a></nav>
+<button class="header-command" id="war-dialog-open" type="button"><span aria-hidden="true">⌕</span> Select war</button>
+<button aria-label="Toggle day and night mode" class="icon-button" id="theme-toggle" title="Toggle day and night mode" type="button">◐</button>
+</header>
+<main>
+<section class="network-section" id="network">
+<div class="network-title">
+<div><p class="eyebrow">Participants · places · dated observations</p><h1 id="network-title">Explore a conflict</h1></div>
+<div class="network-title-meta"><span id="network-status">Loading conflict record</span><a href="map.html" id="conflict-record-link">Conflict record</a></div>
+</div>
+<div aria-label="Network visualization controls" class="network-controls network-command-deck">
+<div class="network-command"><span>Scope</span><button class="network-select" id="network-war-select" type="button"><span aria-hidden="true">⌕</span> Select conflict</button></div>
+<div class="network-command"><span>Time</span><label><span>From</span><input id="network-start" type="date"/></label><label><span>Through</span><input id="network-end" type="date"/></label></div>
+<label class="network-command"><span>Search</span><input id="network-search" placeholder="Nation, place, actor, observation" type="search"/></label>
+<label class="network-command"><span>Filter</span><select id="network-type"><option value="all">All nodes</option><option value="side">Sides</option><option value="nation">Nations</option><option value="actor">Actors</option><option value="location">Locations</option><option value="observation">Observations</option></select></label>
+<div class="network-command"><span>Layout</span><select id="network-topology"><option value="equilibrium">Balanced relationships</option><option value="coalitions">Group by side</option><option value="prisoner">Opposing fields</option><option value="third-party">Emphasize bridges</option><option value="pirates">Influence hierarchy</option><option value="temporal">Arrange by time</option></select><button class="network-optimize" id="network-optimize" type="button">Arrange</button></div>
+<div class="network-command"><span>View</span><button class="network-fit" id="network-fit" type="button">Fit</button><button class="network-3d-nav-title" id="network-3d-nav-title" type="button">3D Browser</button></div>
+<div class="network-command"><span>Evidence</span><button class="network-data" id="network-data" type="button">View network data</button></div>
+</div>
+<div class="network-workspace">
+<div class="network-stage">
+<div aria-hidden="true" class="network-locale-map" id="network-locale-map"></div>
+<div aria-label="Network connecting conflict sides, participants, nations, locations, and observations" id="network-canvas" role="img"></div>
+<div aria-label="Network node legend" class="network-legend">
+<span><i class="conflict"></i> Conflict</span><span><i class="side-a"></i> Source-coded Side A</span><span><i class="side-b"></i> Source-coded Side B</span><span><i class="nation"></i> Nation + government</span><span><i class="actor"></i> Participant</span><span><i class="location"></i> Recorded place</span><span><i class="defensive"></i> Defensive-posture inference</span><span><i class="offensive"></i> Offensive-posture inference</span><span>Events: weekday orbit · week depth</span><span>Size: connections · candidate fatality value</span>
+</div>
+</div>
+<aside aria-label="Selected node inspector" aria-live="polite" class="network-inspector">
+<div class="network-inspector-head"><p class="eyebrow" id="node-type">Network extent</p><h2 id="node-title">Selected conflict</h2></div>
+<div class="network-node-meta" id="node-meta"></div>
+<div aria-label="Node inspector views" class="inspector-tabs" role="tablist">
+<button aria-selected="true" data-inspector-view="overview" role="tab" type="button">Overview</button>
+<button aria-selected="false" data-inspector-view="similar" disabled="" role="tab" type="button">Similar nodes</button>
+</div>
+<section id="node-overview" role="tabpanel"></section>
+<section hidden="" id="node-similar" role="tabpanel">
+<div aria-label="Similar node period" class="similar-controls">
+<button aria-pressed="true" data-similar-era="all" type="button">All time</button>
+<button aria-pressed="false" data-similar-era="historical" type="button">Historical</button>
+<button aria-pressed="false" data-similar-era="present" type="button">Present</button>
+</div>
+<div id="node-similar-list"></div>
+</section>
+</aside>
+<aside aria-label="War Register" class="war-register">
+<header><p class="eyebrow">Focal-date record</p><h2>War Register</h2><strong id="war-register-date">Today</strong></header>
+<div class="war-register-actions"><button id="war-register-play" type="button">▶ Play</button><button id="war-register-latest" type="button">Latest record</button></div>
+<p class="war-register-boundary" id="war-register-boundary"></p>
+<div class="war-register-list" id="war-register-list"></div>
+</aside>
+</div>
+<div class="network-summary" id="network-summary"></div>
+</section>
+</main>
+<dialog aria-labelledby="war-dialog-title" class="war-dialog" id="war-dialog">
+<form class="dialog-heading" method="dialog"><div><p class="eyebrow">Complete conflict register</p><h2 id="war-dialog-title">Select war</h2></div><button aria-label="Close war selector" class="icon-button" title="Close war selector" value="cancel">×</button></form>
+<div class="dialog-controls">
+<label><span>Find war</span><input autocomplete="off" id="war-dialog-search" placeholder="Conflict, territory, state, or party" type="search"/></label>
+<label><span>Region</span><select id="war-dialog-region"><option value="all">All regions</option><option>Europe</option><option>Middle East</option><option>Asia</option><option>Africa</option><option>Americas</option><option>Other</option></select></label>
+</div>
+<div class="dialog-result-head"><span id="war-dialog-count">0 conflicts</span><span>1946-August 2026 source boundary</span></div>
+<div class="war-dialog-list" id="war-dialog-list"></div>
+</dialog>
+<footer><a href="about.html">The War Maps Project</a><span>UCDP conflict-year and candidate-event relationships</span><a href="method.html">Method and source boundaries</a></footer>
 </body>
 </html>

@@ -204,7 +204,7 @@ def build() -> dict:
             "years": years,
         })
     countries.sort(key=lambda item: (-item["civilians"], item["name"]))
-    return {
+    payload = {
         "snapshot": "2026-09-21",
         "metric": "deaths_civilians",
         "unit": "reported civilian deaths",
@@ -258,6 +258,9 @@ def build() -> dict:
             },
         ],
     }
+    from src.import_health_dashboard import context_records
+    payload["external"] = context_records(payload["external"])
+    return payload
 
 
 def write(payload: dict) -> Path:

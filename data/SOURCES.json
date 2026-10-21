@@ -9,7 +9,7 @@
       "license": "CC BY 4.0",
       "enclosure": "reviewed-academic-conflict-dataset",
       "retrieved": "2026-08-28",
-      "verified": "2026-10-08",
+      "verified": "2026-10-19",
       "sha256": "2aea044f1bcae7b050bb6c79fb796743e787edeed3b90e74e146cfc4e5b05447",
       "refresh_status": "Official download unchanged; see dated refresh audit"
     },
@@ -23,7 +23,7 @@
       "enclosure": "reviewed-academic-georeferenced-event-dataset",
       "retrieved": "2026-09-21",
       "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
-      "verified": "2026-10-08",
+      "verified": "2026-10-19",
       "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
@@ -36,7 +36,7 @@
       "enclosure": "candidate-academic-event-dataset",
       "retrieved": "2026-09-09",
       "sha256": "68dd3d363b8edf4808bd6bf6f5d0412c3c722ffb1db367aeb8eff48bab80589a",
-      "verified": "2026-10-08",
+      "verified": "2026-10-19",
       "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
@@ -49,7 +49,7 @@
       "enclosure": "candidate-academic-event-dataset",
       "retrieved": "2026-09-09",
       "sha256": "9fc2c6dd85eee91845512e8ef1055281d9fd028fb98748a6f2a27c6e8aa8c562",
-      "verified": "2026-10-08",
+      "verified": "2026-10-19",
       "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
@@ -62,7 +62,7 @@
       "enclosure": "candidate-academic-event-dataset",
       "retrieved": "2026-09-20",
       "sha256": "2ad6e0b2bfdbaa31873716a3455096923a8539519d69d96aeeea2d0f44a34593",
-      "verified": "2026-10-08",
+      "verified": "2026-10-19",
       "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
@@ -127,7 +127,7 @@
       "citation": "Riley (2005); Zijdeman et al. (2015); HMD (2025); UN WPP (2024), with major processing by Our World in Data",
       "peer_reviewed_source": "https://doi.org/10.1111/j.1728-4457.2005.00083.x",
       "retrieved": "2026-09-19",
-      "verified": "2026-10-08",
+      "verified": "2026-10-19",
       "refresh_status": "Official download unchanged; see dated refresh audit",
       "sha256": "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01"
     },
@@ -153,8 +153,8 @@
       "enclosure": "annual demographic rate; distinct from total fertility rate and from a birth count",
       "retrieved": "2026-10-08",
       "sha256": "925bb606867f5ac01c15feb3f40bd3f758831eec3a3720c14a01c3b4ceb27571",
-      "verified": "2026-10-08",
-      "refresh_status": "Official download updated; see dated refresh audit"
+      "verified": "2026-10-19",
+      "refresh_status": "Official download unchanged; see dated refresh audit"
     },
     {
       "id": "world-bank-wdi-total-population",
@@ -164,21 +164,23 @@
       "url": "https://data.worldbank.org/indicator/SP.POP.TOTL",
       "license": "CC BY 4.0",
       "enclosure": "de facto mid-year population estimate; not a conflict exposure or casualty measure",
-      "retrieved": "2026-09-21",
-      "sha256": "21816454b5ea6e6b7a602aa7e1b10d8d275bf2bb59f38f882477e4d1ed3b09ab",
-      "refresh_status": "Official download unchanged; see dated refresh audit",
-      "verified": "2026-10-08"
+      "retrieved": "2026-10-19",
+      "sha256": "afebdcf7ed2ac0b36bfad60902747de65736fe5a3433820efba97af4d00f388d",
+      "refresh_status": "Official download updated; see dated refresh audit",
+      "verified": "2026-10-19"
     },
     {
-      "id": "celestrak-iceye-sar-2026-09-21",
+      "id": "celestrak-iceye-sar-2026-10-19",
       "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
       "publisher": "CelesTrak",
-      "coverage": "Frozen 2026-09-21 orbital-element snapshot for 52 active publicly catalogued ICEYE objects",
+      "coverage": "Frozen 2026-10-19 orbital-element snapshot for 52 active publicly catalogued ICEYE objects",
       "url": "https://celestrak.org/NORAD/documentation/gp-data-formats.php",
       "license": "Public orbital data; CelesTrak usage and attribution terms apply",
       "enclosure": "public orbit geometry; not evidence of conflict participation",
-      "retrieved": "2026-09-21",
-      "sha256": "f624c9c15644d4093e8f2f262dc28fb4acc76c79ad1d557c26421204052ea411"
+      "retrieved": "2026-10-19",
+      "verified": "2026-10-19",
+      "download_url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=sar&FORMAT=JSON",
+      "sha256": "57bd970e54d5753a99ee6639fd53e640e63e6d1cbdb424a7de9d00a3fb824e0c"
     },
     {
       "id": "iceye-ukraine-support-2026",
@@ -258,6 +260,23 @@
       "enclosure": "non-state organization membership and partnership records",
       "retrieved": "2026-09-21",
       "refresh_status": "Selected entity list revalidated against the current institutional-membership directory"
+    },
+    {
+      "id": "opt-health-cluster-public-dashboard",
+      "title": "oPt Unified Health Dashboard \u2014 casualty and health-attack aggregates",
+      "publisher": "oPt Health Cluster / WHO; casualty series attributed to Palestinian Ministry of Health",
+      "url": "https://app.powerbi.com/view?r=eyJrIjoiODAxNTYzMDYtMjQ3YS00OTMzLTkxMWQtOTU1NWEwMzE5NTMwIiwidCI6ImY2MTBjMGI3LWJkMjQtNGIzOS04MTBiLTNkYzI4MGFmYjU5MCIsImMiOjh9",
+      "coverage": [
+        "2023-10-07",
+        "2026-10-09"
+      ],
+      "retrieved": "2026-10-20T20:12:02.762990+00:00",
+      "model_refreshed": "2026-10-11T11:19:40.917",
+      "sha256": "798f77dc368211e7350be0e7b21c0f8cd2ded89b15b4b4841d68a384352625d3",
+      "license": "Publisher terms apply; no blanket open-data license inferred from public access",
+      "enclosure": "Separate humanitarian context; overlapping reports, never additive to UCDP",
+      "raw_path": "data/raw/opt-health-dashboard.json",
+      "processed_path": "data/processed/opt-health-dashboard.json"
     }
   ]
 }

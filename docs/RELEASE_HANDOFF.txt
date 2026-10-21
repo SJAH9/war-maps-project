@@ -1,0 +1,35 @@
+War Maps v0.12.0 publication handoff
+
+Publication selection: data/curated/print-release-selection.json.
+Do not restore removed release candidates. Do not publish the Ephemeris,
+standalone or inside an ebook. The withheld review copy is in outputs/withheld.
+
+Ready locally: twelve selected standalone PDFs and two 29-page ebooks under
+outputs/release; MANIFEST.json contains hashes and source paths. Letter edition
+is a mini-poster edition, not the Ephemeris. QR links point to the repository
+and deployed site. About and Sources front matter comes from website content.
+Release copy: docs/RELEASE_0_12_0.txt. Roadmap: docs/ROADMAP_2027.txt.
+
+Checked: 2026 Russia-Ukraine death totals reconcile exactly against the raw
+UCDP candidate records by event ID. No count adjustments. New 2024 and 2025
+circles use reviewed GED 26.1. The test suite passes 89 tests. Mobile browser
+has no horizontal overflow or JavaScript errors. About and Sources work
+offline; an uncached page shows the offline fallback.
+
+Publishing was blocked by missing GitHub authentication. A noninteractive
+git push --dry-run failed: could not read Username for https://github.com.
+No credentials were printed, no release was published, and no deployment was
+claimed. Authenticate through the normal Git/GitHub CLI setup; do not put
+credentials into tracked files.
+
+Next: fetch/pull --ff-only after checking status, push main, publish v0.12.0
+using the release description and ONLY the files listed in the release
+manifest. Verify the deployed site and uploaded assets. No force pushes.
+
+AFTER THE RELEASE, per the user's explicit timing request, feature the
+selected Afterimages artwork and 2024/2025/2026 death-circle series on the
+homepage. Implement that through the website generator with preview images,
+accessible descriptions, PDF links and ebook links, then rebuild and deploy.
+This homepage feature has deliberately not been activated before publication.
+
+Preserve untracked experimental print studies; they are not release assets.

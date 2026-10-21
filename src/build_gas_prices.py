@@ -250,6 +250,10 @@ def main() -> int:
                         help="Directory containing the downloaded war-maps-* source files")
     parser.add_argument("--output", type=Path, default=ROOT / "web/gas-price-data.js")
     args = parser.parse_args()
+    if args.output.exists():
+        previous = json.JSONDecoder().raw_decode(args.output.read_text().split("=", 1)[1])[0]
+        if previous.get("schema", 1) >= 2:
+            parser.error("This is the September bootstrap. Use src.refresh_gas_prices to retain current prices and tax metadata.")
     source_dir = args.source_dir
     world = json.loads((ROOT / "data/raw/ne_110m_admin_0_countries.geojson").read_text())
     observations = us_rows(source_dir) + eu_rows(source_dir, world) + japan_rows(source_dir)

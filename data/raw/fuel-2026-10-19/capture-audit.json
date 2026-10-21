@@ -1,0 +1,107 @@
+{
+  "checked": "2026-10-19",
+  "results": [
+    {
+      "file": "aaa.html",
+      "url": "https://gasprices.aaa.com/state-gas-price-averages/",
+      "status": "captured",
+      "sha256": "901ac9cd524a0671e75881b9536d737b582ec164af9a20bfa294bc08242003e8",
+      "bytes": 95817
+    },
+    {
+      "file": "eia.html",
+      "url": "https://www.eia.gov/petroleum/gasdiesel/",
+      "status": "captured",
+      "sha256": "0674e5ea6764725c7eeceb8f0aa23d2f24a7453f3de2f86ecb809ee9bc8fe644",
+      "bytes": 114631
+    },
+    {
+      "file": "japan.html",
+      "url": "https://opengov.jp/en/prices/gasoline/",
+      "status": "captured",
+      "sha256": "ce0cc18d4ca27c2aa42698765a71df7b856b1ffef700faeeddabc1bb558f7278",
+      "bytes": 282399
+    },
+    {
+      "file": "nz.html",
+      "url": "https://www.mbie.govt.nz/building-and-energy/energy-and-natural-resources/energy-statistics-and-modelling/energy-statistics/weekly-fuel-price-monitoring/price-for-fuel-response-support",
+      "status": "unavailable",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "file": "india.html",
+      "url": "https://ppac.gov.in/all-imp-news?page=1",
+      "status": "captured",
+      "sha256": "b076bc00a60865852bf6254523a0308db66d61811bc25963b1dce2b18387f700",
+      "bytes": 253609
+    },
+    {
+      "file": "taiwan.html",
+      "url": "https://vipmbr.cpc.com.tw/mbwebs/showhistoryprice_oil.aspx",
+      "status": "captured",
+      "sha256": "1498e2e47f502478e5e8dc2cdf216ccd2c159fddcd06fbba4ebbb656d1cb0fa6",
+      "bytes": 1289697,
+      "initial_error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Missing Subject Key Identifier (_ssl.c:1081)>",
+      "transport": "curl-system-trust"
+    },
+    {
+      "file": "fx.html",
+      "url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+      "status": "captured",
+      "sha256": "02aaddcdcd7b76106eae23f0aedbc7c63d4f61b5f92aafb152c6a5fef09b1580",
+      "bytes": 1547
+    },
+    {
+      "file": "cbc.html",
+      "url": "https://www.cbc.gov.tw/tw/lp-645-1-1-40.html",
+      "status": "captured",
+      "sha256": "d65fc71730b8eab0c0faa62ac20ec3f615a91f5d3fbea5576de1c5f23192175b",
+      "bytes": 48972,
+      "initial_error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Missing Subject Key Identifier (_ssl.c:1081)>",
+      "transport": "curl-system-trust"
+    },
+    {
+      "file": "eu-with.xlsx",
+      "url": "https://energy.ec.europa.eu/document/download/264c2d0f-f161-4ea3-a777-78faae59bea0_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20with%20Taxes%20-%202026-09-21.xlsx",
+      "status": "captured",
+      "sha256": "e52e8447f875228b6a7a68cb92cb1f3a9769c96818bd458904846b03946dfebc",
+      "bytes": 16933
+    },
+    {
+      "file": "eu-without.xlsx",
+      "url": "https://energy.ec.europa.eu/document/download/78311f92-68f8-4b82-b5cf-1293beeaae77_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20without%20taxes%20-%202024-02-19.xlsx",
+      "status": "captured",
+      "sha256": "f9062ef9c9010b89c8b56059aeab3ba6cb22b39b59c81c04a7f8d38e21ef23b5",
+      "bytes": 17336
+    },
+    {
+      "file": "accc.pdf",
+      "url": "https://www.accc.gov.au/system/files/weekly-fuel-price-monitoring-report-16-october-2026.pdf",
+      "status": "unavailable",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "file": "satellites.json",
+      "url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=sar&FORMAT=JSON",
+      "status": "captured-on-retry",
+      "transport": "curl-system-trust",
+      "sha256": "eb5b558854c31fae2797e7db285e4b9aa1c2469d86b18ed9f8333bed1cf2ba4e",
+      "archive": "data/raw/CelesTrak-ICEYE-SAR-2026-10-19.json",
+      "initial_error": "HTTP Error 500: Internal Server Error"
+    },
+    {
+      "file": "drone-incidents.json",
+      "url": "https://iranattacks.com/incidents.json",
+      "status": "captured",
+      "sha256": "bf3d7d142528f1c878ed0a482c541410f465dda3490a8e5d806ff2a3a30469e2",
+      "bytes": 638934
+    },
+    {
+      "file": "world.geojson",
+      "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson",
+      "status": "captured",
+      "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+      "bytes": 838726
+    }
+  ]
+}

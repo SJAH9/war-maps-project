@@ -32,4 +32,32 @@
 .gas-list strong { display: grid; gap: 2px; text-align: right; }
 .gas-list strong small { font-size: .58rem; text-transform: uppercase; letter-spacing: .05em; }
 .gas-scale i { background: linear-gradient(90deg,#51d7c4,#e3bb55,#ed6547 48%,#153d80 52%,#42a5d9,#b6e4ff); }
+.gas-tax-legend { display:flex; flex-wrap:wrap; align-items:center; gap:8px 20px; padding:10px clamp(16px,4vw,64px); font-size:.7rem; border-bottom:1px solid var(--line); }
+.gas-tax-legend>span { display:flex; align-items:center; gap:7px; }
+.gas-tax-legend i { display:inline-block; width:14px; height:14px; }
+.gas-base-swatch { background:linear-gradient(90deg,#ed6547 50%,#4198d7 50%); }
+.gas-tax-swatch { background:repeating-linear-gradient(135deg,#f59bdf 0 4px,#972673 4px 8px); }
+.gas-tax-legend p { flex-basis:100%; margin:0; color:var(--muted); font-size:.66rem; }
+.gas-refresh-note { margin:0; padding:7px clamp(16px,4vw,64px); font-size:.68rem; color:var(--muted); border-bottom:1px solid var(--line); }
+.gas-aside { overflow-y:auto; }
+.gas-aside>* { flex-shrink:0; }
+.gas-list { flex:1 0 180px; min-height:180px; }
+.gas-tax-details { flex-shrink:0; }
+.gas-tax-card { padding:12px 18px; border-bottom:1px solid var(--line); }
+.gas-tax-card h3 { margin:0 0 8px; font-size:.72rem; }
+.gas-tax-bar { display:flex; height:15px; overflow:hidden; border:1px solid var(--line); }
+.gas-tax-bar i { display:block; height:100%; background-color:var(--teal); }
+.gas-tax-card dl { margin:8px 0; font-size:.72rem; }
+.gas-tax-card dl>div { display:flex; justify-content:space-between; gap:6px; margin-top:4px; }
+.gas-tax-card dd { margin:0; white-space:nowrap; font-weight:700; }
+.gas-tax-value { color:#c53d9f; }
+[data-theme="dark"] .gas-tax-value { color:#f59bdf; }
+.gas-tax-card p,.gas-stale-note { margin:0; color:var(--muted); font-size:.66rem; overflow-wrap:anywhere; }
+.gas-tax-card a { color:var(--teal); }
+.gas-stale-note { padding:12px 18px; border-bottom:1px solid var(--line); }
+.gas-list i.has-tax-split { border-top:7px solid #e66bc4; height:27px; }
 @media (max-width: 760px) { .gas-fuel-toggles { grid-column: 1 / -1; } }
+@media (max-width: 760px) {
+  .gas-aside { height:auto; overflow:visible; }
+  .gas-list { flex:initial; max-height:320px; min-height:100px; }
+}

@@ -66,7 +66,7 @@ Implementation reference: Graphology standard library, <https://graphology.githu
 
 ## Public satellite geometry
 
-The optional satellite layer uses a frozen 2026-09-21 subset of CelesTrak's active public general-perturbations catalog filtered to ICEYE objects. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
+The optional satellite layer uses a frozen 2026-10-19 subset of CelesTrak's active public general-perturbations catalog filtered to ICEYE objects. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
 
 The initial relationship is supported by ICEYE's statement that it expanded the Ukrainian Ministry of Defence's access to the ICEYE SAR satellite constellation. That is a constellation-level relationship. It does not establish that every publicly catalogued ICEYE spacecraft supplied imagery to a particular operation. The generated atlas preserves that boundary in `individual_asset_boundary` and keeps the orbit records free of conflict identifiers.
 

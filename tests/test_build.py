@@ -191,7 +191,8 @@ class WarMapsBuildTests(unittest.TestCase):
     def test_relationship_browser_exposes_sourced_entity_edges(self):
         page = ROOT.joinpath("web/graph.html").read_text(encoding="utf-8")
         source = ROOT.joinpath("web/graph.js").read_text(encoding="utf-8")
-        self.assertIn('href="graph.html" aria-current="page"', page)
+        from bs4 import BeautifulSoup
+        self.assertIsNotNone(BeautifulSoup(page,'html.parser').select_one('a[href="graph.html"][aria-current="page"]'))
         self.assertIn("same_side_partners", source)
         self.assertIn("opposing_states", source)
         self.assertIn("bridgePaths", source)
@@ -594,7 +595,8 @@ class WarMapsBuildTests(unittest.TestCase):
         page = (ROOT / "web/map.html").read_text(encoding="utf-8")
         source = (ROOT / "web/app.js").read_text(encoding="utf-8")
         self.assertIn('id="health-layer"', page)
-        self.assertIn('min="1980" max="2023"', page)
+        from bs4 import BeautifulSoup
+        self.assertIsNotNone(BeautifulSoup(page,'html.parser').select_one('input[min="1980"][max="2023"]'))
         self.assertIn('id="transition-toggle"', page)
         self.assertNotIn('id="play-toggle"', page)
         self.assertNotIn('id="audio-mute"', page)
@@ -648,7 +650,9 @@ class WarMapsBuildTests(unittest.TestCase):
     def test_satellite_geometry_is_separate_from_conflict_relation(self):
         map_page = ROOT.joinpath("web/map.html").read_text(encoding="utf-8")
         styles = ROOT.joinpath("web/styles.css").read_text(encoding="utf-8")
-        self.assertIn('class="satellite-toolbar" hidden', map_page)
+        self.assertIn('class="satellite-toolbar" role="group"', map_page)
+        self.assertNotIn('class="satellite-toolbar" hidden', map_page)
+        self.assertIn('satellite.js@6.0.1/dist/satellite.min.js', map_page)
         self.assertIn(".satellite-toolbar[hidden]{display:none!important}", styles)
         relation = next(item for item in self.data["satellite_constellations"] if item["constellation_id"] == "iceye-ukraine-support")
         self.assertGreaterEqual(relation["object_count"], 40)

@@ -1,0 +1,23 @@
+{
+  "scope": "Selected contextual statements, not an exhaustive incident source or an event inclusion gate. Episode nodes are not added to UCDP death totals.",
+  "sources": [
+    {"id":"UN-Feb28","title":"UN Secretary-General briefing and member-state statements, 28 February 2026","url":"https://turkiye.un.org/en/310903-bombing-iran-and-retaliatory-strikes-%E2%80%98-grave-threat-international-peace-and-security%E2%80%99"},
+    {"id":"UN-Lebanon","title":"UN Lebanon: escalation beginning 2 March; published 13 March 2026","url":"https://lebanon.un.org/en/311785-%E2%80%98perfect-storm%E2%80%99-lebanon-crisis-deepens-civilians-bear-brunt"},
+    {"id":"UN-July2","title":"Security Council S/PV.10189, 2 July 2026, pp. 2-5; Secretariat briefing and Bahrain statement","url":"https://documents.un.org/api/symbol/access?s=S/PV.10189"}
+  ],
+  "episodes": [
+    {"id":"S1","date":"2026-02-28","label":"US-Israeli strikes in Iran","source":"UN-Feb28","actors":["United States","Israel","Iran"],"summary":"The UN describes joint US-Israeli strikes in Iran. US and Israeli representatives frame their action in terms of threats and prevention.","denies_retaliation":false},
+    {"id":"S2","date":"2026-02-28","label":"Iranian strikes across region","source":"UN-Feb28","actors":["Iran","Israel","United States"],"summary":"The UN describes Iran's regional strikes as retaliatory. Iran describes the opening strikes as aggression.","denies_retaliation":false},
+    {"id":"S3","date":"2026-03-02","label":"Hezbollah fire / Israeli response","source":"UN-Lebanon","actors":["Hezbollah","Israel"],"summary":"The UN Lebanon account dates the escalation to Hezbollah fire followed by Israeli retaliation. This is a linked theatre, not a new observation added to conflict 16905.","denies_retaliation":false},
+    {"id":"S4","date":"2026-06-25","label":"Commercial shipping struck","source":"UN-July2","actors":["Iran","United States"],"summary":"The Secretariat describes two vessel strikes near Hormuz, attributing one to an Iranian drone; the IMO was reviewing that incident.","denies_retaliation":false},
+    {"id":"S5","date":"2026-06-26","label":"US strikes in Hormozgan","source":"UN-July2","actors":["United States","Iran"],"summary":"US strikes on 26-27 June were described by the US as responding to shipping attacks. Iran called them a ceasefire violation.","denies_retaliation":false},
+    {"id":"S6","date":"2026-06-28","label":"Iranian Gulf strikes / US strikes","source":"UN-July2","actors":["Iran","United States"],"summary":"Iran said it targeted US infrastructure in Kuwait and Bahrain; later US strikes followed. Bahrain characterized attacks as planned rather than spontaneous. That contests interpretation, not temporal association.","denies_retaliation":false}
+  ],
+  "links": [
+    {"source":"S1","target":"S2","basis":"source-described response","citation":"UN-Feb28"},
+    {"source":"S2","target":"S3","basis":"shared actor and subsequent date; inferred theatre connection, not established trigger","citation":"UN-Lebanon"},
+    {"source":"S4","target":"S5","basis":"US-stated response, reported by Secretariat","citation":"UN-July2"},
+    {"source":"S5","target":"S6","basis":"chronological response-compatible sequence and reported statements","citation":"UN-July2"}
+  ],
+  "denial_note":"No explicit denial of retaliatory motive was established in these selected sources. Preventive framing and Bahrain's planned-action claim are not rewritten as such a denial. Any future explicit denial can be recorded without removing its event or timing edges."
+}
