@@ -14,6 +14,9 @@ def generate():
     for path in web.glob('*.html'):
         soup=BeautifulSoup(path.read_text(),'html.parser')
         if soup.head is None:continue
+        if path.name=='index.html':
+            from src.feature_print_release import insert
+            insert(soup)
         for rel,href in [('manifest','manifest.webmanifest'),('icon','assets/compass-rose.svg'),('apple-touch-icon','assets/compass-192.png'),('stylesheet','brand.css')]:
             if not soup.find('link',href=href):soup.head.append(soup.new_tag('link',rel=rel,href=href))
         if not soup.find('meta',attrs={'name':'theme-color'}):soup.head.append(soup.new_tag('meta',attrs={'name':'theme-color','content':'#10110e'}))
