@@ -20,11 +20,14 @@ def insert(soup):
     grid=section.select_one('.print-feature-grid')
     for slug,title,description in ITEMS:
         card=soup.new_tag('a',href=f'../release/{slug}.pdf')
-        card.append(soup.new_tag('img',src=f'assets/print/{slug}.png',alt=title+' — '+description,loading='lazy',width='750',height='1000'))
+        card.append(soup.new_tag('img',src=f'assets/print/{slug}.png',alt=title+' — '+description,loading='eager',width='750',height='1000'))
         heading=soup.new_tag('h3');heading.string=title;card.append(heading)
-        p=soup.new_tag('p');p.string=description;card.append(p)
         grid.append(card)
-    soup.select_one('.landing-hero').insert_after(section)
+    section.select_one('#print-title').name='h1'
+    hero=soup.select_one('.landing-hero')
+    for heading in hero.select('h1'):heading.name='h2'
+    for icon in soup.select('.trust-grid article > i'):icon.decompose()
+    hero.insert_before(section)
 
 
 def activate():

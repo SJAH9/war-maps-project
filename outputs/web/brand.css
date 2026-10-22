@@ -12,3 +12,27 @@
 @media(max-width:900px){.print-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.print-feature-grid{grid-template-columns:1fr}}
 @media(max-width:640px){.site-header .identity-mark{width:30px;height:34px;flex-basis:30px}.site-header .identity{font-size:.82rem}.install-action{margin:8px}}
+
+/* The opening screen is the visual feature. Everything after it is reading. */
+.landing-page .print-feature{box-sizing:border-box;min-height:calc(100svh - 64px);margin:0;padding:18px clamp(18px,4vw,64px);border-top:0;border-bottom:1px solid var(--line)}
+.print-feature h1{margin:6px 0;font:700 clamp(1.6rem,3vw,2.6rem)/1.1 Georgia,serif}
+.print-feature>p{margin:8px 0;font-size:.85rem;line-height:1.4}
+.print-feature-grid{gap:16px;margin:16px 0;grid-template-columns:repeat(4,minmax(0,1fr))}
+.print-feature-grid img{height:min(42vw,calc(100svh - 250px));width:100%;object-fit:contain}
+.print-feature-grid h3{margin:8px 0 0;font-size:.85rem}
+.landing-page .landing-hero{min-height:0;display:block;padding:48px clamp(18px,6vw,96px);background:none}
+.landing-hero h2{font:700 clamp(2rem,4vw,3rem)/1.1 Georgia,serif;margin:0 0 20px}
+.landing-page .landing-boundary{border:0;background:none;padding:24px 0 0;max-width:850px}
+.landing-page .landing-actions a{min-height:0;padding:0;border:0;background:none;color:var(--ink);text-decoration:underline}
+.landing-page .landing-trust{background:none}
+.landing-page .question-grid,.landing-page .trust-grid,.landing-page .landing-register dl{display:block;border:0;background:none;max-width:950px}
+.landing-page .question-grid>a,.landing-page .trust-grid article,.landing-page .landing-register dl div{display:block;min-height:0;border:0;padding:20px 0;background:none}
+.landing-page .question-grid h3,.landing-page .trust-grid h3{margin:8px 0}
+.landing-page .question-grid b{display:block;padding-top:8px;text-decoration:underline}
+@media(max-width:640px){
+ .landing-page .print-feature{min-height:calc(100svh - 58px);padding:12px 18px}
+ .print-feature-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+ .print-feature-grid img{height:max(80px,calc((100svh - 290px)/2))}
+ .print-feature-grid h3{font-size:.72rem;margin:5px 0}
+ .print-feature>p{font-size:.75rem}
+}
