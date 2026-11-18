@@ -187,6 +187,7 @@ def refresh(source_dir, payload, as_of):
     payload.update(snapshot=as_of, fx_date=node.attrib["time"], taiwan_fx_date=cbc_date,
                    usd_per_eur=rates["USD"], currency_per_eur=rates,
                    source_updates=updates, schema=2)
+    payload.pop("refresh_audit", None)
     payload["sources"].update(notes["sources"])
     for row in observations:
         for fuel in FUELS:

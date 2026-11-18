@@ -1,61 +1,61 @@
 {
-  "snapshot": "2026-10-16",
+  "snapshot": "2026-11-18",
   "source_updates": {
     "aaa": {
-      "observation_date": "2026-10-16",
+      "observation_date": "2026-11-18",
       "observations": 51,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "eia": {
-      "observation_date": "2026-10-12",
+      "observation_date": "2026-11-16",
       "observations": 10,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "eu": {
-      "observation_date": "2026-10-12",
+      "observation_date": "2026-11-09",
       "observations": 27,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "japan": {
-      "observation_date": "2026-10-05",
+      "observation_date": "2026-11-09",
       "observations": 47,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "accc": {
-      "observation_date": "2026-10-14",
+      "observation_date": "2026-11-11",
       "observations": 195,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "india": {
-      "observation_date": "2026-10-16",
+      "observation_date": "2026-11-18",
       "observations": 1,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "taiwan": {
-      "observation_date": "2026-10-12",
+      "observation_date": "2026-11-16",
       "observations": 1,
-      "checked_on": "2026-10-16"
+      "checked_on": "2026-11-18"
     },
     "nz": {
-      "observation_date": "2026-09-27",
+      "observation_date": "2026-11-08",
       "observations": 1,
-      "checked_on": "2026-10-16",
+      "checked_on": "2026-11-18",
       "status": "last_verified",
-      "note": "Last verified official MBIE board-price publication: week ending 27 September 2026. The upstream page and CSV returned HTTP 403 during the 16 October refresh; a newer observation could not be verified. This is not a current-week price."
+      "note": "Official MBIE Price for fuel response support publication: 91 Regular board price for the week ending 8 November 2026, NZ$3.52/litre. The page was verified on 18 November but returned HTTP 403 to the automated capture; the dated publisher observation is retained explicitly."
     }
   },
   "captures": {
-    "fx.html": "4422161311c3c02cf2d1571db07bdf9884b3f42fdeb16a4926903236ae6ab42d",
-    "eia.html": "4ae2c4312f56e1c05d1159ae04ddb7c04e41a84af2e59dfb899db6db5e6d726b",
-    "cbc.html": "3b0720354131a83841c36b766f0bd9684fdd47944700f19c41fced47595f01e7",
-    "eu.html": "151c29dadff228524457fb9ef82f5965c24f77e449f572ee8dd8965be12e6821",
-    "eu-without.xlsx": "f9062ef9c9010b89c8b56059aeab3ba6cb22b39b59c81c04a7f8d38e21ef23b5",
-    "aaa.html": "759359a3e390bdde7d0cecd510039a6b894033124961867d335d9adfce3a7398",
-    "eu-with.xlsx": "e52e8447f875228b6a7a68cb92cb1f3a9769c96818bd458904846b03946dfebc",
-    "source-notes.json": "367044bbd298fe5b4e40121052d8d6f690cf6270467463e39c685104a5bf57c8",
-    "india.html": "f39c482026cb113a330aa98354f9f713b46636b100ace5b48d72f13b50cffa40",
-    "japan.html": "02ab6e2d265181a31404545406421c390522f479cc5d91d4496b373321fa6721",
-    "taiwan.html": "62486becc4d5dc24a1c3129df5854dd19ef8a89de582b2913bfdbf7590b5cd6b",
-    "accc-web-extract.txt": "a6ac7caa270e00b060260dac35104db12439ffaed313b5ca811b0943ec76386e"
+    "fx.html": "16d4a35422e5e64de97382b0988c51e098c81be9d18ba389dda8f9365f454b0f",
+    "eia.html": "13a63eb2708b27bd5e7d7d08c8e621b1ac8568e23b88e9fdae1c9da40ebabf8b",
+    "cbc.html": "c7afc2b4f7c4e8155a6e9f536f93adceee799ebdc7057902ed32e912fc923b3c",
+    "eu-without.xlsx": "265405fece404836ddd413c84f2b3633fc80e26051cc5503d5d3a32d4526d5f0",
+    "aaa.html": "2cebca1ca1781c185b694e9d14fc2f32dce6341fd11fa586b4ab7f527433ed14",
+    "eu-with.xlsx": "8d48ab28011bee8ca5a85a4e0d6725bcdfba62af1ee8a1ca9a5ff48eb03eccdb",
+    "capture-audit.json": "44371e97e85f69e046cfb75ec2b0ec0005a5853c1a7fbfd90c61da5198c42381",
+    "source-notes.json": "84004f899cfa229f2c975631b489a44cc3bb312022361669fa37e6b74594d13c",
+    "india.html": "0f54c66213dd294e76a17456533f96015efc5581fe57048d4dd104af6c3403fd",
+    "japan.html": "d9b0b936cbf1e04ea01cf98d3a8a6c2d2d57d0833e55f066f71a6cf236ee4920",
+    "taiwan.html": "65fcf709724a617a98ac2bccfca75866c4f0c77e8ca94722d3b56dffc719bcbd",
+    "accc-web-extract.txt": "f807a83dd99f0a323807bef23ba272a3cfd5fa19f7d436bcb6d6270ef751efdb"
   }
 }

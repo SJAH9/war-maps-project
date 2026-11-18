@@ -1,0 +1,60 @@
+{
+  "checked": "2026-11-18",
+  "results": [
+    {
+      "source_id": "ucdp-prio-acd-26.1",
+      "url": "https://ucdp.uu.se/downloads/ucdpprio/ucdp-prio-acd-261-csv.zip",
+      "path": "data/raw/UcdpPrioConflict_v26_1.csv",
+      "status": "unchanged",
+      "previous_sha256": "2aea044f1bcae7b050bb6c79fb796743e787edeed3b90e74e146cfc4e5b05447",
+      "sha256": "2aea044f1bcae7b050bb6c79fb796743e787edeed3b90e74e146cfc4e5b05447"
+    },
+    {
+      "source_id": "ucdp-ged-26.1",
+      "url": "https://ucdp.uu.se/downloads/ged/ged261-csv.zip",
+      "path": "data/raw/ged261-csv.zip",
+      "status": "unchanged",
+      "previous_sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667",
+      "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667"
+    },
+    {
+      "source_id": "ucdp-candidate-ged-2026-09-quarterly",
+      "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_01_26_09.csv",
+      "path": "data/raw/GEDEvent_v26_01_26_09.csv",
+      "status": "unchanged",
+      "previous_sha256": "134da9b3df08b65266802c4b662e572f396c70c92ab62297319be657540bcede",
+      "sha256": "134da9b3df08b65266802c4b662e572f396c70c92ab62297319be657540bcede"
+    },
+    {
+      "source_id": "ucdp-candidate-ged-2026-09",
+      "url": "https://ucdp.uu.se/downloads/candidateged/GEDEvent_v26_0_9.csv",
+      "path": "data/raw/GEDEvent_v26_0_9.csv",
+      "status": "unchanged",
+      "previous_sha256": "20256b0d674f4c58d747c7c75ddc012eabfedf44ada22f436ef2d9a6405567d5",
+      "sha256": "20256b0d674f4c58d747c7c75ddc012eabfedf44ada22f436ef2d9a6405567d5"
+    },
+    {
+      "source_id": "world-bank-wdi-total-population",
+      "url": "https://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL?date=1960:2025&format=json&per_page=20000",
+      "path": "data/raw/world-bank-SP.POP.TOTL-1960-2025.json",
+      "status": "updated",
+      "previous_sha256": "afebdcf7ed2ac0b36bfad60902747de65736fe5a3433820efba97af4d00f388d",
+      "sha256": "d6a069b61aa22f6d53554376dbacf416e01c08a79d514309b39f9925886b611f"
+    },
+    {
+      "source_id": "world-bank-wdi-crude-birth-rate",
+      "url": "https://api.worldbank.org/v2/country/all/indicator/SP.DYN.CBRT.IN?date=1960:2024&format=json&per_page=20000",
+      "path": "data/raw/world-bank-SP.DYN.CBRT.IN-1960-2024.json",
+      "status": "unavailable",
+      "error": "The read operation timed out"
+    },
+    {
+      "source_id": "owid-long-run-life-expectancy-2026-09-19",
+      "url": "https://ourworldindata.org/grapher/life-expectancy.csv",
+      "path": "data/raw/owid-life-expectancy-2026-09-19.csv",
+      "status": "unchanged",
+      "previous_sha256": "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01",
+      "sha256": "c304603fb8a7da263619a8ae43b7097f35b648c458855e23f1c4ef8f2ae75c01"
+    }
+  ]
+}

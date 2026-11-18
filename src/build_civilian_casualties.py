@@ -205,15 +205,15 @@ def build() -> dict:
         })
     countries.sort(key=lambda item: (-item["civilians"], item["name"]))
     payload = {
-        "snapshot": "2026-09-21",
+        "snapshot": "2026-11-18",
         "metric": "deaths_civilians",
         "unit": "reported civilian deaths",
         "coverage": {
             "ged_version": "26.1",
             "ged_years": [1989, 2025],
             "play_years": list(range(2017, 2027)),
-            "candidate_through": "2026-08-31",
-            "note": "UCDP GED 26.1 covers 1989-2025. Candidate events add provisional observations through August 2026. The map defaults to the latest ten calendar years; a blank year remains blank rather than being interpolated.",
+            "candidate_through": "2026-09-30",
+            "note": "UCDP GED 26.1 covers 1989-2025. Candidate events add provisional observations through September 2026. The map defaults to the latest ten calendar years; a blank year remains blank rather than being interpolated.",
         },
         "world_total": sum(item["civilians"] for item in countries),
         "country_count": len(countries),

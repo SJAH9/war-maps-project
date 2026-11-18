@@ -1,0 +1,21 @@
+{
+  "accc": {
+    "observation_date": "2026-11-11",
+    "excise_per_litre": 0.537,
+    "excise_verified_from_current_report": true,
+    "evidence": "13 November 2026 report, page 3: full fuel excise restored to 53.7 cents/litre on 3 August; tables 6 and 7 contain prices to 11 November. GST is 1/11 of the inclusive retail price."
+  },
+  "nz": {
+    "observation_date": "2026-11-08",
+    "gasoline": 3.52,
+    "note": "Official MBIE Price for fuel response support publication: 91 Regular board price for the week ending 8 November 2026, NZ$3.52/litre. The page was verified on 18 November but returned HTTP 403 to the automated capture; the dated publisher observation is retained explicitly.",
+    "evidence": "Official MBIE Price for fuel response support page, last updated 11 November 2026."
+  },
+  "sources": {
+    "eu_with_tax": "https://energy.ec.europa.eu/document/download/264c2d0f-f161-4ea3-a777-78faae59bea0_en",
+    "eu_before_tax": "https://energy.ec.europa.eu/document/download/78311f92-68f8-4b82-b5cf-1293beeaae77_en",
+    "accc": "https://www.accc.gov.au/system/files/weekly-fuel-price-monitoring-report-13-november-2026.pdf",
+    "accc_tax": "https://www.accc.gov.au/consumers/petrol-and-fuel/what-affects-fuel-prices",
+    "japan_tax": "https://www.enecho.meti.go.jp/statistics/petroleum_and_lpgas/pl007/results.html"
+  }
+}

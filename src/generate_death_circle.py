@@ -86,7 +86,7 @@ def generate(year=2026):
     text(c,f'CIVILIANS / {totals["civilian"]:,}',48,294,19,bold=True)
     text(c,f'UNKNOWN SIDE / {totals["unknown"]:,}',1030,294,17,bold=True)
     c.setStrokeColor(GRID);c.line(48,165,1248,165)
-    coverage='UCDP 2026 candidate event records, January-August 2026' if year==2026 else f'UCDP GED 26.1, January-December {year}'
+    coverage='UCDP 2026 candidate event records, January-September 2026' if year==2026 else f'UCDP GED 26.1, January-December {year}'
     para(c,f'Source: {coverage}. Counts sum the source best, deaths_a, deaths_b, deaths_civilians and deaths_unknown fields. Side labels follow the source records.',48,145,1200,11,MUTED)
     para(c,'The circle contains recorded Russian-side and Ukrainian-side deaths. Civilian and unknown-side deaths appear outside the circle at the same dot size. All dots are individually drawn vectors.',48,88,1200,11,MUTED)
     c.showPage();c.save()

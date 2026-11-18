@@ -53,7 +53,7 @@ conflict-ID-only candidate grouping. No name-based conflict merging occurs.
 Annual ACD records join only type-1 events with the same stable conflict ID.
 
 Reviewed GED 26.1 covers 1989–2025; the loaded candidate releases cover
-January–August 2026. Annual ACD supplies older state-based records from 1946.
+January–September 2026. Annual ACD supplies older state-based records from 1946.
 The latest candidate revision wins for a repeated event ID, including any
 overlap with reviewed GED. These are all **available recorded years**, not a
 claim of exhaustive observation of a conflict's lifetime.
@@ -120,7 +120,7 @@ conflict/type key. The ranking audit retains ineligible conflicts too.
 `python3 -m src.generate_event_network_print` rebuilds the two combined posters
 independently. 2026 membership is date-interval overlap. All-time includes every
 deduplicated event from the local reviewed archive and candidate inputs
-(currently 431,627 events; 13,659 overlap 2026). It does not manufacture
+(currently 434,601 events; 16,633 overlap 2026). It does not manufacture
 event observations from annual-only records.
 
 Each conflict has a black hub, exact named sides (olive triangles), recorded
@@ -150,10 +150,10 @@ row, and refuses missing/negative values, duplicate IDs or cross-year
 intervals that cannot be wholly assigned to one year. There is no rounding,
 sampling or inferred allocation of unknown status.
 
-The 2026 January-August releases contain 125,245 reported deaths,
-including 21,000 civilians, 74,664 coded-side deaths and 29,581 unknown.
-Some uncertain event intervals in the August release extend to September 10;
-the poster discloses this and does not claim a strict August 31 cutoff.
+The 2026 January-September releases contain 140,009 reported deaths,
+including 23,205 civilians, 85,348 coded-side deaths and 31,456 unknown.
+Some uncertain event intervals in the September release extend to October 4;
+the poster discloses this and does not claim a strict September 30 cutoff.
 Reviewed 2024: 188,209 deaths, 34,895 civilian. Reviewed 2025: 245,464 deaths,
 91,566 civilian. Those are full calendar years; 2026 is provisional and
 partial-year, so raw totals are not directly comparable annual rates.

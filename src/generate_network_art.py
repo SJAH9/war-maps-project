@@ -198,7 +198,7 @@ def generate(out=None,memorial=False,nation_pixels=False,edge_pixels=False,doubl
     c.setStrokeColor(HexColor('#4a595d'));c.setLineWidth(.5);c.line(62,178,1234,178)
     caption=(f"{memorial_audit['count']:,} pure-white squares, one for each death in the UCDP event records. Each death appears once across the three views. The memorial follows the original network textures. Counts sum the UCDP best field." if memorial else 'Three perspectives on one Russia-Ukraine event network. Nodes represent recorded events and shared attributes. The artwork layers three saved views of the same network.')
     para(c,caption,62,159,700,9,muted)
-    para(c,'Visual exploration & saved viewpoints: Sid J. A. Hubbard.\nAI-assisted composition & rendering: OpenAI Codex.\nSource data: UCDP GED 26.1 / loaded candidate records through August 2026; record-level attribution retained in GraphML.',815,159,419,9,muted)
+    para(c,'Visual exploration & saved viewpoints: Sid J. A. Hubbard.\nAI-assisted composition & rendering: OpenAI Codex.\nSource data: UCDP GED 26.1 / loaded candidate records through September 2026; record-level attribution retained in GraphML.',815,159,419,9,muted)
     text(c,'CURATED DATA ART / LATTICE (14) + LATTICE (7) + THIRD-PARTY (3)',62,62,8,muted)
     text(c,'18 x 24 IN / VECTOR EDITION',1028,62,8,muted)
     edge_audit=None

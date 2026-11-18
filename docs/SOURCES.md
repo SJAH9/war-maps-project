@@ -10,7 +10,7 @@ UCDP datasets are licensed CC BY 4.0. The War Maps Project does not relicense th
 
 ## UCDP Candidate Events 2026
 
-The live layer combines the January-June 2026 quarterly release with the July and August 2026 monthly releases, the latest file listed by UCDP when revalidated on 8 October 2026. All three downloads were byte-identical to the retained files. Rows are reconciled by stable UCDP event ID, with the newer monthly form replacing an overlapping earlier row. The generated data retains the resulting unique observations and candidate conflict clusters and makes them navigable in the atlas.
+The live layer combines UCDP's January-September 2026 cumulative candidate release with its September monthly release, the latest files listed by UCDP when checked on 18 November 2026. Rows are reconciled by stable UCDP event ID, with the September monthly form replacing an overlapping cumulative row. The generated data retains 16,633 unique observations across 540 candidate conflict clusters and makes them navigable in the atlas.
 
 Candidate observations are provisional. `code_status`, source count, source office, source headline, date precision, location precision, dyad identifiers, violence type, and low/best/high fatality estimates are retained. A `Clear` event is not transformed into an unrestricted fact; it remains clear within the candidate UCDP enclosure.
 
@@ -66,7 +66,7 @@ Implementation reference: Graphology standard library, <https://graphology.githu
 
 ## Public satellite geometry
 
-The optional satellite layer uses a frozen 2026-10-19 subset of CelesTrak's active public general-perturbations catalog filtered to ICEYE objects. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
+The optional satellite layer uses a frozen 2026-11-18 subset of CelesTrak's active public general-perturbations catalog filtered to ICEYE objects. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
 
 The initial relationship is supported by ICEYE's statement that it expanded the Ukrainian Ministry of Defence's access to the ICEYE SAR satellite constellation. That is a constellation-level relationship. It does not establish that every publicly catalogued ICEYE spacecraft supplied imagery to a particular operation. The generated atlas preserves that boundary in `individual_asset_boundary` and keeps the orbit records free of conflict identifiers.
 

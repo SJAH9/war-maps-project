@@ -189,7 +189,7 @@ def render(rows,out,selection):
     para(c,'Binary node frequency per event; IGF = ln(N / feature event count). Rare features have stronger links; repeated features are downweighted. Features present in >70% of events are suppressed, then any node linked to >70% of remaining nodes is unlinked. Exact weighted betweenness uses distance = 1/IGF. Similarity and shared dates do not establish causality, coordination or retaliation.',48,164,1200,10)
     leaders=sorted(g,key=lambda v:(-g.nodes[v]['betweenness'],v))[:3]
     para(c,'Highest weighted betweenness: '+'; '.join(f"{g.nodes[v]['label']} ({g.nodes[v]['betweenness']:.4f})" for v in leaders)+'. All degrees, centralities, labels and evidence are preserved in the companion JSON.',48,113,1200,9)
-    para(c,'Sources: UCDP GED 26.1 / loaded candidate records through August 2026. '+selection+' Method terms are literal headline matches, not validated weapon classifications. No geography or power-law inference from layout.',48,66,1200,8)
+    para(c,'Sources: UCDP GED 26.1 / loaded candidate records through September 2026. '+selection+' Method terms are literal headline matches, not validated weapon classifications. No geography or power-law inference from layout.',48,66,1200,8)
     c.showPage();c.save()
     audit={'title':'Russia - Ukraine / government-free relationships','selection':selection,
            'weighting':'Binary event feature frequency; IGF=ln(N/df); distance=1/IGF',

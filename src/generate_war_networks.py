@@ -137,7 +137,7 @@ def compile_report(rows):
                    'edges':[dict(source=a,target=b,**v) for a,b,v in g['graph'].edges(data=True)]}
                for c,g in groups.items()}
     audit={'scope':'Loaded 2026 UCDP event intervals; all source-coded events retained regardless of motive statements',
-           'source_boundary':'Reviewed GED 26.1 plus candidate releases January-August 2026; not current/live coverage',
+           'source_boundary':'Reviewed GED 26.1 plus candidate releases January-September 2026; not current/live coverage',
            'events':len(rows),'countries':countries,'pairs':pairs,'eligible':eligible,'cross_region_pairs_compared':comparisons,
            'similarity_features':list(FEATURES),'focal':focal,'temporal_edges':windows,'temporal_statistics':stats,
            'statements':statement,'injury_graph':health['graphs'],
@@ -218,7 +218,7 @@ def render(a,groups,health,path):
     text(c,example.upper()+' / OBSERVED CODED-SIDE GRAPH',32,267,10,ORANGE,True)
     r.p(f"{a['events']:,} loaded event records active in 2026. {len(a['eligible'])} country graphs meet comparison criteria. {a['cross_region_pairs_compared']} cross-region pairs screened. All {len(f)} focal conflict records retained, including those without motive statements.",245)
     r.p('Reading key: nodes are defined per figure; links are observed coding or explicitly derived relations. Force-directed layouts, degree-scaled nodes and community colors follow network-science visualization practice, not a claim that conflicts follow a Barabasi-Albert growth law.',167)
-    r.p('Coverage warning: UCDP candidate releases run through August 2026. Health Cluster figures have a separate October reporting boundary. This report is not a live account of all attacks or casualties.',94,9)
+    r.p('Coverage warning: UCDP candidate releases run through September 2026. Health Cluster figures have a separate November reporting boundary. This report is not a live account of all attacks or casualties.',94,9)
 
     r.new('02 / Method','What the graph measures','Barabasi-informed network analysis, with measurement boundaries made explicit')
     y=r.table(['Measure','Definition / reading'],[
@@ -361,7 +361,7 @@ def render(a,groups,health,path):
 
     r.new('Sources / Rebuild','Audit and reproduce','Frozen inputs, transparent transformations, no hosted page equivalent')
     y=625
-    refs=[('UCDP','GED 26.1 and candidate releases January-August 2026. https://ucdp.uu.se/downloads/'),
+    refs=[('UCDP','GED 26.1 and candidate releases January-September 2026. https://ucdp.uu.se/downloads/'),
           ('Graph methods','Albert-Laszlo Barabasi, Network Science. Chapters 2, 4, 5 and 9. https://networksciencebook.com/'),
           ('Implementation','NetworkX 3.5: degree, density, clustering, cores, connected components, greedy modularity and spring layout. https://networkx.org/documentation/stable/'),
           *[(s['id'],s['title']+' '+s['url']) for s in a['statements']['sources']],

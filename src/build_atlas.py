@@ -12,17 +12,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HISTORICAL = ROOT / "data/raw/UcdpPrioConflict_v26_1.csv"
 CURRENT_SOURCES = (
-    (ROOT / "data/raw/GEDEvent_v26_01_26_06.csv", "ucdp-candidate-ged-2026-06"),
-    (ROOT / "data/raw/GEDEvent_v26_0_7.csv", "ucdp-candidate-ged-2026-07"),
-    (ROOT / "data/raw/GEDEvent_v26_0_8.csv", "ucdp-candidate-ged-2026-08"),
+    (ROOT / "data/raw/GEDEvent_v26_01_26_09.csv", "ucdp-candidate-ged-2026-09-quarterly"),
+    (ROOT / "data/raw/GEDEvent_v26_0_9.csv", "ucdp-candidate-ged-2026-09"),
 )
-CANDIDATE_BOUNDARY = "2026-08-31"
-CANDIDATE_LABEL = "August 2026"
-LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-08"
+CANDIDATE_BOUNDARY = "2026-09-30"
+CANDIDATE_LABEL = "September 2026"
+LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-09"
 VDEM = ROOT / "data/raw/V-Dem-CY-Core-v16.csv"
 VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v16.csv"
 GEOMETRY = ROOT / "data/raw/ne_110m_admin_0_countries.geojson"
-SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-10-19.json"
+SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-11-18.json"
 SATELLITE_RELATIONS = ROOT / "data/curated/satellite_relations.json"
 CLAIMS = ROOT / "data/curated/claims.json"
 PROJECTIONS = ROOT / "data/curated/projections.json"

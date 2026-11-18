@@ -230,7 +230,7 @@ def generate(out=None,hybrid_only=False):
             text(c,'THIRD-PARTY (3) / 2,780 nodes / 4,555 links shown / 8 off-screen nodes cropped',48,362,11,ORANGE,True)
             key(c,333);interpretation(c,273,g,stats)
             para(c,'Saved camera projection, uniformly fitted to the poster; no new network layout. Node size follows original degree. Weighted betweenness uses distance = 1/IGF, with IGF = ln(N/feature event count). The browser layout name is not a claim that the arrangement optimizes betweenness. Callouts describe the full graph, not just the cropped view.',48,124,1200,10)
-        para(c,'Source: Uppsala Conflict Data Program (UCDP), candidate event releases through August 2026. Event records and their source attribution are preserved in GraphML. War Maps derives method-term nodes from the source_headline field. Rebuild: python -m src.generate_view_comparison_posters',48,63,1200,8)
+        para(c,'Source: Uppsala Conflict Data Program (UCDP), candidate event releases through September 2026. Event records and their source attribution are preserved in GraphML. War Maps derives method-term nodes from the source_headline field. Rebuild: python -m src.generate_view_comparison_posters',48,63,1200,8)
         c.showPage();c.save()
         audit={'panels':panels,'event_scope':scope,'findings_full_graph':stats,'source_graph_nodes':len(g),'source_graph_edges':g.number_of_edges(),
                'inputs':{k:{'path':str((INPUT/FILES[k]).relative_to(ROOT)),'sha256':hashlib.sha256((INPUT/FILES[k]).read_bytes()).hexdigest()} for k in panels}}

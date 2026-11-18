@@ -1,0 +1,126 @@
+[
+  {
+    "file": "aaa.html",
+    "url": "https://gasprices.aaa.com/state-gas-price-averages/",
+    "checked_at": "2026-11-18T11:21:16.845392+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "2cebca1ca1781c185b694e9d14fc2f32dce6341fd11fa586b4ab7f527433ed14",
+    "bytes": 96144
+  },
+  {
+    "file": "eia.html",
+    "url": "https://www.eia.gov/petroleum/gasdiesel/",
+    "checked_at": "2026-11-18T11:21:16.846629+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "13a63eb2708b27bd5e7d7d08c8e621b1ac8568e23b88e9fdae1c9da40ebabf8b",
+    "bytes": 114888
+  },
+  {
+    "file": "japan.html",
+    "url": "https://opengov.jp/en/prices/gasoline/",
+    "checked_at": "2026-11-18T11:21:16.846876+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "d9b0b936cbf1e04ea01cf98d3a8a6c2d2d57d0833e55f066f71a6cf236ee4920",
+    "bytes": 282472
+  },
+  {
+    "file": "nz.html",
+    "url": "https://www.mbie.govt.nz/building-and-energy/energy-and-natural-resources/energy-statistics-and-modelling/energy-statistics/weekly-fuel-price-monitoring/price-for-fuel-response-support",
+    "checked_at": "2026-11-18T11:21:16.847093+00:00",
+    "status": "unavailable",
+    "error": "HTTP Error 403: Forbidden"
+  },
+  {
+    "file": "india.html",
+    "url": "https://ppac.gov.in/all-imp-news?page=1",
+    "checked_at": "2026-11-18T11:21:17.293041+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "0f54c66213dd294e76a17456533f96015efc5581fe57048d4dd104af6c3403fd",
+    "bytes": 253618
+  },
+  {
+    "file": "taiwan.html",
+    "url": "https://vipmbr.cpc.com.tw/mbwebs/showhistoryprice_oil.aspx",
+    "checked_at": "2026-11-18T11:21:17.471629+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "65fcf709724a617a98ac2bccfca75866c4f0c77e8ca94722d3b56dffc719bcbd",
+    "bytes": 1307880
+  },
+  {
+    "file": "fx.html",
+    "url": "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml",
+    "checked_at": "2026-11-18T11:21:17.527812+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "16d4a35422e5e64de97382b0988c51e098c81be9d18ba389dda8f9365f454b0f",
+    "bytes": 1547
+  },
+  {
+    "file": "cbc.html",
+    "url": "https://www.cbc.gov.tw/tw/lp-645-1-1-40.html",
+    "checked_at": "2026-11-18T11:21:18.097352+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "c7afc2b4f7c4e8155a6e9f536f93adceee799ebdc7057902ed32e912fc923b3c",
+    "bytes": 48972
+  },
+  {
+    "file": "eu-with.xlsx",
+    "url": "https://energy.ec.europa.eu/document/download/264c2d0f-f161-4ea3-a777-78faae59bea0_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20with%20Taxes%20-%202026-09-21.xlsx",
+    "checked_at": "2026-11-18T11:21:18.782304+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "8d48ab28011bee8ca5a85a4e0d6725bcdfba62af1ee8a1ca9a5ff48eb03eccdb",
+    "bytes": 16928
+  },
+  {
+    "file": "eu-without.xlsx",
+    "url": "https://energy.ec.europa.eu/document/download/78311f92-68f8-4b82-b5cf-1293beeaae77_en?filename=Weekly%20Oil%20Bulletin%20Weekly%20prices%20without%20taxes%20-%202024-02-19.xlsx",
+    "checked_at": "2026-11-18T11:21:19.667419+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "265405fece404836ddd413c84f2b3633fc80e26051cc5503d5d3a32d4526d5f0",
+    "bytes": 17336
+  },
+  {
+    "file": "accc.pdf",
+    "url": "https://www.accc.gov.au/system/files/weekly-fuel-price-monitoring-report-13-november-2026.pdf",
+    "checked_at": "2026-11-18T11:32:00+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "d716162e798e7ea5239351eb98ed1dc7667308280a1ae649de691bc0f9682336",
+    "bytes": 1640892
+  },
+  {
+    "file": "satellites.json",
+    "url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=sar&FORMAT=JSON",
+    "checked_at": "2026-11-18T11:21:20.827868+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "9ee8d454518fde8de51f0207663c1e0a04b8d72a0923d47a7a2e404869fdaccf",
+    "bytes": 53326
+  },
+  {
+    "file": "drone-incidents.json",
+    "url": "https://iranattacks.com/incidents.json",
+    "checked_at": "2026-11-18T11:21:20.828078+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "bf3d7d142528f1c878ed0a482c541410f465dda3490a8e5d806ff2a3a30469e2",
+    "bytes": 638934
+  },
+  {
+    "file": "world.geojson",
+    "url": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/master/geojson/ne_110m_admin_0_countries.geojson",
+    "checked_at": "2026-11-18T11:21:21.028345+00:00",
+    "transport": "urllib",
+    "status": "captured",
+    "sha256": "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f",
+    "bytes": 838726
+  }
+]

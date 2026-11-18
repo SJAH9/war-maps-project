@@ -162,7 +162,7 @@ def render(groups, out, scope):
          "Spiral positions order events chronologically; distance is not geography or a measure of causality. "
          "Dense regions require digital zoom; the companion compressed JSON retains every event and link endpoint.",
          48,148,1200,10)
-    para(c,"Sources: UCDP GED 26.1 (1989-2025) and locally loaded UCDP candidate releases through August 2026. "
+    para(c,"Sources: UCDP GED 26.1 (1989-2025) and locally loaded UCDP candidate releases through September 2026. "
          "Latest candidate revision replaces duplicate event IDs. All-time means available event history, not all wars "
          "in history; annual-only records are not invented as events. Network incidence representation informed by "
          "Barabasi, Network Science, chapter 2 (networksciencebook.com). No scale-free or causal claim.",
@@ -201,7 +201,7 @@ def render_large_five(groups, out):
          'Grey dot: zero or unknown deaths. Every event links to its conflict, sides and country. Each dot is one event, not one person.',48,147,1200,10)
     para(c,'Ranks follow event count, not mortality. Elliptical chronological spirals fill each panel; position is not geography or causality. '
          'Countries are event locations, not inferred belligerents. Candidate and reviewed records use the same colors.',48,111,1200,10)
-    para(c,'Source: UCDP GED 26.1 and loaded candidate releases through August 2026; latest revision per event ID. '
+    para(c,'Source: UCDP GED 26.1 and loaded candidate releases through September 2026; latest revision per event ID. '
          'Selection: networks 1-5 in war-maps-event-networks-2026. Companion JSON preserves every selected event and incidence endpoint.',48,75,1200,9)
     c.showPage();c.save()
     payload={'format':'war-maps-event-incidence-1','scope':'2026','selection':'Ranks 1-5 by event count from war-maps-event-networks-2026',

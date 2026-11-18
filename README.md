@@ -4,7 +4,7 @@ The War Maps Project is an open, reproducible interface to publicly available ev
 
 War Maps does not collect conflict observations, conduct surveillance, advise combatants, or argue for any party. It combines records maintained by named public and institutional sources so relationships hidden by isolated datasets and daily reporting can be inspected in context. Its hope is that clearer public understanding can make avoidable conflict harder to sustain and its human cost harder to disregard.
 
-The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Conflict Dataset 26.1 (1946-2025), adds the latest available current-event layer from the UCDP Candidate Events Dataset through August 2026, and nests those conflict-years inside the state conditions observed in V-Dem. The official candidate files were revalidated on 21 September 2026. The first current focal centre is the Iran-Israel-United States conflict recorded by UCDP as conflict `16905` in its candidate data.
+The atlas begins with every state-based armed conflict in the UCDP/PRIO Armed Conflict Dataset 26.1 (1946-2025), adds the latest available current-event layer from the UCDP Candidate Events Dataset through September 2026, and nests those conflict-years inside the state conditions observed in V-Dem. The official candidate files were refreshed on 18 November 2026. The first current focal centre is the Iran-Israel-United States conflict recorded by UCDP as conflict `16905` in its candidate data.
 
 The top-level **NewsMedia** section embeds the maintained standalone [NewsBoob](https://github.com/SJAH9/newsboob) player for comparing live international coverage. It is a contextual surface, not a data-ingestion path: broadcaster output is not promoted into a War Maps observation, and the project does not rank or endorse channels.
 
@@ -32,12 +32,10 @@ tables (including proportions, not counts, in `GAd_by_Years`), and health-attack
 records. No personal/contact tables are requested. Public access does not imply
 an unrestricted reuse license; publisher terms and attribution still apply.
 
-The initial capture has 1,099 casualty-date rows, 3,188 demographic rows, four
-period-share rows and 2,069 health-attack records. The 9 October 2026 figures are
-74,370 Gaza fatalities and 175,371 injuries; West Bank 1,216 fatalities and
-13,473 injuries. The previous Gaza context was 73,470 fatalities on 2 September:
-the difference of 900 is a snapshot revision/change, not an assigned interval
-death count. Its original provenance remains attached to the replacement record.
+The current capture has 1,136 casualty-date rows, 3,188 demographic rows, four
+period-share rows and 2,137 health-attack records. The 15 November 2026 figures are
+74,702 Gaza fatalities and 176,105 injuries; West Bank 1,220 fatalities and
+13,473 injuries. Its original provenance remains attached to the replacement record.
 Gaza and West Bank totals remain outside UCDP; health-attack losses overlap them.
 Never sum cumulative daily rows, infer combatant status from age/sex, combine
 injuries with deaths, or treat zero/missing values as interchangeable.
@@ -80,7 +78,7 @@ Interactive graphics retain a text inspector, register, list, table, or download
 
 The complete interface rules and publication checklist are documented in [Public-understanding interface](docs/PUBLIC_UNDERSTANDING_DESIGN.md).
 
-The latest source-by-source audit is [Data refresh · 19 October 2026](docs/DATA_REFRESH_2026-10-19.md). It records updated, unchanged, and retained sources separately. Fuel observations, exchange rates, the ICEYE orbit snapshot, and the World Bank population response were refreshed; official conflict downloads remain unchanged.
+The latest source-by-source audit is [Data refresh · 18 November 2026](docs/DATA_REFRESH_2026-11-18.md). It records updated, unchanged, and retained sources separately. UCDP candidate events, fuel observations, exchange rates, the oPt Health Dashboard, the ICEYE orbit snapshot, and the World Bank population response were refreshed.
 
 Sid J.A. Hubbard is the Principal Investigator of the War Maps Project. At this stage, the entirety of the atlas is written, directed, and engineered by its Principal Investigator with the assistance of AI and data-science tools. Decisions about scope, interpretation, publication, and corrections remain with the Principal Investigator.
 
@@ -115,7 +113,7 @@ Every mapped nation opens a nation-centred record with three views. **Date** com
 
 The world map accepts a movable 1, 10, 25, 50, or all-time window. Its government-type selector uses V-Dem's `v2x_regime` vocabulary: Closed Autocracy, Electoral Autocracy, Electoral Democracy, and Liberal Democracy. "Totalitarian dictatorship" is not substituted for an official V-Dem category.
 
-The World map offers an optional **Satellite paths** control for the ICEYE constellation. Turn it on to view approximate paths and snapshot positions calculated from the frozen CelesTrak record dated 2026-10-19. These are archived reference geometry, not live positions. Orbit records remain separate from conflict relationships; constellation access does not establish individual satellite tasking. The toolbar links to CelesTrak, and [the source notes](docs/SOURCES.md#public-satellite-geometry) explain the snapshot and relationship boundaries.
+The World map offers an optional **Satellite paths** control for the ICEYE constellation. Turn it on to view approximate paths and snapshot positions calculated from the frozen CelesTrak record dated 2026-11-18. These are archived reference geometry, not live positions. Orbit records remain separate from conflict relationships; constellation access does not establish individual satellite tasking. The toolbar links to CelesTrak, and [the source notes](docs/SOURCES.md#public-satellite-geometry) explain the snapshot and relationship boundaries.
 
 ## Conflict network exploration
 
@@ -179,7 +177,7 @@ python3 -m http.server 8765
 ## Data boundaries
 
 - UCDP/PRIO 26.1 supplies the canonical 1946-2025 state-based conflict-year spine.
-- UCDP Candidate Events supplies 13,659 unique provisional observations through August 2026. All 510 candidate conflict clusters are navigable; overlapping monthly rows replace their earlier quarterly form by stable event ID. Candidate coding is explicitly not treated as final.
+- UCDP Candidate Events supplies 16,633 unique provisional observations through September 2026. All 540 candidate conflict clusters are navigable; overlapping monthly rows replace their earlier cumulative form by stable event ID. Candidate coding is explicitly not treated as final.
 - A conflict-year row is not a complete event chronology. It establishes annual participation, incompatibility, type, and intensity under UCDP definitions.
 - Uppsala and V-Dem are the project data field. The project does not create a generic intake layer for outside datasets.
 - Natural Earth and CelesTrak supply cartographic reference geometry only. ICEYE's operator statement supplies the separately enclosed constellation relationship; it is not treated as conflict-event data or individual satellite tasking.
@@ -198,7 +196,7 @@ The format does not enforce both-sideism, one-sideism, or no-sideism. It follows
 
 The separate print-first War Map prototype treats the map as a recurring information structure populated by a selected conflict and focal interval. The completed print atlas is intended to map every conflict represented in the project's loaded datasets. Its first specification, `falklands-1982`, begins before the San Carlos landings and stops before the formal surrender, keeping the unresolved operational field visible. The resulting landscape A4 PDF includes the interval rule, operational map, reported deaths, a five-measure Life and Death comparison, nation fields, postwar demographic context, dated observations, the conflict network, degree distribution, normalized betweenness, and source disclosures. The focal movement is a sourced retrospective selection open to revision, not a claim that one event alone caused the outcome.
 
-The `iran-2026-current` proof adapts that format to an unresolved conflict. It maps all 126 UCDP candidate observations from 28 February through 31 August 2026 without claiming a retrospective turning point. Its print network retains the website topology and separates terrestrial and maritime locales. Locale-node area follows observation count, observation nodes have equal area, and the proportionality page prints observation share only. No conflict or location casualty total is derived from candidate rows because their record class is unavailable and period aggregates can overlap incidents. Israeli and United States actions are not assigned separate event colors because the loaded UCDP rows encode a combined Side B rather than an observation-level acting-party field.
+The `iran-2026-current` proof adapts that format to an unresolved conflict. It maps all 459 UCDP candidate observations from 28 February through 23 September 2026 without claiming a retrospective turning point. Its print network retains the website topology and separates terrestrial and maritime locales. Locale-node area follows observation count, observation nodes have equal area, and the proportionality page prints observation share only. No conflict or location casualty total is derived from candidate rows because their record class is unavailable and period aggregates can overlap incidents. Israeli and United States actions are not assigned separate event colors because the loaded UCDP rows encode a combined Side B rather than an observation-level acting-party field.
 
 A separately sourced context layer records selected U.S. overseas-base and access relationships from CRS Report R48123. In the print Life and Death isometric field, this appears only as an ordinal stack: its height compares relationship classes and does not represent installation count, troop strength, operational capacity, or strike attribution. A white outlined stack and outer network ring mark a conflict locale with a documented former U.S. installation or military footprint but no current site identified in that dated inventory; the current proof applies these marks to Iran. Persistent sites, other identified sites, former-only footprint, and locations not classified from the selected table remain distinct. Qatar's Al Udeid Air Base is disclosed as regional context but is not added to the conflict network because Qatar is not one of conflict `16905`'s loaded event locales.
 

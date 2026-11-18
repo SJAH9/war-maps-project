@@ -47,8 +47,10 @@ def main():
         ("ucdp-prio-acd-26.1", sources["ucdp-prio-acd-26.1"]["url"], "UcdpPrioConflict_v26_1.csv", ["conflict_id", "year"]),
         ("ucdp-ged-26.1", sources["ucdp-ged-26.1"]["url"], "ged261-csv.zip", None),
     ]
-    for month, filename in [("06", "GEDEvent_v26_01_26_06.csv"), ("07", "GEDEvent_v26_0_7.csv"), ("08", "GEDEvent_v26_0_8.csv")]:
-        sid = "ucdp-candidate-ged-2026-" + month
+    for sid, filename in [
+        ("ucdp-candidate-ged-2026-09-quarterly", "GEDEvent_v26_01_26_09.csv"),
+        ("ucdp-candidate-ged-2026-09", "GEDEvent_v26_0_9.csv"),
+    ]:
         jobs.append((sid, sources[sid]["url"], filename, ["id", "date_start", "date_end"]))
     for sid, indicator, end in [("world-bank-wdi-total-population", "SP.POP.TOTL", 2025), ("world-bank-wdi-crude-birth-rate", "SP.DYN.CBRT.IN", 2024)]:
         jobs.append((sid, f"https://api.worldbank.org/v2/country/all/indicator/{indicator}?date=1960:{end}&format=json&per_page=20000", f"world-bank-{indicator}-1960-{end}.json", "wb"))

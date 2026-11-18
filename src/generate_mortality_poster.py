@@ -93,7 +93,7 @@ def render(summary, out, capacity):
     text(c,"REPORTED FATAL CASUALTIES",48,1578,18,INK,True)
     text(c,f"{summary['total']:,}",43,1485,100,INK,True)
     candidate = any("candidate" in source for source in summary["sources"])
-    coverage = ("January-August releases | Provisional, partial year" if candidate
+    coverage = ("January-September releases | Provisional, partial year" if candidate
                 else "January-December | Reviewed GED 26.1 | Full calendar year")
     text(c,f"Deaths only | {coverage}",
          48,1450,14,MUTED)
@@ -117,7 +117,7 @@ def render(summary, out, capacity):
          "The civilian count is a subset of the total; deaths are represented only once. "
          "The 2024, 2025 and 2026 posters share an identical dot scale; unused grid space is intentional.",
          48,219,1200,12)
-    source_label = ("UCDP candidate observations, January-August releases" if candidate else
+    source_label = ("UCDP candidate observations, January-September releases" if candidate else
                     "UCDP reviewed GED 26.1")
     source_note = (f"Candidate reports remain provisional; distinct observations may overlap. "
                    f"Recorded date intervals extend through {summary['through']}. "
