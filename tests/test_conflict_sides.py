@@ -1,6 +1,6 @@
 import unittest
 from src.conflict_sides import compile_rows,counts,overview_segments
-from src.generate_conflict_sides import spiral_points, page_plan, printable_years, print_spiral_colors, detail_colors
+from src.generate_conflict_sides import spiral_points, page_plan, printable_years, print_spiral_colors, detail_colors, recent_deaths, qualifies_for_print, civilian_only, atlas_scope
 
 
 def row(id,year=2026,conflict='1',a=3,b=2,civilian=1,unknown=1):
@@ -13,6 +13,49 @@ class ConflictSidesTests(unittest.TestCase):
         self.assertEqual(printable_years({'years':{
             '1999':{'total':8},'2000':{'total':8},'2001':{'total':0},
             '2002':{'total':4},'2026':{'total':1}}}),['2026','2002'])
+        self.assertEqual(printable_years({'years':{'1999':{'total':8},'2008':{'total':2}}}),['2008'])
+        self.assertEqual(printable_years({'years':{'1999':{'total':8},'2009':{'total':2}}}),['2009'])
+
+    def test_print_threshold_uses_inclusive_2007_window(self):
+        model={'years':{'2006':{'total':50000},'2007':{'total':999},'2026':{'total':0},'2027':{'total':50000}}}
+        self.assertEqual(recent_deaths(model,2026),999)
+        self.assertFalse(qualifies_for_print(model,2026))
+        model['years']['2026']['total']=1
+        self.assertTrue(qualifies_for_print(model,2026))
+        self.assertEqual(recent_deaths(model,2026),1000)
+        self.assertFalse(qualifies_for_print({'years':{'1999':{'total':1},'2026':{'total':1}}},2026))
+        self.assertFalse(qualifies_for_print({'years':{'2018':{'total':1},'2026':{'total':1}}},2026))
+
+    def test_civilian_book_partition_is_whole_conflict_and_disjoint(self):
+        models=compile_rows([
+            row('1',conflict='civilian',a=0,b=0,civilian=1000,unknown=0),
+            row('2',conflict='mixed',a=0,b=0,civilian=1000,unknown=0),
+            row('3',2025,conflict='mixed',a=1,b=0,civilian=0,unknown=0),
+            row('4',conflict='unknown',a=0,b=0,civilian=1000,unknown=1),
+            row('5',conflict='zero',a=0,b=0,civilian=0,unknown=0)],2026)
+        original=dict(year=2026,conflicts=models)
+        scoped=atlas_scope(original)
+        removed=[m for m in models if civilian_only(m)]
+        self.assertEqual([m['id'] for m in removed],['1:civilian'])
+        self.assertFalse(set(m['id'] for m in removed)&set(m['id'] for m in scoped['conflicts']))
+        self.assertEqual(scoped['total']+sum(m['years']['2026']['total'] for m in removed),3001)
+        self.assertEqual(len(original['conflicts']),4)
+        mixed=next(m for m in scoped['conflicts'] if m['id']=='1:mixed')
+        self.assertEqual(printable_years(mixed),['2026','2025'])
+
+    def test_decade_books_partition_annual_pages(self):
+        from src.generate_conflict_sides_decades import decade_models,decade_overview
+        models=compile_rows([row(str(y),y,a=1000) for y in (2000,2001,2009,2010,2019,2020,2026)],2026)
+        data=dict(year=2026,conflicts=models)
+        seen=set()
+        for start,end in [(2001,2009),(2010,2019),(2020,2026)]:
+            selected=decade_models(data,start,end)
+            pairs={(m['id'],y) for m in selected for y in m['years']}
+            self.assertFalse(seen & pairs)
+            seen.update(pairs)
+            overview=decade_overview(selected,start,end,'2026-09-30')
+            self.assertEqual(overview['total'],sum(b['total'] for m in selected for b in m['years'].values()))
+        self.assertEqual({y for _,y in seen},{'2001','2009','2010','2019','2020','2026'})
 
     def test_print_promotes_civilians_caps_dots_and_does_not_duplicate(self):
         for a,b,civ,unknown in [(1,0,0,0),(0,0,100,0),(2,3,30,20)]:

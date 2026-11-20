@@ -248,3 +248,22 @@ next-year network-science, cybersecurity and data-source plans.
 The homepage carousel opens four views: conflict map, conflict network, Conflict Sides, and the satellite-distance globe. Conflict Sides uses scalable SVG with 2001-onward downloads; the new bookmarked Letter atlas is rebuilt with `python -m src.generate_print_atlas --conflict-sides`.
 
 `python -m src.generate_web_atlas` also rebuilds the frozen satellite-model input and homepage carousel. The satellite globe displays a 30-day backward SGP4 model ending at the saved reference timestamp, not observed month-long telemetry or real-time/future positions. See [release details](docs/RELEASE_0_13_0.md).
+
+## Conflict Sides decade books (0.13.1)
+
+The print atlas is available in three bookmarked US Letter volumes:
+
+- [2020-2026: 522 pages](outputs/print/war-maps-conflict-sides-2020s.pdf)
+- [2010-2019: 513 pages](outputs/print/war-maps-conflict-sides-2010s.pdf)
+- [2001-2009: 268 pages](outputs/print/war-maps-conflict-sides-2000s.pdf)
+
+Each book includes a period overview and annual conflict pages. The selected
+conflicts are active in the loaded 2026 data and have at least 1,000 deaths in
+2007-2026. Zero-death years and wholly civilian-only conflicts are omitted;
+the latter are reserved for a separate civilian deaths book. Mixed conflicts
+retain their civilian counts. Annual pages never overlap across decades.
+
+Run `python -m src.generate_conflict_sides_decades` for the three books, or
+`python -m src.generate_print_atlas --conflict-sides` for the combined atlas
+and decade books. Each PDF has a JSON page index with counts and sources.
+See [release notes](docs/RELEASE_0_13_1.md).

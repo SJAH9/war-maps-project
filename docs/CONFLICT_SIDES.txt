@@ -50,8 +50,17 @@ top to bottom. Civilian and unknown marks sit outside at identical scale.
 The web table/selector is the keyboard-accessible alternative to dot picking.
 Fit and zoom do not sample or change counts. The print atlas contains an
 introduction, the current-year spiral, and a page for each recorded year
-after 2000 (2001 onward) of each current conflict, newest first, with
-navigable PDF bookmarks. Pages with zero deaths are omitted.
+of each qualifying current conflict, newest first, with
+navigable PDF bookmarks. Detail pages include only conflicts with at least
+1,000 deaths (all categories combined) from 2007 through
+the atlas year: 2007-2026 (20 calendar years) for the 2026 edition. Qualifying conflicts retain
+their nonzero annual pages from 2001 onward. Conflicts whose entire recorded history contains only civilian deaths are
+excluded from both detail pages and the opening overview, and written to
+war-maps-civilian-deaths-selection.json for a separate civilian deaths book.
+The partition is by whole conflict, including its full history; no death
+from those conflicts remains in this atlas. Unknown deaths do not count as
+civilian for this classification. Civilian-only years of mixed conflicts
+remain here. Website data remains unchanged. Pages with zero deaths are omitted.
 Years without event records are not fabricated as zero-death pages.
 
 No Ephemeris or release selection is changed by this generator.
@@ -84,3 +93,13 @@ canvas is used only for measuring text. Detail dots use the approved smaller
 diameter: solid dark-gray fill without outlines, red fill with black outlines.
 Civilian and unknown detail dots are hollow gray rings. The overview retains
 its black/white side palette and click selection.
+
+Decade books
+The standard atlas generator also creates war-maps-conflict-sides-2020s.pdf,
+war-maps-conflict-sides-2010s.pdf, and war-maps-conflict-sides-2000s.pdf, each
+with a JSON page index. These partition the selected annual pages into
+2020-2026, 2010-2019, and 2001-2009 respectively. Eligibility remains
+1,000 deaths in 2007-2026 among conflicts active in 2026, excluding
+wholly civilian-only conflicts. Each book has its own cover, period overview,
+and bookmarks; the overview totals match that book's annual pages.
+Rebuild just these books with python -m src.generate_conflict_sides_decades.

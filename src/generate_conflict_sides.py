@@ -7,7 +7,7 @@ from functools import lru_cache
 from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor
 from reportlab.lib.utils import simpleSplit
-from src.conflict_sides import ROOT, COLORS, build, write
+from src.conflict_sides import ROOT, COLORS, build, write, overview_segments
 from src.generate_death_circle import circle_points
 from src.generate_network_print import fonts, PAPER, INK, MUTED, GRID, text, para, frame
 from src.publication_brand import brand
@@ -41,6 +41,28 @@ def base(c,page):
 
 def printable_years(m):
     return sorted((y for y,b in m['years'].items() if int(y)>2000 and b['total']>0),key=int,reverse=True)
+
+def recent_deaths(model,year):
+    """Deaths from 2007 through the atlas year, including all death categories."""
+    return sum(b['total'] for y,b in model['years'].items() if 2007<=int(y)<=year)
+
+
+def qualifies_for_print(model,year):
+    return recent_deaths(model,year)>=1000
+
+
+def civilian_only(model):
+    """Classify the whole conflict, not individual civilian-only years."""
+    bucket=model['all']
+    return bucket['total']>0 and bucket['counts']['civilian']==bucket['total']
+
+
+def atlas_scope(data):
+    models=[m for m in data['conflicts'] if not civilian_only(m)]
+    year=data['year']
+    return dict(data,conflicts=models,segments=overview_segments(models,year),
+                total=sum(m['years'][str(year)]['total'] for m in models),
+                side_total=sum(m['years'][str(year)]['counts'][s] for m in models for s in 'abcd'))
 
 
 def page_plan(b,title_size=30):
@@ -168,24 +190,29 @@ def overview_page(c,data):
 def generate(year=None,web_only=False):
     data=build(year);write(data)
     if web_only:return data
+    civilian_models=[m for m in data['conflicts'] if civilian_only(m)]
+    data=atlas_scope(data)
+    included=[m for m in data['conflicts'] if qualifies_for_print(m,data['year'])]
     fonts();out=ROOT/'outputs/print/war-maps-conflict-sides-atlas.pdf';out.parent.mkdir(exist_ok=True)
+    selection=dict(year=data['year'],classification='Whole conflict: every recorded death is civilian; unknown deaths are not classified as civilian',minimum_deaths=1000,window_start=2007,window_end=data['year'],conflicts=civilian_models,qualifying_conflicts=[m['id'] for m in civilian_models if qualifies_for_print(m,data['year'])])
+    (out.parent/'war-maps-civilian-deaths-selection.json').write_text(json.dumps(selection,ensure_ascii=False,indent=2)+'\n')
     buffer=io.BytesIO()
     c=canvas.Canvas(buffer,pagesize=(612,792),pageCompression=1,invariant=1)
     c.setTitle('War Maps / Conflict Sides / '+str(data['year']));c.setAuthor('The War Maps Project')
     base(c,1);text(c,'CONFLICT SIDES',32,680,35,bold=True)
     text(c,f"{data['year']} / {data['total']:,} DEATHS",32,632,24,bold=True)
-    para(c,f"{len(data['conflicts']):,} conflicts with recorded activity in {data['year']}. Current-year coverage through {data['coverage_through']}. One dot represents one death.",32,590,540,12)
+    para(c,f"{len(data['conflicts']):,} conflicts with recorded activity in {data['year']}. Current-year coverage through {data['coverage_through']}. One dot represents one death. Detail pages: {len(included):,} conflicts with at least 1,000 deaths in 2007-{data['year']}.",32,590,540,12)
     para(c,'The opening spiral holds current-year named-side deaths in one clockwise line, from the outer top edge inward. It begins with the side with the greatest loss, shown in black, followed by its opposing side. Each conflict’s sides stay together; conflicts follow their largest side loss. Civilian and unknown deaths appear in separate blocks below the spiral.',32,506,540,12)
-    para(c,'The following pages preserve the death-circle poster design: sides ordered from the fewest deaths at the top, with the smaller side black and the larger side red. Civilian-only pages use the main circle. The overview spiral has its own black-and-white side legend, with gray shades for additional sides. C and D are used only when recorded; the available UCDP records provide A and B.',32,402,540,12)
+    para(c,'The following pages preserve the death-circle poster design: sides ordered from the fewest deaths at the top, with the smaller side black and the larger side red. Civilian-only conflicts are reserved for the separate civilian deaths book. A civilian-only year within a mixed conflict stays here. The overview spiral has its own black-and-white side legend, with gray shades for additional sides. C and D are used only when recorded; the available UCDP records provide A and B.',32,402,540,12)
     para(c,'Uppsala Conflict Data Program / GED 26.1 and loaded candidate releases. Latest revisions replace earlier records with the same event ID. Annual conflict tables are not added to event death totals. All death fields reconcile to the source best estimate. This print atlas includes only years after 2000 (2001 onward) with at least one recorded death. Website history is unchanged.',32,270,540,11)
     para(c,'When civilian + unknown deaths exceed side deaths, a second circle is sized for all deaths; only civilian + unknown dots are drawn in it. Side deaths already drawn occupy its empty portion. Dot diameter never exceeds title text height.',32,170,540,10)
     para(c,'Use the PDF bookmarks to navigate conflicts. On the website, select any overview dot or conflict name to open its circle, with All years selected by default. Source data and source attribution: https://ucdp.uu.se/downloads/',32,90,540,10)
     c.linkURL('https://ucdp.uu.se/downloads/',(32,30,580,90));c.showPage()
     overview_page(c,data);page=3;index=[]
-    for m in data['conflicts']:
+    for m in included:
         years=printable_years(m)
         if not years:continue
-        index.append(dict(conflict=m['id'],title=m['title'],first_page=page,years=[]))
+        index.append(dict(conflict=m['id'],title=m['title'],first_page=page,recent_deaths=recent_deaths(m,data['year']),years=[]))
         for i,y in enumerate(years):
             bookmark=f"{m['id']}-{y}";c.bookmarkPage(bookmark)
             if i==0:c.addOutlineEntry(m['title'],bookmark,level=0,closed=True)
@@ -194,8 +221,11 @@ def generate(year=None,web_only=False):
             audit=year_page(c,m,y,page);index[-1]['years'][-1].update(audit);page+=1
     c.save()
     pending=out.with_suffix('.building.pdf');pending.write_bytes(buffer.getvalue());pending.replace(out)
-    (out.with_suffix('.json')).write_text(json.dumps(dict(year=data['year'],coverage_through=data['coverage_through'],pages=page-1,total=data['total'],first_year=2001,exclude_zero_deaths=True,sources=data['sources'],index=index),ensure_ascii=False,indent=2)+'\n')
-    print(out,page-1,'pages',flush=True);return data
+    (out.with_suffix('.json')).write_text(json.dumps(dict(year=data['year'],coverage_through=data['coverage_through'],pages=page-1,total=data['total'],first_year=2001,exclude_zero_deaths=True,minimum_recent_deaths=1000,recent_window_start=2007,recent_window_end=data['year'],qualifying_conflicts=len(included),excluded_civilian_only_conflicts=[m['id'] for m in civilian_models],overview_scope='Current conflicts excluding wholly civilian-only conflicts; threshold applies to detail pages only',sources=data['sources'],index=index),ensure_ascii=False,indent=2)+'\n')
+    print(out,page-1,'pages',flush=True)
+    from src.generate_conflict_sides_decades import generate as generate_decades
+    generate_decades(data)
+    return data
 
 
 if __name__=='__main__':

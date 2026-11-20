@@ -1,0 +1,35 @@
+{
+  "release": "v0.13.1",
+  "files": [
+    {
+      "path": "outputs/print/war-maps-conflict-sides-2020s.pdf",
+      "bytes": 24618829,
+      "sha256": "5e5695942ca7212b6df2ec7aca65e2e9ca4aa3669166e0e5e1745d074255e162"
+    },
+    {
+      "path": "outputs/print/war-maps-conflict-sides-2020s.json",
+      "bytes": 161998,
+      "sha256": "aae43428351d53600fd5a2cbe3a062b3a903b36495e06947bced895892f01fcc"
+    },
+    {
+      "path": "outputs/print/war-maps-conflict-sides-2010s.pdf",
+      "bytes": 9741971,
+      "sha256": "18765ec592efc0ae169ef7ab877a5103b50d02006f4cc258f13ec7deb7df375a"
+    },
+    {
+      "path": "outputs/print/war-maps-conflict-sides-2010s.json",
+      "bytes": 157750,
+      "sha256": "1d12f827dc5fc4df54a6430b995e283895548f58abbd7812cdc9f3d955565fd4"
+    },
+    {
+      "path": "outputs/print/war-maps-conflict-sides-2000s.pdf",
+      "bytes": 3150274,
+      "sha256": "20a96b3ffe37339ad889c037a765082520249e7c4c6b34ea9bac714cf8256d39"
+    },
+    {
+      "path": "outputs/print/war-maps-conflict-sides-2000s.json",
+      "bytes": 83510,
+      "sha256": "8d68b4f54dcd750c652a54edce702098997e7699c1906e0fa7a590aa22ca1b43"
+    }
+  ]
+}

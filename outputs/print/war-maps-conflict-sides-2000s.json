@@ -1,0 +1,3550 @@
+{
+  "decade": "2000s",
+  "first_year": 2001,
+  "last_year": 2009,
+  "selection_year": 2026,
+  "coverage_through": "2009-12-31",
+  "minimum_deaths": 1000,
+  "window_start": 2007,
+  "window_end": 2026,
+  "civilian_only_conflicts_excluded": true,
+  "pages": 268,
+  "total": 149212,
+  "sources": [
+    {
+      "path": "data/raw/ged261-csv.zip",
+      "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667"
+    },
+    {
+      "path": "data/raw/GEDEvent_v26_01_26_09.csv",
+      "sha256": "134da9b3df08b65266802c4b662e572f396c70c92ab62297319be657540bcede"
+    },
+    {
+      "path": "data/raw/GEDEvent_v26_0_9.csv",
+      "sha256": "20256b0d674f4c58d747c7c75ddc012eabfedf44ada22f436ef2d9a6405567d5"
+    }
+  ],
+  "index": [
+    {
+      "conflict": "1:230",
+      "title": "Yemen (North Yemen): Government",
+      "first_page": 3,
+      "years": [
+        {
+          "year": 2009,
+          "page": 3,
+          "total": 1413,
+          "named": 1197,
+          "outside": 216,
+          "promoted": false,
+          "second": false,
+          "population": 1197,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 4,
+          "total": 33,
+          "named": 22,
+          "outside": 11,
+          "promoted": false,
+          "second": false,
+          "population": 22,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:404",
+      "title": "Pakistan: Government",
+      "first_page": 5,
+      "years": [
+        {
+          "year": 2009,
+          "page": 5,
+          "total": 6303,
+          "named": 1046,
+          "outside": 5257,
+          "promoted": false,
+          "second": true,
+          "population": 6303,
+          "pitch": 5.2862626446543395,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 6,
+          "total": 3002,
+          "named": 650,
+          "outside": 2352,
+          "promoted": false,
+          "second": true,
+          "population": 3002,
+          "pitch": 7.640915828119068,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 7,
+          "total": 585,
+          "named": 477,
+          "outside": 108,
+          "promoted": false,
+          "second": false,
+          "population": 477,
+          "pitch": 27.5,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:325",
+      "title": "Pakistan: Balochistan",
+      "first_page": 8,
+      "years": [
+        {
+          "year": 2009,
+          "page": 8,
+          "total": 81,
+          "named": 57,
+          "outside": 24,
+          "promoted": false,
+          "second": false,
+          "population": 57,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 9,
+          "total": 197,
+          "named": 78,
+          "outside": 119,
+          "promoted": false,
+          "second": true,
+          "population": 197,
+          "pitch": 30.508510792387604,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 10,
+          "total": 94,
+          "named": 78,
+          "outside": 16,
+          "promoted": false,
+          "second": false,
+          "population": 78,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 11,
+          "total": 200,
+          "named": 140,
+          "outside": 60,
+          "promoted": false,
+          "second": false,
+          "population": 140,
+          "pitch": 11.0,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 12,
+          "total": 18,
+          "named": 10,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 10,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 13,
+          "total": 43,
+          "named": 27,
+          "outside": 16,
+          "promoted": false,
+          "second": false,
+          "population": 27,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:426",
+      "title": "Israel: Southern Lebanon",
+      "first_page": 14,
+      "years": [
+        {
+          "year": 2008,
+          "page": 14,
+          "total": 1,
+          "named": 1,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 15,
+          "total": 1242,
+          "named": 373,
+          "outside": 869,
+          "promoted": false,
+          "second": true,
+          "population": 1242,
+          "pitch": 11.878883437432854,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 16,
+          "total": 8,
+          "named": 7,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 7,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 17,
+          "total": 3,
+          "named": 1,
+          "outside": 2,
+          "promoted": false,
+          "second": true,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 18,
+          "total": 1,
+          "named": 1,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 19,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:11347",
+      "title": "Mali: Government",
+      "first_page": 20,
+      "years": [
+        {
+          "year": 2009,
+          "page": 20,
+          "total": 87,
+          "named": 87,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 87,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:234",
+      "title": "Israel: Palestine",
+      "first_page": 21,
+      "years": [
+        {
+          "year": 2009,
+          "page": 21,
+          "total": 709,
+          "named": 80,
+          "outside": 629,
+          "promoted": false,
+          "second": true,
+          "population": 709,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 22,
+          "total": 708,
+          "named": 416,
+          "outside": 292,
+          "promoted": false,
+          "second": false,
+          "population": 416,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 23,
+          "total": 286,
+          "named": 244,
+          "outside": 42,
+          "promoted": false,
+          "second": false,
+          "population": 244,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 24,
+          "total": 424,
+          "named": 285,
+          "outside": 139,
+          "promoted": false,
+          "second": false,
+          "population": 285,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 25,
+          "total": 141,
+          "named": 97,
+          "outside": 44,
+          "promoted": false,
+          "second": false,
+          "population": 97,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 26,
+          "total": 432,
+          "named": 332,
+          "outside": 100,
+          "promoted": false,
+          "second": false,
+          "population": 332,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 27,
+          "total": 312,
+          "named": 181,
+          "outside": 131,
+          "promoted": false,
+          "second": false,
+          "population": 181,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 28,
+          "total": 626,
+          "named": 444,
+          "outside": 182,
+          "promoted": false,
+          "second": false,
+          "population": 444,
+          "pitch": 6.875,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 29,
+          "total": 255,
+          "named": 206,
+          "outside": 49,
+          "promoted": false,
+          "second": false,
+          "population": 206,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:283",
+      "title": "DR Congo (Zaire): Government",
+      "first_page": 30,
+      "years": [
+        {
+          "year": 2008,
+          "page": 30,
+          "total": 486,
+          "named": 346,
+          "outside": 140,
+          "promoted": false,
+          "second": false,
+          "population": 346,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 31,
+          "total": 517,
+          "named": 487,
+          "outside": 30,
+          "promoted": false,
+          "second": false,
+          "population": 487,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 32,
+          "total": 182,
+          "named": 164,
+          "outside": 18,
+          "promoted": false,
+          "second": false,
+          "population": 164,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 33,
+          "total": 34,
+          "named": 34,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 34,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 34,
+          "total": 462,
+          "named": 8,
+          "outside": 454,
+          "promoted": false,
+          "second": true,
+          "population": 462,
+          "pitch": 19.5218432071545,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:413",
+      "title": "Ethiopia: Oromiya",
+      "first_page": 35,
+      "years": [
+        {
+          "year": 2009,
+          "page": 35,
+          "total": 42,
+          "named": 42,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 42,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 36,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 37,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 38,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 39,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 40,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 41,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 42,
+          "total": 25,
+          "named": 8,
+          "outside": 17,
+          "promoted": false,
+          "second": true,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 43,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:222",
+      "title": "Myanmar (Burma): Government",
+      "first_page": 44,
+      "years": [
+        {
+          "year": 2007,
+          "page": 44,
+          "total": 4,
+          "named": 4,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 4,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 45,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 46,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 47,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:297",
+      "title": "Nigeria: Government",
+      "first_page": 48,
+      "years": [
+        {
+          "year": 2009,
+          "page": 48,
+          "total": 405,
+          "named": 255,
+          "outside": 150,
+          "promoted": false,
+          "second": false,
+          "population": 255,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:289",
+      "title": "Colombia: Government",
+      "first_page": 49,
+      "years": [
+        {
+          "year": 2009,
+          "page": 49,
+          "total": 400,
+          "named": 376,
+          "outside": 24,
+          "promoted": false,
+          "second": false,
+          "population": 376,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 50,
+          "total": 282,
+          "named": 265,
+          "outside": 17,
+          "promoted": false,
+          "second": false,
+          "population": 265,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 51,
+          "total": 336,
+          "named": 314,
+          "outside": 22,
+          "promoted": false,
+          "second": false,
+          "population": 314,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 52,
+          "total": 509,
+          "named": 484,
+          "outside": 25,
+          "promoted": false,
+          "second": false,
+          "population": 484,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 53,
+          "total": 1578,
+          "named": 1486,
+          "outside": 92,
+          "promoted": false,
+          "second": false,
+          "population": 1486,
+          "pitch": 26.206813351009888,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 54,
+          "total": 1358,
+          "named": 1311,
+          "outside": 47,
+          "promoted": false,
+          "second": false,
+          "population": 1311,
+          "pitch": 27.779548173130834,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 55,
+          "total": 2098,
+          "named": 1986,
+          "outside": 112,
+          "promoted": false,
+          "second": false,
+          "population": 1986,
+          "pitch": 22.619848788144957,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 56,
+          "total": 3387,
+          "named": 3128,
+          "outside": 259,
+          "promoted": false,
+          "second": false,
+          "population": 3128,
+          "pitch": 17.989372182506465,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 57,
+          "total": 1880,
+          "named": 1794,
+          "outside": 86,
+          "promoted": false,
+          "second": false,
+          "population": 1794,
+          "pitch": 23.797702518547673,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:337",
+      "title": "Somalia: Government",
+      "first_page": 58,
+      "years": [
+        {
+          "year": 2009,
+          "page": 58,
+          "total": 1480,
+          "named": 280,
+          "outside": 1200,
+          "promoted": false,
+          "second": true,
+          "population": 1480,
+          "pitch": 10.958980590507792,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 59,
+          "total": 1491,
+          "named": 473,
+          "outside": 1018,
+          "promoted": false,
+          "second": true,
+          "population": 1491,
+          "pitch": 10.878299881551273,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 60,
+          "total": 1546,
+          "named": 216,
+          "outside": 1330,
+          "promoted": false,
+          "second": true,
+          "population": 1546,
+          "pitch": 10.6465462069082,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 61,
+          "total": 547,
+          "named": 197,
+          "outside": 350,
+          "promoted": false,
+          "second": true,
+          "population": 547,
+          "pitch": 18.0838886035893,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 62,
+          "total": 114,
+          "named": 28,
+          "outside": 86,
+          "promoted": false,
+          "second": true,
+          "population": 114,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 63,
+          "total": 228,
+          "named": 49,
+          "outside": 179,
+          "promoted": false,
+          "second": true,
+          "population": 228,
+          "pitch": 27.71739468734333,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:309",
+      "title": "Sudan: Government",
+      "first_page": 64,
+      "years": [
+        {
+          "year": 2009,
+          "page": 64,
+          "total": 353,
+          "named": 229,
+          "outside": 124,
+          "promoted": false,
+          "second": false,
+          "population": 229,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 65,
+          "total": 598,
+          "named": 422,
+          "outside": 176,
+          "promoted": false,
+          "second": false,
+          "population": 422,
+          "pitch": 11.0,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 66,
+          "total": 239,
+          "named": 136,
+          "outside": 103,
+          "promoted": false,
+          "second": false,
+          "population": 136,
+          "pitch": 7.857142857142857,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 67,
+          "total": 1002,
+          "named": 121,
+          "outside": 881,
+          "promoted": false,
+          "second": true,
+          "population": 1002,
+          "pitch": 13.315005718713655,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 68,
+          "total": 161,
+          "named": 101,
+          "outside": 60,
+          "promoted": false,
+          "second": false,
+          "population": 101,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 69,
+          "total": 3278,
+          "named": 3014,
+          "outside": 264,
+          "promoted": false,
+          "second": false,
+          "population": 3014,
+          "pitch": 18.333333333333332,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 70,
+          "total": 1999,
+          "named": 1855,
+          "outside": 144,
+          "promoted": false,
+          "second": false,
+          "population": 1855,
+          "pitch": 13.749999999999998,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 71,
+          "total": 2021,
+          "named": 1913,
+          "outside": 108,
+          "promoted": false,
+          "second": false,
+          "population": 1913,
+          "pitch": 18.333333333333332,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 72,
+          "total": 3408,
+          "named": 3352,
+          "outside": 56,
+          "promoted": false,
+          "second": false,
+          "population": 3352,
+          "pitch": 17.426292654367874,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:381",
+      "title": "Haiti: Government",
+      "first_page": 73,
+      "years": [
+        {
+          "year": 2004,
+          "page": 73,
+          "total": 207,
+          "named": 79,
+          "outside": 128,
+          "promoted": false,
+          "second": true,
+          "population": 207,
+          "pitch": 29.139711855430964,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:430",
+      "title": "Niger: Government",
+      "first_page": 74,
+      "years": [
+        {
+          "year": 2008,
+          "page": 74,
+          "total": 47,
+          "named": 38,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 38,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 75,
+          "total": 81,
+          "named": 76,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 76,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:209",
+      "title": "Philippines: Government",
+      "first_page": 76,
+      "years": [
+        {
+          "year": 2009,
+          "page": 76,
+          "total": 377,
+          "named": 372,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 372,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 77,
+          "total": 184,
+          "named": 181,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 181,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 78,
+          "total": 132,
+          "named": 129,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 129,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 79,
+          "total": 310,
+          "named": 298,
+          "outside": 12,
+          "promoted": false,
+          "second": false,
+          "population": 298,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 80,
+          "total": 234,
+          "named": 214,
+          "outside": 20,
+          "promoted": false,
+          "second": false,
+          "population": 214,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 81,
+          "total": 270,
+          "named": 263,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 263,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 82,
+          "total": 231,
+          "named": 225,
+          "outside": 6,
+          "promoted": false,
+          "second": false,
+          "population": 225,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 83,
+          "total": 280,
+          "named": 255,
+          "outside": 25,
+          "promoted": false,
+          "second": false,
+          "population": 255,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 84,
+          "total": 142,
+          "named": 139,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 139,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:227",
+      "title": "India: Government",
+      "first_page": 85,
+      "years": [
+        {
+          "year": 2009,
+          "page": 85,
+          "total": 522,
+          "named": 501,
+          "outside": 21,
+          "promoted": false,
+          "second": false,
+          "population": 501,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 86,
+          "total": 388,
+          "named": 382,
+          "outside": 6,
+          "promoted": false,
+          "second": false,
+          "population": 382,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 87,
+          "total": 382,
+          "named": 354,
+          "outside": 28,
+          "promoted": false,
+          "second": false,
+          "population": 354,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 88,
+          "total": 548,
+          "named": 469,
+          "outside": 79,
+          "promoted": false,
+          "second": false,
+          "population": 469,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 89,
+          "total": 199,
+          "named": 173,
+          "outside": 26,
+          "promoted": false,
+          "second": false,
+          "population": 173,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 90,
+          "total": 89,
+          "named": 87,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 87,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 91,
+          "total": 102,
+          "named": 98,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 98,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 92,
+          "total": 186,
+          "named": 166,
+          "outside": 20,
+          "promoted": false,
+          "second": false,
+          "population": 166,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 93,
+          "total": 176,
+          "named": 167,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 167,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:333",
+      "title": "Afghanistan: Government",
+      "first_page": 94,
+      "years": [
+        {
+          "year": 2009,
+          "page": 94,
+          "total": 6390,
+          "named": 5158,
+          "outside": 1232,
+          "promoted": false,
+          "second": false,
+          "population": 5158,
+          "pitch": 5.499999999999999,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 95,
+          "total": 5655,
+          "named": 4580,
+          "outside": 1075,
+          "promoted": false,
+          "second": false,
+          "population": 4580,
+          "pitch": 7.333333333333333,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 96,
+          "total": 6848,
+          "named": 6152,
+          "outside": 696,
+          "promoted": false,
+          "second": false,
+          "population": 6152,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 97,
+          "total": 4734,
+          "named": 4232,
+          "outside": 502,
+          "promoted": false,
+          "second": false,
+          "population": 4232,
+          "pitch": 6.470588235294119,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 98,
+          "total": 1628,
+          "named": 1504,
+          "outside": 124,
+          "promoted": false,
+          "second": false,
+          "population": 1504,
+          "pitch": 26.11122587135377,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 99,
+          "total": 711,
+          "named": 583,
+          "outside": 128,
+          "promoted": false,
+          "second": false,
+          "population": 583,
+          "pitch": 7.333333333333333,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 100,
+          "total": 660,
+          "named": 580,
+          "outside": 80,
+          "promoted": false,
+          "second": false,
+          "population": 580,
+          "pitch": 11.0,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 101,
+          "total": 40,
+          "named": 10,
+          "outside": 30,
+          "promoted": false,
+          "second": true,
+          "population": 40,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 102,
+          "total": 2328,
+          "named": 1357,
+          "outside": 971,
+          "promoted": false,
+          "second": false,
+          "population": 1357,
+          "pitch": 3.7931034482758617,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:338",
+      "title": "Iran: Government",
+      "first_page": 103,
+      "years": [
+        {
+          "year": 2009,
+          "page": 103,
+          "total": 133,
+          "named": 106,
+          "outside": 27,
+          "promoted": false,
+          "second": false,
+          "population": 106,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 104,
+          "total": 121,
+          "named": 79,
+          "outside": 42,
+          "promoted": false,
+          "second": false,
+          "population": 79,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 105,
+          "total": 86,
+          "named": 85,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 85,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 106,
+          "total": 57,
+          "named": 46,
+          "outside": 11,
+          "promoted": false,
+          "second": false,
+          "population": 46,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 107,
+          "total": 38,
+          "named": 37,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 108,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 109,
+          "total": 119,
+          "named": 43,
+          "outside": 76,
+          "promoted": false,
+          "second": true,
+          "population": 119,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:4973",
+      "title": "Fulani - Tiv",
+      "first_page": 110,
+      "years": [
+        {
+          "year": 2008,
+          "page": 110,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 111,
+          "total": 14,
+          "named": 14,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 14,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:4948",
+      "title": "Birom - Fulani",
+      "first_page": 112,
+      "years": [
+        {
+          "year": 2002,
+          "page": 112,
+          "total": 48,
+          "named": 0,
+          "outside": 48,
+          "promoted": true,
+          "second": false,
+          "population": 48,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:259",
+      "title": "Iraq: Government",
+      "first_page": 113,
+      "years": [
+        {
+          "year": 2009,
+          "page": 113,
+          "total": 1040,
+          "named": 371,
+          "outside": 669,
+          "promoted": false,
+          "second": true,
+          "population": 1040,
+          "pitch": 12.941176470588236,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 114,
+          "total": 2118,
+          "named": 703,
+          "outside": 1415,
+          "promoted": false,
+          "second": true,
+          "population": 2118,
+          "pitch": 9.072647087265548,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 115,
+          "total": 2212,
+          "named": 1526,
+          "outside": 686,
+          "promoted": false,
+          "second": false,
+          "population": 1526,
+          "pitch": 6.470588235294119,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 116,
+          "total": 3923,
+          "named": 3042,
+          "outside": 881,
+          "promoted": false,
+          "second": false,
+          "population": 3042,
+          "pitch": 7.333333333333333,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 117,
+          "total": 2617,
+          "named": 1608,
+          "outside": 1009,
+          "promoted": false,
+          "second": false,
+          "population": 1608,
+          "pitch": 4.583333333333334,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 118,
+          "total": 4104,
+          "named": 1267,
+          "outside": 2837,
+          "promoted": false,
+          "second": true,
+          "population": 4104,
+          "pitch": 6.538821281055404,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 119,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:423",
+      "title": "Thailand: Patani",
+      "first_page": 120,
+      "years": [
+        {
+          "year": 2009,
+          "page": 120,
+          "total": 138,
+          "named": 129,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 129,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 121,
+          "total": 130,
+          "named": 114,
+          "outside": 16,
+          "promoted": false,
+          "second": false,
+          "population": 114,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 122,
+          "total": 197,
+          "named": 140,
+          "outside": 57,
+          "promoted": false,
+          "second": false,
+          "population": 140,
+          "pitch": 13.75,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 123,
+          "total": 212,
+          "named": 115,
+          "outside": 97,
+          "promoted": false,
+          "second": false,
+          "population": 115,
+          "pitch": 7.857142857142857,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 124,
+          "total": 205,
+          "named": 126,
+          "outside": 79,
+          "promoted": false,
+          "second": false,
+          "population": 126,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 125,
+          "total": 164,
+          "named": 160,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 160,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 126,
+          "total": 26,
+          "named": 25,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:364",
+      "title": "India: Kashmir",
+      "first_page": 127,
+      "years": [
+        {
+          "year": 2009,
+          "page": 127,
+          "total": 361,
+          "named": 346,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 346,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 128,
+          "total": 500,
+          "named": 485,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 485,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 129,
+          "total": 550,
+          "named": 522,
+          "outside": 28,
+          "promoted": false,
+          "second": false,
+          "population": 522,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 130,
+          "total": 705,
+          "named": 651,
+          "outside": 54,
+          "promoted": false,
+          "second": false,
+          "population": 651,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 131,
+          "total": 1058,
+          "named": 989,
+          "outside": 69,
+          "promoted": false,
+          "second": false,
+          "population": 989,
+          "pitch": 32.07705923144653,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 132,
+          "total": 1404,
+          "named": 1278,
+          "outside": 126,
+          "promoted": false,
+          "second": false,
+          "population": 1278,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 133,
+          "total": 1328,
+          "named": 1221,
+          "outside": 107,
+          "promoted": false,
+          "second": false,
+          "population": 1221,
+          "pitch": 28.91387045626899,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 134,
+          "total": 1499,
+          "named": 1480,
+          "outside": 19,
+          "promoted": false,
+          "second": false,
+          "population": 1480,
+          "pitch": 26.401180513496048,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 135,
+          "total": 893,
+          "named": 824,
+          "outside": 69,
+          "promoted": false,
+          "second": false,
+          "population": 824,
+          "pitch": 22.0,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:221",
+      "title": "Myanmar (Burma): Karen",
+      "first_page": 136,
+      "years": [
+        {
+          "year": 2009,
+          "page": 136,
+          "total": 63,
+          "named": 49,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 49,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 137,
+          "total": 33,
+          "named": 3,
+          "outside": 30,
+          "promoted": false,
+          "second": true,
+          "population": 33,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 138,
+          "total": 104,
+          "named": 51,
+          "outside": 53,
+          "promoted": false,
+          "second": true,
+          "population": 104,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 139,
+          "total": 104,
+          "named": 99,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 99,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 140,
+          "total": 42,
+          "named": 36,
+          "outside": 6,
+          "promoted": false,
+          "second": false,
+          "population": 36,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 141,
+          "total": 27,
+          "named": 22,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 22,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 142,
+          "total": 38,
+          "named": 28,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 28,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 143,
+          "total": 110,
+          "named": 82,
+          "outside": 28,
+          "promoted": false,
+          "second": false,
+          "population": 82,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 144,
+          "total": 39,
+          "named": 13,
+          "outside": 26,
+          "promoted": false,
+          "second": true,
+          "population": 39,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:416",
+      "title": "Central African Republic: Government",
+      "first_page": 145,
+      "years": [
+        {
+          "year": 2009,
+          "page": 145,
+          "total": 28,
+          "named": 19,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 19,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 146,
+          "total": 11,
+          "named": 11,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 11,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 147,
+          "total": 46,
+          "named": 31,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 31,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 148,
+          "total": 13,
+          "named": 0,
+          "outside": 13,
+          "promoted": true,
+          "second": false,
+          "population": 13,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 149,
+          "total": 131,
+          "named": 19,
+          "outside": 112,
+          "promoted": false,
+          "second": true,
+          "population": 131,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 150,
+          "total": 195,
+          "named": 13,
+          "outside": 182,
+          "promoted": false,
+          "second": true,
+          "population": 195,
+          "pitch": 30.508510792387604,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:386",
+      "title": "Algeria: Government",
+      "first_page": 151,
+      "years": [
+        {
+          "year": 2009,
+          "page": 151,
+          "total": 505,
+          "named": 491,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 491,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 152,
+          "total": 339,
+          "named": 273,
+          "outside": 66,
+          "promoted": false,
+          "second": false,
+          "population": 273,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 153,
+          "total": 472,
+          "named": 394,
+          "outside": 78,
+          "promoted": false,
+          "second": false,
+          "population": 394,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 154,
+          "total": 255,
+          "named": 240,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 240,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 155,
+          "total": 229,
+          "named": 206,
+          "outside": 23,
+          "promoted": false,
+          "second": false,
+          "population": 206,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 156,
+          "total": 464,
+          "named": 449,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 449,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 157,
+          "total": 670,
+          "named": 622,
+          "outside": 48,
+          "promoted": false,
+          "second": false,
+          "population": 622,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 158,
+          "total": 539,
+          "named": 529,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 529,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 159,
+          "total": 642,
+          "named": 640,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 640,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:288",
+      "title": "Chad: Government",
+      "first_page": 160,
+      "years": [
+        {
+          "year": 2009,
+          "page": 160,
+          "total": 131,
+          "named": 123,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 123,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 161,
+          "total": 991,
+          "named": 2,
+          "outside": 989,
+          "promoted": false,
+          "second": true,
+          "population": 991,
+          "pitch": 13.315005718713655,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 162,
+          "total": 100,
+          "named": 85,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 85,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 163,
+          "total": 1250,
+          "named": 895,
+          "outside": 355,
+          "promoted": false,
+          "second": false,
+          "population": 895,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 164,
+          "total": 100,
+          "named": 14,
+          "outside": 86,
+          "promoted": false,
+          "second": true,
+          "population": 100,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 165,
+          "total": 37,
+          "named": 2,
+          "outside": 35,
+          "promoted": false,
+          "second": true,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 166,
+          "total": 294,
+          "named": 83,
+          "outside": 211,
+          "promoted": false,
+          "second": true,
+          "population": 294,
+          "pitch": 24.751933820372525,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 167,
+          "total": 226,
+          "named": 17,
+          "outside": 209,
+          "promoted": false,
+          "second": true,
+          "population": 226,
+          "pitch": 27.717394687343333,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:14532",
+      "title": "Jalisco Cartel New Generation - Santa Rosa de Lima Cartel",
+      "first_page": 168,
+      "years": [
+        {
+          "year": 2002,
+          "page": 168,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:4652",
+      "title": "Juarez Cartel - Sinaloa Cartel",
+      "first_page": 169,
+      "years": [
+        {
+          "year": 2009,
+          "page": 169,
+          "total": 2986,
+          "named": 43,
+          "outside": 2943,
+          "promoted": false,
+          "second": true,
+          "population": 2986,
+          "pitch": 7.687422135960734,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 170,
+          "total": 1800,
+          "named": 1,
+          "outside": 1799,
+          "promoted": false,
+          "second": true,
+          "population": 1800,
+          "pitch": 9.87829161147262,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 171,
+          "total": 136,
+          "named": 0,
+          "outside": 136,
+          "promoted": true,
+          "second": false,
+          "population": 136,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 172,
+          "total": 61,
+          "named": 1,
+          "outside": 60,
+          "promoted": false,
+          "second": true,
+          "population": 61,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:709",
+      "title": "Government of Iran - Civilians",
+      "first_page": 173,
+      "years": [
+        {
+          "year": 2009,
+          "page": 173,
+          "total": 50,
+          "named": 0,
+          "outside": 50,
+          "promoted": true,
+          "second": false,
+          "population": 50,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 174,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 175,
+          "total": 9,
+          "named": 0,
+          "outside": 9,
+          "promoted": true,
+          "second": false,
+          "population": 9,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 176,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:506",
+      "title": "IS - Civilians",
+      "first_page": 177,
+      "years": [
+        {
+          "year": 2009,
+          "page": 177,
+          "total": 636,
+          "named": 0,
+          "outside": 636,
+          "promoted": true,
+          "second": false,
+          "population": 636,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 178,
+          "total": 526,
+          "named": 0,
+          "outside": 526,
+          "promoted": true,
+          "second": false,
+          "population": 526,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 179,
+          "total": 1991,
+          "named": 0,
+          "outside": 1991,
+          "promoted": true,
+          "second": false,
+          "population": 1991,
+          "pitch": 22.619848788144957,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 180,
+          "total": 443,
+          "named": 0,
+          "outside": 443,
+          "promoted": true,
+          "second": false,
+          "population": 443,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 181,
+          "total": 727,
+          "named": 0,
+          "outside": 727,
+          "promoted": true,
+          "second": false,
+          "population": 727,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 182,
+          "total": 92,
+          "named": 0,
+          "outside": 92,
+          "promoted": true,
+          "second": false,
+          "population": 92,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 183,
+          "total": 22,
+          "named": 0,
+          "outside": 22,
+          "promoted": true,
+          "second": false,
+          "population": 22,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:1850",
+      "title": "JAS - Civilians",
+      "first_page": 184,
+      "years": [
+        {
+          "year": 2009,
+          "page": 184,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:480",
+      "title": "Government of Sudan - Civilians",
+      "first_page": 185,
+      "years": [
+        {
+          "year": 2008,
+          "page": 185,
+          "total": 186,
+          "named": 0,
+          "outside": 186,
+          "promoted": true,
+          "second": false,
+          "population": 186,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 186,
+          "total": 98,
+          "named": 0,
+          "outside": 98,
+          "promoted": true,
+          "second": false,
+          "population": 98,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 187,
+          "total": 252,
+          "named": 0,
+          "outside": 252,
+          "promoted": true,
+          "second": false,
+          "population": 252,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 188,
+          "total": 424,
+          "named": 0,
+          "outside": 424,
+          "promoted": true,
+          "second": false,
+          "population": 424,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 189,
+          "total": 4963,
+          "named": 0,
+          "outside": 4963,
+          "promoted": true,
+          "second": false,
+          "population": 4963,
+          "pitch": 14.31387242630783,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 190,
+          "total": 1694,
+          "named": 0,
+          "outside": 1694,
+          "promoted": true,
+          "second": false,
+          "population": 1694,
+          "pitch": 24.47312611659934,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 191,
+          "total": 35,
+          "named": 0,
+          "outside": 35,
+          "promoted": true,
+          "second": false,
+          "population": 35,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 192,
+          "total": 50,
+          "named": 0,
+          "outside": 50,
+          "promoted": true,
+          "second": false,
+          "population": 50,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:474",
+      "title": "Government of Ethiopia - Civilians",
+      "first_page": 193,
+      "years": [
+        {
+          "year": 2008,
+          "page": 193,
+          "total": 33,
+          "named": 0,
+          "outside": 33,
+          "promoted": true,
+          "second": false,
+          "population": 33,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 194,
+          "total": 162,
+          "named": 0,
+          "outside": 162,
+          "promoted": true,
+          "second": false,
+          "population": 162,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 195,
+          "total": 26,
+          "named": 0,
+          "outside": 26,
+          "promoted": true,
+          "second": false,
+          "population": 26,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 196,
+          "total": 21,
+          "named": 0,
+          "outside": 21,
+          "promoted": true,
+          "second": false,
+          "population": 21,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 197,
+          "total": 244,
+          "named": 0,
+          "outside": 244,
+          "promoted": true,
+          "second": false,
+          "population": 244,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 198,
+          "total": 509,
+          "named": 0,
+          "outside": 509,
+          "promoted": true,
+          "second": false,
+          "population": 509,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 199,
+          "total": 35,
+          "named": 0,
+          "outside": 35,
+          "promoted": true,
+          "second": false,
+          "population": 35,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 200,
+          "total": 5,
+          "named": 0,
+          "outside": 5,
+          "promoted": true,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:488",
+      "title": "Government of Myanmar (Burma) - Civilians",
+      "first_page": 201,
+      "years": [
+        {
+          "year": 2009,
+          "page": 201,
+          "total": 20,
+          "named": 0,
+          "outside": 20,
+          "promoted": true,
+          "second": false,
+          "population": 20,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 202,
+          "total": 54,
+          "named": 0,
+          "outside": 54,
+          "promoted": true,
+          "second": false,
+          "population": 54,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 203,
+          "total": 292,
+          "named": 0,
+          "outside": 292,
+          "promoted": true,
+          "second": false,
+          "population": 292,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 204,
+          "total": 192,
+          "named": 0,
+          "outside": 192,
+          "promoted": true,
+          "second": false,
+          "population": 192,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 205,
+          "total": 198,
+          "named": 0,
+          "outside": 198,
+          "promoted": true,
+          "second": false,
+          "population": 198,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 206,
+          "total": 114,
+          "named": 0,
+          "outside": 114,
+          "promoted": true,
+          "second": false,
+          "population": 114,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 207,
+          "total": 195,
+          "named": 0,
+          "outside": 195,
+          "promoted": true,
+          "second": false,
+          "population": 195,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 208,
+          "total": 249,
+          "named": 0,
+          "outside": 249,
+          "promoted": true,
+          "second": false,
+          "population": 249,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 209,
+          "total": 106,
+          "named": 0,
+          "outside": 106,
+          "promoted": true,
+          "second": false,
+          "population": 106,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:231",
+      "title": "Myanmar (Burma): Kachin",
+      "first_page": 210,
+      "years": [
+        {
+          "year": 2006,
+          "page": 210,
+          "total": 6,
+          "named": 5,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 211,
+          "total": 11,
+          "named": 9,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 9,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:453",
+      "title": "Government of Russia (Soviet Union) - Civilians",
+      "first_page": 212,
+      "years": [
+        {
+          "year": 2007,
+          "page": 212,
+          "total": 6,
+          "named": 0,
+          "outside": 6,
+          "promoted": true,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 213,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 214,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 215,
+          "total": 18,
+          "named": 0,
+          "outside": 18,
+          "promoted": true,
+          "second": false,
+          "population": 18,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 216,
+          "total": 204,
+          "named": 0,
+          "outside": 204,
+          "promoted": true,
+          "second": false,
+          "population": 204,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 217,
+          "total": 188,
+          "named": 0,
+          "outside": 188,
+          "promoted": true,
+          "second": false,
+          "population": 188,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:604",
+      "title": "Al-Shabaab - Civilians",
+      "first_page": 218,
+      "years": [
+        {
+          "year": 2009,
+          "page": 218,
+          "total": 20,
+          "named": 0,
+          "outside": 20,
+          "promoted": true,
+          "second": false,
+          "population": 20,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 219,
+          "total": 43,
+          "named": 0,
+          "outside": 43,
+          "promoted": true,
+          "second": false,
+          "population": 43,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:530",
+      "title": "TTP - Civilians",
+      "first_page": 220,
+      "years": [
+        {
+          "year": 2009,
+          "page": 220,
+          "total": 225,
+          "named": 0,
+          "outside": 225,
+          "promoted": true,
+          "second": false,
+          "population": 225,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 221,
+          "total": 243,
+          "named": 0,
+          "outside": 243,
+          "promoted": true,
+          "second": false,
+          "population": 243,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 222,
+          "total": 58,
+          "named": 0,
+          "outside": 58,
+          "promoted": true,
+          "second": false,
+          "population": 58,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:467",
+      "title": "Government of DR Congo (Zaire) - Civilians",
+      "first_page": 223,
+      "years": [
+        {
+          "year": 2009,
+          "page": 223,
+          "total": 899,
+          "named": 0,
+          "outside": 899,
+          "promoted": true,
+          "second": false,
+          "population": 899,
+          "pitch": 33.72309243771622,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 224,
+          "total": 50,
+          "named": 0,
+          "outside": 50,
+          "promoted": true,
+          "second": false,
+          "population": 50,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 225,
+          "total": 142,
+          "named": 0,
+          "outside": 142,
+          "promoted": true,
+          "second": false,
+          "population": 142,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 226,
+          "total": 154,
+          "named": 0,
+          "outside": 154,
+          "promoted": true,
+          "second": false,
+          "population": 154,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 227,
+          "total": 16,
+          "named": 0,
+          "outside": 16,
+          "promoted": true,
+          "second": false,
+          "population": 16,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 228,
+          "total": 87,
+          "named": 0,
+          "outside": 87,
+          "promoted": true,
+          "second": false,
+          "population": 87,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 229,
+          "total": 189,
+          "named": 0,
+          "outside": 189,
+          "promoted": true,
+          "second": false,
+          "population": 189,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 230,
+          "total": 14,
+          "named": 0,
+          "outside": 14,
+          "promoted": true,
+          "second": false,
+          "population": 14,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:711",
+      "title": "Government of Syria - Civilians",
+      "first_page": 231,
+      "years": [
+        {
+          "year": 2004,
+          "page": 231,
+          "total": 7,
+          "named": 0,
+          "outside": 7,
+          "promoted": true,
+          "second": false,
+          "population": 7,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:569",
+      "title": "FDLR-FOCA - Civilians",
+      "first_page": 232,
+      "years": [
+        {
+          "year": 2009,
+          "page": 232,
+          "total": 906,
+          "named": 0,
+          "outside": 906,
+          "promoted": true,
+          "second": false,
+          "population": 906,
+          "pitch": 33.72309243771622,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 233,
+          "total": 32,
+          "named": 0,
+          "outside": 32,
+          "promoted": true,
+          "second": false,
+          "population": 32,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 234,
+          "total": 37,
+          "named": 0,
+          "outside": 37,
+          "promoted": true,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 235,
+          "total": 36,
+          "named": 0,
+          "outside": 36,
+          "promoted": true,
+          "second": false,
+          "population": 36,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 236,
+          "total": 72,
+          "named": 0,
+          "outside": 72,
+          "promoted": true,
+          "second": false,
+          "population": 72,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 237,
+          "total": 54,
+          "named": 0,
+          "outside": 54,
+          "promoted": true,
+          "second": false,
+          "population": 54,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 238,
+          "total": 29,
+          "named": 0,
+          "outside": 29,
+          "promoted": true,
+          "second": false,
+          "population": 29,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 239,
+          "total": 20,
+          "named": 0,
+          "outside": 20,
+          "promoted": true,
+          "second": false,
+          "population": 20,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:559",
+      "title": "LRA - Civilians",
+      "first_page": 240,
+      "years": [
+        {
+          "year": 2009,
+          "page": 240,
+          "total": 1394,
+          "named": 0,
+          "outside": 1394,
+          "promoted": true,
+          "second": false,
+          "population": 1394,
+          "pitch": 26.941414092093492,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 241,
+          "total": 734,
+          "named": 0,
+          "outside": 734,
+          "promoted": true,
+          "second": false,
+          "population": 734,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 242,
+          "total": 62,
+          "named": 0,
+          "outside": 62,
+          "promoted": true,
+          "second": false,
+          "population": 62,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 243,
+          "total": 47,
+          "named": 0,
+          "outside": 47,
+          "promoted": true,
+          "second": false,
+          "population": 47,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 244,
+          "total": 304,
+          "named": 0,
+          "outside": 304,
+          "promoted": true,
+          "second": false,
+          "population": 304,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 245,
+          "total": 952,
+          "named": 0,
+          "outside": 952,
+          "promoted": true,
+          "second": false,
+          "population": 952,
+          "pitch": 32.9325975980636,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 246,
+          "total": 637,
+          "named": 0,
+          "outside": 637,
+          "promoted": true,
+          "second": false,
+          "population": 637,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 247,
+          "total": 1051,
+          "named": 0,
+          "outside": 1051,
+          "promoted": true,
+          "second": false,
+          "population": 1051,
+          "pitch": 31.06915023330911,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 248,
+          "total": 60,
+          "named": 0,
+          "outside": 60,
+          "promoted": true,
+          "second": false,
+          "population": 60,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:464",
+      "title": "Government of Central African Republic - Civilians",
+      "first_page": 249,
+      "years": [
+        {
+          "year": 2009,
+          "page": 249,
+          "total": 21,
+          "named": 0,
+          "outside": 21,
+          "promoted": true,
+          "second": false,
+          "population": 21,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 250,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 251,
+          "total": 36,
+          "named": 0,
+          "outside": 36,
+          "promoted": true,
+          "second": false,
+          "population": 36,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 252,
+          "total": 133,
+          "named": 0,
+          "outside": 133,
+          "promoted": true,
+          "second": false,
+          "population": 133,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 253,
+          "total": 8,
+          "named": 0,
+          "outside": 8,
+          "promoted": true,
+          "second": false,
+          "population": 8,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 254,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2003,
+          "page": 255,
+          "total": 6,
+          "named": 0,
+          "outside": 6,
+          "promoted": true,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2002,
+          "page": 256,
+          "total": 21,
+          "named": 0,
+          "outside": 21,
+          "promoted": true,
+          "second": false,
+          "population": 21,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2001,
+          "page": 257,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:499",
+      "title": "CPI-Maoist - Civilians",
+      "first_page": 258,
+      "years": [
+        {
+          "year": 2009,
+          "page": 258,
+          "total": 243,
+          "named": 0,
+          "outside": 243,
+          "promoted": true,
+          "second": false,
+          "population": 243,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 259,
+          "total": 167,
+          "named": 0,
+          "outside": 167,
+          "promoted": true,
+          "second": false,
+          "population": 167,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 260,
+          "total": 133,
+          "named": 0,
+          "outside": 133,
+          "promoted": true,
+          "second": false,
+          "population": 133,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 261,
+          "total": 165,
+          "named": 0,
+          "outside": 165,
+          "promoted": true,
+          "second": false,
+          "population": 165,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 262,
+          "total": 43,
+          "named": 0,
+          "outside": 43,
+          "promoted": true,
+          "second": false,
+          "population": 43,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:532",
+      "title": "Patani insurgents - Civilians",
+      "first_page": 263,
+      "years": [
+        {
+          "year": 2009,
+          "page": 263,
+          "total": 120,
+          "named": 0,
+          "outside": 120,
+          "promoted": true,
+          "second": false,
+          "population": 120,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2008,
+          "page": 264,
+          "total": 180,
+          "named": 0,
+          "outside": 180,
+          "promoted": true,
+          "second": false,
+          "population": 180,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2007,
+          "page": 265,
+          "total": 320,
+          "named": 0,
+          "outside": 320,
+          "promoted": true,
+          "second": false,
+          "population": 320,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2006,
+          "page": 266,
+          "total": 329,
+          "named": 0,
+          "outside": 329,
+          "promoted": true,
+          "second": false,
+          "population": 329,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2005,
+          "page": 267,
+          "total": 286,
+          "named": 0,
+          "outside": 286,
+          "promoted": true,
+          "second": false,
+          "population": 286,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2004,
+          "page": 268,
+          "total": 146,
+          "named": 0,
+          "outside": 146,
+          "promoted": true,
+          "second": false,
+          "population": 146,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    }
+  ]
+}

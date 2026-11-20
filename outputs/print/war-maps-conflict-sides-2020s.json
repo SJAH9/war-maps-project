@@ -1,0 +1,6864 @@
+{
+  "decade": "2020s",
+  "first_year": 2020,
+  "last_year": 2026,
+  "selection_year": 2026,
+  "coverage_through": "2026-09-30",
+  "minimum_deaths": 1000,
+  "window_start": 2007,
+  "window_end": 2026,
+  "civilian_only_conflicts_excluded": true,
+  "pages": 522,
+  "total": 1271374,
+  "sources": [
+    {
+      "path": "data/raw/ged261-csv.zip",
+      "sha256": "8c941d84954e555ee2e54f40fa04d9203bf1e2f962203d0a9930966c4947c667"
+    },
+    {
+      "path": "data/raw/GEDEvent_v26_01_26_09.csv",
+      "sha256": "134da9b3df08b65266802c4b662e572f396c70c92ab62297319be657540bcede"
+    },
+    {
+      "path": "data/raw/GEDEvent_v26_0_9.csv",
+      "sha256": "20256b0d674f4c58d747c7c75ddc012eabfedf44ada22f436ef2d9a6405567d5"
+    }
+  ],
+  "index": [
+    {
+      "conflict": "1:13243",
+      "title": "Russia - Ukraine",
+      "first_page": 3,
+      "years": [
+        {
+          "year": 2026,
+          "page": 3,
+          "total": 64439,
+          "named": 61672,
+          "outside": 2767,
+          "promoted": false,
+          "second": false,
+          "population": 61672,
+          "pitch": 4.065392750528642,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 4,
+          "total": 94741,
+          "named": 91829,
+          "outside": 2912,
+          "promoted": false,
+          "second": false,
+          "population": 91829,
+          "pitch": 3.3306994319830534,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 5,
+          "total": 102120,
+          "named": 99437,
+          "outside": 2683,
+          "promoted": false,
+          "second": false,
+          "population": 99437,
+          "pitch": 3.201379774046902,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 6,
+          "total": 76254,
+          "named": 73790,
+          "outside": 2464,
+          "promoted": false,
+          "second": false,
+          "population": 73790,
+          "pitch": 3.7155719625113948,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 7,
+          "total": 99473,
+          "named": 63773,
+          "outside": 35700,
+          "promoted": false,
+          "second": false,
+          "population": 63773,
+          "pitch": 0.873015873015873,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:230",
+      "title": "Yemen (North Yemen): Government",
+      "first_page": 8,
+      "years": [
+        {
+          "year": 2026,
+          "page": 8,
+          "total": 4808,
+          "named": 4303,
+          "outside": 505,
+          "promoted": false,
+          "second": false,
+          "population": 4303,
+          "pitch": 11.000000000000002,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 9,
+          "total": 444,
+          "named": 287,
+          "outside": 157,
+          "promoted": false,
+          "second": false,
+          "population": 287,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 10,
+          "total": 779,
+          "named": 497,
+          "outside": 282,
+          "promoted": false,
+          "second": false,
+          "population": 497,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 11,
+          "total": 808,
+          "named": 508,
+          "outside": 300,
+          "promoted": false,
+          "second": false,
+          "population": 508,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 12,
+          "total": 2942,
+          "named": 2148,
+          "outside": 794,
+          "promoted": false,
+          "second": false,
+          "population": 2148,
+          "pitch": 5.7894736842105265,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 13,
+          "total": 23374,
+          "named": 22015,
+          "outside": 1359,
+          "promoted": false,
+          "second": false,
+          "population": 22015,
+          "pitch": 6.799343576727907,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 14,
+          "total": 6273,
+          "named": 4873,
+          "outside": 1400,
+          "promoted": false,
+          "second": false,
+          "population": 4873,
+          "pitch": 5.7894736842105265,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:404",
+      "title": "Pakistan: Government",
+      "first_page": 15,
+      "years": [
+        {
+          "year": 2026,
+          "page": 15,
+          "total": 2075,
+          "named": 1856,
+          "outside": 219,
+          "promoted": false,
+          "second": false,
+          "population": 1856,
+          "pitch": 18.333333333333332,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 16,
+          "total": 2511,
+          "named": 2351,
+          "outside": 160,
+          "promoted": false,
+          "second": false,
+          "population": 2351,
+          "pitch": 20.772337744244943,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 17,
+          "total": 1305,
+          "named": 1188,
+          "outside": 117,
+          "promoted": false,
+          "second": false,
+          "population": 1188,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 18,
+          "total": 872,
+          "named": 807,
+          "outside": 65,
+          "promoted": false,
+          "second": false,
+          "population": 807,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 19,
+          "total": 495,
+          "named": 419,
+          "outside": 76,
+          "promoted": false,
+          "second": false,
+          "population": 419,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 20,
+          "total": 260,
+          "named": 233,
+          "outside": 27,
+          "promoted": false,
+          "second": false,
+          "population": 233,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 21,
+          "total": 186,
+          "named": 168,
+          "outside": 18,
+          "promoted": false,
+          "second": false,
+          "population": 168,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:13641",
+      "title": "Nigeria: Islamic State",
+      "first_page": 22,
+      "years": [
+        {
+          "year": 2026,
+          "page": 22,
+          "total": 1668,
+          "named": 1524,
+          "outside": 144,
+          "promoted": false,
+          "second": false,
+          "population": 1524,
+          "pitch": 25.830619477914706,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 23,
+          "total": 1662,
+          "named": 1547,
+          "outside": 115,
+          "promoted": false,
+          "second": false,
+          "population": 1547,
+          "pitch": 25.648497680278844,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 24,
+          "total": 1163,
+          "named": 1079,
+          "outside": 84,
+          "promoted": false,
+          "second": false,
+          "population": 1079,
+          "pitch": 30.548692138324455,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 25,
+          "total": 1545,
+          "named": 1542,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 1542,
+          "pitch": 25.648497680278844,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 26,
+          "total": 1052,
+          "named": 1033,
+          "outside": 19,
+          "promoted": false,
+          "second": false,
+          "population": 1033,
+          "pitch": 31.50522980872149,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 27,
+          "total": 1597,
+          "named": 1351,
+          "outside": 246,
+          "promoted": false,
+          "second": false,
+          "population": 1351,
+          "pitch": 18.333333333333332,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 28,
+          "total": 1559,
+          "named": 1442,
+          "outside": 117,
+          "promoted": false,
+          "second": false,
+          "population": 1442,
+          "pitch": 26.533187239053223,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:16905",
+      "title": "Iran - Israel, United States of America",
+      "first_page": 29,
+      "years": [
+        {
+          "year": 2026,
+          "page": 29,
+          "total": 3859,
+          "named": 1285,
+          "outside": 2574,
+          "promoted": false,
+          "second": true,
+          "population": 3859,
+          "pitch": 6.7477043934491885,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:119",
+      "title": "XXX475",
+      "first_page": 30,
+      "years": [
+        {
+          "year": 2026,
+          "page": 30,
+          "total": 1615,
+          "named": 1404,
+          "outside": 211,
+          "promoted": false,
+          "second": false,
+          "population": 1404,
+          "pitch": 6.470588235294118,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:16069",
+      "title": "Ethiopia: Government/Amhara",
+      "first_page": 31,
+      "years": [
+        {
+          "year": 2026,
+          "page": 31,
+          "total": 2116,
+          "named": 1935,
+          "outside": 181,
+          "promoted": false,
+          "second": false,
+          "population": 1935,
+          "pitch": 7.333333333333332,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 32,
+          "total": 3835,
+          "named": 3182,
+          "outside": 653,
+          "promoted": false,
+          "second": false,
+          "population": 3182,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 33,
+          "total": 2191,
+          "named": 1542,
+          "outside": 649,
+          "promoted": false,
+          "second": false,
+          "population": 1542,
+          "pitch": 6.875,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 34,
+          "total": 1255,
+          "named": 523,
+          "outside": 732,
+          "promoted": false,
+          "second": true,
+          "population": 1255,
+          "pitch": 11.878883437432854,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:325",
+      "title": "Pakistan: Balochistan",
+      "first_page": 35,
+      "years": [
+        {
+          "year": 2026,
+          "page": 35,
+          "total": 1365,
+          "named": 1287,
+          "outside": 78,
+          "promoted": false,
+          "second": false,
+          "population": 1287,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 36,
+          "total": 526,
+          "named": 475,
+          "outside": 51,
+          "promoted": false,
+          "second": false,
+          "population": 475,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 37,
+          "total": 318,
+          "named": 223,
+          "outside": 95,
+          "promoted": false,
+          "second": false,
+          "population": 223,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 38,
+          "total": 110,
+          "named": 95,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 95,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 39,
+          "total": 154,
+          "named": 150,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 150,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 40,
+          "total": 136,
+          "named": 125,
+          "outside": 11,
+          "promoted": false,
+          "second": false,
+          "population": 125,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 41,
+          "total": 127,
+          "named": 110,
+          "outside": 17,
+          "promoted": false,
+          "second": false,
+          "population": 110,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:360",
+      "title": "Burkina Faso: Government",
+      "first_page": 42,
+      "years": [
+        {
+          "year": 2026,
+          "page": 42,
+          "total": 1781,
+          "named": 1695,
+          "outside": 86,
+          "promoted": false,
+          "second": false,
+          "population": 1695,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 43,
+          "total": 2939,
+          "named": 2568,
+          "outside": 371,
+          "promoted": false,
+          "second": false,
+          "population": 2568,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 44,
+          "total": 2136,
+          "named": 1804,
+          "outside": 332,
+          "promoted": false,
+          "second": false,
+          "population": 1804,
+          "pitch": 13.750000000000002,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 45,
+          "total": 3989,
+          "named": 3735,
+          "outside": 254,
+          "promoted": false,
+          "second": false,
+          "population": 3735,
+          "pitch": 16.522211689296565,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 46,
+          "total": 1703,
+          "named": 1423,
+          "outside": 280,
+          "promoted": false,
+          "second": false,
+          "population": 1423,
+          "pitch": 13.750000000000002,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 47,
+          "total": 821,
+          "named": 698,
+          "outside": 123,
+          "promoted": false,
+          "second": false,
+          "population": 698,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 48,
+          "total": 352,
+          "named": 270,
+          "outside": 82,
+          "promoted": false,
+          "second": false,
+          "population": 270,
+          "pitch": 13.75,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:426",
+      "title": "Israel: Southern Lebanon",
+      "first_page": 49,
+      "years": [
+        {
+          "year": 2026,
+          "page": 49,
+          "total": 4593,
+          "named": 753,
+          "outside": 3840,
+          "promoted": false,
+          "second": true,
+          "population": 4593,
+          "pitch": 6.180653166097382,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 50,
+          "total": 337,
+          "named": 158,
+          "outside": 179,
+          "promoted": false,
+          "second": true,
+          "population": 337,
+          "pitch": 23.062266407882202,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 51,
+          "total": 4362,
+          "named": 1052,
+          "outside": 3310,
+          "promoted": false,
+          "second": true,
+          "population": 4362,
+          "pitch": 6.3402945947465845,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 52,
+          "total": 139,
+          "named": 96,
+          "outside": 43,
+          "promoted": false,
+          "second": false,
+          "population": 96,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 53,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:11347",
+      "title": "Mali: Government",
+      "first_page": 54,
+      "years": [
+        {
+          "year": 2026,
+          "page": 54,
+          "total": 987,
+          "named": 858,
+          "outside": 129,
+          "promoted": false,
+          "second": false,
+          "population": 858,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 55,
+          "total": 1086,
+          "named": 803,
+          "outside": 283,
+          "promoted": false,
+          "second": false,
+          "population": 803,
+          "pitch": 8.461538461538462,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 56,
+          "total": 760,
+          "named": 618,
+          "outside": 142,
+          "promoted": false,
+          "second": false,
+          "population": 618,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 57,
+          "total": 886,
+          "named": 566,
+          "outside": 320,
+          "promoted": false,
+          "second": false,
+          "population": 566,
+          "pitch": 6.875,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 58,
+          "total": 1117,
+          "named": 707,
+          "outside": 410,
+          "promoted": false,
+          "second": false,
+          "population": 707,
+          "pitch": 7.857142857142857,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 59,
+          "total": 616,
+          "named": 544,
+          "outside": 72,
+          "promoted": false,
+          "second": false,
+          "population": 544,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 60,
+          "total": 520,
+          "named": 465,
+          "outside": 55,
+          "promoted": false,
+          "second": false,
+          "population": 465,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:234",
+      "title": "Israel: Palestine",
+      "first_page": 61,
+      "years": [
+        {
+          "year": 2026,
+          "page": 61,
+          "total": 1155,
+          "named": 382,
+          "outside": 773,
+          "promoted": false,
+          "second": true,
+          "population": 1155,
+          "pitch": 12.375966910186262,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 62,
+          "total": 14456,
+          "named": 513,
+          "outside": 13943,
+          "promoted": false,
+          "second": true,
+          "population": 14456,
+          "pitch": 3.482425360921232,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 63,
+          "total": 21600,
+          "named": 563,
+          "outside": 21037,
+          "promoted": false,
+          "second": true,
+          "population": 21600,
+          "pitch": 2.8516171605086695,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 64,
+          "total": 26800,
+          "named": 893,
+          "outside": 25907,
+          "promoted": false,
+          "second": true,
+          "population": 26800,
+          "pitch": 2.5586585150144807,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 65,
+          "total": 97,
+          "named": 70,
+          "outside": 27,
+          "promoted": false,
+          "second": false,
+          "population": 70,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 66,
+          "total": 273,
+          "named": 109,
+          "outside": 164,
+          "promoted": false,
+          "second": true,
+          "population": 273,
+          "pitch": 25.235730725761798,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 67,
+          "total": 13,
+          "named": 6,
+          "outside": 7,
+          "promoted": false,
+          "second": true,
+          "population": 13,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:267",
+      "title": "Ethiopia: Government",
+      "first_page": 68,
+      "years": [
+        {
+          "year": 2026,
+          "page": 68,
+          "total": 574,
+          "named": 399,
+          "outside": 175,
+          "promoted": false,
+          "second": false,
+          "population": 399,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 69,
+          "total": 19,
+          "named": 3,
+          "outside": 16,
+          "promoted": false,
+          "second": true,
+          "population": 19,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 70,
+          "total": 10,
+          "named": 4,
+          "outside": 6,
+          "promoted": false,
+          "second": true,
+          "population": 10,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 71,
+          "total": 162453,
+          "named": 158530,
+          "outside": 3923,
+          "promoted": false,
+          "second": false,
+          "population": 158530,
+          "pitch": 2.5355369113167923,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 72,
+          "total": 124269,
+          "named": 119912,
+          "outside": 4357,
+          "promoted": false,
+          "second": false,
+          "population": 119912,
+          "pitch": 2.914596720578755,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 73,
+          "total": 20888,
+          "named": 20452,
+          "outside": 436,
+          "promoted": false,
+          "second": false,
+          "population": 20452,
+          "pitch": 7.05914092793249,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:13639",
+      "title": "Niger: Islamic State",
+      "first_page": 74,
+      "years": [
+        {
+          "year": 2026,
+          "page": 74,
+          "total": 404,
+          "named": 371,
+          "outside": 33,
+          "promoted": false,
+          "second": false,
+          "population": 371,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 75,
+          "total": 535,
+          "named": 468,
+          "outside": 67,
+          "promoted": false,
+          "second": false,
+          "population": 468,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 76,
+          "total": 485,
+          "named": 450,
+          "outside": 35,
+          "promoted": false,
+          "second": false,
+          "population": 450,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 77,
+          "total": 247,
+          "named": 232,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 232,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 78,
+          "total": 323,
+          "named": 298,
+          "outside": 25,
+          "promoted": false,
+          "second": false,
+          "population": 298,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 79,
+          "total": 380,
+          "named": 366,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 366,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 80,
+          "total": 512,
+          "named": 502,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 502,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:283",
+      "title": "DR Congo (Zaire): Government",
+      "first_page": 81,
+      "years": [
+        {
+          "year": 2026,
+          "page": 81,
+          "total": 669,
+          "named": 308,
+          "outside": 361,
+          "promoted": false,
+          "second": true,
+          "population": 669,
+          "pitch": 16.2628679610006,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 82,
+          "total": 4428,
+          "named": 1935,
+          "outside": 2493,
+          "promoted": false,
+          "second": true,
+          "population": 4428,
+          "pitch": 6.308932681440448,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 83,
+          "total": 917,
+          "named": 296,
+          "outside": 621,
+          "promoted": false,
+          "second": true,
+          "population": 917,
+          "pitch": 13.858697343671667,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 84,
+          "total": 223,
+          "named": 126,
+          "outside": 97,
+          "promoted": false,
+          "second": false,
+          "population": 126,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 85,
+          "total": 567,
+          "named": 443,
+          "outside": 124,
+          "promoted": false,
+          "second": false,
+          "population": 443,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 86,
+          "total": 422,
+          "named": 357,
+          "outside": 65,
+          "promoted": false,
+          "second": false,
+          "population": 357,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 87,
+          "total": 254,
+          "named": 204,
+          "outside": 50,
+          "promoted": false,
+          "second": false,
+          "population": 204,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:413",
+      "title": "Ethiopia: Oromiya",
+      "first_page": 88,
+      "years": [
+        {
+          "year": 2026,
+          "page": 88,
+          "total": 274,
+          "named": 242,
+          "outside": 32,
+          "promoted": false,
+          "second": false,
+          "population": 242,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 89,
+          "total": 477,
+          "named": 430,
+          "outside": 47,
+          "promoted": false,
+          "second": false,
+          "population": 430,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 90,
+          "total": 685,
+          "named": 638,
+          "outside": 47,
+          "promoted": false,
+          "second": false,
+          "population": 638,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 91,
+          "total": 464,
+          "named": 320,
+          "outside": 144,
+          "promoted": false,
+          "second": false,
+          "population": 320,
+          "pitch": 11.0,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 92,
+          "total": 766,
+          "named": 220,
+          "outside": 546,
+          "promoted": false,
+          "second": true,
+          "population": 766,
+          "pitch": 15.145424598073314,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 93,
+          "total": 283,
+          "named": 109,
+          "outside": 174,
+          "promoted": false,
+          "second": true,
+          "population": 283,
+          "pitch": 25.23573072576179,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 94,
+          "total": 28,
+          "named": 17,
+          "outside": 11,
+          "promoted": false,
+          "second": false,
+          "population": 17,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:222",
+      "title": "Myanmar (Burma): Government",
+      "first_page": 95,
+      "years": [
+        {
+          "year": 2026,
+          "page": 95,
+          "total": 869,
+          "named": 166,
+          "outside": 703,
+          "promoted": false,
+          "second": true,
+          "population": 869,
+          "pitch": 14.171445780818278,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 96,
+          "total": 1360,
+          "named": 102,
+          "outside": 1258,
+          "promoted": false,
+          "second": true,
+          "population": 1360,
+          "pitch": 11.39116820772695,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 97,
+          "total": 1250,
+          "named": 226,
+          "outside": 1024,
+          "promoted": false,
+          "second": true,
+          "population": 1250,
+          "pitch": 11.878883437432854,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 98,
+          "total": 1702,
+          "named": 795,
+          "outside": 907,
+          "promoted": false,
+          "second": true,
+          "population": 1702,
+          "pitch": 10.158656123871424,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 99,
+          "total": 1327,
+          "named": 793,
+          "outside": 534,
+          "promoted": false,
+          "second": false,
+          "population": 793,
+          "pitch": 6.470588235294118,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 100,
+          "total": 722,
+          "named": 493,
+          "outside": 229,
+          "promoted": false,
+          "second": false,
+          "population": 493,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 101,
+          "total": 5,
+          "named": 0,
+          "outside": 5,
+          "promoted": true,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:297",
+      "title": "Nigeria: Government",
+      "first_page": 102,
+      "years": [
+        {
+          "year": 2026,
+          "page": 102,
+          "total": 281,
+          "named": 221,
+          "outside": 60,
+          "promoted": false,
+          "second": false,
+          "population": 221,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 103,
+          "total": 195,
+          "named": 176,
+          "outside": 19,
+          "promoted": false,
+          "second": false,
+          "population": 176,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 104,
+          "total": 222,
+          "named": 219,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 219,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 105,
+          "total": 464,
+          "named": 457,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 457,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 106,
+          "total": 428,
+          "named": 426,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 426,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 107,
+          "total": 276,
+          "named": 249,
+          "outside": 27,
+          "promoted": false,
+          "second": false,
+          "population": 249,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 108,
+          "total": 465,
+          "named": 458,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 458,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:289",
+      "title": "Colombia: Government",
+      "first_page": 109,
+      "years": [
+        {
+          "year": 2026,
+          "page": 109,
+          "total": 198,
+          "named": 178,
+          "outside": 20,
+          "promoted": false,
+          "second": false,
+          "population": 178,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 110,
+          "total": 307,
+          "named": 284,
+          "outside": 23,
+          "promoted": false,
+          "second": false,
+          "population": 284,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 111,
+          "total": 233,
+          "named": 217,
+          "outside": 16,
+          "promoted": false,
+          "second": false,
+          "population": 217,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 112,
+          "total": 92,
+          "named": 82,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 82,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 113,
+          "total": 133,
+          "named": 113,
+          "outside": 20,
+          "promoted": false,
+          "second": false,
+          "population": 113,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 114,
+          "total": 134,
+          "named": 124,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 124,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 115,
+          "total": 52,
+          "named": 37,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:337",
+      "title": "Somalia: Government",
+      "first_page": 116,
+      "years": [
+        {
+          "year": 2026,
+          "page": 116,
+          "total": 2915,
+          "named": 155,
+          "outside": 2760,
+          "promoted": false,
+          "second": true,
+          "population": 2915,
+          "pitch": 7.7588017744445805,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 117,
+          "total": 2989,
+          "named": 2861,
+          "outside": 128,
+          "promoted": false,
+          "second": false,
+          "population": 2861,
+          "pitch": 18.892459653687254,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 118,
+          "total": 2191,
+          "named": 1747,
+          "outside": 444,
+          "promoted": false,
+          "second": false,
+          "population": 1747,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 119,
+          "total": 3859,
+          "named": 3652,
+          "outside": 207,
+          "promoted": false,
+          "second": false,
+          "population": 3652,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 120,
+          "total": 3034,
+          "named": 2531,
+          "outside": 503,
+          "promoted": false,
+          "second": false,
+          "population": 2531,
+          "pitch": 12.22222222222222,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 121,
+          "total": 2119,
+          "named": 1837,
+          "outside": 282,
+          "promoted": false,
+          "second": false,
+          "population": 1837,
+          "pitch": 7.333333333333333,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 122,
+          "total": 1901,
+          "named": 1699,
+          "outside": 202,
+          "promoted": false,
+          "second": false,
+          "population": 1699,
+          "pitch": 18.333333333333332,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:309",
+      "title": "Sudan: Government",
+      "first_page": 123,
+      "years": [
+        {
+          "year": 2026,
+          "page": 123,
+          "total": 3280,
+          "named": 206,
+          "outside": 3074,
+          "promoted": false,
+          "second": true,
+          "population": 3280,
+          "pitch": 7.321141582036939,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 124,
+          "total": 12269,
+          "named": 4132,
+          "outside": 8137,
+          "promoted": false,
+          "second": true,
+          "population": 12269,
+          "pitch": 3.784674943419232,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 125,
+          "total": 4684,
+          "named": 679,
+          "outside": 4005,
+          "promoted": false,
+          "second": true,
+          "population": 4684,
+          "pitch": 6.122933739905143,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 126,
+          "total": 11760,
+          "named": 263,
+          "outside": 11497,
+          "promoted": false,
+          "second": true,
+          "population": 11760,
+          "pitch": 3.8626224297134297,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 127,
+          "total": 47,
+          "named": 24,
+          "outside": 23,
+          "promoted": false,
+          "second": false,
+          "population": 24,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 128,
+          "total": 31,
+          "named": 0,
+          "outside": 31,
+          "promoted": true,
+          "second": false,
+          "population": 31,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 129,
+          "total": 48,
+          "named": 43,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 43,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:381",
+      "title": "Haiti: Government",
+      "first_page": 130,
+      "years": [
+        {
+          "year": 2026,
+          "page": 130,
+          "total": 125,
+          "named": 119,
+          "outside": 6,
+          "promoted": false,
+          "second": false,
+          "population": 119,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 131,
+          "total": 1211,
+          "named": 969,
+          "outside": 242,
+          "promoted": false,
+          "second": false,
+          "population": 969,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 132,
+          "total": 217,
+          "named": 182,
+          "outside": 35,
+          "promoted": false,
+          "second": false,
+          "population": 182,
+          "pitch": 22.0,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:430",
+      "title": "Niger: Government",
+      "first_page": 133,
+      "years": [
+        {
+          "year": 2026,
+          "page": 133,
+          "total": 212,
+          "named": 139,
+          "outside": 73,
+          "promoted": false,
+          "second": false,
+          "population": 139,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 134,
+          "total": 167,
+          "named": 152,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 152,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 135,
+          "total": 440,
+          "named": 359,
+          "outside": 81,
+          "promoted": false,
+          "second": false,
+          "population": 359,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 136,
+          "total": 48,
+          "named": 42,
+          "outside": 6,
+          "promoted": false,
+          "second": false,
+          "population": 42,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 137,
+          "total": 165,
+          "named": 161,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 161,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 138,
+          "total": 76,
+          "named": 73,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 73,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 139,
+          "total": 2,
+          "named": 0,
+          "outside": 2,
+          "promoted": true,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:209",
+      "title": "Philippines: Government",
+      "first_page": 140,
+      "years": [
+        {
+          "year": 2026,
+          "page": 140,
+          "total": 92,
+          "named": 78,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 78,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 141,
+          "total": 141,
+          "named": 139,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 139,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 142,
+          "total": 133,
+          "named": 114,
+          "outside": 19,
+          "promoted": false,
+          "second": false,
+          "population": 114,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 143,
+          "total": 164,
+          "named": 154,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 154,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 144,
+          "total": 167,
+          "named": 162,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 162,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 145,
+          "total": 195,
+          "named": 190,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 190,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 146,
+          "total": 165,
+          "named": 162,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 162,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:227",
+      "title": "India: Government",
+      "first_page": 147,
+      "years": [
+        {
+          "year": 2026,
+          "page": 147,
+          "total": 77,
+          "named": 74,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 74,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 148,
+          "total": 417,
+          "named": 403,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 403,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 149,
+          "total": 326,
+          "named": 294,
+          "outside": 32,
+          "promoted": false,
+          "second": false,
+          "population": 294,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 150,
+          "total": 96,
+          "named": 84,
+          "outside": 12,
+          "promoted": false,
+          "second": false,
+          "population": 84,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 151,
+          "total": 75,
+          "named": 72,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 72,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 152,
+          "total": 181,
+          "named": 173,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 173,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 153,
+          "total": 153,
+          "named": 146,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 146,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:16179",
+      "title": "AFC - VDP",
+      "first_page": 154,
+      "years": [
+        {
+          "year": 2026,
+          "page": 154,
+          "total": 318,
+          "named": 119,
+          "outside": 199,
+          "promoted": false,
+          "second": true,
+          "population": 318,
+          "pitch": 23.062266407882202,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 155,
+          "total": 769,
+          "named": 241,
+          "outside": 528,
+          "promoted": false,
+          "second": true,
+          "population": 769,
+          "pitch": 15.145424598073314,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 156,
+          "total": 150,
+          "named": 47,
+          "outside": 103,
+          "promoted": false,
+          "second": true,
+          "population": 150,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 157,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:14845",
+      "title": "Mozambique: Islamic State",
+      "first_page": 158,
+      "years": [
+        {
+          "year": 2026,
+          "page": 158,
+          "total": 166,
+          "named": 130,
+          "outside": 36,
+          "promoted": false,
+          "second": false,
+          "population": 130,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 159,
+          "total": 245,
+          "named": 219,
+          "outside": 26,
+          "promoted": false,
+          "second": false,
+          "population": 219,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 160,
+          "total": 151,
+          "named": 124,
+          "outside": 27,
+          "promoted": false,
+          "second": false,
+          "population": 124,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 161,
+          "total": 176,
+          "named": 166,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 166,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 162,
+          "total": 378,
+          "named": 306,
+          "outside": 72,
+          "promoted": false,
+          "second": false,
+          "population": 306,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 163,
+          "total": 867,
+          "named": 629,
+          "outside": 238,
+          "promoted": false,
+          "second": false,
+          "population": 629,
+          "pitch": 13.75,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 164,
+          "total": 939,
+          "named": 738,
+          "outside": 201,
+          "promoted": false,
+          "second": false,
+          "population": 738,
+          "pitch": 7.857142857142857,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:13884",
+      "title": "IS - JAS",
+      "first_page": 165,
+      "years": [
+        {
+          "year": 2026,
+          "page": 165,
+          "total": 134,
+          "named": 94,
+          "outside": 40,
+          "promoted": false,
+          "second": false,
+          "population": 94,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 166,
+          "total": 333,
+          "named": 303,
+          "outside": 30,
+          "promoted": false,
+          "second": false,
+          "population": 303,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 167,
+          "total": 633,
+          "named": 337,
+          "outside": 296,
+          "promoted": false,
+          "second": false,
+          "population": 337,
+          "pitch": 10.0,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 168,
+          "total": 373,
+          "named": 79,
+          "outside": 294,
+          "promoted": false,
+          "second": true,
+          "population": 373,
+          "pitch": 21.67724411961445,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 169,
+          "total": 386,
+          "named": 254,
+          "outside": 132,
+          "promoted": false,
+          "second": false,
+          "population": 254,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 170,
+          "total": 308,
+          "named": 53,
+          "outside": 255,
+          "promoted": false,
+          "second": true,
+          "population": 308,
+          "pitch": 24.003967925959163,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 171,
+          "total": 6,
+          "named": 6,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:14864",
+      "title": "IS - JNIM",
+      "first_page": 172,
+      "years": [
+        {
+          "year": 2026,
+          "page": 172,
+          "total": 70,
+          "named": 69,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 69,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 173,
+          "total": 154,
+          "named": 82,
+          "outside": 72,
+          "promoted": false,
+          "second": false,
+          "population": 82,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 174,
+          "total": 40,
+          "named": 37,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 175,
+          "total": 436,
+          "named": 202,
+          "outside": 234,
+          "promoted": false,
+          "second": true,
+          "population": 436,
+          "pitch": 20.0,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 176,
+          "total": 405,
+          "named": 186,
+          "outside": 219,
+          "promoted": false,
+          "second": true,
+          "population": 405,
+          "pitch": 20.88147590655498,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 177,
+          "total": 122,
+          "named": 78,
+          "outside": 44,
+          "promoted": false,
+          "second": false,
+          "population": 78,
+          "pitch": 13.75,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 178,
+          "total": 381,
+          "named": 160,
+          "outside": 221,
+          "promoted": false,
+          "second": true,
+          "population": 381,
+          "pitch": 21.169509870286277,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:14113",
+      "title": "Mali: Islamic State",
+      "first_page": 179,
+      "years": [
+        {
+          "year": 2026,
+          "page": 179,
+          "total": 112,
+          "named": 70,
+          "outside": 42,
+          "promoted": false,
+          "second": false,
+          "population": 70,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 180,
+          "total": 189,
+          "named": 138,
+          "outside": 51,
+          "promoted": false,
+          "second": false,
+          "population": 138,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 181,
+          "total": 128,
+          "named": 113,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 113,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 182,
+          "total": 182,
+          "named": 165,
+          "outside": 17,
+          "promoted": false,
+          "second": false,
+          "population": 165,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 183,
+          "total": 323,
+          "named": 319,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 319,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 184,
+          "total": 110,
+          "named": 108,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 108,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 185,
+          "total": 63,
+          "named": 60,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 60,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:333",
+      "title": "Afghanistan: Government",
+      "first_page": 186,
+      "years": [
+        {
+          "year": 2026,
+          "page": 186,
+          "total": 107,
+          "named": 98,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 98,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 187,
+          "total": 27,
+          "named": 22,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 22,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 188,
+          "total": 32,
+          "named": 24,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 24,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 189,
+          "total": 78,
+          "named": 69,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 69,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 190,
+          "total": 689,
+          "named": 659,
+          "outside": 30,
+          "promoted": false,
+          "second": false,
+          "population": 659,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 191,
+          "total": 35329,
+          "named": 34136,
+          "outside": 1193,
+          "promoted": false,
+          "second": false,
+          "population": 34136,
+          "pitch": 5.463046666286867,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 192,
+          "total": 20159,
+          "named": 18862,
+          "outside": 1297,
+          "promoted": false,
+          "second": false,
+          "population": 18862,
+          "pitch": 7.352606069436685,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:338",
+      "title": "Iran: Government",
+      "first_page": 193,
+      "years": [
+        {
+          "year": 2026,
+          "page": 193,
+          "total": 94,
+          "named": 92,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 92,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 194,
+          "total": 58,
+          "named": 49,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 49,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 195,
+          "total": 114,
+          "named": 106,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 106,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 196,
+          "total": 36,
+          "named": 36,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 36,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 197,
+          "total": 20,
+          "named": 9,
+          "outside": 11,
+          "promoted": false,
+          "second": true,
+          "population": 20,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 198,
+          "total": 44,
+          "named": 39,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 39,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 199,
+          "total": 36,
+          "named": 35,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 35,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:16799",
+      "title": "Jalisco Cartel New Generation, Sinaloa Cartel - Los Chapitos - Sinaloa Cartel - Los Mayos",
+      "first_page": 200,
+      "years": [
+        {
+          "year": 2026,
+          "page": 200,
+          "total": 705,
+          "named": 46,
+          "outside": 659,
+          "promoted": false,
+          "second": true,
+          "population": 705,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 201,
+          "total": 692,
+          "named": 66,
+          "outside": 626,
+          "promoted": false,
+          "second": true,
+          "population": 692,
+          "pitch": 15.83594651647128,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 202,
+          "total": 38,
+          "named": 4,
+          "outside": 34,
+          "promoted": false,
+          "second": true,
+          "population": 38,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 203,
+          "total": 99,
+          "named": 12,
+          "outside": 87,
+          "promoted": false,
+          "second": true,
+          "population": 99,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 204,
+          "total": 189,
+          "named": 0,
+          "outside": 189,
+          "promoted": true,
+          "second": false,
+          "population": 189,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:14129",
+      "title": "Cameroon: Ambazonia",
+      "first_page": 205,
+      "years": [
+        {
+          "year": 2026,
+          "page": 205,
+          "total": 116,
+          "named": 81,
+          "outside": 35,
+          "promoted": false,
+          "second": false,
+          "population": 81,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 206,
+          "total": 133,
+          "named": 115,
+          "outside": 18,
+          "promoted": false,
+          "second": false,
+          "population": 115,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 207,
+          "total": 168,
+          "named": 137,
+          "outside": 31,
+          "promoted": false,
+          "second": false,
+          "population": 137,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 208,
+          "total": 193,
+          "named": 161,
+          "outside": 32,
+          "promoted": false,
+          "second": false,
+          "population": 161,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 209,
+          "total": 375,
+          "named": 329,
+          "outside": 46,
+          "promoted": false,
+          "second": false,
+          "population": 329,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 210,
+          "total": 519,
+          "named": 376,
+          "outside": 143,
+          "promoted": false,
+          "second": false,
+          "population": 376,
+          "pitch": 9.166666666666668,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 211,
+          "total": 401,
+          "named": 270,
+          "outside": 131,
+          "promoted": false,
+          "second": false,
+          "population": 270,
+          "pitch": 13.75,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:4973",
+      "title": "Fulani - Tiv",
+      "first_page": 212,
+      "years": [
+        {
+          "year": 2026,
+          "page": 212,
+          "total": 73,
+          "named": 42,
+          "outside": 31,
+          "promoted": false,
+          "second": false,
+          "population": 42,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 213,
+          "total": 388,
+          "named": 84,
+          "outside": 304,
+          "promoted": false,
+          "second": true,
+          "population": 388,
+          "pitch": 21.07217827486533,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 214,
+          "total": 103,
+          "named": 44,
+          "outside": 59,
+          "promoted": false,
+          "second": true,
+          "population": 103,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 215,
+          "total": 190,
+          "named": 114,
+          "outside": 76,
+          "promoted": false,
+          "second": false,
+          "population": 114,
+          "pitch": 8.461538461538462,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 216,
+          "total": 210,
+          "named": 120,
+          "outside": 90,
+          "promoted": false,
+          "second": false,
+          "population": 120,
+          "pitch": 7.333333333333333,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 217,
+          "total": 282,
+          "named": 256,
+          "outside": 26,
+          "promoted": false,
+          "second": false,
+          "population": 256,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 218,
+          "total": 45,
+          "named": 37,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:14692",
+      "title": "DR Congo (Zaire): Islamic State",
+      "first_page": 219,
+      "years": [
+        {
+          "year": 2026,
+          "page": 219,
+          "total": 106,
+          "named": 72,
+          "outside": 34,
+          "promoted": false,
+          "second": false,
+          "population": 72,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 220,
+          "total": 36,
+          "named": 25,
+          "outside": 11,
+          "promoted": false,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 221,
+          "total": 150,
+          "named": 143,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 143,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 222,
+          "total": 348,
+          "named": 318,
+          "outside": 30,
+          "promoted": false,
+          "second": false,
+          "population": 318,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 223,
+          "total": 914,
+          "named": 817,
+          "outside": 97,
+          "promoted": false,
+          "second": false,
+          "population": 817,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 224,
+          "total": 616,
+          "named": 475,
+          "outside": 141,
+          "promoted": false,
+          "second": false,
+          "population": 475,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 225,
+          "total": 644,
+          "named": 483,
+          "outside": 161,
+          "promoted": false,
+          "second": false,
+          "population": 483,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:4948",
+      "title": "Birom - Fulani",
+      "first_page": 226,
+      "years": [
+        {
+          "year": 2026,
+          "page": 226,
+          "total": 75,
+          "named": 61,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 61,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 227,
+          "total": 118,
+          "named": 108,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 108,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 228,
+          "total": 7,
+          "named": 6,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 229,
+          "total": 86,
+          "named": 66,
+          "outside": 20,
+          "promoted": false,
+          "second": false,
+          "population": 66,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 230,
+          "total": 3,
+          "named": 3,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 231,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:259",
+      "title": "Iraq: Government",
+      "first_page": 232,
+      "years": [
+        {
+          "year": 2026,
+          "page": 232,
+          "total": 47,
+          "named": 37,
+          "outside": 10,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 233,
+          "total": 77,
+          "named": 77,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 77,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 234,
+          "total": 217,
+          "named": 214,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 214,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 235,
+          "total": 203,
+          "named": 198,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 198,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 236,
+          "total": 340,
+          "named": 324,
+          "outside": 16,
+          "promoted": false,
+          "second": false,
+          "population": 324,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 237,
+          "total": 707,
+          "named": 468,
+          "outside": 239,
+          "promoted": false,
+          "second": false,
+          "population": 468,
+          "pitch": 13.75,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 238,
+          "total": 674,
+          "named": 605,
+          "outside": 69,
+          "promoted": false,
+          "second": false,
+          "population": 605,
+          "pitch": 13.75,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:13604",
+      "title": "Syria: Islamic State",
+      "first_page": 239,
+      "years": [
+        {
+          "year": 2026,
+          "page": 239,
+          "total": 36,
+          "named": 35,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 35,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 240,
+          "total": 29,
+          "named": 28,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 28,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 241,
+          "total": 629,
+          "named": 542,
+          "outside": 87,
+          "promoted": false,
+          "second": false,
+          "population": 542,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 242,
+          "total": 459,
+          "named": 346,
+          "outside": 113,
+          "promoted": false,
+          "second": false,
+          "population": 346,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 243,
+          "total": 348,
+          "named": 305,
+          "outside": 43,
+          "promoted": false,
+          "second": false,
+          "population": 305,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 244,
+          "total": 680,
+          "named": 657,
+          "outside": 23,
+          "promoted": false,
+          "second": false,
+          "population": 657,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 245,
+          "total": 1076,
+          "named": 1060,
+          "outside": 16,
+          "promoted": false,
+          "second": false,
+          "population": 1060,
+          "pitch": 31.0159040069746,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:353",
+      "title": "Cameroon: Government",
+      "first_page": 246,
+      "years": [
+        {
+          "year": 2026,
+          "page": 246,
+          "total": 46,
+          "named": 38,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 38,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 247,
+          "total": 45,
+          "named": 42,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 42,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 248,
+          "total": 63,
+          "named": 52,
+          "outside": 11,
+          "promoted": false,
+          "second": false,
+          "population": 52,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 249,
+          "total": 113,
+          "named": 110,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 110,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 250,
+          "total": 31,
+          "named": 19,
+          "outside": 12,
+          "promoted": false,
+          "second": false,
+          "population": 19,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 251,
+          "total": 22,
+          "named": 22,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 22,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 252,
+          "total": 28,
+          "named": 27,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 27,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:14275",
+      "title": "Philippines: Islamic State",
+      "first_page": 253,
+      "years": [
+        {
+          "year": 2026,
+          "page": 253,
+          "total": 43,
+          "named": 42,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 42,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 254,
+          "total": 14,
+          "named": 14,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 14,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 255,
+          "total": 43,
+          "named": 43,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 43,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 256,
+          "total": 79,
+          "named": 79,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 79,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 257,
+          "total": 53,
+          "named": 52,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 52,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 258,
+          "total": 71,
+          "named": 66,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 66,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 259,
+          "total": 75,
+          "named": 73,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 73,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:423",
+      "title": "Thailand: Patani",
+      "first_page": 260,
+      "years": [
+        {
+          "year": 2026,
+          "page": 260,
+          "total": 42,
+          "named": 37,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 261,
+          "total": 36,
+          "named": 31,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 31,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 262,
+          "total": 34,
+          "named": 30,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 30,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 263,
+          "total": 30,
+          "named": 30,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 30,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 264,
+          "total": 29,
+          "named": 27,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 27,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 265,
+          "total": 38,
+          "named": 36,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 36,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 266,
+          "total": 46,
+          "named": 46,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 46,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:13840",
+      "title": "Burkina Faso: Islamic State",
+      "first_page": 267,
+      "years": [
+        {
+          "year": 2026,
+          "page": 267,
+          "total": 34,
+          "named": 34,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 34,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 268,
+          "total": 92,
+          "named": 84,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 84,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 269,
+          "total": 63,
+          "named": 46,
+          "outside": 17,
+          "promoted": false,
+          "second": false,
+          "population": 46,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 270,
+          "total": 817,
+          "named": 767,
+          "outside": 50,
+          "promoted": false,
+          "second": false,
+          "population": 767,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 271,
+          "total": 402,
+          "named": 265,
+          "outside": 137,
+          "promoted": false,
+          "second": false,
+          "population": 265,
+          "pitch": 18.333333333333336,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 272,
+          "total": 170,
+          "named": 162,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 162,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 273,
+          "total": 160,
+          "named": 151,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 151,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:364",
+      "title": "India: Kashmir",
+      "first_page": 274,
+      "years": [
+        {
+          "year": 2026,
+          "page": 274,
+          "total": 32,
+          "named": 28,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 28,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 275,
+          "total": 93,
+          "named": 60,
+          "outside": 33,
+          "promoted": false,
+          "second": false,
+          "population": 60,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 276,
+          "total": 112,
+          "named": 108,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 108,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 277,
+          "total": 119,
+          "named": 112,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 112,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 278,
+          "total": 235,
+          "named": 223,
+          "outside": 12,
+          "promoted": false,
+          "second": false,
+          "population": 223,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 279,
+          "total": 250,
+          "named": 235,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 235,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 280,
+          "total": 311,
+          "named": 296,
+          "outside": 15,
+          "promoted": false,
+          "second": false,
+          "population": 296,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:11345",
+      "title": "South Sudan: Government",
+      "first_page": 281,
+      "years": [
+        {
+          "year": 2026,
+          "page": 281,
+          "total": 123,
+          "named": 37,
+          "outside": 86,
+          "promoted": false,
+          "second": true,
+          "population": 123,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 282,
+          "total": 282,
+          "named": 161,
+          "outside": 121,
+          "promoted": false,
+          "second": false,
+          "population": 161,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 283,
+          "total": 23,
+          "named": 21,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 21,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 284,
+          "total": 5,
+          "named": 2,
+          "outside": 3,
+          "promoted": false,
+          "second": true,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 285,
+          "total": 23,
+          "named": 3,
+          "outside": 20,
+          "promoted": false,
+          "second": true,
+          "population": 23,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 286,
+          "total": 188,
+          "named": 140,
+          "outside": 48,
+          "promoted": false,
+          "second": false,
+          "population": 140,
+          "pitch": 13.75,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 287,
+          "total": 64,
+          "named": 25,
+          "outside": 39,
+          "promoted": false,
+          "second": true,
+          "population": 64,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:13637",
+      "title": "Afghanistan: Islamic State",
+      "first_page": 288,
+      "years": [
+        {
+          "year": 2026,
+          "page": 288,
+          "total": 34,
+          "named": 26,
+          "outside": 8,
+          "promoted": false,
+          "second": false,
+          "population": 26,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 289,
+          "total": 56,
+          "named": 49,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 49,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 290,
+          "total": 105,
+          "named": 85,
+          "outside": 20,
+          "promoted": false,
+          "second": false,
+          "population": 85,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 291,
+          "total": 163,
+          "named": 122,
+          "outside": 41,
+          "promoted": false,
+          "second": false,
+          "population": 122,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 292,
+          "total": 258,
+          "named": 182,
+          "outside": 76,
+          "promoted": false,
+          "second": false,
+          "population": 182,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 293,
+          "total": 264,
+          "named": 190,
+          "outside": 74,
+          "promoted": false,
+          "second": false,
+          "population": 190,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 294,
+          "total": 316,
+          "named": 180,
+          "outside": 136,
+          "promoted": false,
+          "second": false,
+          "population": 180,
+          "pitch": 22.0,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:221",
+      "title": "Myanmar (Burma): Karen",
+      "first_page": 295,
+      "years": [
+        {
+          "year": 2026,
+          "page": 295,
+          "total": 141,
+          "named": 21,
+          "outside": 120,
+          "promoted": false,
+          "second": true,
+          "population": 141,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 296,
+          "total": 151,
+          "named": 11,
+          "outside": 140,
+          "promoted": false,
+          "second": true,
+          "population": 151,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 297,
+          "total": 177,
+          "named": 18,
+          "outside": 159,
+          "promoted": false,
+          "second": true,
+          "population": 177,
+          "pitch": 31.428571428571427,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 298,
+          "total": 191,
+          "named": 59,
+          "outside": 132,
+          "promoted": false,
+          "second": true,
+          "population": 191,
+          "pitch": 30.508510792387604,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 299,
+          "total": 241,
+          "named": 155,
+          "outside": 86,
+          "promoted": false,
+          "second": false,
+          "population": 155,
+          "pitch": 27.5,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 300,
+          "total": 78,
+          "named": 54,
+          "outside": 24,
+          "promoted": false,
+          "second": false,
+          "population": 54,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 301,
+          "total": 1,
+          "named": 1,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:13587",
+      "title": "AQAP - Forces of the Presidential Leadership Council",
+      "first_page": 302,
+      "years": [
+        {
+          "year": 2026,
+          "page": 302,
+          "total": 22,
+          "named": 21,
+          "outside": 1,
+          "promoted": false,
+          "second": false,
+          "population": 21,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 303,
+          "total": 87,
+          "named": 83,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 83,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 304,
+          "total": 65,
+          "named": 62,
+          "outside": 3,
+          "promoted": false,
+          "second": false,
+          "population": 62,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 305,
+          "total": 107,
+          "named": 105,
+          "outside": 2,
+          "promoted": false,
+          "second": false,
+          "population": 105,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 306,
+          "total": 205,
+          "named": 198,
+          "outside": 7,
+          "promoted": false,
+          "second": false,
+          "population": 198,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 307,
+          "total": 55,
+          "named": 46,
+          "outside": 9,
+          "promoted": false,
+          "second": false,
+          "population": 46,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 308,
+          "total": 42,
+          "named": 37,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:416",
+      "title": "Central African Republic: Government",
+      "first_page": 309,
+      "years": [
+        {
+          "year": 2026,
+          "page": 309,
+          "total": 37,
+          "named": 13,
+          "outside": 24,
+          "promoted": false,
+          "second": true,
+          "population": 37,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 310,
+          "total": 197,
+          "named": 98,
+          "outside": 99,
+          "promoted": false,
+          "second": true,
+          "population": 197,
+          "pitch": 30.508510792387604,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 311,
+          "total": 196,
+          "named": 164,
+          "outside": 32,
+          "promoted": false,
+          "second": false,
+          "population": 164,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 312,
+          "total": 253,
+          "named": 198,
+          "outside": 55,
+          "promoted": false,
+          "second": false,
+          "population": 198,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 313,
+          "total": 677,
+          "named": 309,
+          "outside": 368,
+          "promoted": false,
+          "second": true,
+          "population": 677,
+          "pitch": 16.002645283972775,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 314,
+          "total": 906,
+          "named": 318,
+          "outside": 588,
+          "promoted": false,
+          "second": true,
+          "population": 906,
+          "pitch": 13.99826478546711,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 315,
+          "total": 64,
+          "named": 51,
+          "outside": 13,
+          "promoted": false,
+          "second": false,
+          "population": 51,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:386",
+      "title": "Algeria: Government",
+      "first_page": 316,
+      "years": [
+        {
+          "year": 2026,
+          "page": 316,
+          "total": 10,
+          "named": 10,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 10,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 317,
+          "total": 1,
+          "named": 1,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 318,
+          "total": 14,
+          "named": 14,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 14,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 319,
+          "total": 18,
+          "named": 13,
+          "outside": 5,
+          "promoted": false,
+          "second": false,
+          "population": 13,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 320,
+          "total": 26,
+          "named": 26,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 26,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:16447",
+      "title": "Jalisco Cartel New Generation - La Barredora",
+      "first_page": 321,
+      "years": [
+        {
+          "year": 2026,
+          "page": 321,
+          "total": 9,
+          "named": 5,
+          "outside": 4,
+          "promoted": false,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 322,
+          "total": 661,
+          "named": 30,
+          "outside": 631,
+          "promoted": false,
+          "second": true,
+          "population": 661,
+          "pitch": 16.35247121743766,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 323,
+          "total": 848,
+          "named": 19,
+          "outside": 829,
+          "promoted": false,
+          "second": true,
+          "population": 848,
+          "pitch": 14.29053565415588,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:223",
+      "title": "Myanmar (Burma): Arakan",
+      "first_page": 324,
+      "years": [
+        {
+          "year": 2026,
+          "page": 324,
+          "total": 209,
+          "named": 4,
+          "outside": 205,
+          "promoted": false,
+          "second": true,
+          "population": 209,
+          "pitch": 29.139711855430964,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 325,
+          "total": 286,
+          "named": 6,
+          "outside": 280,
+          "promoted": false,
+          "second": true,
+          "population": 286,
+          "pitch": 24.751933820372525,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 326,
+          "total": 515,
+          "named": 20,
+          "outside": 495,
+          "promoted": false,
+          "second": true,
+          "population": 515,
+          "pitch": 18.333333333333332,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 327,
+          "total": 80,
+          "named": 20,
+          "outside": 60,
+          "promoted": false,
+          "second": true,
+          "population": 80,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 328,
+          "total": 134,
+          "named": 62,
+          "outside": 72,
+          "promoted": false,
+          "second": true,
+          "population": 134,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 329,
+          "total": 3,
+          "named": 1,
+          "outside": 2,
+          "promoted": false,
+          "second": true,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 330,
+          "total": 179,
+          "named": 32,
+          "outside": 147,
+          "promoted": false,
+          "second": true,
+          "population": 179,
+          "pitch": 31.428571428571427,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:107",
+      "title": "XXX70 - XXX70",
+      "first_page": 331,
+      "years": [
+        {
+          "year": 2026,
+          "page": 331,
+          "total": 1007,
+          "named": 4,
+          "outside": 1003,
+          "promoted": false,
+          "second": true,
+          "population": 1007,
+          "pitch": 13.218518898774413,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:11052",
+      "title": "Jalisco Cartel New Generation - Los Caballeros Templarios",
+      "first_page": 332,
+      "years": [
+        {
+          "year": 2026,
+          "page": 332,
+          "total": 9,
+          "named": 3,
+          "outside": 6,
+          "promoted": false,
+          "second": true,
+          "population": 9,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:288",
+      "title": "Chad: Government",
+      "first_page": 333,
+      "years": [
+        {
+          "year": 2026,
+          "page": 333,
+          "total": 6,
+          "named": 6,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 334,
+          "total": 61,
+          "named": 61,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 61,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 335,
+          "total": 10,
+          "named": 10,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 10,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 336,
+          "total": 431,
+          "named": 431,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 431,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 337,
+          "total": 53,
+          "named": 53,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 53,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:14532",
+      "title": "Jalisco Cartel New Generation - Santa Rosa de Lima Cartel",
+      "first_page": 338,
+      "years": [
+        {
+          "year": 2026,
+          "page": 338,
+          "total": 216,
+          "named": 2,
+          "outside": 214,
+          "promoted": false,
+          "second": true,
+          "population": 216,
+          "pitch": 28.168113585237116,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 339,
+          "total": 1489,
+          "named": 13,
+          "outside": 1476,
+          "promoted": false,
+          "second": true,
+          "population": 1489,
+          "pitch": 10.878299881551273,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 340,
+          "total": 2389,
+          "named": 2,
+          "outside": 2387,
+          "promoted": false,
+          "second": true,
+          "population": 2389,
+          "pitch": 8.583017461049575,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 341,
+          "total": 2001,
+          "named": 5,
+          "outside": 1996,
+          "promoted": false,
+          "second": true,
+          "population": 2001,
+          "pitch": 9.35535162237637,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 342,
+          "total": 2348,
+          "named": 12,
+          "outside": 2336,
+          "promoted": false,
+          "second": true,
+          "population": 2348,
+          "pitch": 8.622479818365825,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 343,
+          "total": 2225,
+          "named": 24,
+          "outside": 2201,
+          "promoted": false,
+          "second": true,
+          "population": 2225,
+          "pitch": 8.885716308942213,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 344,
+          "total": 4190,
+          "named": 7,
+          "outside": 4183,
+          "promoted": false,
+          "second": true,
+          "population": 4190,
+          "pitch": 6.470588235294118,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:13902",
+      "title": "Turkey: Islamic State",
+      "first_page": 345,
+      "years": [
+        {
+          "year": 2026,
+          "page": 345,
+          "total": 2,
+          "named": 2,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 346,
+          "total": 9,
+          "named": 9,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 9,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:13972",
+      "title": "Comando Vermelho - PCC",
+      "first_page": 347,
+      "years": [
+        {
+          "year": 2026,
+          "page": 347,
+          "total": 112,
+          "named": 1,
+          "outside": 111,
+          "promoted": false,
+          "second": true,
+          "population": 112,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 348,
+          "total": 188,
+          "named": 12,
+          "outside": 176,
+          "promoted": false,
+          "second": true,
+          "population": 188,
+          "pitch": 30.508510792387604,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 349,
+          "total": 575,
+          "named": 75,
+          "outside": 500,
+          "promoted": false,
+          "second": true,
+          "population": 575,
+          "pitch": 17.557911458287688,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 350,
+          "total": 714,
+          "named": 25,
+          "outside": 689,
+          "promoted": false,
+          "second": true,
+          "population": 714,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 351,
+          "total": 448,
+          "named": 9,
+          "outside": 439,
+          "promoted": false,
+          "second": true,
+          "population": 448,
+          "pitch": 19.75658322294524,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 352,
+          "total": 214,
+          "named": 12,
+          "outside": 202,
+          "promoted": false,
+          "second": true,
+          "population": 214,
+          "pitch": 28.168113585237116,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 353,
+          "total": 196,
+          "named": 4,
+          "outside": 192,
+          "promoted": false,
+          "second": true,
+          "population": 196,
+          "pitch": 30.508510792387604,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:4652",
+      "title": "Juarez Cartel - Sinaloa Cartel",
+      "first_page": 354,
+      "years": [
+        {
+          "year": 2026,
+          "page": 354,
+          "total": 56,
+          "named": 1,
+          "outside": 55,
+          "promoted": false,
+          "second": true,
+          "population": 56,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 355,
+          "total": 1075,
+          "named": 15,
+          "outside": 1060,
+          "promoted": false,
+          "second": true,
+          "population": 1075,
+          "pitch": 12.701705922171769,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 356,
+          "total": 1690,
+          "named": 13,
+          "outside": 1677,
+          "promoted": false,
+          "second": true,
+          "population": 1690,
+          "pitch": 10.158656123871424,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 357,
+          "total": 1806,
+          "named": 1,
+          "outside": 1805,
+          "promoted": false,
+          "second": true,
+          "population": 1806,
+          "pitch": 9.848552582788596,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 358,
+          "total": 1363,
+          "named": 1,
+          "outside": 1362,
+          "promoted": false,
+          "second": true,
+          "population": 1363,
+          "pitch": 11.39116820772695,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 359,
+          "total": 1691,
+          "named": 21,
+          "outside": 1670,
+          "promoted": false,
+          "second": true,
+          "population": 1691,
+          "pitch": 10.158656123871424,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 360,
+          "total": 956,
+          "named": 1,
+          "outside": 955,
+          "promoted": false,
+          "second": true,
+          "population": 956,
+          "pitch": 13.438638879193578,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:709",
+      "title": "Government of Iran - Civilians",
+      "first_page": 361,
+      "years": [
+        {
+          "year": 2026,
+          "page": 361,
+          "total": 19895,
+          "named": 0,
+          "outside": 19895,
+          "promoted": true,
+          "second": false,
+          "population": 19895,
+          "pitch": 7.160201090023316,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 362,
+          "total": 18,
+          "named": 0,
+          "outside": 18,
+          "promoted": true,
+          "second": false,
+          "population": 18,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 363,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 364,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 365,
+          "total": 211,
+          "named": 0,
+          "outside": 211,
+          "promoted": true,
+          "second": false,
+          "population": 211,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 366,
+          "total": 26,
+          "named": 0,
+          "outside": 26,
+          "promoted": true,
+          "second": false,
+          "population": 26,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 367,
+          "total": 27,
+          "named": 0,
+          "outside": 27,
+          "promoted": true,
+          "second": false,
+          "population": 27,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:506",
+      "title": "IS - Civilians",
+      "first_page": 368,
+      "years": [
+        {
+          "year": 2026,
+          "page": 368,
+          "total": 1552,
+          "named": 0,
+          "outside": 1552,
+          "promoted": true,
+          "second": false,
+          "population": 1552,
+          "pitch": 25.648497680278844,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 369,
+          "total": 2399,
+          "named": 0,
+          "outside": 2399,
+          "promoted": true,
+          "second": false,
+          "population": 2399,
+          "pitch": 20.614610801986974,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 370,
+          "total": 3808,
+          "named": 0,
+          "outside": 3808,
+          "promoted": true,
+          "second": false,
+          "population": 3808,
+          "pitch": 16.348372009604347,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 371,
+          "total": 2218,
+          "named": 0,
+          "outside": 2218,
+          "promoted": true,
+          "second": false,
+          "population": 2218,
+          "pitch": 21.512036399407272,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 372,
+          "total": 3809,
+          "named": 0,
+          "outside": 3809,
+          "promoted": true,
+          "second": false,
+          "population": 3809,
+          "pitch": 16.348372009604347,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 373,
+          "total": 3791,
+          "named": 0,
+          "outside": 3791,
+          "promoted": true,
+          "second": false,
+          "population": 3791,
+          "pitch": 16.44250928677899,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 374,
+          "total": 2483,
+          "named": 0,
+          "outside": 2483,
+          "promoted": true,
+          "second": false,
+          "population": 2483,
+          "pitch": 20.265056491899625,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:16712",
+      "title": "SFA - Civilians",
+      "first_page": 375,
+      "years": [
+        {
+          "year": 2026,
+          "page": 375,
+          "total": 440,
+          "named": 0,
+          "outside": 440,
+          "promoted": true,
+          "second": false,
+          "population": 440,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 376,
+          "total": 61973,
+          "named": 0,
+          "outside": 61973,
+          "promoted": true,
+          "second": false,
+          "population": 61973,
+          "pitch": 4.054078301504473,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:1850",
+      "title": "JAS - Civilians",
+      "first_page": 377,
+      "years": [
+        {
+          "year": 2026,
+          "page": 377,
+          "total": 437,
+          "named": 0,
+          "outside": 437,
+          "promoted": true,
+          "second": false,
+          "population": 437,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 378,
+          "total": 389,
+          "named": 0,
+          "outside": 389,
+          "promoted": true,
+          "second": false,
+          "population": 389,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 379,
+          "total": 223,
+          "named": 0,
+          "outside": 223,
+          "promoted": true,
+          "second": false,
+          "population": 223,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 380,
+          "total": 166,
+          "named": 0,
+          "outside": 166,
+          "promoted": true,
+          "second": false,
+          "population": 166,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 381,
+          "total": 178,
+          "named": 0,
+          "outside": 178,
+          "promoted": true,
+          "second": false,
+          "population": 178,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 382,
+          "total": 102,
+          "named": 0,
+          "outside": 102,
+          "promoted": true,
+          "second": false,
+          "population": 102,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 383,
+          "total": 328,
+          "named": 0,
+          "outside": 328,
+          "promoted": true,
+          "second": false,
+          "population": 328,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:16101",
+      "title": "AFC - Civilians",
+      "first_page": 384,
+      "years": [
+        {
+          "year": 2026,
+          "page": 384,
+          "total": 282,
+          "named": 0,
+          "outside": 282,
+          "promoted": true,
+          "second": false,
+          "population": 282,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 385,
+          "total": 1390,
+          "named": 0,
+          "outside": 1390,
+          "promoted": true,
+          "second": false,
+          "population": 1390,
+          "pitch": 27.152722537663678,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 386,
+          "total": 250,
+          "named": 0,
+          "outside": 250,
+          "promoted": true,
+          "second": false,
+          "population": 250,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 387,
+          "total": 32,
+          "named": 0,
+          "outside": 32,
+          "promoted": true,
+          "second": false,
+          "population": 32,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:480",
+      "title": "Government of Sudan - Civilians",
+      "first_page": 388,
+      "years": [
+        {
+          "year": 2026,
+          "page": 388,
+          "total": 228,
+          "named": 0,
+          "outside": 228,
+          "promoted": true,
+          "second": false,
+          "population": 228,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 389,
+          "total": 437,
+          "named": 0,
+          "outside": 437,
+          "promoted": true,
+          "second": false,
+          "population": 437,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 390,
+          "total": 465,
+          "named": 0,
+          "outside": 465,
+          "promoted": true,
+          "second": false,
+          "population": 465,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 391,
+          "total": 8,
+          "named": 0,
+          "outside": 8,
+          "promoted": true,
+          "second": false,
+          "population": 8,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 392,
+          "total": 74,
+          "named": 0,
+          "outside": 74,
+          "promoted": true,
+          "second": false,
+          "population": 74,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 393,
+          "total": 81,
+          "named": 0,
+          "outside": 81,
+          "promoted": true,
+          "second": false,
+          "population": 81,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 394,
+          "total": 52,
+          "named": 0,
+          "outside": 52,
+          "promoted": true,
+          "second": false,
+          "population": 52,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:474",
+      "title": "Government of Ethiopia - Civilians",
+      "first_page": 395,
+      "years": [
+        {
+          "year": 2026,
+          "page": 395,
+          "total": 206,
+          "named": 0,
+          "outside": 206,
+          "promoted": true,
+          "second": false,
+          "population": 206,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 396,
+          "total": 574,
+          "named": 0,
+          "outside": 574,
+          "promoted": true,
+          "second": false,
+          "population": 574,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 397,
+          "total": 725,
+          "named": 0,
+          "outside": 725,
+          "promoted": true,
+          "second": false,
+          "population": 725,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 398,
+          "total": 190,
+          "named": 0,
+          "outside": 190,
+          "promoted": true,
+          "second": false,
+          "population": 190,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 399,
+          "total": 378,
+          "named": 0,
+          "outside": 378,
+          "promoted": true,
+          "second": false,
+          "population": 378,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 400,
+          "total": 1294,
+          "named": 0,
+          "outside": 1294,
+          "promoted": true,
+          "second": false,
+          "population": 1294,
+          "pitch": 27.894736842105264,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 401,
+          "total": 512,
+          "named": 0,
+          "outside": 512,
+          "promoted": true,
+          "second": false,
+          "population": 512,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:13968",
+      "title": "JNIM - Civilians",
+      "first_page": 402,
+      "years": [
+        {
+          "year": 2026,
+          "page": 402,
+          "total": 158,
+          "named": 0,
+          "outside": 158,
+          "promoted": true,
+          "second": false,
+          "population": 158,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 403,
+          "total": 592,
+          "named": 0,
+          "outside": 592,
+          "promoted": true,
+          "second": false,
+          "population": 592,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 404,
+          "total": 1396,
+          "named": 0,
+          "outside": 1396,
+          "promoted": true,
+          "second": false,
+          "population": 1396,
+          "pitch": 26.941414092093492,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 405,
+          "total": 1064,
+          "named": 0,
+          "outside": 1064,
+          "promoted": true,
+          "second": false,
+          "population": 1064,
+          "pitch": 31.0159040069746,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 406,
+          "total": 510,
+          "named": 0,
+          "outside": 510,
+          "promoted": true,
+          "second": false,
+          "population": 510,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 407,
+          "total": 299,
+          "named": 0,
+          "outside": 299,
+          "promoted": true,
+          "second": false,
+          "population": 299,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 408,
+          "total": 140,
+          "named": 0,
+          "outside": 140,
+          "promoted": true,
+          "second": false,
+          "population": 140,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:16265",
+      "title": "Viv Ansanm - Civilians",
+      "first_page": 409,
+      "years": [
+        {
+          "year": 2026,
+          "page": 409,
+          "total": 151,
+          "named": 0,
+          "outside": 151,
+          "promoted": true,
+          "second": false,
+          "population": 151,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 410,
+          "total": 960,
+          "named": 0,
+          "outside": 960,
+          "promoted": true,
+          "second": false,
+          "population": 960,
+          "pitch": 32.37490275442088,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 411,
+          "total": 347,
+          "named": 0,
+          "outside": 347,
+          "promoted": true,
+          "second": false,
+          "population": 347,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:488",
+      "title": "Government of Myanmar (Burma) - Civilians",
+      "first_page": 412,
+      "years": [
+        {
+          "year": 2026,
+          "page": 412,
+          "total": 134,
+          "named": 0,
+          "outside": 134,
+          "promoted": true,
+          "second": false,
+          "population": 134,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 413,
+          "total": 207,
+          "named": 0,
+          "outside": 207,
+          "promoted": true,
+          "second": false,
+          "population": 207,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 414,
+          "total": 421,
+          "named": 0,
+          "outside": 421,
+          "promoted": true,
+          "second": false,
+          "population": 421,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 415,
+          "total": 593,
+          "named": 0,
+          "outside": 593,
+          "promoted": true,
+          "second": false,
+          "population": 593,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 416,
+          "total": 616,
+          "named": 0,
+          "outside": 616,
+          "promoted": true,
+          "second": false,
+          "population": 616,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 417,
+          "total": 600,
+          "named": 0,
+          "outside": 600,
+          "promoted": true,
+          "second": false,
+          "population": 600,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 418,
+          "total": 8,
+          "named": 0,
+          "outside": 8,
+          "promoted": true,
+          "second": false,
+          "population": 8,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:14745",
+      "title": "URDPC - Civilians",
+      "first_page": 419,
+      "years": [
+        {
+          "year": 2026,
+          "page": 419,
+          "total": 123,
+          "named": 0,
+          "outside": 123,
+          "promoted": true,
+          "second": false,
+          "population": 123,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 420,
+          "total": 425,
+          "named": 0,
+          "outside": 425,
+          "promoted": true,
+          "second": false,
+          "population": 425,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 421,
+          "total": 340,
+          "named": 0,
+          "outside": 340,
+          "promoted": true,
+          "second": false,
+          "population": 340,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 422,
+          "total": 760,
+          "named": 0,
+          "outside": 760,
+          "promoted": true,
+          "second": false,
+          "population": 760,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 423,
+          "total": 595,
+          "named": 0,
+          "outside": 595,
+          "promoted": true,
+          "second": false,
+          "population": 595,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 424,
+          "total": 410,
+          "named": 0,
+          "outside": 410,
+          "promoted": true,
+          "second": false,
+          "population": 410,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 425,
+          "total": 468,
+          "named": 0,
+          "outside": 468,
+          "promoted": true,
+          "second": false,
+          "population": 468,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:13737",
+      "title": "Jalisco Cartel New Generation - Sinaloa Cartel",
+      "first_page": 426,
+      "years": [
+        {
+          "year": 2026,
+          "page": 426,
+          "total": 107,
+          "named": 0,
+          "outside": 107,
+          "promoted": true,
+          "second": false,
+          "population": 107,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 427,
+          "total": 996,
+          "named": 4,
+          "outside": 992,
+          "promoted": false,
+          "second": true,
+          "population": 996,
+          "pitch": 13.315005718713655,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 428,
+          "total": 3103,
+          "named": 43,
+          "outside": 3060,
+          "promoted": false,
+          "second": true,
+          "population": 3103,
+          "pitch": 7.532656531376908,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 429,
+          "total": 3807,
+          "named": 17,
+          "outside": 3790,
+          "promoted": false,
+          "second": true,
+          "population": 3807,
+          "pitch": 6.7861166832319935,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 430,
+          "total": 4360,
+          "named": 37,
+          "outside": 4323,
+          "promoted": false,
+          "second": true,
+          "population": 4360,
+          "pitch": 6.3402945947465845,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 431,
+          "total": 5250,
+          "named": 42,
+          "outside": 5208,
+          "promoted": false,
+          "second": true,
+          "population": 5250,
+          "pitch": 5.783469042645821,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 432,
+          "total": 4690,
+          "named": 16,
+          "outside": 4674,
+          "promoted": false,
+          "second": true,
+          "population": 4690,
+          "pitch": 6.111111111111111,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:231",
+      "title": "Myanmar (Burma): Kachin",
+      "first_page": 433,
+      "years": [
+        {
+          "year": 2026,
+          "page": 433,
+          "total": 61,
+          "named": 0,
+          "outside": 61,
+          "promoted": true,
+          "second": false,
+          "population": 61,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 434,
+          "total": 220,
+          "named": 0,
+          "outside": 220,
+          "promoted": true,
+          "second": false,
+          "population": 220,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 435,
+          "total": 283,
+          "named": 58,
+          "outside": 225,
+          "promoted": false,
+          "second": true,
+          "population": 283,
+          "pitch": 25.23573072576179,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 436,
+          "total": 293,
+          "named": 145,
+          "outside": 148,
+          "promoted": false,
+          "second": true,
+          "population": 293,
+          "pitch": 24.751933820372525,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 437,
+          "total": 276,
+          "named": 175,
+          "outside": 101,
+          "promoted": false,
+          "second": false,
+          "population": 175,
+          "pitch": 13.75,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 438,
+          "total": 136,
+          "named": 117,
+          "outside": 19,
+          "promoted": false,
+          "second": false,
+          "population": 117,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 439,
+          "total": 10,
+          "named": 10,
+          "outside": 0,
+          "promoted": false,
+          "second": false,
+          "population": 10,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:453",
+      "title": "Government of Russia (Soviet Union) - Civilians",
+      "first_page": 440,
+      "years": [
+        {
+          "year": 2026,
+          "page": 440,
+          "total": 51,
+          "named": 0,
+          "outside": 51,
+          "promoted": true,
+          "second": false,
+          "population": 51,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 441,
+          "total": 106,
+          "named": 0,
+          "outside": 106,
+          "promoted": true,
+          "second": false,
+          "population": 106,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 442,
+          "total": 151,
+          "named": 0,
+          "outside": 151,
+          "promoted": true,
+          "second": false,
+          "population": 151,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 443,
+          "total": 314,
+          "named": 0,
+          "outside": 314,
+          "promoted": true,
+          "second": false,
+          "population": 314,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 444,
+          "total": 1132,
+          "named": 0,
+          "outside": 1132,
+          "promoted": true,
+          "second": false,
+          "population": 1132,
+          "pitch": 30.150646571394436,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 445,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:604",
+      "title": "Al-Shabaab - Civilians",
+      "first_page": 446,
+      "years": [
+        {
+          "year": 2026,
+          "page": 446,
+          "total": 50,
+          "named": 0,
+          "outside": 50,
+          "promoted": true,
+          "second": false,
+          "population": 50,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 447,
+          "total": 8,
+          "named": 0,
+          "outside": 8,
+          "promoted": true,
+          "second": false,
+          "population": 8,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 448,
+          "total": 92,
+          "named": 0,
+          "outside": 92,
+          "promoted": true,
+          "second": false,
+          "population": 92,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 449,
+          "total": 60,
+          "named": 0,
+          "outside": 60,
+          "promoted": true,
+          "second": false,
+          "population": 60,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 450,
+          "total": 88,
+          "named": 0,
+          "outside": 88,
+          "promoted": true,
+          "second": false,
+          "population": 88,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 451,
+          "total": 87,
+          "named": 0,
+          "outside": 87,
+          "promoted": true,
+          "second": false,
+          "population": 87,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 452,
+          "total": 98,
+          "named": 0,
+          "outside": 98,
+          "promoted": true,
+          "second": false,
+          "population": 98,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:530",
+      "title": "TTP - Civilians",
+      "first_page": 453,
+      "years": [
+        {
+          "year": 2026,
+          "page": 453,
+          "total": 36,
+          "named": 0,
+          "outside": 36,
+          "promoted": true,
+          "second": false,
+          "population": 36,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 454,
+          "total": 20,
+          "named": 0,
+          "outside": 20,
+          "promoted": true,
+          "second": false,
+          "population": 20,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 455,
+          "total": 11,
+          "named": 0,
+          "outside": 11,
+          "promoted": true,
+          "second": false,
+          "population": 11,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 456,
+          "total": 7,
+          "named": 0,
+          "outside": 7,
+          "promoted": true,
+          "second": false,
+          "population": 7,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 457,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 458,
+          "total": 5,
+          "named": 0,
+          "outside": 5,
+          "promoted": true,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 459,
+          "total": 5,
+          "named": 0,
+          "outside": 5,
+          "promoted": true,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:467",
+      "title": "Government of DR Congo (Zaire) - Civilians",
+      "first_page": 460,
+      "years": [
+        {
+          "year": 2026,
+          "page": 460,
+          "total": 34,
+          "named": 0,
+          "outside": 34,
+          "promoted": true,
+          "second": false,
+          "population": 34,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 461,
+          "total": 187,
+          "named": 0,
+          "outside": 187,
+          "promoted": true,
+          "second": false,
+          "population": 187,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 462,
+          "total": 353,
+          "named": 0,
+          "outside": 353,
+          "promoted": true,
+          "second": false,
+          "population": 353,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 463,
+          "total": 136,
+          "named": 0,
+          "outside": 136,
+          "promoted": true,
+          "second": false,
+          "population": 136,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 464,
+          "total": 121,
+          "named": 0,
+          "outside": 121,
+          "promoted": true,
+          "second": false,
+          "population": 121,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 465,
+          "total": 102,
+          "named": 0,
+          "outside": 102,
+          "promoted": true,
+          "second": false,
+          "population": 102,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 466,
+          "total": 108,
+          "named": 0,
+          "outside": 108,
+          "promoted": true,
+          "second": false,
+          "population": 108,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:708",
+      "title": "Government of South Sudan - Civilians",
+      "first_page": 467,
+      "years": [
+        {
+          "year": 2026,
+          "page": 467,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 468,
+          "total": 16,
+          "named": 0,
+          "outside": 16,
+          "promoted": true,
+          "second": false,
+          "population": 16,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 469,
+          "total": 39,
+          "named": 0,
+          "outside": 39,
+          "promoted": true,
+          "second": false,
+          "population": 39,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 470,
+          "total": 38,
+          "named": 0,
+          "outside": 38,
+          "promoted": true,
+          "second": false,
+          "population": 38,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 471,
+          "total": 95,
+          "named": 0,
+          "outside": 95,
+          "promoted": true,
+          "second": false,
+          "population": 95,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 472,
+          "total": 46,
+          "named": 0,
+          "outside": 46,
+          "promoted": true,
+          "second": false,
+          "population": 46,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 473,
+          "total": 29,
+          "named": 0,
+          "outside": 29,
+          "promoted": true,
+          "second": false,
+          "population": 29,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:711",
+      "title": "Government of Syria - Civilians",
+      "first_page": 474,
+      "years": [
+        {
+          "year": 2026,
+          "page": 474,
+          "total": 19,
+          "named": 0,
+          "outside": 19,
+          "promoted": true,
+          "second": false,
+          "population": 19,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 475,
+          "total": 1721,
+          "named": 0,
+          "outside": 1721,
+          "promoted": true,
+          "second": false,
+          "population": 1721,
+          "pitch": 24.421110911956845,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 476,
+          "total": 11,
+          "named": 0,
+          "outside": 11,
+          "promoted": true,
+          "second": false,
+          "population": 11,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 477,
+          "total": 6,
+          "named": 0,
+          "outside": 6,
+          "promoted": true,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 478,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 479,
+          "total": 25,
+          "named": 0,
+          "outside": 25,
+          "promoted": true,
+          "second": false,
+          "population": 25,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:569",
+      "title": "FDLR-FOCA - Civilians",
+      "first_page": 480,
+      "years": [
+        {
+          "year": 2026,
+          "page": 480,
+          "total": 15,
+          "named": 0,
+          "outside": 15,
+          "promoted": true,
+          "second": false,
+          "population": 15,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 481,
+          "total": 4,
+          "named": 0,
+          "outside": 4,
+          "promoted": true,
+          "second": false,
+          "population": 4,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 482,
+          "total": 27,
+          "named": 0,
+          "outside": 27,
+          "promoted": true,
+          "second": false,
+          "population": 27,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 483,
+          "total": 5,
+          "named": 0,
+          "outside": 5,
+          "promoted": true,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 484,
+          "total": 6,
+          "named": 0,
+          "outside": 6,
+          "promoted": true,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 485,
+          "total": 4,
+          "named": 0,
+          "outside": 4,
+          "promoted": true,
+          "second": false,
+          "population": 4,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 486,
+          "total": 32,
+          "named": 0,
+          "outside": 32,
+          "promoted": true,
+          "second": false,
+          "population": 32,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:559",
+      "title": "LRA - Civilians",
+      "first_page": 487,
+      "years": [
+        {
+          "year": 2026,
+          "page": 487,
+          "total": 6,
+          "named": 0,
+          "outside": 6,
+          "promoted": true,
+          "second": false,
+          "population": 6,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 488,
+          "total": 4,
+          "named": 0,
+          "outside": 4,
+          "promoted": true,
+          "second": false,
+          "population": 4,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "1:14609",
+      "title": "Iran - Israel",
+      "first_page": 489,
+      "years": [
+        {
+          "year": 2026,
+          "page": 489,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 490,
+          "total": 1222,
+          "named": 438,
+          "outside": 784,
+          "promoted": false,
+          "second": true,
+          "population": 1222,
+          "pitch": 12.001983962979581,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 491,
+          "total": 549,
+          "named": 438,
+          "outside": 111,
+          "promoted": false,
+          "second": false,
+          "population": 438,
+          "pitch": 12.222222222222221,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 492,
+          "total": 160,
+          "named": 146,
+          "outside": 14,
+          "promoted": false,
+          "second": false,
+          "population": 146,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 493,
+          "total": 56,
+          "named": 39,
+          "outside": 17,
+          "promoted": false,
+          "second": false,
+          "population": 39,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 494,
+          "total": 166,
+          "named": 131,
+          "outside": 35,
+          "promoted": false,
+          "second": false,
+          "population": 131,
+          "pitch": 22.0,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 495,
+          "total": 461,
+          "named": 253,
+          "outside": 208,
+          "promoted": false,
+          "second": false,
+          "population": 253,
+          "pitch": 15.714285714285714,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:464",
+      "title": "Government of Central African Republic - Civilians",
+      "first_page": 496,
+      "years": [
+        {
+          "year": 2026,
+          "page": 496,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 497,
+          "total": 2,
+          "named": 0,
+          "outside": 2,
+          "promoted": true,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 498,
+          "total": 11,
+          "named": 0,
+          "outside": 11,
+          "promoted": true,
+          "second": false,
+          "population": 11,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 499,
+          "total": 9,
+          "named": 0,
+          "outside": 9,
+          "promoted": true,
+          "second": false,
+          "population": 9,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 500,
+          "total": 35,
+          "named": 0,
+          "outside": 35,
+          "promoted": true,
+          "second": false,
+          "population": 35,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 501,
+          "total": 45,
+          "named": 0,
+          "outside": 45,
+          "promoted": true,
+          "second": false,
+          "population": 45,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 502,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "2:15082",
+      "title": "Sinaloa Cartel - Los Chapitos - Sinaloa Cartel - Los Mayos",
+      "first_page": 503,
+      "years": [
+        {
+          "year": 2026,
+          "page": 503,
+          "total": 2,
+          "named": 0,
+          "outside": 2,
+          "promoted": true,
+          "second": false,
+          "population": 2,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 504,
+          "total": 1095,
+          "named": 62,
+          "outside": 1033,
+          "promoted": false,
+          "second": true,
+          "population": 1095,
+          "pitch": 12.680589189493169,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 505,
+          "total": 1009,
+          "named": 64,
+          "outside": 945,
+          "promoted": false,
+          "second": true,
+          "population": 1009,
+          "pitch": 13.218518898774413,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 506,
+          "total": 215,
+          "named": 5,
+          "outside": 210,
+          "promoted": false,
+          "second": true,
+          "population": 215,
+          "pitch": 28.168113585237116,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 507,
+          "total": 129,
+          "named": 10,
+          "outside": 119,
+          "promoted": false,
+          "second": true,
+          "population": 129,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 508,
+          "total": 83,
+          "named": 4,
+          "outside": 79,
+          "promoted": false,
+          "second": true,
+          "population": 83,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 509,
+          "total": 108,
+          "named": 3,
+          "outside": 105,
+          "promoted": false,
+          "second": true,
+          "population": 108,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:499",
+      "title": "CPI-Maoist - Civilians",
+      "first_page": 510,
+      "years": [
+        {
+          "year": 2026,
+          "page": 510,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2025,
+          "page": 511,
+          "total": 38,
+          "named": 0,
+          "outside": 38,
+          "promoted": true,
+          "second": false,
+          "population": 38,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 512,
+          "total": 54,
+          "named": 0,
+          "outside": 54,
+          "promoted": true,
+          "second": false,
+          "population": 54,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 513,
+          "total": 43,
+          "named": 0,
+          "outside": 43,
+          "promoted": true,
+          "second": false,
+          "population": 43,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 514,
+          "total": 48,
+          "named": 0,
+          "outside": 48,
+          "promoted": true,
+          "second": false,
+          "population": 48,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 515,
+          "total": 40,
+          "named": 0,
+          "outside": 40,
+          "promoted": true,
+          "second": false,
+          "population": 40,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 516,
+          "total": 72,
+          "named": 0,
+          "outside": 72,
+          "promoted": true,
+          "second": false,
+          "population": 72,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    },
+    {
+      "conflict": "3:532",
+      "title": "Patani insurgents - Civilians",
+      "first_page": 517,
+      "years": [
+        {
+          "year": 2025,
+          "page": 517,
+          "total": 9,
+          "named": 0,
+          "outside": 9,
+          "promoted": true,
+          "second": false,
+          "population": 9,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2024,
+          "page": 518,
+          "total": 5,
+          "named": 0,
+          "outside": 5,
+          "promoted": true,
+          "second": false,
+          "population": 5,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2023,
+          "page": 519,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2022,
+          "page": 520,
+          "total": 7,
+          "named": 0,
+          "outside": 7,
+          "promoted": true,
+          "second": false,
+          "population": 7,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2021,
+          "page": 521,
+          "total": 3,
+          "named": 0,
+          "outside": 3,
+          "promoted": true,
+          "second": false,
+          "population": 3,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        },
+        {
+          "year": 2020,
+          "page": 522,
+          "total": 1,
+          "named": 0,
+          "outside": 1,
+          "promoted": true,
+          "second": false,
+          "population": 1,
+          "pitch": 33.87096774193549,
+          "title_size": 30
+        }
+      ]
+    }
+  ]
+}
