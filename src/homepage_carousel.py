@@ -19,7 +19,7 @@ def insert(soup):
         slide=soup.new_tag('article',attrs={'class':'view-slide','id':f'view-slide-{i}','aria-label':f'{i+1} of {len(SLIDES)}: {title}','aria-roledescription':'slide'})
         if i:slide['hidden']=''
         visual=soup.new_tag('a',href=url,attrs={'class':'view-screen','aria-label':f'Open {title}'})
-        visual.append(soup.new_tag('img',src='assets/screens/'+image,alt=title+' screen from War Maps',width='1280',height='800',loading='eager' if not i else 'lazy'))
+        visual.append(soup.new_tag('img',src='assets/screens/'+image,alt=title+' visualization from War Maps',width='1280',height='800',loading='eager' if not i else 'lazy'))
         slide.append(visual);copy=soup.new_tag('div',attrs={'class':'view-copy'})
         eyebrow=soup.new_tag('p',attrs={'class':'eyebrow'});eyebrow.string=f'Explore War Maps / 0{i+1}';copy.append(eyebrow)
         h=soup.new_tag('h2');h.string=title;copy.append(h)
