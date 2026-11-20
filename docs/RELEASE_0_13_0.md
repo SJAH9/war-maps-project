@@ -14,7 +14,7 @@ Where civilian and unknown deaths outnumber named-side deaths, a second circle u
 
 ## Satellite estimated distance — historical model, not real-time positions
 
-The new rotating 3D Earth compares ICEYE-X36 and Kosmos 2612. It offers a historical time slider, playback, orbital trails, satellite altitudes, and a five-minute-sampled distance curve across a 30-day retrospective model.
+The new rotating 3D Earth compares ICEYE-X36 and Kosmos 2612. It offers a historical time slider, playback, orbital trails, satellite altitudes, and a five-minute-sampled distance curve across a 30-day retrospective model. Track satellites is enabled by default: playback keeps the pair centered while Earth moves beneath them. Turn it off to keep the globe orientation fixed.
 
 **There is no real-time position projection and no future-position display.** Playback ends at the saved common reference time, 19 November 2026 at 15:15:13 UTC. The latest displayed separation is approximately 621 km. Positions and distances are estimates calculated from archived CelesTrak orbital elements, not confirmed telemetry.
 
