@@ -1,4 +1,4 @@
-"""Homepage print feature, activated only after the corresponding release exists."""
+"""Release preview assets and cleanup of the retired homepage promotion."""
 import json
 import subprocess
 import urllib.request
@@ -6,28 +6,19 @@ from bs4 import BeautifulSoup
 from src.publication_brand import ROOT, REPO
 
 FLAG=ROOT/'data/curated/homepage-print-release.json'
-ITEMS=[('war-maps-afterimages-network','Afterimages','A memorial artwork built from conflict-event networks.'),
-       *[(f'war-maps-russia-ukraine-deaths-{year}-circle',f'Russia–Ukraine / {year}',
+ITEMS=[(f'war-maps-russia-ukraine-deaths-{year}-circle',f'Russia–Ukraine / {year}',
           f'One dot, one death. {total} deaths recorded in {period}.')
-         for year,total,period in [(2024,'102,120','2024'),(2025,'94,741','2025'),(2026,'57,840','January–August 2026')]]]
+         for year,total,period in [(2024,'102,120','2024'),(2025,'94,741','2025'),(2026,'57,840','January–August 2026')]]
 
 
 def insert(soup):
-    if not FLAG.exists():return
-    old=soup.find(id='print-collection')
-    if old:old.decompose()
-    section=BeautifulSoup('<section id="print-collection" class="print-feature" aria-labelledby="print-title"><p class="eyebrow">Art, evidence and human lives</p><h2 id="print-title">War Maps in print</h2><p>Explore the memorial artwork and the death-circle series. Open the vector PDFs to inspect each individual mark.</p><div class="print-feature-grid"></div><p><a href="../release/war_posters.pdf">Large-format ebook</a> · <a href="../release/warmaps.pdf">Letter mini-poster ebook</a> · <a href="publications.html">About the collection and sources</a></p></section>','html.parser')
-    grid=section.select_one('.print-feature-grid')
-    for slug,title,description in ITEMS:
-        card=soup.new_tag('a',href=f'../release/{slug}.pdf')
-        card.append(soup.new_tag('img',src=f'assets/print/{slug}.png',alt=title+' — '+description,loading='eager',width='750',height='1000'))
-        heading=soup.new_tag('h3');heading.string=title;card.append(heading)
-        grid.append(card)
-    section.select_one('#print-title').name='h1'
+    """Remove the retired homepage promotion, including its poster series."""
+    for old in soup.select('#print-collection'):
+        old.decompose()
     hero=soup.select_one('.landing-hero')
-    for heading in hero.select('h1'):heading.name='h2'
-    for icon in soup.select('.trust-grid article > i'):icon.decompose()
-    hero.insert_before(section)
+    if hero:
+        heading=hero.find(['h1','h2'])
+        if heading:heading.name='h1'
 
 
 def activate():

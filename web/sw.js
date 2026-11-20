@@ -1,9 +1,9 @@
-const VERSION = 'war-maps-v0.12.0';
+const VERSION = 'war-maps-v0.12.2-views-2026-11-20';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const BASE = new URL('./', self.location.href);
 const CORE = ['index.html','about.html','sources.html','install.html','publications.html','offline.html',
-  'styles.css','brand.css','atlas-ui.js','pwa.js','information.js','manifest.webmanifest',
+  'homepage-carousel.css','homepage-carousel.js','styles.css','brand.css','human-cost-theme.css','human-cost-clock.js','atlas-ui.js','pwa.js','information.js','manifest.webmanifest',
   'assets/compass-rose.svg','assets/compass-192.png','assets/compass-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(SHELL).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));

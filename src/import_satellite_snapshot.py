@@ -8,10 +8,12 @@ from pathlib import Path
 from src.build_atlas import ROOT
 
 
-def import_snapshot(path, snapshot):
+def import_snapshot(path, snapshot, includes=()):
     dated = date.fromisoformat(snapshot)
     rows = json.loads(path.read_bytes())
     objects = [row for row in rows if row.get('OBJECT_NAME', '').startswith('ICEYE')]
+    for include in includes:
+        objects.extend(json.loads(include.read_bytes()))
     if not objects or len({row['NORAD_CAT_ID'] for row in objects}) != len(objects):
         raise ValueError('Empty or duplicate satellite catalog')
     for row in objects:
@@ -24,7 +26,8 @@ def import_snapshot(path, snapshot):
                 raise ValueError('Invalid orbit element')
         if row['MEAN_MOTION'] <= 0 or not 0 <= row['ECCENTRICITY'] < 1:
             raise ValueError('Invalid orbital shape')
-    target = ROOT/'data/raw'/f'CelesTrak-ICEYE-SAR-{snapshot}.json'
+    suffix = 'ICEYE-SAR-COSMOS-2612' if includes else 'ICEYE-SAR'
+    target = ROOT/'data/raw'/f'CelesTrak-{suffix}-{snapshot}.json'
     content = (json.dumps(objects, indent=2)+'\n').encode()
     if target.exists() and target.read_bytes() != content:
         raise ValueError('Refusing to replace a different dated snapshot')
@@ -41,5 +44,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('capture', type=Path)
     parser.add_argument('--snapshot', required=True)
+    parser.add_argument('--include', action='append', default=[], type=Path,
+                        help='Additional CelesTrak JSON payload to include in the archive')
     args = parser.parse_args()
-    import_snapshot(args.capture, args.snapshot)
+    import_snapshot(args.capture, args.snapshot, args.include)

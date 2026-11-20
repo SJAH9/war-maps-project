@@ -1,0 +1,86 @@
+CONFLICT SIDES / REBUILD AND DATA RULES
+
+Website: outputs/web/conflict-sides.html
+Print atlas: outputs/print/war-maps-conflict-sides-atlas.pdf
+Page register and source hashes: the adjacent JSON file.
+
+Build both data and print:
+  python -m src.generate_conflict_sides
+Equivalent print-atlas entry point:
+  python -m src.generate_print_atlas --conflict-sides
+Rebuild the website, including side data and navigation:
+  python -m src.generate_web_atlas
+
+Obtain GED 26.1 and the candidate CSV inputs directly from UCDP using the
+source instructions already in the project. No replacement data is silently
+downloaded. The loader uses CURRENT_SOURCES in src/build_atlas.py and the
+local GED archive, and records their SHA-256 hashes. Missing data fails the
+build rather than producing an incomplete historical atlas.
+
+Current means an event recorded in the requested year (default: calendar year).
+Identity is violence type plus conflict_new_id, not title or country. Event
+IDs are deduplicated with the latest candidate revision taking precedence.
+Historical GED rows with a revised candidate ID are not counted again.
+Deaths are grouped by the source year field, not spread or repeated over
+date intervals. Annual ACD totals are never added to GED death counts.
+
+Every event must reconcile deaths_a + deaths_b + deaths_civilians +
+deaths_unknown (and C/D when supplied) to best, with nonnegative integers.
+Failure stops the build. No sides, nationalities or actor-level splits are
+inferred. Multiple recorded names in a side retain the original side label.
+The loaded UCDP data supplies A/B, not C/D. Civilian and unknown categories
+are kept separate rather than relabeled as C/D. Side deaths are not labeled
+soldiers where the data does not establish that status.
+
+Overview: current-year only. Conflicts sort by largest named-side loss,
+then total deaths, then source identity. Inside each conflict, side runs
+sort by loss (A/B/C/D breaks ties). Civilian and unknown deaths are excluded
+from the spiral and its total; they remain in conflict details and full tables.
+Each death has one coordinate on a clockwise, inward Archimedean spiral
+starting at the outer top edge. Print preserves this casualty ordering and
+assigns black to the opening side, with the legend reflecting that palette.
+Recorded side identities and counts remain unchanged.
+The continuous radial pitch is one unit;
+radius at index i is sqrt((N-i)/pi). Web picking uses the same segment ranges
+as the dot sequence, with a spatial index for responsive selection.
+
+Conflict detail defaults to All years and offers each recorded year.
+The side circle uses exactly N nearest hexagonal lattice sites, ordered
+top to bottom. Civilian and unknown marks sit outside at identical scale.
+The web table/selector is the keyboard-accessible alternative to dot picking.
+Fit and zoom do not sample or change counts. The print atlas contains an
+introduction, the current-year spiral, and a page for each recorded year
+after 2000 (2001 onward) of each current conflict, newest first, with
+navigable PDF bookmarks. Pages with zero deaths are omitted.
+Years without event records are not fabricated as zero-death pages.
+
+No Ephemeris or release selection is changed by this generator.
+
+Detail views follow the death-circle poster composition: black for the smaller A/B death count and
+red for the larger count, with the smallest side at the top. Equal counts
+use black A and red B; C/D retain their gray shades. Web surfaces use the site
+theme; print uses the original paper background. Opening a
+conflict or changing year resets zoom and pan and brings its title into view.
+The overview retains its monochrome side palette and places civilians and
+unknown deaths in separate blocks beneath the side-only spiral.
+
+If civilian + unknown deaths exceed named-side deaths, the detail uses a
+second circle sized for ALL deaths. Only the civilian + unknown portion is
+drawn there; named-side deaths are left empty because they appear in the
+first circle. Both circles share dot pitch and diameter. Each death appears
+once. Print pages with no named-side deaths promote civilian/unknown deaths
+to the main circle. Dot diameter is capped below the title text height,
+including pages with only one death. The adjacent PDF JSON records each
+page's layout, dot pitch, population, and total for auditing.
+
+SVG downloads: the Download SVG control exports vector dots and labels for
+the selected view and theme. Exports cover 2001 onward; All years merges
+only that period and labels the exported year range. Earlier-year downloads
+are disabled. The compass is embedded as SVG; source metadata and exact
+category counts accompany the artwork. Dots are batched into vector paths.
+
+The website displays these graphics as inline SVG with batched dot paths;
+canvas is used only for measuring text. Detail dots use the approved smaller
+diameter: solid dark-gray fill without outlines, red fill with black outlines.
+Civilian and unknown detail dots are hollow gray rings. The overview retains
+its black/white side palette and click selection.

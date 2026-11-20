@@ -66,13 +66,17 @@ Implementation reference: Graphology standard library, <https://graphology.githu
 
 ## Public satellite geometry
 
-The optional satellite layer uses a frozen 2026-11-18 subset of CelesTrak's active public general-perturbations catalog filtered to ICEYE objects. The browser propagates those orbital elements around their catalog epoch to draw approximate ground tracks. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
+The optional satellite layer uses a frozen 2026-11-19 subset of CelesTrak's active public general-perturbations catalog containing 52 ICEYE objects and COSMOS 2612. The browser propagates the selected orbital elements to one shared reference instant to draw approximate ground tracks and snapshot positions. The layer is a cartographic reference, not a live operational feed, pass alert, or claim about tasking.
 
 The initial relationship is supported by ICEYE's statement that it expanded the Ukrainian Ministry of Defence's access to the ICEYE SAR satellite constellation. That is a constellation-level relationship. It does not establish that every publicly catalogued ICEYE spacecraft supplied imagery to a particular operation. The generated atlas preserves that boundary in `individual_asset_boundary` and keeps the orbit records free of conflict identifiers.
+
+The paired ICEYE-X36 / COSMOS 2612 view responds to the October 2026 close approach reported by Axios from LeoLabs analysis. It displays both public element sets at the same instant and calculates their estimated three-dimensional separation. The comparison does not assert that the October proximity persists, and it does not infer current intent from orbital geometry.
 
 CelesTrak GP formats: <https://celestrak.org/NORAD/documentation/gp-data-formats.php>
 
 ICEYE operator statement: <https://www.iceye.com/newsroom/press-releases/ukraine-expands-partnership-with-iceye>
+
+Reported October 2026 approach: <https://www.axios.com/2026/10/17/russia-ukraine-satellite-space>
 
 ## What is not inferred
 

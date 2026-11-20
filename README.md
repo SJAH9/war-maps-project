@@ -113,7 +113,7 @@ Every mapped nation opens a nation-centred record with three views. **Date** com
 
 The world map accepts a movable 1, 10, 25, 50, or all-time window. Its government-type selector uses V-Dem's `v2x_regime` vocabulary: Closed Autocracy, Electoral Autocracy, Electoral Democracy, and Liberal Democracy. "Totalitarian dictatorship" is not substituted for an official V-Dem category.
 
-The World map offers an optional **Satellite paths** control for the ICEYE constellation. Turn it on to view approximate paths and snapshot positions calculated from the frozen CelesTrak record dated 2026-11-18. These are archived reference geometry, not live positions. Orbit records remain separate from conflict relationships; constellation access does not establish individual satellite tasking. The toolbar links to CelesTrak, and [the source notes](docs/SOURCES.md#public-satellite-geometry) explain the snapshot and relationship boundaries.
+The World map offers an optional **Satellite paths** control. Its paired view compares ICEYE-X36 and COSMOS 2612 at one shared UTC reference instant, while the constellation view retains all 52 active ICEYE objects in the frozen 2026-11-19 CelesTrak snapshot. These are propagated estimates from archived public elements, not live telemetry. Orbit records remain separate from conflict relationships; constellation access does not establish individual satellite tasking. The toolbar links to CelesTrak, and [the source notes](docs/SOURCES.md#public-satellite-geometry) explain the snapshot and relationship boundaries.
 
 ## Conflict network exploration
 
@@ -180,7 +180,7 @@ python3 -m http.server 8765
 - UCDP Candidate Events supplies 16,633 unique provisional observations through September 2026. All 540 candidate conflict clusters are navigable; overlapping monthly rows replace their earlier cumulative form by stable event ID. Candidate coding is explicitly not treated as final.
 - A conflict-year row is not a complete event chronology. It establishes annual participation, incompatibility, type, and intensity under UCDP definitions.
 - Uppsala and V-Dem are the project data field. The project does not create a generic intake layer for outside datasets.
-- Natural Earth and CelesTrak supply cartographic reference geometry only. ICEYE's operator statement supplies the separately enclosed constellation relationship; it is not treated as conflict-event data or individual satellite tasking.
+- Natural Earth and CelesTrak supply cartographic reference geometry only. ICEYE's operator statement supplies the separately enclosed constellation relationship; the ICEYE-X36 / COSMOS 2612 comparison is not treated as conflict-event data, live telemetry, or evidence of current intent.
 - User prompts select the volatile question. NCM then projects from outer conditions inward to expose initiation, motive, decision makers, war economies, trade relations, equipment, claims, and other causal flows at the depth the nesting reaches.
 - A projection is not cut off merely because the first dataset row does not contain the answer. The atlas keeps asking the next correctly nested question and documents the resulting causal path.
 
@@ -242,3 +242,9 @@ not the full atlas or print downloads. See the site's Install page.
 
 See `docs/RELEASE_0_12_0.txt` and `docs/ROADMAP_2027.txt` for the print release and
 next-year network-science, cybersecurity and data-source plans.
+
+## Conflict Sides and satellite distance (0.13.0)
+
+The homepage carousel opens four views: conflict map, conflict network, Conflict Sides, and the satellite-distance globe. Conflict Sides uses scalable SVG with 2001-onward downloads; the new bookmarked Letter atlas is rebuilt with `python -m src.generate_print_atlas --conflict-sides`.
+
+`python -m src.generate_web_atlas` also rebuilds the frozen satellite-model input and homepage carousel. The satellite globe displays a 30-day backward SGP4 model ending at the saved reference timestamp, not observed month-long telemetry or real-time/future positions. See [release details](docs/RELEASE_0_13_0.md).

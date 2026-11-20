@@ -312,7 +312,12 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--conflict", default="ucdp-candidate-16905")
     parser.add_argument("--size", choices=sorted(SIZES), default="standard")
+    parser.add_argument("--conflict-sides", action="store_true", help="Build the complete Letter Conflict Sides atlas")
     args = parser.parse_args()
+    if args.conflict_sides:
+        from src.generate_conflict_sides import generate as generate_sides
+        generate_sides()
+        return 0
     path = generate(args.conflict, args.size)
     print(path)
     return 0

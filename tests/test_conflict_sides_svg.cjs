@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict');
+const {centuryBucket,detailColors}=require('../web/conflict-sides.js');
+const bucket=n=>({counts:{a:n,b:0,c:0,d:0,civilian:0,unknown:0},total:n,events:1,labels:{a:['A & B'],b:[],c:[],d:[]},sources:['fixture']});
+const result=centuryBucket({years:{2000:bucket(500),2001:bucket(2),2026:bucket(3)}});
+assert.equal(result.total,5);
+assert.equal(result.events,2);
+assert.deepEqual(result.labels.a,['A & B']);
+assert.deepEqual(result.sources,['fixture']);
+assert.equal(detailColors(result.counts).a,'#ac2529');
+assert.equal(centuryBucket({years:{2000:bucket(500)}}).total,0);
+console.log('PASS SVG century scope, merged totals, labels and colors');

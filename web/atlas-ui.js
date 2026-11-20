@@ -3,7 +3,9 @@
   const navItems = [
     ['index.html', 'Start'],
     ['network.html', 'Conflict network'],
+    ['conflict-sides.html', 'Conflict Sides'],
     ['map.html', 'World map'],
+    ['satellites.html', 'Satellite distance'],
     ['graph.html', 'Relationships'],
     ['civilian-casualties.html', 'Human cost'],
     ['life-death.html', 'Living conditions'],

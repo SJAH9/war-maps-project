@@ -1,0 +1,15 @@
+{
+  "release": "v0.13.0",
+  "files": [
+    {
+      "path": "outputs/print/war-maps-conflict-sides-atlas.pdf",
+      "bytes": 21500381,
+      "sha256": "389d85c4d978775e910b4eda05241a1725a75447908514c19cc4d99c58c46f30"
+    },
+    {
+      "path": "outputs/print/war-maps-conflict-sides-atlas.json",
+      "bytes": 970198,
+      "sha256": "ff93564a8c1578b95e21f253f8d65e4506e80abf07b54b10eb30e314ae7faf4f"
+    }
+  ]
+}

@@ -579,7 +579,11 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("NEWSBOOB — world news tuner", standalone)
         self.assertIn('src="hls.min.js"', standalone)
         self.assertIn('src="player.js', standalone)
-        self.assertIn('<video id="hlsVideo" autoplay muted playsinline>', standalone)
+        from bs4 import BeautifulSoup
+        video = BeautifulSoup(standalone, 'html.parser').select_one('video#hlsVideo')
+        self.assertIsNotNone(video)
+        for attribute in ('autoplay', 'muted', 'playsinline'):
+            self.assertTrue(video.has_attr(attribute))
         self.assertIn('go(index);', (player.parent / "player.js").read_text(encoding="utf-8"))
 
     def test_donation_page_exposes_a_wallet_link_and_qr(self):
@@ -660,6 +664,11 @@ class WarMapsBuildTests(unittest.TestCase):
         self.assertIn("does not establish", relation["individual_asset_boundary"])
         self.assertTrue(all("conflict_ids" not in item for item in relation["objects"]))
         self.assertTrue(all(item["NORAD_CAT_ID"] for item in relation["objects"]))
+        comparison = next(item for item in self.data["satellite_constellations"] if item["constellation_id"] == "iceye-x36-cosmos-2612")
+        self.assertEqual({item["NORAD_CAT_ID"] for item in comparison["objects"]}, {59103, 68762})
+        self.assertEqual(comparison["relation_class"], "public_orbital_comparison")
+        self.assertIn("not live telemetry", comparison["individual_asset_boundary"])
+        self.assertIn('value="iceye-x36-cosmos-2612"', map_page)
 
     def test_output_is_machine_readable(self):
         loaded = json.loads(OUTPUT.read_text(encoding="utf-8"))

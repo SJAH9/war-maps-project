@@ -1,0 +1,4 @@
+(() => {const root=document.getElementById('view-carousel');if(!root)return;const slides=[...root.querySelectorAll('.view-slide')],buttons=[...root.querySelectorAll('[data-view-index]')];let index=0;
+ function show(next){index=(next+slides.length)%slides.length;slides.forEach((slide,i)=>slide.hidden=i!==index);buttons.forEach((b,i)=>b.setAttribute('aria-pressed',String(i===index)));root.querySelector('[data-view-status]').textContent=`${index+1} of ${slides.length}: ${buttons[index].textContent}`;}
+ root.querySelector('[data-view-prev]').onclick=()=>show(index-1);root.querySelector('[data-view-next]').onclick=()=>show(index+1);buttons.forEach((b,i)=>b.onclick=()=>show(i));root.querySelector('.view-carousel-controls').onkeydown=e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();show(index+(e.key==='ArrowRight'?1:-1));buttons[index].focus();}};
+})();

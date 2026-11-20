@@ -5,8 +5,8 @@
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#10110e",
-  "theme_color": "#10110e",
+  "background_color": "#080f18",
+  "theme_color": "#080f18",
   "description": "Public evidence about organized conflict. Core reading pages available offline.",
   "icons": [
     {

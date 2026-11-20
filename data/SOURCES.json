@@ -196,17 +196,28 @@
       "verified": "2026-11-18"
     },
     {
-      "id": "celestrak-iceye-sar-2026-11-18",
-      "title": "CelesTrak public GP orbital elements, ICEYE SAR subset",
+      "id": "celestrak-iceye-cosmos-2026-11-19",
+      "title": "CelesTrak public GP orbital elements, ICEYE SAR and COSMOS 2612 subset",
       "publisher": "CelesTrak",
-      "coverage": "Frozen 2026-11-18 orbital-element snapshot for 52 active publicly catalogued ICEYE objects",
+      "coverage": "Frozen 2026-11-19 orbital-element snapshot for 52 active publicly catalogued ICEYE objects and COSMOS 2612",
       "url": "https://celestrak.org/NORAD/documentation/gp-data-formats.php",
       "license": "Public orbital data; CelesTrak usage and attribution terms apply",
       "enclosure": "public orbit geometry; not evidence of conflict participation",
-      "retrieved": "2026-11-18",
-      "verified": "2026-11-18",
-      "download_url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=sar&FORMAT=JSON",
-      "sha256": "9ee8d454518fde8de51f0207663c1e0a04b8d72a0923d47a7a2e404869fdaccf"
+      "retrieved": "2026-11-19",
+      "verified": "2026-11-19",
+      "download_url": "https://celestrak.org/NORAD/elements/gp.php?GROUP=sar&FORMAT=JSON; https://celestrak.org/NORAD/elements/gp.php?CATNR=68762&FORMAT=JSON",
+      "sha256": "7ff8f9dc2fdf5f5a40eb22774b083ca2271f7e15bae1aaaa503c727bbf23a9c8"
+    },
+    {
+      "id": "axios-cosmos-2612-iceye-x36-2026",
+      "title": "Russia nears U.S. satellite, raising alarm about intent",
+      "publisher": "Axios",
+      "coverage": "Reported October 2026 close approach between COSMOS 2612 and ICEYE-X36, citing LeoLabs orbital analysis",
+      "url": "https://www.axios.com/2026/10/17/russia-ukraine-satellite-space",
+      "license": "Linked source; publisher copyright applies",
+      "enclosure": "reported historical proximity; not evidence of present proximity, tasking, or intent",
+      "retrieved": "2026-11-19",
+      "verified": "2026-11-19"
     },
     {
       "id": "iceye-ukraine-support-2026",

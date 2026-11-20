@@ -25,7 +25,7 @@
 
   const healthAliases = {'Bolivia (Plurinational State of)':'Bolivia','Cabo Verde':'Cape Verde',"Côte d'Ivoire":"Cote d'Ivoire",'Democratic Republic of the Congo':'Democratic Republic of the Congo','Iran (Islamic Republic of)':'Iran','Lao People\'s Democratic Republic':'Laos','Micronesia (Federated States of)':'Micronesia','Republic of Korea':'South Korea','Republic of Moldova':'Moldova','Russian Federation':'Russia','Syrian Arab Republic':'Syria','Türkiye':'Turkey','United Republic of Tanzania':'Tanzania','United States of America':'United States','Venezuela (Bolivarian Republic of)':'Venezuela','Viet Nam':'Vietnam'};
   const healthByMap = new Map((health?.locations||[]).map(location=>[healthAliases[location.name]||location.name,{...location,mortality:new Map(location.mortality.map(row=>[row[0],row[1]])),fertility:new Map(location.fertility.map(row=>[row[0],row[1]]))}]));
-  const state = {start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,satelliteConstellation:'iceye-ukraine-support',healthLayer:'none',healthYear:2023,transitions:false};
+  const state = {start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:true,satelliteSeparation:true,satelliteConstellation:'iceye-x36-cosmos-2612',healthLayer:'none',healthYear:2023,transitions:false,humanPlace:'',humanCategory:'best'};
   const satellitePathCache = new Map();
   const currentTheme = () => document.documentElement.dataset.theme === 'dark';
   const nationUrl = country => `nation.html?country=${encodeURIComponent(country)}`;
@@ -71,17 +71,23 @@
   }
 
   function satelliteTraces() {
-    if (!state.satellites || !window.satellite) return [];
+    if (!state.satellites) return [];
+    if (!window.satellite) { $('#satellite-note').textContent='Saved orbit layer unavailable'; return []; }
     const relation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);
     if(!relation)return [];
-    if(satellitePathCache.has(relation.constellation_id))return satellitePathCache.get(relation.constellation_id);
-    const snapshot=new Date(Math.max(...relation.objects.map(item=>new Date(item.EPOCH).getTime())));
-    const lat=[];const lon=[];const text=[];const markerLat=[];const markerLon=[];const markerText=[];
+    const cacheKey=relation.constellation_id+String(state.satelliteSeparation);
+    if(satellitePathCache.has(cacheKey)){
+      const cached=satellitePathCache.get(cacheKey);
+      $('#satellite-note').textContent=cached.note;
+      return cached.traces;
+    }
+    const snapshot=new Date(Math.min(...relation.objects.map(item=>Date.parse(/Z$|[+-]\d\d:\d\d$/.test(item.EPOCH)?item.EPOCH:`${item.EPOCH}Z`))));
+    const series=[];const positions=[];
     relation.objects.forEach(object=>{
       try{
         const satrec=window.satellite.json2satrec(object);
-        let previous=null;
-        for(let minute=-50;minute<=50;minute+=2){
+        const lat=[];const lon=[];const text=[];let previous=null;let marker=null;
+        for(let minute=-50;minute<=0;minute+=2){
           const time=new Date(snapshot.getTime()+minute*60000);
           const position=window.satellite.propagate(satrec,time).position;
           if(!position)continue;
@@ -89,17 +95,48 @@
           const latitude=point.latitude*180/Math.PI;
           const longitude=((point.longitude*180/Math.PI+540)%360)-180;
           if(previous!==null&&Math.abs(longitude-previous)>180){lat.push(null);lon.push(null);text.push(null);}
-          lat.push(latitude);lon.push(longitude);text.push(`${object.OBJECT_NAME} · public GP ground track`);previous=longitude;
-          if(minute===0){markerLat.push(latitude);markerLon.push(longitude);markerText.push(`${object.OBJECT_NAME} · NORAD ${object.NORAD_CAT_ID}`);}
+          lat.push(latitude);lon.push(longitude);text.push(`${object.OBJECT_NAME} · ${time.toISOString()} · estimated historical ground track`);previous=longitude;
+          if(minute===0){marker={latitude,longitude,position};positions.push(position);}
         }
-        lat.push(null);lon.push(null);text.push(null);
+        series.push({object,lat,lon,text,marker,color:relation.object_display_colors?.[object.OBJECT_NAME]||relation.display_color});
       }catch(error){ /* A malformed public element remains omitted at this render frontier. */ }
     });
-    const traces=[
-      {type:'scattergeo',mode:'lines',lat,lon,text,hovertemplate:'%{text}<extra>approximate path</extra>',line:{color:relation.display_color,width:1},opacity:.32,name:'Public satellite paths'},
-      {type:'scattergeo',mode:'markers',lat:markerLat,lon:markerLon,text:markerText,hovertemplate:'%{text}<extra>snapshot position</extra>',marker:{size:4,color:'#f8d35e',line:{color:relation.display_color,width:1}},name:'Snapshot positions'}
-    ];
-    satellitePathCache.set(relation.constellation_id,traces);
+    let traces;
+    if(relation.object_display_colors){
+      traces=series.flatMap(item=>[
+        {type:'scattergeo',mode:'lines',lat:item.lat,lon:item.lon,text:item.text,hovertemplate:'%{text}<extra>approximate path</extra>',line:{color:item.color,width:2},opacity:.76,name:item.object.OBJECT_NAME},
+        {type:'scattergeo',mode:'markers',lat:[item.marker?.latitude],lon:[item.marker?.longitude],text:[`${item.object.OBJECT_NAME} · NORAD ${item.object.NORAD_CAT_ID}`],hovertemplate:'%{text}<extra>estimated snapshot position</extra>',marker:{size:9,color:item.color,line:{color:'#ffffff',width:1}},name:`${item.object.OBJECT_NAME} position`}
+      ]);
+    }else{
+      const lat=[];const lon=[];const text=[];const markerLat=[];const markerLon=[];const markerText=[];
+      series.forEach(item=>{lat.push(...item.lat,null);lon.push(...item.lon,null);text.push(...item.text,null);if(item.marker){markerLat.push(item.marker.latitude);markerLon.push(item.marker.longitude);markerText.push(`${item.object.OBJECT_NAME} · NORAD ${item.object.NORAD_CAT_ID}`);}});
+      traces=[
+        {type:'scattergeo',mode:'lines',lat,lon,text,hovertemplate:'%{text}<extra>approximate path</extra>',line:{color:relation.display_color,width:1},opacity:.32,name:'Public satellite paths'},
+        {type:'scattergeo',mode:'markers',lat:markerLat,lon:markerLon,text:markerText,hovertemplate:'%{text}<extra>estimated snapshot position</extra>',marker:{size:4,color:'#f8d35e',line:{color:relation.display_color,width:1}},name:'Snapshot positions'}
+      ];
+    }
+    const separation=state.satelliteSeparation&&relation.show_separation&&positions.length===2?Math.hypot(positions[0].x-positions[1].x,positions[0].y-positions[1].y,positions[0].z-positions[1].z):null;
+    const instant=snapshot.toISOString().replace('T',' ').replace(/\.\d\d\dZ$/,' UTC');
+    const note=Number.isFinite(separation)?`${Math.round(separation).toLocaleString('en-US')} km estimated separation · ${instant}`:`${relation.object_count} estimated historical tracks · ${instant}`;
+    if(Number.isFinite(separation)){
+      const [a,b]=series.map(item=>item.marker);
+      // Use the short longitude interval so a dateline crossing is not a world-wide box.
+      const bx=a.longitude+((b.longitude-a.longitude+540)%360)-180;
+      const west=Math.min(a.longitude,bx)-2,east=Math.max(a.longitude,bx)+2;
+      const south=Math.max(-89,Math.min(a.latitude,b.latitude)-2),north=Math.min(89,Math.max(a.latitude,b.latitude)+2);
+      const corners=[[west,south],[west,north],[east,north],[east,south],[west,south]],lat=[],lon=[];
+      let previous=null;
+      for(let edge=0;edge<4;edge++)for(let i=0;i<=24;i++){
+        const t=i/24,x=corners[edge][0]*(1-t)+corners[edge+1][0]*t,y=corners[edge][1]*(1-t)+corners[edge+1][1]*t;
+        const wrapped=((x+540)%360)-180;
+        if(previous!==null&&Math.abs(wrapped-previous)>180){lat.push(null);lon.push(null);}
+        lat.push(y);lon.push(wrapped);previous=wrapped;
+      }
+      traces.push({type:'scattergeo',mode:'lines',lat,lon,line:{color:'#f8d35e',width:2,dash:'dash'},hoverinfo:'skip',name:'Satellite separation bounding box'});
+      traces.push({type:'scattergeo',mode:'text',lat:[north],lon:[(((west+east)/2+540)%360)-180],text:[`${Math.round(separation).toLocaleString('en-US')} km estimated separation<br>${instant}`],textposition:((west+east)/2>90?'top left':(west+east)/2< -90?'top right':'top center'),textfont:{color:'#f8d35e',size:12},hovertemplate:'3D straight-line separation at the displayed historical time<extra></extra>',name:'Satellite separation at snapshot'});
+    }
+    $('#satellite-note').textContent=note+' · saved orbital elements; no live projection';
+    satellitePathCache.set(cacheKey,{traces,note:note+' · saved orbital elements; no live projection'});
     return traces;
   }
 
@@ -111,6 +148,7 @@
     const packet = mapPacket(conflicts);
     const regimeMode = state.regime !== 'all';
     const healthMode = state.healthLayer !== 'none' && health;
+    const humanMode = state.start === 2026 && state.end === 2026 && !healthMode && !regimeMode;
     const regimeColors = {'0':'#3e1e18','1':'#9a5a43','2':'#6d7442','3':'#657078'};
     const regimeColor = regimeColors[state.regime] || '#f07800';
     const regimeSet = new Set(regimeMode ? data.nations.filter(nation=>healthMode?String(regimeAtYear(nation,state.healthYear)?.code)===state.regime:regimeInWindow(nation)).map(item => item.map_name) : []);
@@ -118,7 +156,10 @@
     const locations = healthMode ? rows.map(item=>item.country) : packet.locations;
     const values = healthMode ? rows.map(item=>item.value) : packet.counts;
     const healthLabel = state.healthLayer==='mortality'?'deaths per 100,000':'births per woman';
-    const traces = [{
+    const traces = humanMode ? [{
+      type:'choropleth',locationmode:'country names',locations:data.nations.map(item=>item.map_name),z:data.nations.map(()=>1),text:data.nations.map(item=>item.country),
+      hovertemplate:'<b>%{text}</b><extra></extra>',colorscale:[[0,'#11232d'],[1,'#11232d']],showscale:false,marker:{line:{color:'#34444e',width:.5}}
+    }] : [{
       type:'choropleth', locationmode:'country names', locations, z:values,
       text:locations,
       hovertemplate:healthMode?`<b>%{location}</b><br>%{z:.2f} ${healthLabel}<extra>${state.healthYear}</extra>`:'<b>%{location}</b><br>%{z} recorded conflicts in window<extra></extra>',
@@ -129,22 +170,34 @@
     if(state.transitions){const changed=data.nations.filter(transitionsInWindow).map(item=>item.map_name);traces.push({type:'scattergeo',mode:'markers',locationmode:'country names',locations:changed,text:changed,hovertemplate:'<b>%{location}</b><br>V-Dem category transition in selected window<extra></extra>',marker:{size:11,color:'#7dff36',symbol:'circle-open',line:{color:'#7dff36',width:2.6}}});}
     if (state.start <= 2026 && state.end >= 2026) {
       const visibleIds = new Set(conflicts.map(item => item.id));
-      const events = data.events.filter(event => visibleIds.has(event.conflict_id) && event.map_point_eligible && event.plot_latitude !== null && event.plot_longitude !== null);
-      if (events.length) traces.push({type:'scattergeo',mode:'markers',lat:events.map(e=>e.plot_latitude),lon:events.map(e=>e.plot_longitude),text:events.map(e=>`${e.date_start} · ${e.place || e.country}`),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
+      const fatalityValue = event => state.humanCategory === 'sides' ? (event.fatalities.side_a || 0) + (event.fatalities.side_b || 0) : event.fatalities[state.humanCategory] || 0;
+      const events = data.events.filter(event => visibleIds.has(event.conflict_id) && event.map_point_eligible && event.plot_latitude !== null && event.plot_longitude !== null && (!humanMode || !state.humanPlace || event.country === state.humanPlace));
+      if (humanMode) {
+        const counted = events.filter(event => fatalityValue(event) > 0);
+        const total = counted.reduce((sum,event)=>sum+fatalityValue(event),0);
+        $('#human-cost-map-total').textContent=total.toLocaleString('en-US');
+        traces.push({type:'scattergeo',mode:'markers',lat:counted.map(e=>e.plot_latitude),lon:counted.map(e=>e.plot_longitude),text:counted.map(e=>`${e.country} / ${e.place || 'location unspecified'} · ${fatalityValue(e).toLocaleString('en-US')}`),customdata:counted.map(e=>e.conflict_id),hovertemplate:'%{text}<extra>recorded estimate</extra>',marker:{size:counted.map(e=>Math.max(3,Math.sqrt(fatalityValue(e))*.76)),color:({best:'#d6ac78',civilians:'#a0a7e0',sides:'#83c6c3',unknown:'#d4d8db'})[state.humanCategory],opacity:.65,line:{width:0}}});
+      } else if (events.length) traces.push({type:'scattergeo',mode:'markers',lat:events.map(e=>e.plot_latitude),lon:events.map(e=>e.plot_longitude),text:events.map(e=>`${e.date_start} · ${e.place || e.country}`),customdata:events.map(e=>e.conflict_id),hovertemplate:'%{text}<extra>candidate event</extra>',marker:{size:5,color:'#d52222',opacity:.86,line:{color:'#ffd500',width:.7}}});
     }
     traces.push(...satelliteTraces());
     const dark=currentTheme();
-    const layout = {margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,geo:{projection:{type:'natural earth'},bgcolor:'rgba(0,0,0,0)',showframe:false,showcoastlines:true,coastlinecolor:dark?'#7b8067':'#555b2f',coastlinewidth:.75,showcountries:true,countrycolor:dark?'#aaa071':'#e6d9b0',countrywidth:.6,showocean:true,oceancolor:dark?'#1b2019':'#8e9271',showlakes:true,lakecolor:dark?'#242a21':'#9da080',lonaxis:{showgrid:true,gridcolor:dark?'#343a2d':'#74785d',gridwidth:.4},lataxis:{showgrid:true,gridcolor:dark?'#343a2d':'#74785d',gridwidth:.4}}};
+    const layout = {margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',plot_bgcolor:'rgba(0,0,0,0)',showlegend:false,geo:{projection:{type:'natural earth'},bgcolor:humanMode?'#070e16':'rgba(0,0,0,0)',showframe:false,showland:humanMode,landcolor:humanMode?'#11232d':undefined,showcoastlines:true,coastlinecolor:humanMode?'#34444e':dark?'#7b8067':'#555b2f',coastlinewidth:.75,showcountries:true,countrycolor:humanMode?'#34444e':dark?'#aaa071':'#e6d9b0',countrywidth:.6,showocean:true,oceancolor:humanMode?'#070e16':dark?'#1b2019':'#8e9271',showlakes:true,lakecolor:humanMode?'#070e16':dark?'#242a21':'#9da080',lonaxis:{showgrid:!humanMode,gridcolor:dark?'#343a2d':'#74785d',gridwidth:.4},lataxis:{showgrid:!humanMode,gridcolor:dark?'#343a2d':'#74785d',gridwidth:.4}}};
     Plotly.react('map', traces, layout, {responsive:true,displayModeBar:false,scrollZoom:true});
+    $('.human-cost-map-summary').hidden=!humanMode;
+    $('.human-cost-legend').hidden=!humanMode;
+    $('.conflict-low').hidden=humanMode;
+    $('.conflict-high').hidden=humanMode;
     const map = $('#map');
     map.removeAllListeners?.('plotly_click');
     map.on('plotly_click', event => {
       const point = event.points?.[0];
-      if (!point || !point.location) return;
+      if (!point) return;
+      if (point.customdata && conflictsById.has(point.customdata)) { openConflict(point.customdata); return; }
+      if (!point.location) return;
       const nation = nationsByMapName.get(point.location) || nationsByName.get(point.location);
       if (nation) openNation(nation.country);
     });
-    $('#map-note').textContent = healthMode ? `${health.metrics[state.healthLayer].label}, ${state.healthYear}; conflict events remain overlaid where the selected window supports them.` : 'Select any nation to open its map, timeline, relations, and raw records.';
+    $('#map-note').textContent = humanMode ? `${state.humanPlace||'World'} · circle area represents the selected source estimate; select a circle to open its conflict.` : healthMode ? `${health.metrics[state.healthLayer].label}, ${state.healthYear}; conflict events remain overlaid where the selected window supports them.` : 'Select any nation to open its map, timeline, relations, and raw records.';
   }
 
   function renderList(conflicts) {
@@ -262,11 +315,14 @@
   $('#regime-filter').addEventListener('change',event=>{state.regime=event.target.value;render();});
   $('#health-layer').addEventListener('change',event=>{state.healthLayer=event.target.value;render();});
   $('#health-map-year').addEventListener('input',event=>{state.healthYear=Number(event.target.value);render();});
+  $('#human-cost-place').addEventListener('change',event=>{state.humanPlace=event.target.value;render();});
+  $('#human-cost-category').addEventListener('change',event=>{state.humanCategory=event.target.value;render();});
   $('#transition-toggle').addEventListener('change',event=>{state.transitions=event.target.checked;render();});
   $('#active-only').addEventListener('change',event=>{state.activeOnly=event.target.checked;render();});
   $('#satellite-toggle').addEventListener('change',event=>{state.satellites=event.target.checked;if(state.satellites&&!window.satellite){state.satellites=false;event.target.checked=false;$('#satellite-note').textContent='Orbit library unavailable · layer remains off';}else{const relation=data.satellite_constellations.find(item=>item.constellation_id===state.satelliteConstellation);$('#satellite-note').textContent=state.satellites?`${relation?.object_count||0} approximate tracks · frozen public snapshot`:'Frozen public orbit snapshot · constellation relation';}render();});
+  $('#satellite-separation-toggle').addEventListener('change',event=>{state.satelliteSeparation=event.target.checked;render();});
   $('#satellite-constellation').addEventListener('change',event=>{state.satelliteConstellation=event.target.value;satellitePathCache.clear();render();});
-  $('#reset').addEventListener('click',()=>{Object.assign(state,{start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:false,healthLayer:'none',healthYear:2023,transitions:false});$('#year-start').value=2026;$('#year-end').value=2026;$('#window-size').value='1';$('#search').value='';$('#type-filter').value='all';$('#regime-filter').value='all';$('#health-layer').value='none';$('#health-map-year').value=2023;$('#transition-toggle').checked=false;$('#active-only').checked=false;$('#satellite-toggle').checked=false;$('#satellite-note').textContent='Frozen public orbit snapshot · constellation relation';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
+  $('#reset').addEventListener('click',()=>{Object.assign(state,{start:2026,end:2026,windowSize:1,type:'all',regime:'all',search:'',activeOnly:false,selected:'',satellites:true,satelliteSeparation:true,satelliteConstellation:'iceye-x36-cosmos-2612',healthLayer:'none',healthYear:2023,transitions:false,humanPlace:'',humanCategory:'best'});$('#year-start').value=2026;$('#year-end').value=2026;$('#window-size').value='1';$('#search').value='';$('#type-filter').value='all';$('#regime-filter').value='all';$('#health-layer').value='none';$('#health-map-year').value=2023;$('#human-cost-place').value='';$('#human-cost-category').value='best';$('#satellite-constellation').value='iceye-x36-cosmos-2612';$('#transition-toggle').checked=false;$('#active-only').checked=false;$('#satellite-toggle').checked=true;$('#satellite-separation-toggle').checked=true;$('#satellite-note').textContent='Frozen public orbit snapshot · constellation relation';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
   $('#close-detail').addEventListener('click',()=>{state.selected='';$('#detail').hidden=true;history.replaceState(null,'','./');render();});
   $('#theme-toggle').addEventListener('click',()=>{const theme=currentTheme()?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('war-maps-theme',theme);}catch(error){ /* Theme still applies for this page. */ }render();});
   $('#war-dialog-open').addEventListener('click',()=>{$('#war-dialog-search').value='';$('#war-dialog-region').value='all';renderWarDialog();$('#war-dialog').showModal();requestAnimationFrame(()=>$('#war-dialog-search').focus());});
@@ -274,6 +330,7 @@
   $('#war-dialog-region').addEventListener('change',renderWarDialog);
   $('#war-dialog').addEventListener('click',event=>{if(event.target===$('#war-dialog'))$('#war-dialog').close();});
 
+  [...new Set(data.events.map(event=>event.country).filter(Boolean))].sort().forEach(country=>{const option=document.createElement('option');option.value=option.textContent=country;$('#human-cost-place').append(option);});
   renderStates();renderSources();renderWarDialog();render();
   const initial=new URLSearchParams(location.search).get('conflict');
   if(initial)setTimeout(()=>openConflict(initial,false),100);

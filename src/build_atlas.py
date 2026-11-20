@@ -21,7 +21,7 @@ LATEST_CANDIDATE_SOURCE = "ucdp-candidate-ged-2026-09"
 VDEM = ROOT / "data/raw/V-Dem-CY-Core-v16.csv"
 VDEM_REGIMES = ROOT / "data/raw/V-Dem-CY-Regime-v16.csv"
 GEOMETRY = ROOT / "data/raw/ne_110m_admin_0_countries.geojson"
-SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-2026-11-18.json"
+SATELLITE_ORBITS = ROOT / "data/raw/CelesTrak-ICEYE-SAR-COSMOS-2612-2026-11-19.json"
 SATELLITE_RELATIONS = ROOT / "data/curated/satellite_relations.json"
 CLAIMS = ROOT / "data/curated/claims.json"
 PROJECTIONS = ROOT / "data/curated/projections.json"
@@ -645,10 +645,13 @@ def satellite_constellations() -> list[dict]:
         "REV_AT_EPOCH", "BSTAR", "MEAN_MOTION_DOT", "MEAN_MOTION_DDOT",
     )
     for relation in relations:
-        prefix = relation.pop("object_name_prefix")
+        prefix = relation.pop("object_name_prefix", None)
+        names = set(relation.pop("object_names", []))
         relation["objects"] = [
             {field: item.get(field) for field in fields}
-            for item in objects if item.get("OBJECT_NAME", "").startswith(prefix)
+            for item in objects
+            if (prefix and item.get("OBJECT_NAME", "").startswith(prefix))
+            or item.get("OBJECT_NAME") in names
         ]
         relation["object_count"] = len(relation["objects"])
     return relations
@@ -736,7 +739,11 @@ def build() -> dict:
             "focal_iran_events": sum(event["conflict_id"] == "ucdp-candidate-16905" for event in events),
             "vdem_state_years": len(state_conditions),
             "prompted_projection_branches": len(projections) + sum(claim["source_type"] == "user-prompted-causal-projection" for claim in claims),
-            "public_satellite_orbits": sum(item["object_count"] for item in constellations),
+            "public_satellite_orbits": len({
+                obj["NORAD_CAT_ID"]
+                for item in constellations
+                for obj in item["objects"]
+            }),
             "organizations": len(organizations["organizations"]),
             "organization_memberships": sum(item["member_count"] for item in organizations["organizations"]),
         },

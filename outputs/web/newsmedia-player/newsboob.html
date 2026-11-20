@@ -1,13 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>NEWSBOOB — world news tuner</title>
-  <meta name="description" content="A standalone news stream viewer. One player, international channels. No account, no extra ads." />
-  <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <link rel="canonical" href="https://sidhubbard.com/newsboob/" />
-  <script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>NEWSBOOB — world news tuner</title>
+<meta content="A standalone news stream viewer. One player, international channels. No account, no extra ads." name="description"/>
+<meta content="strict-origin-when-cross-origin" name="referrer"/>
+<link href="https://sidhubbard.com/newsboob/" rel="canonical"/>
+<script>
     (() => {
       let mode = "auto";
       try {
@@ -21,8 +22,8 @@
       document.documentElement.dataset.themeMode = mode;
     })();
   </script>
-  <script src="hls.min.js"></script>
-  <style>
+<script src="hls.min.js"></script>
+<style>
     .desk, .carto {
       --bg: #050608;
       --panel: #08090c;
@@ -720,87 +721,97 @@
       .set { --dial: clamp(110px, 34vmin, 180px); }
     }
   </style>
-</head>
+<style id="neutrality-footer-style">.neutrality-footer{position:relative;clear:both;box-sizing:border-box;width:100%;padding:18px clamp(16px,4vw,64px);border-top:1px solid var(--line,currentColor);background:var(--paper,var(--bg,inherit));color:var(--ink,var(--text,inherit));font:inherit;text-align:left}
+.neutrality-footer details{max-width:1000px;margin:auto}.neutrality-footer summary{cursor:pointer;font-weight:700;padding:8px 0;list-style:revert}.neutrality-footer summary:focus-visible{outline:2px solid currentColor;outline-offset:4px}.neutrality-copy{padding:8px 0 12px;overflow-wrap:anywhere}.neutrality-copy p{font:inherit;color:inherit;max-width:none;margin:12px 0}.neutrality-copy h3{margin:24px 0 12px}.neutrality-copy a{color:inherit;text-decoration:underline}
+.neutrality-footer.neutrality-overlay{position:fixed;z-index:30;bottom:0;left:0;padding:4px 16px}.neutrality-overlay details[open]{max-height:65vh;overflow:auto;overscroll-behavior:contain}.neutrality-overlay summary{font-size:inherit}
+@media print{.neutrality-footer{position:static!important}.neutrality-footer details:not([open]){display:none}}</style></head>
 <body class="newsboob-page">
-  <div class="carto" aria-hidden="true"></div>
-  <div class="desk">
-    <div class="set">
-      <header class="plate">
-        <div class="wordmark">NEWS<i>BOOB</i><span class="datetime" id="titleDate"></span><span class="chan" id="titleChan"></span></div>
-        <div class="model"><span>International News</span><div class="scan-controls" aria-label="Scan modes"><button class="bezel-btn" id="scanPrevBtn" type="button" aria-label="Previous channel">&lt;</button><button class="bezel-btn scan-btn" id="scanBtn" type="button" aria-pressed="false" title="Measure an interval, then scan automatically">AUTO</button><button class="bezel-btn scan-btn" id="scan30Btn" type="button" aria-pressed="false" title="Switch every 30 seconds">:30</button><button class="bezel-btn scan-btn" id="scan60Btn" type="button" aria-pressed="false" title="Switch every 60 seconds">:60</button><input class="scan-custom" id="scanCustom" type="number" min="5" max="3600" step="1" inputmode="numeric" placeholder="SEC" aria-label="Custom scan interval in seconds" title="Enter 5–3600 seconds, then press Enter" /><span class="scan-status" id="scanStatus" aria-hidden="true"></span><button class="bezel-btn" id="scanNextBtn" type="button" aria-label="Next channel">&gt;</button></div></div>
-      </header>
-
-      <div class="body" id="layout">
-        <aside class="tuner">
-          <div class="dial-wrap" id="dial" aria-label="Station dial">
-            <div class="dial-ring"></div>
-            <div class="dial-face"></div>
-            <div id="ticks"></div>
-            <div class="pointer" id="pointer"></div>
-            <div class="hub"></div>
-            <div class="clock" id="clock" aria-hidden="true">00:00:00</div>
-          </div>
-
-          <div class="previews" id="previews"></div>
-
-          <div class="readout" aria-live="polite">
-            <div class="row">
-              <span class="call" id="call">STANDBY</span>
-              <span class="live off" id="live">LIVE</span>
-            </div>
-            <div class="sub" id="sub">Press START, then choose a channel.</div>
-          </div>
-
-          <div class="keys">
-            <button type="button" id="prevBtn">Prev</button>
-            <button type="button" id="nextBtn">Next</button>
-            <div class="auto-controls"><button class="bezel-btn auto-mark" id="scanMarkBtn" type="button" disabled>START</button><span class="auto-status" id="autoStatus" aria-live="polite"></span></div>
-          </div>
-        </aside>
-
-        <section class="tv">
-          <div class="screen-frame">
-            <div id="stage">
-              <video id="hlsVideo" autoplay muted playsinline></video>
-              <div id="yt"></div>
-            </div>
-            <div class="scan"></div>
-            <div class="glass"></div>
-            <div class="veil" id="veil">
-              <div>
-                <h2>NEWSBOOB</h2>
-                <button class="power" id="power" type="button">START</button>
-                <p>Newsboob is a news player I made for myself that does not track you, serve internet ads, or show “skip button”–style video ads. It is a player for international news in the style of the old-school internet.<br><br>With the channel drawer open, select AUTO, press START at one moment, then STOP at the next. AUTO uses the interval between those clicks to switch channels repeatedly, starting one interval after STOP. Press START again to measure a new interval; closing the drawer stops AUTO. It never inspects video pixels. Timed modes :30 and :60, or a custom number of seconds, keep their countdowns. Click an active mode again to stop scanning, or press “S” to toggle it. Change channels with the right or left arrow. Up and down changes volume; Spacebar mutes. “C” closes or opens the channel drawer, “F” toggles full screen, and “R” reloads the video if it gets stuck.<br><br>This service is free, legal, and not evil. I made it to escape the bubble with another bubble. I’m sharing so I won’t be the only one boobing out in front of it.<br><br>— Sid</p>
-              </div>
-            </div>
-            <div class="veil hidden" id="offair">
-              <div>
-                <h2 id="offTitle">No lock</h2>
-                <p id="offCopy">Could not open this public feed. Try the official live page.</p>
-                <a class="bezel-btn" id="offLink" href="#" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">Open official live</a>
-              </div>
-            </div>
-          </div>
-          <div class="under">
-            <div class="leds">
-              <button class="bezel-btn" id="panelBtn" type="button" aria-label="Hide tuner panel" title="Hide tuner panel">&lt;&lt;</button>
-              <span class="dot" id="pwrLed"></span>
-            </div>
-            <div class="ticker" id="ticker" aria-label="Channels"><div class="ticker-track" id="tickerTrack"></div></div>
-            <div class="bezel-controls">
-              <label class="vol">Vol
-                <input id="vol" type="range" min="0" max="100" value="80" />
-              </label>
-              <button class="bezel-btn" id="muteBtn" type="button">Mute</button>
-              <button class="bezel-btn" id="reloadBtn" type="button">Reload</button>
-              <button class="bezel-btn" id="fsBtn" type="button">Full</button>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </div>
-  <div style="position:fixed;z-index:30;left:10px;bottom:8px;padding:6px 8px;background:#08090ce8;border:1px solid #1c2430;font:10px ui-monospace,monospace"><a href="../donate.html" style="color:#3dffd2;font-weight:800">Support this project</a> · <a href="../donate.html" style="color:#3dffd2">1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr</a></div>
-  <script src="player.js?v=20260923-health"></script>
-</body>
+<div aria-hidden="true" class="carto"></div>
+<div class="desk">
+<div class="set">
+<header class="plate">
+<div class="wordmark">NEWS<i>BOOB</i><span class="datetime" id="titleDate"></span><span class="chan" id="titleChan"></span></div>
+<div class="model"><span>International News</span><div aria-label="Scan modes" class="scan-controls"><button aria-label="Previous channel" class="bezel-btn" id="scanPrevBtn" type="button">&lt;</button><button aria-pressed="false" class="bezel-btn scan-btn" id="scanBtn" title="Measure an interval, then scan automatically" type="button">AUTO</button><button aria-pressed="false" class="bezel-btn scan-btn" id="scan30Btn" title="Switch every 30 seconds" type="button">:30</button><button aria-pressed="false" class="bezel-btn scan-btn" id="scan60Btn" title="Switch every 60 seconds" type="button">:60</button><input aria-label="Custom scan interval in seconds" class="scan-custom" id="scanCustom" inputmode="numeric" max="3600" min="5" placeholder="SEC" step="1" title="Enter 5–3600 seconds, then press Enter" type="number"/><span aria-hidden="true" class="scan-status" id="scanStatus"></span><button aria-label="Next channel" class="bezel-btn" id="scanNextBtn" type="button">&gt;</button></div></div>
+</header>
+<div class="body" id="layout">
+<aside class="tuner">
+<div aria-label="Station dial" class="dial-wrap" id="dial">
+<div class="dial-ring"></div>
+<div class="dial-face"></div>
+<div id="ticks"></div>
+<div class="pointer" id="pointer"></div>
+<div class="hub"></div>
+<div aria-hidden="true" class="clock" id="clock">00:00:00</div>
+</div>
+<div class="previews" id="previews"></div>
+<div aria-live="polite" class="readout">
+<div class="row">
+<span class="call" id="call">STANDBY</span>
+<span class="live off" id="live">LIVE</span>
+</div>
+<div class="sub" id="sub">Press START, then choose a channel.</div>
+</div>
+<div class="keys">
+<button id="prevBtn" type="button">Prev</button>
+<button id="nextBtn" type="button">Next</button>
+<div class="auto-controls"><button class="bezel-btn auto-mark" disabled="" id="scanMarkBtn" type="button">START</button><span aria-live="polite" class="auto-status" id="autoStatus"></span></div>
+</div>
+</aside>
+<section class="tv">
+<div class="screen-frame">
+<div id="stage">
+<video autoplay="" id="hlsVideo" muted="" playsinline=""></video>
+<div id="yt"></div>
+</div>
+<div class="scan"></div>
+<div class="glass"></div>
+<div class="veil" id="veil">
+<div>
+<h2>NEWSBOOB</h2>
+<button class="power" id="power" type="button">START</button>
+<p>Newsboob is a news player I made for myself that does not track you, serve internet ads, or show “skip button”–style video ads. It is a player for international news in the style of the old-school internet.<br/><br/>With the channel drawer open, select AUTO, press START at one moment, then STOP at the next. AUTO uses the interval between those clicks to switch channels repeatedly, starting one interval after STOP. Press START again to measure a new interval; closing the drawer stops AUTO. It never inspects video pixels. Timed modes :30 and :60, or a custom number of seconds, keep their countdowns. Click an active mode again to stop scanning, or press “S” to toggle it. Change channels with the right or left arrow. Up and down changes volume; Spacebar mutes. “C” closes or opens the channel drawer, “F” toggles full screen, and “R” reloads the video if it gets stuck.<br/><br/>This service is free, legal, and not evil. I made it to escape the bubble with another bubble. I’m sharing so I won’t be the only one boobing out in front of it.<br/><br/>— Sid</p>
+</div>
+</div>
+<div class="veil hidden" id="offair">
+<div>
+<h2 id="offTitle">No lock</h2>
+<p id="offCopy">Could not open this public feed. Try the official live page.</p>
+<a class="bezel-btn" href="#" id="offLink" rel="noopener" style="display:inline-block;text-decoration:none" target="_blank">Open official live</a>
+</div>
+</div>
+</div>
+<div class="under">
+<div class="leds">
+<button aria-label="Hide tuner panel" class="bezel-btn" id="panelBtn" title="Hide tuner panel" type="button">&lt;&lt;</button>
+<span class="dot" id="pwrLed"></span>
+</div>
+<div aria-label="Channels" class="ticker" id="ticker"><div class="ticker-track" id="tickerTrack"></div></div>
+<div class="bezel-controls">
+<label class="vol">Vol
+                <input id="vol" max="100" min="0" type="range" value="80"/>
+</label>
+<button class="bezel-btn" id="muteBtn" type="button">Mute</button>
+<button class="bezel-btn" id="reloadBtn" type="button">Reload</button>
+<button class="bezel-btn" id="fsBtn" type="button">Full</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+</div>
+<div style="position:fixed;z-index:30;left:10px;bottom:8px;padding:6px 8px;background:#08090ce8;border:1px solid #1c2430;font:10px ui-monospace,monospace"><a href="../donate.html" style="color:#3dffd2;font-weight:800">Support this project</a> · <a href="../donate.html" style="color:#3dffd2">1LoNg5YrKJ6xM5oKvcCP7nZ1RAuj9wj4Hr</a></div>
+<script src="player.js?v=20260923-health"></script>
+<footer aria-label="Project neutrality" class="neutrality-footer neutrality-overlay">
+<details><summary>Neutrality · Purpose · Data integrity</summary>
+<div class="neutrality-copy">
+<p><strong>The War Maps Project is an open information design project working with open data. It is not an intelligence product or a tactical data source. It is neutral to every conflict represented in the data.</strong></p>
+<p>The War Maps Project honors the dead by making them visible to the world. A human life has the same value regardless of the side, nationality, or civilian or military status recorded in the source. Showing a conflict, actor, border, or loss does not express allegiance or endorsement.</p>
+<p>Our work is to make public records readable through maps, diagrams, print publications, and art. Source attribution, definitions, dates, and distinctions between recorded data and our visual interpretation belong with that work. Readers can examine the methods and obtain the underlying data directly from its publishers.</p>
+<h3>Sources and their published standards</h3>
+<p><strong>Uppsala Conflict Data Program (UCDP):</strong> The conflict and event datasets use published definitions and systematic coding. UCDP describes evaluating sources for independence and transparency, tracing reports to their origins, and assessing reliability in context. Its materials include news reporting, international and nongovernmental organizations, research, historical archives, and truth commission reports. These are research datasets, not a collection of headlines turned into points. <a href="https://www.uu.se/en/department/peace-and-conflict-research/research/ucdp/ucdp-methodology">UCDP methodology</a> · <a href="https://ucdp.uu.se/downloads/">Data and codebooks</a>.</p>
+<p><strong>V-Dem:</strong> The governance data comes with a published measurement methodology. V-Dem combines expert assessments using a statistical model that accounts for differences in coding and reports estimates with uncertainty intervals. <a href="https://www.v-dem.net/about/v-dem-project/methodology/">V-Dem methodology</a>.</p>
+<p><strong>WHO:</strong> WHO’s data principles call for accessible data, transparent methods, provenance and metadata, and adherence to scientific data standards. The oPt Health Cluster dashboard identifies the Palestinian Ministry of Health as the source of its casualty series; that attribution remains part of our presentation. <a href="https://www.who.int/data/principles">WHO data principles</a>.</p>
+<p><strong>CelesTrak:</strong> Public orbital elements are fitted from observations for orbit estimation. The satellite layer presents dated estimates from saved elements, not live tracking or operational tasking. <a href="https://celestrak.org/NORAD/documentation/gp-data-formats.php">CelesTrak GP documentation</a>.</p>
+<p>These are the publishers’ documented methods and standards, not a claim that every source makes the same neutrality declaration. The <a data-source-register="" href="../sources.html">source register</a> identifies the other geographic, health, population, economic, and organizational sources, with attribution and release information. Our neutrality statement belongs to War Maps; it does not speak on behalf of those publishers.</p>
+</div></details></footer></body>
 </html>

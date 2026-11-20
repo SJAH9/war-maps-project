@@ -1,0 +1,335 @@
+/*
+ * Shared visual language from War Maps · The Human Cost.
+ *
+ * The feature-specific death clock, projected ticker and one-dot/one-death
+ * semantics remain in the feature. This sheet carries only its presentation
+ * system into the atlas: the nocturnal field, precise rules, compact controls,
+ * editorial type, evidence colors and restrained display texture.
+ */
+:root{
+  --human-bg:#f0eee7;
+  --human-panel:#e5e3dc;
+  --human-ink:#172029;
+  --human-dim:#59666e;
+  --human-line:#aab4b9;
+  --human-gold:#9a6737;
+  --human-teal:#2d7472;
+  --human-violet:#656aa6;
+  --human-pink:#a94989;
+  --human-field:#d5dcdd;
+  --paper:var(--human-bg);
+  --surface:var(--human-panel);
+  --ink:var(--human-ink);
+  --muted:var(--human-dim);
+  --line:var(--human-line);
+  --strong:#101820;
+  --accent:var(--human-gold);
+  --teal:var(--human-teal);
+  --amber:var(--human-gold);
+  --orange:var(--human-gold);
+  --yellow:var(--human-pink);
+  --map:var(--human-field);
+  --header:rgba(240,238,231,.96);
+  --side-a:var(--human-violet);
+  --side-a-deep:#4e548a;
+  --side-b:var(--human-teal);
+  --side-b-deep:#205d5b;
+  --clay:var(--human-pink);
+  --terracotta:var(--human-gold);
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --human-bg:#080f18;
+  --human-panel:#0c1722;
+  --human-ink:#e7e6dc;
+  --human-dim:#a7b7bf;
+  --human-line:#34444e;
+  --human-gold:#d6ac78;
+  --human-teal:#83c6c3;
+  --human-violet:#a0a7e0;
+  --human-pink:#ed90d4;
+  --human-field:#070e16;
+  --paper:var(--human-bg);
+  --surface:var(--human-panel);
+  --ink:var(--human-ink);
+  --muted:var(--human-dim);
+  --line:var(--human-line);
+  --strong:#e7e6dc;
+  --accent:var(--human-gold);
+  --teal:var(--human-teal);
+  --amber:var(--human-gold);
+  --orange:var(--human-gold);
+  --yellow:var(--human-pink);
+  --map:var(--human-field);
+  --header:rgba(8,15,24,.96);
+  --side-a:var(--human-violet);
+  --side-a-deep:#7279bd;
+  --side-b:var(--human-teal);
+  --side-b-deep:#4f9694;
+  --clay:var(--human-pink);
+  --terracotta:var(--human-gold);
+  --neon:#83c6c3;
+}
+
+html{background:var(--paper)}
+body{
+  min-width:280px;
+  background:var(--paper);
+  color:var(--ink);
+  font:13px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  pointer-events:none;
+  background:repeating-linear-gradient(transparent 0,transparent 3px,rgba(3,8,13,.055) 4px);
+  opacity:.38;
+}
+:root:not([data-theme="dark"]) body::after{opacity:.14}
+
+a{color:var(--teal);text-underline-offset:4px}
+a:hover{color:var(--human-pink)}
+h1,h2{font-family:Georgia,serif;font-weight:400;letter-spacing:-.035em}
+h3{letter-spacing:.08em}
+button,input,select,textarea{font:inherit;border-radius:2px}
+button,input,select,textarea,fieldset{border-color:var(--line)}
+button{color:var(--ink);background:transparent}
+button:hover{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 9%,transparent)}
+button[aria-pressed="true"],button[aria-selected="true"]{color:var(--teal);border-color:var(--teal);background:color-mix(in srgb,var(--teal) 9%,transparent)}
+input,select,textarea{background:var(--paper);color:var(--ink)}
+input[type="range"],input[type="checkbox"],input[type="radio"]{accent-color:var(--teal)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--human-pink);outline-offset:4px}
+.eyebrow{color:var(--human-gold);font-size:.66rem;letter-spacing:.13em}
+
+/* A narrow instrument rail replaces the broad conventional site header. */
+.site-header{
+  min-height:48px;
+  padding:0 13px;
+  gap:16px;
+  border-color:var(--line);
+  background:var(--header);
+  box-shadow:0 1px 0 rgba(0,0,0,.22);
+}
+.site-header .identity{gap:9px;color:var(--human-gold);font-size:.78rem;letter-spacing:.055em;text-transform:uppercase}
+.site-header .identity-mark{flex-basis:30px;width:30px;height:34px;filter:saturate(.65) hue-rotate(128deg)}
+.primary-nav{gap:4px}
+.primary-nav a{
+  min-height:32px;
+  padding:3px 8px;
+  border:1px solid transparent;
+  color:var(--muted);
+  font-size:.66rem;
+  letter-spacing:.02em;
+}
+.primary-nav a:hover{border-color:var(--line);color:var(--ink)}
+.primary-nav a[aria-current="page"]{border-color:var(--teal);color:var(--teal);text-decoration:none;background:color-mix(in srgb,var(--teal) 8%,transparent)}
+.icon-button,.nav-toggle,.install-action{min-height:32px;height:32px;border-color:var(--line);background:transparent;color:var(--ink);font-size:.66rem}
+
+/* The Human Cost clock interrupts the atlas at the annual estimate's cadence. */
+.human-cost-clock{
+  position:relative;
+  z-index:19;
+  display:grid;
+  grid-template-columns:auto minmax(160px,1fr) auto;
+  align-items:center;
+  gap:14px;
+  min-height:30px;
+  padding:5px clamp(12px,3vw,42px);
+  border-bottom:1px solid var(--line);
+  background:#000;
+  color:#fff;
+}
+.human-cost-clock-label{font-size:.56rem;letter-spacing:.12em;white-space:nowrap}
+.human-cost-clock.is-disabled .human-cost-clock-label::after{content:" / FLASHES OFF";color:var(--human-pink)}
+.human-cost-clock-marks{display:grid;grid-template-columns:repeat(50,1fr);grid-template-rows:repeat(5,2px);gap:2px 0;justify-items:center}
+.human-cost-clock-marks i{display:block;width:2px;height:2px;background:#202020}
+.human-cost-clock-marks i.lit{background:currentColor}
+.human-cost-clock-count{min-width:54px;color:inherit;font-size:.72rem;font-variant-numeric:tabular-nums;letter-spacing:.14em;text-align:right}
+.human-cost-clock-tip{display:none;position:absolute;top:100%;left:clamp(12px,3vw,42px);z-index:80;max-width:min(520px,calc(100vw - 24px));padding:11px 13px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font-size:.62rem;line-height:1.6;letter-spacing:0;box-shadow:0 14px 34px #0009}
+.human-cost-clock:hover .human-cost-clock-tip,.human-cost-clock:focus-visible .human-cost-clock-tip{display:block}
+.human-cost-page-flash{
+  position:fixed;
+  inset:0;
+  z-index:3000;
+  pointer-events:none;
+  visibility:hidden;
+  background:#fff;
+}
+.human-cost-page-flash.is-visible{visibility:visible}
+.human-cost-disclosure{
+  position:fixed;
+  inset:0;
+  z-index:2500;
+  display:grid;
+  place-items:center;
+  padding:clamp(18px,5vw,72px);
+  background:rgba(3,8,13,.94);
+  color:var(--human-ink);
+}
+.human-cost-disclosure[hidden]{display:none}
+.human-cost-disclosure-panel{
+  width:min(720px,100%);
+  padding:clamp(24px,5vw,62px);
+  border:1px solid var(--human-gold);
+  background:var(--human-bg);
+  box-shadow:0 30px 100px #000;
+}
+.human-cost-disclosure h2{margin:.25rem 0 1.25rem;color:var(--human-ink);font-size:clamp(2rem,6vw,4.8rem);line-height:.98}
+.human-cost-disclosure h2:focus{outline:none}
+.human-cost-disclosure-copy{max-width:62ch;color:var(--human-dim);font-size:clamp(.8rem,1.6vw,1rem);line-height:1.8}
+.human-cost-disclosure-copy strong{color:var(--human-ink);font-weight:500}
+.human-cost-disclosure-clock-line{margin:1.6rem 0;color:var(--human-gold);font-family:Georgia,serif;font-size:clamp(1.15rem,2.7vw,1.8rem);line-height:1.35}
+.human-cost-disclosure-source{font-size:.64rem;color:var(--human-dim)}
+.human-cost-disclosure-actions{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:2rem;padding-top:1rem;border-top:1px solid var(--human-line)}
+.human-cost-disclosure-actions label{display:flex;align-items:center;gap:9px;color:var(--human-dim);font-size:.7rem}
+.human-cost-disclosure-actions button{min-width:110px;padding:8px 15px;border:1px solid var(--human-teal);color:var(--human-teal)}
+body.human-cost-intro-open .human-cost-clock{z-index:2601;box-shadow:0 0 0 2px var(--human-gold),0 0 42px color-mix(in srgb,var(--human-gold) 65%,transparent)}
+.network-3d-page .human-cost-clock{position:fixed;inset:0 290px auto 0;z-index:5}
+.network-3d-page .navigator-hud{top:46px}
+.network-3d-page .navigator-controls{top:122px}
+.network-3d-page .navigator-register{top:30px}
+
+/* The 2026 map opens in the Human Cost feature's event field. */
+.human-cost-map-summary{
+  position:absolute;
+  z-index:7;
+  top:12px;
+  left:12px;
+  display:flex;
+  align-items:center;
+  gap:18px;
+  max-width:calc(100% - 24px);
+  padding:8px 10px;
+  border:1px solid var(--line);
+  background:rgba(8,15,24,.94);
+  box-shadow:0 8px 30px #0008;
+}
+.human-cost-map-summary[hidden]{display:none}
+.human-cost-map-summary>div{min-width:170px}
+.human-cost-map-summary span,.human-cost-map-summary label{display:block;color:var(--human-dim);font-size:.56rem;letter-spacing:.08em;text-transform:uppercase}
+.human-cost-map-summary strong{display:block;color:var(--human-ink);font:400 2.15rem/1 Georgia,serif;letter-spacing:-.05em}
+.human-cost-map-summary label{display:grid;gap:3px}
+.human-cost-map-summary select{min-width:135px;height:30px;padding:3px 7px;border:1px solid var(--line);background:var(--human-bg);color:var(--human-ink);font:inherit;text-transform:none}
+.map-stage:has(.human-cost-map-summary:not([hidden])) .satellite-toolbar{top:86px}
+.map-legend .human-cost-legend i{border-radius:50%;background:var(--human-gold)}
+
+/* Reading guidance becomes a compact evidence/status deck. */
+.view-context{
+  padding:14px clamp(16px,3vw,42px);
+  gap:24px;
+  border-color:var(--line);
+  background:linear-gradient(100deg,color-mix(in srgb,var(--surface) 94%,var(--paper)),var(--paper));
+}
+.view-context h2{font-weight:400}
+.view-context p:not(.eyebrow),.view-context nav a,.evidence-key span,.evidence-key strong{font-size:.65rem}
+.evidence-key i{width:8px;height:8px}
+.evidence-source{background:var(--teal)}
+.evidence-transform{background:var(--human-gold)}
+.evidence-inference{border-color:var(--human-pink)}
+
+/* The shared headings and command decks use the feature's measured spacing. */
+.title-band,.section-heading,.detail-heading,.global-graph-title,.mortality-title,.gas-heading,.newsmedia-heading{
+  padding:24px clamp(18px,4vw,64px) 20px;
+  border-color:var(--line);
+}
+.title-band h1,.global-graph-title h1,.mortality-title h1,.gas-heading h1,.newsmedia-heading h1,.nation-title h1{font-weight:400}
+.controls,.network-command-deck,.mortality-controls,.gas-controls{
+  padding:8px clamp(12px,2vw,28px);
+  gap:7px;
+  border-color:var(--line);
+  background:var(--surface);
+}
+.controls label,.network-command>span,.mortality-controls>label>span,.gas-controls label{color:var(--muted);font-size:.62rem;letter-spacing:.08em}
+.controls input,.controls select,.controls button,.network-command input,.network-command select,.network-command button,.mortality-controls input,.mortality-controls select,.mortality-controls button,.gas-controls input,.gas-controls select,.gas-controls button{border-color:var(--line);background:var(--paper);color:var(--ink)}
+.network-command-deck .network-command{border-color:var(--line);background:var(--paper)}
+.network-command-deck .network-command .network-optimize,.network-command-deck .network-command .graph-optimize{border-color:var(--teal);color:var(--teal)}
+
+/* Visual fields and inspectors inherit the feature's black stage and ruled panel. */
+.map-stage,.network-stage,.global-graph-stage,.mortality-stage,.gas-stage,#map,#network-canvas,#global-graph,#mortality-map,#gas-map{
+  background:var(--human-field);
+}
+.results,.network-inspector,.global-graph-inspector,.mortality-inspector,.gas-aside,.war-register{
+  background:var(--surface);
+  border-color:var(--line);
+}
+.network-workspace,.map-workspace,.mortality-workspace,.gas-workspace{border-color:var(--line)}
+.results-head,.network-inspector-head,.global-graph-inspector-head,.mortality-inspector-head,.gas-aside-head,.war-register header{border-color:var(--line)}
+.network-legend,.global-graph-legend,.mortality-legend,.map-legend{background:rgba(8,15,24,.88);color:#c6d1d4;border-color:var(--line)}
+.network-summary,.global-graph-summary,.mortality-metrics,.gas-facts{background:var(--line)}
+.network-summary>*,.global-graph-summary>*,.mortality-metrics>*,.gas-facts>*{background:var(--surface)}
+.conflict-item:hover,.conflict-item.active,.war-register-list button:hover{background:color-mix(in srgb,var(--teal) 8%,var(--surface))}
+
+/* The opening collection is framed like the Human Cost editorial feature. */
+.landing-page .print-feature{
+  position:relative;
+  isolation:isolate;
+  padding:24px clamp(18px,4vw,64px);
+  border-color:var(--line);
+  background:radial-gradient(ellipse at 76% 22%,color-mix(in srgb,var(--teal) 10%,transparent),transparent 38%),var(--paper);
+}
+.print-feature-intro{display:block;min-height:0}
+.print-feature-copy h1{max-width:700px;margin:.2rem 0 1.4rem;font-size:clamp(2.9rem,6vw,6rem);font-weight:400;line-height:.94;letter-spacing:-.045em}
+.print-feature-copy>p:not(.eyebrow){max-width:48ch;color:var(--human-dim);font-size:.8rem;line-height:1.8}
+.print-feature-copy>a{display:inline-block;margin-top:1.2rem;font-size:.7rem}
+.print-feature-art{position:relative;display:block;align-self:stretch;min-height:520px;overflow:hidden;border-left:1px solid var(--line);background:#050b11}
+.print-feature-art img{width:100%;height:100%;object-fit:cover;object-position:center 38%}
+.print-feature-art span{position:absolute;inset:auto 0 0;padding:72px 18px 14px;background:linear-gradient(transparent,var(--human-bg) 72%);color:var(--human-dim);font-size:.62rem;text-decoration:none}
+.print-feature-art em{color:var(--human-ink);font-family:Georgia,serif;font-size:1rem}
+.print-feature-series{display:grid;grid-template-columns:minmax(220px,.45fr) minmax(0,1.55fr);gap:28px;align-items:start;padding-top:28px;border-top:1px solid var(--line)}
+.print-feature-series h3{margin:0;color:var(--human-ink);font:400 clamp(1.5rem,3vw,2.5rem)/1.05 Georgia,serif;letter-spacing:-.025em;text-transform:none}
+.print-feature-series>div>p:not(.eyebrow){color:var(--human-dim);font-size:.68rem}
+.print-feature-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.print-feature-grid a{padding:12px;background:var(--paper)}
+.print-feature-grid a:hover{background:color-mix(in srgb,var(--teal) 7%,var(--surface))}
+.print-feature-grid img{background:#050b11;border:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
+.print-feature-grid h3{color:var(--teal);font-weight:400;letter-spacing:.02em;text-transform:none}
+.print-feature-links{margin:18px 0 0;font-size:.66rem}
+.landing-page .landing-hero,.landing-path,.landing-trust,.landing-register{border-color:var(--line);background:var(--paper)}
+.landing-page .landing-hero{background:linear-gradient(100deg,var(--surface),var(--paper))}
+.landing-hero h2,.landing-path h2,.landing-trust h2,.landing-register h2{font-weight:400}
+.landing-actions .primary-action{border-color:var(--teal);background:var(--teal);color:#080f18}
+.question-grid,.trust-grid,.landing-register dl{background:var(--line)}
+.question-grid>a,.trust-grid article,.landing-register dl div{background:var(--paper)}
+.question-grid>a:hover{background:color-mix(in srgb,var(--teal) 7%,var(--surface))}
+
+table,details,.source-boundary,.source-item,.detail-meta span,.stat-grid>div,.nation-summary div{border-color:var(--line)}
+.source-item,.detail-meta span,.stat-grid>div,.nation-summary div{background:var(--surface)}
+dialog{border:1px solid var(--teal);background:var(--surface);color:var(--ink)}
+footer{border-top:1px solid var(--line);background:var(--paper);font-size:.66rem}
+.project-support{color:var(--muted);font-size:.64rem}
+
+@media(max-width:1100px){
+  .site-header{min-height:48px}
+  .site-header .primary-nav[data-open="true"]{padding:5px 0;border-color:var(--line);background:var(--paper)}
+}
+@media(max-width:640px){
+  .site-header{padding-inline:9px}
+  .site-header .identity{font-size:.69rem}
+  .site-header .identity-mark{width:25px;height:29px;flex-basis:25px}
+  .site-header .nav-toggle{right:9px;top:8px}
+  .view-context{padding-inline:12px}
+  .landing-page .print-feature{padding-inline:12px}
+  .print-feature-grid a{padding:7px}
+  .human-cost-clock{grid-template-columns:minmax(120px,1fr) auto;gap:8px;padding-inline:9px}
+  .human-cost-clock-label{display:none}
+  .human-cost-clock-marks{grid-template-columns:repeat(50,1fr)}
+  .network-3d-page .human-cost-clock{right:0}
+  .network-3d-page .navigator-hud{top:44px}
+  .network-3d-page .navigator-controls{top:114px}
+  .human-cost-disclosure-actions{align-items:stretch;flex-direction:column}
+  .human-cost-disclosure-actions button{width:100%}
+  .human-cost-map-summary{right:8px;top:8px;left:8px;display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
+  .human-cost-map-summary>div{grid-column:1/-1;min-width:0}
+  .human-cost-map-summary select{width:100%;min-width:0}
+  .map-stage:has(.human-cost-map-summary:not([hidden])) .satellite-toolbar{top:126px}
+  .print-feature-intro{grid-template-columns:1fr;min-height:0}
+  .print-feature-copy h1{font-size:clamp(2.6rem,13vw,4.3rem)}
+  .print-feature-art{min-height:62vh;border-left:0;border-top:1px solid var(--line)}
+  .print-feature-series{grid-template-columns:1fr}
+  .print-feature-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){body::after{display:none}}
+@media print{body::after{display:none}.site-header{position:static}}
