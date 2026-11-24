@@ -1,0 +1,137 @@
+:root{--room-scale:.75;zoom:var(--room-scale)}
+:root{color-scheme:dark;--paper:#080f18;--ink:#e9e5db;--muted:#a6acae;--line:#34424a;--accent:#bd974a;--table-orientation:perspective(1500px) rotateX(43deg)}*{box-sizing:border-box}body{margin:0;overflow:hidden;background:var(--paper);color:var(--ink);font:13px system-ui,sans-serif}button,a{font:inherit}button{color:inherit;background:#101d27;border:1px solid var(--line);padding:9px 12px;cursor:pointer}button:hover,a:hover{color:#f3d28b;border-color:var(--accent)}:focus-visible{outline:2px solid #f3d28b;outline-offset:3px}a{color:inherit;text-decoration:none}.room{position:fixed;inset:0;overflow:hidden;pointer-events:none;background:radial-gradient(ellipse at 50% 33%,#2a3c42 0,#101c26 32%,#050910 78%)}.horizon{position:absolute;top:33.333%;width:100%;height:1px;background:#849d9b66;box-shadow:0 0 65px 14px #8aa29822}.ceiling{position:absolute;inset:0 0 67%;background:repeating-linear-gradient(90deg,transparent 0 24.8%,#96a5a21c 25% 25.1%),linear-gradient(#03070b99,transparent);clip-path:polygon(0 0,100% 0,72% 100%,28% 100%)}.ceiling:after{content:'';position:absolute;top:14%;left:35%;width:30%;height:4px;background:#d5d4b1;box-shadow:0 0 34px #d5d4b177}.floor{position:absolute;top:33.333%;left:-100%;width:300%;height:160%;transform-origin:top center;transform:perspective(450px) rotateX(73deg);background:repeating-linear-gradient(90deg,transparent 0 79px,#99a9a41a 80px 81px),repeating-linear-gradient(0deg,transparent 0 79px,#99a9a41a 80px 81px);mask-image:linear-gradient(transparent,#000 12%,#000)}.wall{position:absolute;top:0;bottom:0;width:17%;background:linear-gradient(90deg,#04070bbb,transparent);border-right:1px solid #acb8b51c;transform:skewY(37deg);transform-origin:top left}.wall.right{right:0;transform:skewY(-37deg) scaleX(-1)}.room-label{position:absolute;top:25px;left:calc(4vw / var(--room-scale));right:calc(4vw / var(--room-scale));display:flex;justify-content:space-between;color:#9daaa9;font-size:10px;letter-spacing:.18em}.table{position:absolute;bottom:165px;left:calc(4vw / var(--room-scale));width:calc(92vw / var(--room-scale));height:calc(76vh / var(--room-scale));transform:var(--table-orientation);transform-origin:center bottom;background:#0c1720;border:2px solid #67716a;box-shadow:0 0 0 8px #18242b,0 0 0 10px #58625c,0 40px 95px #000c;display:flex;flex-direction:column}.table-rim,.near-rim{height:30px;flex:0 0 30px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#17242c;color:#bcc0ae;font-size:10px;letter-spacing:.14em}.table-rim{border-bottom:1px solid #8d8256}.near-rim{border-top:1px solid #8d8256}.display{position:relative;flex:1;min-height:0;background:#080f18}iframe{border:0;width:100%;height:100%;display:block;background:#080f18}#loading{position:absolute;inset:40% 0 auto;text-align:center;pointer-events:none;background:#101d27;padding:16px}#loading[hidden]{display:none}.fascia{position:absolute;bottom:24px;left:calc(4vw / var(--room-scale));width:calc(92vw / var(--room-scale));min-height:130px;background:linear-gradient(#25323a,#0c1620);border:1px solid #59635d;border-top:5px solid #77755f;box-shadow:0 25px 40px #000b;transform:perspective(1500px) rotateX(-7deg);transform-origin:center top}.masthead{display:flex;align-items:center;gap:26px;padding:12px 20px 10px}.identity{display:flex;align-items:center;gap:12px;flex-shrink:0}.identity img{width:47px;height:47px}.identity small{font-size:9px;letter-spacing:.18em;display:block;color:#bab7a7}.identity strong{display:block;font:30px Georgia,serif;letter-spacing:.03em}.masthead p{font-size:11px;color:#c3c4ba;max-width:390px;line-height:1.5;margin:0}.tools{margin-left:auto;display:flex;align-items:center;gap:8px}.tools button,.tools a{font-size:11px;white-space:nowrap}.tools a{padding:8px}nav{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--line)}nav button{border:0;border-right:1px solid var(--line);background:#080f1877;padding:12px;font-size:13px}nav b{font-size:10px;color:#aaae9e;margin-right:10px}nav button[aria-current]{color:#f4d187;background:#bc974a18;box-shadow:inset 0 -3px var(--accent)}body.flat .table{transform:none;top:70px;height:auto;bottom:175px}body.flat .fascia{transform:none}body.flat .room{opacity:.5}@media(max-width:637.5px){.table{bottom:205px;height:calc(72vh / var(--room-scale))}.fascia{bottom:12px}.masthead{flex-wrap:wrap;gap:10px;padding:10px}.masthead p{flex:1;min-width:160px}.tools{width:100%;margin:0;justify-content:flex-end}.identity strong{font-size:24px}.identity img{width:36px}.room-label span:last-child,.table-rim span:last-child,.near-rim span:first-child{display:none}nav button{padding:12px 4px;font-size:11px}nav b{display:none}body.flat .table{bottom:215px;top:55px}.table-rim,.near-rim{font-size:8px;padding:0 9px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+@media(max-width:450px){nav{grid-template-columns:repeat(3,1fr)}nav button{padding:8px 4px}.table{bottom:235px}body.flat .table{bottom:245px}}
+
+/* The far wall meets the floor at the existing one-third horizon. */
+.news-wall{position:absolute;inset:0 0 auto;height:calc(33.333vh / var(--room-scale));display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;z-index:1;border-bottom:2px solid #67716a;background:#050910}
+.news-wall .news-player{min-width:0;height:100%;border-right:1px solid var(--line)}
+.news-wall .news-player:last-child{border-right:0}
+.room-label{display:none}
+.table{height:calc(calc(66.667vh / var(--room-scale)) - 190px)}
+body.flat .table{top:calc(calc(33.333vh / var(--room-scale)) + 16px)}
+@media(max-width:637.5px){.table{height:calc(calc(66.667vh / var(--room-scale)) - 230px)}body.flat .table{top:calc(calc(33.333vh / var(--room-scale)) + 16px)}}
+@media(max-width:450px){.table{height:calc(calc(66.667vh / var(--room-scale)) - 260px)}}
+
+/* Foreground console follows the native controls without covering the map. */
+.fascia{transform:none;bottom:12px;z-index:2;min-height:0}
+.control-console{max-height:calc(23vh / var(--room-scale));overflow:auto;padding:7px 12px;border-bottom:1px solid var(--line);font-size:11px;scrollbar-width:thin}
+.control-console:empty{display:none}
+.console-group{position:static!important;inset:auto!important;display:flex!important;align-items:center;flex-wrap:wrap;gap:7px 14px;margin:0!important;padding:4px 0!important;max-width:none!important;background:none!important;border:0!important;transform:none!important}
+.console-group[hidden],.console-group [hidden]{display:none!important}
+.control-console label{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.control-console input,.control-console select,.control-console button{font:inherit;color:var(--ink);accent-color:var(--accent)}
+.control-console select,.control-console input:not([type=checkbox]):not([type=radio]):not([type=range]){background:#080f18;border:1px solid var(--line);padding:4px;max-width:180px}
+.control-console input[type=range]{width:90px}
+.control-console button{padding:5px 9px}
+.control-console fieldset,.control-console fieldset>div{display:flex;flex-wrap:wrap;gap:8px;border:0;padding:0;margin:0}
+.control-console legend{float:left;color:var(--muted);margin-right:8px}
+.control-console output{color:#f3d28b}
+.control-console .human-cost-map-summary strong{font-size:15px;margin-left:8px}
+.control-console .modebar-group{display:flex;gap:8px}
+.control-console .modebar-btn{cursor:pointer;display:inline-flex;width:20px;height:20px}
+.control-console .modebar-btn svg{width:18px;height:18px;fill:var(--ink)}
+.control-console .timeline-band,.control-console .timeline-heading>div{display:none}
+.masthead{padding:7px 12px;gap:15px}.identity strong{font-size:24px}.identity img{width:32px;height:32px}
+nav button{padding:9px 4px}
+@media(max-height:487.5px){.control-console{max-height:calc(18vh / var(--room-scale))}.masthead p{display:none}.table-rim,.near-rim{height:20px;flex-basis:20px}}
+
+/* Movable remote occupies the side space; table and news-wall geometry is retained. */
+:is(#news-remote,#map-remote,#wars-remote){transform:var(--table-orientation);transform-origin:center bottom;position:absolute;right:5px;top:calc(calc(33.333vh / var(--room-scale)) + 18px);width:192px;padding:8px;z-index:5;border:1px solid #77755f;border-radius:9px;background:linear-gradient(110deg,#25323a,#0c1620);box-shadow:3px 9px 18px #000a;font-size:10px}
+:is(#news-remote,#map-remote,#wars-remote) button{font-size:10px;padding:5px 3px;line-height:1.1}
+#remote-grip{width:100%;touch-action:auto;cursor:pointer;font-size:9px!important;border:0;background:#080f18;letter-spacing:.04em}
+.remote-channels{display:flex;align-items:center;justify-content:space-between;margin:6px 0}.remote-channels button{width:40px}
+.remote-players{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}.remote-players>div{text-align:center;min-width:0}.remote-players span{display:block;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:3px 0}.remote-players>div>div{display:flex;gap:2px}.remote-players>div>div button{flex:1}.remote-players>div>button{width:100%;margin:4px 0}
+:is(#news-remote,#map-remote,#wars-remote) button[aria-pressed=true]{border-color:var(--accent);color:#f3d28b;background:#bd974a22}:is(#news-remote,#map-remote,#wars-remote) button:disabled{opacity:.4}
+.remote-volumes label{display:flex;align-items:center;gap:5px;margin:6px 0}.remote-volumes input{width:96px;min-width:0}
+:is(#news-remote,#map-remote,#wars-remote) input{accent-color:var(--accent)}#remote-scan{width:100%;margin:4px 0}.remote-interval{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px}.remote-interval input{width:100%;margin:0}.remote-interval output{color:#f3d28b}
+#table-video{position:absolute;inset:0;background:#050910;z-index:2}#table-video[hidden]{display:none}#table-feed{width:100%;height:100%;display:block}#table-video-close{position:absolute;bottom:8px;right:8px;background:#101d27df}.show-video>#display{visibility:hidden}
+
+.remote-players button{white-space:nowrap;font-size:9px!important}.remote-volumes label{white-space:nowrap}.remote-volumes input{flex:1;width:0}
+
+/* The handheld remote lies in the same viewing plane as the table. */
+body.flat{--table-orientation:none}
+
+.control-console[hidden]{display:none!important}
+
+/* Each screen owns the vertical fader directly below its buttons. */
+.remote-volume{display:flex;flex-direction:column;align-items:center;gap:5px;margin:6px 0;font-size:10px}
+.remote-volume input[type=range]{writing-mode:vertical-lr;direction:rtl;width:22px;height:100px;margin:0;cursor:pointer}
+
+/* Bevelled shell and stepped side wall give the remote visible thickness. */
+:is(#news-remote,#map-remote,#wars-remote){border-color:#8d8d77 #46535a #303b40 #77817a;background:linear-gradient(120deg,#34434a 0,#25323a 35%,#14212b 100%);box-shadow:inset 1px 1px 1px #d1d6bd55,inset -1px -2px 2px #0009,0 1px 0 #727568,0 3px 0 #465157,0 5px 0 #344047,0 7px 0 #202c34,0 9px 0 #080f18,0 10px 1px #67716a,2px 16px 18px #000c}
+:is(#news-remote,#map-remote,#wars-remote) button{border-radius:3px;background:linear-gradient(#2b3b44,#111d27);box-shadow:inset 0 1px #c5cbb733,0 2px 0 #050a10,0 3px 2px #0008;text-shadow:0 1px 1px #000}
+:is(#news-remote,#map-remote,#wars-remote) button:active{box-shadow:inset 0 2px 3px #000b,0 1px 0 #455159}
+:is(#news-remote,#map-remote,#wars-remote) button[aria-pressed=true]{background:linear-gradient(#52472d,#28271f);box-shadow:inset 0 1px #e1bd6844,0 2px 0 #050a10,0 0 5px #bd974a22}
+:is(#news-remote,#map-remote,#wars-remote) #remote-grip{background:repeating-linear-gradient(0deg,#080f18 0 2px,#1e2b34 2px 3px);box-shadow:inset 0 2px 3px #000b,0 1px 0 #71807866}
+.remote-players>div{border-radius:4px;background:#080f1855;box-shadow:inset 1px 2px 3px #0009,inset -1px -1px 0 #7b8a7b33}
+.remote-volume input[type=range]{border-radius:7px;background:#050a10;box-shadow:inset 2px 2px 4px #000,1px 1px 0 #84917e66}
+/* Identity leads the table front; controls follow to its right or below. */
+.masthead{align-items:flex-start}.control-console{border-top:1px solid var(--line)}
+
+/* Retain the table perspective; size alone follows vertical screen position. */
+:is(#news-remote,#map-remote,#wars-remote){transform:var(--table-orientation) scale(var(--remote-size,1))}
+
+body.flat :is(#news-remote,#map-remote,#wars-remote){transform:scale(var(--remote-size,1))}
+
+:is(#news-remote,#map-remote,#wars-remote){cursor:pointer}:is(#news-remote,#map-remote,#wars-remote) label{cursor:default}
+
+/* Opposite palettes flank the map; native map controls stay in their mirror. */
+#map-remote{left:12px;right:auto;width:320px;max-width:calc(80vw / var(--room-scale))}
+#map-grip{width:100%;font-size:9px!important;letter-spacing:.04em;cursor:pointer;background:repeating-linear-gradient(0deg,#080f18 0 2px,#1e2b34 2px 3px);box-shadow:inset 0 2px 3px #000b,0 1px 0 #71807866}
+#map-remote .control-console{max-height:240px;padding:6px 2px 0;border-bottom:0;cursor:default}
+#map-remote .control-console label{white-space:normal}
+#map-remote .console-group{gap:7px 9px}
+#map-remote .control-console select{max-width:170px}
+
+/* Casing and top bars drag; control inputs retain their own handlers. */
+:is(#news-remote,#map-remote,#wars-remote),#remote-grip,#map-grip{touch-action:none;cursor:grab}
+:is(#news-remote,#map-remote,#wars-remote).dragging,:is(#news-remote,#map-remote,#wars-remote).dragging :is(#remote-grip,#map-grip){cursor:grabbing;user-select:none}
+
+/* Compact World controls: search, paired dates/filters, then options. */
+#map-remote .controls.console-group{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px!important;align-items:center}
+#map-remote .controls.console-group>label{min-width:0;max-width:100%;font-size:10px;gap:4px}
+#map-remote .controls.console-group>.search-control{grid-column:1/-1;display:grid;grid-template-columns:auto minmax(0,1fr)}
+#map-remote .controls.console-group .search-control input{width:100%;max-width:none}
+#map-remote .controls.console-group label:has(input[type=range]){display:grid;grid-template-columns:auto minmax(0,1fr) auto}
+#map-remote .controls.console-group input[type=range]{width:100%;min-width:20px;margin:0}
+#map-remote .controls.console-group select{width:100%;max-width:100%;min-width:0;font-size:10px;padding:3px}
+#map-remote .controls.console-group label:has(select){display:grid;grid-template-columns:1fr;gap:2px}
+#map-remote .controls.console-group input[type=checkbox]{margin:0;flex:0 0 auto}
+#map-remote .control-console{max-height:min(200px,calc(30vh / var(--room-scale)));overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+
+/* The left dock uses the news remote's narrow casing, not the foreground width. */
+#map-remote.map-docked-layout .controls.console-group{grid-template-columns:minmax(0,1fr);gap:5px!important}
+#map-remote.map-docked-layout .controls.console-group label:has(select){grid-template-columns:64px minmax(0,1fr);align-items:center}
+#map-remote.map-docked-layout .controls.console-group>.search-control{grid-column:auto}
+#map-remote.map-docked-layout .control-console{max-height:min(180px,calc(27vh / var(--room-scale)));padding:5px 0 0}
+#map-remote.map-docked-layout .control-console input:not([type=checkbox]):not([type=radio]),#map-remote.map-docked-layout .control-console select{min-width:0;max-width:100%}
+
+/* Table-front controls share the existing masthead row without increasing it. */
+.masthead:has(#front-map-controls:not(:empty)){align-items:center;flex-wrap:nowrap}
+.masthead:has(#front-map-controls:not(:empty)) #boundary{display:none}
+#front-map-controls{display:flex;flex:1 1 0;min-width:0;align-items:center;gap:14px;height:32px;max-height:32px;padding:0;border:0;overflow-x:auto;overflow-y:hidden;white-space:nowrap;scrollbar-width:thin}
+#front-map-controls:empty{display:none}
+#front-map-controls .console-group{flex:0 0 auto;flex-wrap:nowrap;gap:6px;padding:0!important;height:30px}
+#front-map-controls .room-map-place label{font-size:10px}
+#front-map-controls input[type=search]{width:110px}
+#front-map-controls #room-place-result,#front-map-controls [id$="room-place-result"]{max-width:95px;overflow:hidden;text-overflow:ellipsis;font-size:10px}
+#front-map-controls .human-cost-map-summary>div{display:flex;align-items:center;gap:4px}
+#front-map-controls .human-cost-map-summary span{font-size:9px;white-space:nowrap}
+#front-map-controls .human-cost-map-summary strong{font-size:13px;margin:0}
+#front-map-controls label{font-size:10px;gap:4px}
+#front-map-controls select{max-width:115px;padding:3px;font-size:10px}
+.masthead:has(#front-map-controls:not(:empty)) .tools{flex:0 0 auto;width:auto}
+
+#wars-remote{left:12px;right:auto;width:192px;max-width:calc(80vw / var(--room-scale))}
+#wars-remote[hidden]{display:none!important}
+#wars-grip{width:100%;font-size:9px!important;letter-spacing:.04em;touch-action:none;background:repeating-linear-gradient(0deg,#080f18 0 2px,#1e2b34 2px 3px)!important}
+#wars-buttons{display:grid;gap:5px;margin-top:6px}
+#wars-buttons button{width:100%;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+#wars-remote.dragging,#wars-remote.dragging #wars-grip{cursor:grabbing;user-select:none}
+
+/* Nation-only Wars buttons need only a slim strip beside the map. */
+#wars-remote{width:88px;padding:4px;border-radius:5px}
+#wars-grip{font-size:8px!important;letter-spacing:0;padding:3px 0!important;white-space:nowrap}
+#wars-buttons{gap:3px;margin-top:4px}
+#wars-buttons button{padding:3px 2px;font-size:10px}

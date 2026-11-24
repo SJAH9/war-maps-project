@@ -1,0 +1,296 @@
+(() => {
+  const $ = selector => document.querySelector(selector);
+  const data = window.GAS_PRICE_DATA;
+  const geometry = window.WAR_MAPS_GEOMETRY;
+  const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const MAP_SCALE = .63, MAP_Y = 9, GALLON_LITRES = 3.785411784, PRICE_CEILING = 10, MAX_TOWER_HEIGHT = 13;
+  const state = {fuels:new Set(['gasoline']), selectedFuel:'gasoline', region:'All', search:'', selected:null, nation:null, visible:[], worldVisible:[], priceScale:{min:0,max:PRICE_CEILING}, scene:null, renderer:null, camera:null, controls:null, plateRoot:null, worldLandGroup:null, reverseGroup:null, towerGroup:null, reverseTowerGroup:null, worldMeshes:[], reverseMeshes:[], towers:[], worldTowers:[], reverseTowers:[], countryAnchors:[], countryAnchorGroup:null, hoveredTower:null, raycaster:null, pointer:null, flipTarget:0, flipping:false, pointerDown:null};
+  const dark = () => document.documentElement.dataset.theme === 'dark';
+  const activeFuels = () => ['gasoline','diesel'].filter(fuel=>state.fuels.has(fuel));
+  const fuelLabel = fuel => fuel === 'gasoline' ? 'Gasoline' : 'Diesel';
+  const rawPrice = (row,fuel=state.selectedFuel) => row[fuel];
+  const usdPerGallon = (row,fuel=state.selectedFuel) => {
+    const raw = rawPrice(row,fuel);
+    if (raw == null) return null;
+    const perEur = data.currency_per_eur[row.currency];
+    if (!perEur) return null;
+    const inUsd = raw * data.usd_per_eur / perEur;
+    return row.unit === 'US gallon' ? inUsd : inUsd * GALLON_LITRES;
+  };
+  const usdPerLitre = (row,fuel=state.selectedFuel) => { const gallon = usdPerGallon(row,fuel); return gallon == null ? null : gallon / GALLON_LITRES; };
+  const taxInfo = (row,fuel) => GasPriceModel.tax(data,row,fuel);
+  function taxSummary(row,fuel) {
+    const t=taxInfo(row,fuel);
+    return t.known?`Before tax ${money(t.net,'USD')} · taxes ${money(t.amount,'USD')} (${(t.share*100).toFixed(1)}%)`:'Taxes included · amount not separately available';
+  }
+  const money = (value, currency, digits = 2) => new Intl.NumberFormat('en-US', {style:'currency', currency, minimumFractionDigits:digits, maximumFractionDigits:digits}).format(value);
+  const priceFraction = value => {
+    const {min, max} = state.priceScale || {min: 0, max: 1};
+    return Math.max(0, Math.min(1, (value - min) / Math.max(0.01, max - min)));
+  };
+  const footprintScale = value => .28 + Math.pow(priceFraction(value),3) * 1.72;
+  const priceColor = (value,fuel='gasoline') => {
+    const t = priceFraction(value);
+    if(fuel==='diesel')return new THREE.Color('#153d80').lerp(new THREE.Color('#b6e4ff'),t);
+    return t < .5
+      ? new THREE.Color('#12f0c8').lerp(new THREE.Color('#ffd028'), t * 2)
+      : new THREE.Color('#ffd028').lerp(new THREE.Color('#ff140c'), (t - .5) * 2);
+  };
+  const tone = (value,fuel='gasoline') => {
+    const t = priceFraction(value);
+    if(fuel==='diesel')return `color-mix(in srgb, #153d80 ${Math.round((1-t)*100)}%, #b6e4ff)`;
+    return t < .5 ? `color-mix(in srgb, #12f0c8 ${Math.round((1-t*2)*100)}%, #ffd028)` : `color-mix(in srgb, #ffd028 ${Math.round((2-t*2)*100)}%, #ff140c)`;
+  };
+  function refreshPriceScale() {
+    state.priceScale = {min:0,max:PRICE_CEILING};
+    const minEl = $('#gas-scale-min'), maxEl = $('#gas-scale-max');
+    if (minEl) minEl.textContent = money(state.priceScale.min, 'USD');
+    if (maxEl) maxEl.textContent = `${money(state.priceScale.max, 'USD')} ceiling`;
+  }
+  const countryForRow = row => row.region === 'United States' ? 'United States of America'
+    : row.source === 'japan' ? 'Japan' : row.source === 'india' ? 'India'
+    : row.source === 'taiwan' ? 'Taiwan' : row.source === 'accc' ? 'Australia'
+    : row.source === 'nz' ? 'New Zealand' : row.name;
+  function filterRows() {
+    state.worldVisible = data.observations.filter(row => activeFuels().some(fuel=>rawPrice(row,fuel)!=null) &&
+      (state.region === 'All' || (state.region === 'Islands' ? row.island : row.region === state.region)) &&
+      (!state.search || `${row.name} ${row.region} ${row.scope}`.toLocaleLowerCase().includes(state.search)));
+    state.visible = state.nation ? state.worldVisible.filter(row=>countryForRow(row)===state.nation) : state.worldVisible;
+    $('#gas-count').textContent = state.visible.length.toLocaleString();
+    $('#gas-list-count').textContent = `${state.visible.length} priced locations`;
+    if (state.selected && !state.visible.includes(state.selected)) state.selected = null;
+    refreshPriceScale(state.worldVisible);
+    drawTowers();
+    renderInspector();
+    renderList();
+  }
+  function renderInspector() {
+    const row = state.selected;
+    $('#gas-kicker').textContent = row ? `${row.region} / ${row.scope}` : state.nation ? `Nation view / ${data.snapshot}` : `Snapshot ${data.snapshot}`;
+    $('#gas-selected').textContent = row ? row.name : state.nation || 'A geography of pump prices';
+    $('#gas-selected-sub').textContent = row ? row.detail : state.nation ? 'Click a price tower to inspect it. Click outside the nation to turn the map back.' : 'Choose a tower or a location below.';
+    $('#gas-tax-details').innerHTML='';
+    if (!row) {
+      const count = state.visible.length;
+      const dated = [...new Set(state.visible.map(item => item.date))].sort();
+      $('#gas-facts').innerHTML = `<div><span>Visible observations</span><strong>${count}</strong></div><div><span>Price dates</span><strong>${dated[0] || '—'}–${dated.at(-1) || '—'}</strong></div><div><span>Fuel layers</span><strong>${esc(activeFuels().map(fuelLabel).join(' + '))}</strong></div><div><span>Display unit</span><strong>USD / U.S. gallon</strong></div>`;
+      return;
+    }
+    const priceCells=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null).flatMap(fuel=>[
+      [`${fuelLabel(fuel)} price`, `${money(usdPerGallon(row,fuel), 'USD')} / U.S. gallon`],
+      [`${fuelLabel(fuel)} indicative conversion`, `${money(usdPerLitre(row,fuel), 'USD', 2)} / litre`],
+    ]);
+    const cells = [
+      ...priceCells,
+      ['Observation date', row.date],
+      ['Tax treatment', row.tax_included?'Included in pump price':'Not specified by source'],
+      ['Reporting geography', row.scope],
+      ['Exchange rate date', row.currency==='TWD'?(data.taiwan_fx_date||data.fx_date):data.fx_date],
+      ['Exchange source', `<a href="${esc(data.sources[row.currency === 'TWD' ? 'taiwan_fx' : 'fx'])}" target="_blank" rel="noopener noreferrer">${row.currency === 'TWD' ? 'CBC TWD/USD' : 'ECB daily rates'} ↗</a>`],
+      ['Original source', `<a href="${esc(data.sources[row.source])}" target="_blank" rel="noopener noreferrer">Open ${esc(row.source.toUpperCase())} ↗</a>`],
+    ];
+    $('#gas-facts').innerHTML = cells.map(([label,value]) => `<div><span>${esc(label)}</span><strong>${label === 'Original source' || label === 'Exchange source' ? value : esc(value)}</strong></div>`).join('');
+    $('#gas-tax-details').innerHTML=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null).map(fuel=>{
+      const t=taxInfo(row,fuel),total=usdPerGallon(row,fuel);
+      if(!t.known)return `<section class="gas-tax-card"><h3>${esc(fuelLabel(fuel))} · tax amount unavailable</h3><p>Taxes are included in this pump price. No full, source-matched breakdown is available, so this column is not split. This does not mean the price is tax-free.</p></section>`;
+      const share=t.share*100;
+      return `<section class="gas-tax-card"><h3>${esc(fuelLabel(fuel))} · total ${esc(money(total,'USD'))}/gal</h3><div class="gas-tax-bar" role="img" aria-label="${esc(taxSummary(row,fuel))} per U.S. gallon"><i style="width:${100-share}%"></i><i class="gas-tax-swatch" style="width:${share}%"></i></div><dl><div><dt>Before taxes</dt><dd>${esc(money(t.net,'USD'))}/gal</dd></div><div class="gas-tax-value"><dt>Included taxes · ${share.toFixed(1)}%</dt><dd>${esc(money(t.amount,'USD'))}/gal</dd></div></dl><p>${esc(t.method)} · ${esc(t.date)}. <a href="${esc(data.sources[t.source])}" target="_blank" rel="noopener noreferrer">Tax source ↗</a>${total>PRICE_CEILING?' Tower clipped at $10; amounts above are complete.':''}</p></section>`;
+    }).join('')+(row.refresh_note?`<p class="gas-stale-note">${esc(row.refresh_note)}</p>`:'');
+  }
+  function renderList() {
+    const sorted = [...state.visible].sort((a,b) => a.name.localeCompare(b.name) || a.scope.localeCompare(b.scope));
+    $('#gas-list').innerHTML = sorted.length ? sorted.map(row => {
+      const index = data.observations.indexOf(row);
+      const prices=activeFuels().filter(fuel=>usdPerGallon(row,fuel)!=null);
+      const lead=prices[0],value=usdPerGallon(row,lead);
+      const split=prices.some(fuel=>taxInfo(row,fuel).known);
+      return `<button type="button" data-index="${index}" aria-current="${row === state.selected}"><i class="${split?'has-tax-split':''}" style="background:${tone(value,lead)}"></i><span><b>${esc(row.name)}</b><small>${esc(row.scope)} · ${esc(row.date)}${row.refresh_status==='last_verified'?' · last verified':''}</small><small class="${split?'gas-tax-value':''}">${split?'Tax breakdown available':'Tax amount not split'}</small></span><strong>${prices.map(fuel=>`<small>${fuel==='gasoline'?'G':'D'}</small>${esc(money(usdPerGallon(row,fuel),'USD'))}`).join('')}</strong></button>`;
+    }).join('') : `<p class="gas-list-empty">${state.nation ? 'No priced observations are available for this nation and filter. Click outside the nation to return to the world.' : 'No priced observations match these controls. Try another region, fuel, or search.'}</p>`;
+  }
+  function selectRow(row) {
+    const country=countryForRow(row);
+    if (state.nation !== country && state.worldMeshes.some(mesh => mesh.userData.country === country)) {
+      flipToNation(country, row);
+      return;
+    }
+    state.selected = row;
+    renderInspector(); renderList(); drawTowers();
+  }
+  function makeShape(rings, project = ([lon,lat]) => [lon*MAP_SCALE,lat*MAP_SCALE]) {
+    if (!rings?.[0]?.length) return null;
+    const shape = new THREE.Shape();
+    rings[0].forEach((point, index) => {const [x,y]=project(point);index ? shape.lineTo(x,y) : shape.moveTo(x,y);});
+    shape.closePath();
+    rings.slice(1).forEach(ring => {
+      const hole = new THREE.Path();
+      ring.forEach((point, index) => {const [x,y]=project(point);index ? hole.lineTo(x,y) : hole.moveTo(x,y);});
+      hole.closePath(); shape.holes.push(hole);
+    });
+    return shape;
+  }
+  function addWorld() {
+    const ocean = new THREE.Mesh(new THREE.BoxGeometry(232,1.2,116),new THREE.MeshPhongMaterial({color:dark()?'#171f1c':'#929c8d',shininess:16}));
+    ocean.position.y=-.82; state.plateRoot.add(ocean);
+    state.worldLandGroup=new THREE.Group();state.plateRoot.add(state.worldLandGroup);
+    geometry.features.forEach(feature => {
+      const country=feature.properties.ADMIN;
+      const polygons = feature.geometry.type === 'Polygon' ? [feature.geometry.coordinates] : feature.geometry.type === 'MultiPolygon' ? feature.geometry.coordinates : [];
+      polygons.forEach(rings => {
+        const shape=makeShape(rings); if(!shape)return;
+        const geo=new THREE.ShapeGeometry(shape,1); geo.rotateX(-Math.PI/2);
+        const mesh=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:dark()?'#5e6941':'#c2bc8e',side:THREE.DoubleSide,shininess:5}));
+        mesh.userData.country=country;state.worldLandGroup.add(mesh);state.worldMeshes.push(mesh);
+        const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geo,8),new THREE.LineBasicMaterial({color:dark()?'#bcb276':'#5b5f45',transparent:true,opacity:.5}));
+        edge.position.y=.08; state.worldLandGroup.add(edge);
+      });
+    });
+    addCountryLabels();
+  }
+  function canvasTexture(text, opts) {
+    const w = opts.w, h = opts.h;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = opts.font;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (opts.stroke) {
+      ctx.lineJoin = 'round';
+      ctx.lineWidth = opts.strokeWidth || 6;
+      ctx.strokeStyle = opts.stroke;
+      ctx.strokeText(text, w / 2, h / 2);
+    }
+    ctx.fillStyle = opts.fill;
+    ctx.fillText(text, w / 2, h / 2);
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.minFilter = THREE.LinearFilter;
+    return tex;
+  }
+  function addCountryLabels() {
+    if (!geometry?.features || !state.plateRoot) return;
+    if (state.countryAnchorGroup) {
+      state.countryAnchorGroup.traverse(object => {
+        object.geometry?.dispose?.();
+        if (object.material) {
+          object.material.map?.dispose?.();
+          object.material.dispose();
+        }
+      });
+      state.plateRoot.remove(state.countryAnchorGroup);
+    }
+    const group = new THREE.Group();
+    state.countryAnchorGroup = group;
+    state.plateRoot.add(group);
+    state.countryAnchors = [];
+    geometry.features.forEach(feature => {
+      const props = feature.properties || {};
+      const rank = Number(props.LABELRANK) || 6;
+      if (rank > 2) return;
+      const lon = Number(props.LABEL_X), lat = Number(props.LABEL_Y);
+      if (!Number.isFinite(lon) || !Number.isFinite(lat)) return;
+      if (props.ADMIN === 'Antarctica') return;
+      const name = String(props.NAME || props.ADMIN).toUpperCase();
+      const tex = canvasTexture(name, {
+        w: 512, h: 96,
+        font: '600 40px Georgia, serif',
+        fill: 'rgba(214,222,204,0.95)',
+      });
+      const width = Math.min(20, 1.05 * name.length);
+      const mesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, width * 96 / 512),
+        new THREE.MeshBasicMaterial({map: tex, transparent: true, opacity: 0.38, depthWrite: false, side: THREE.DoubleSide})
+      );
+      mesh.rotation.x = -Math.PI / 2;
+      mesh.position.set(lon * MAP_SCALE, 1.05, -lat * MAP_SCALE);
+      mesh.renderOrder = 2;
+      mesh.raycast = () => {};
+      group.add(mesh);
+      state.countryAnchors.push(mesh);
+    });
+  }
+  function addNationReverse(country) {
+    if (state.reverseGroup) {
+      state.reverseGroup.traverse(object=>{object.geometry?.dispose?.();object.material?.dispose?.();});
+      state.plateRoot.remove(state.reverseGroup);
+    }
+    const feature=geometry.features.find(item=>item.properties.ADMIN===country);
+    if(!feature)return;
+    const polygons=feature.geometry.type==='Polygon'?[feature.geometry.coordinates]:feature.geometry.type==='MultiPolygon'?feature.geometry.coordinates:[];
+    const anchor=Number(feature.properties.LABEL_X)||0;
+    const unwrap=lon=>{let delta=lon-anchor;while(delta>180)delta-=360;while(delta<-180)delta+=360;return anchor+delta;};
+    const points=polygons.flatMap(rings=>rings[0]||[]);
+    const xs=points.map(([lon])=>unwrap(lon)),ys=points.map(([,lat])=>lat);
+    const bounds={minX:Math.min(...xs),maxX:Math.max(...xs),minY:Math.min(...ys),maxY:Math.max(...ys)};
+    const centerX=(bounds.minX+bounds.maxX)/2,centerY=(bounds.minY+bounds.maxY)/2;
+    const scale=Math.min(170/Math.max(1,bounds.maxX-bounds.minX),88/Math.max(1,bounds.maxY-bounds.minY),24);
+    const project=([lon,lat])=>[(unwrap(lon)-centerX)*scale,(lat-centerY)*scale];
+    const reverse=new THREE.Group();state.reverseGroup=reverse;state.plateRoot.add(reverse);
+    state.reverseMeshes=[];
+    polygons.forEach(rings=>{
+      const shape=makeShape(rings,project);if(!shape)return;
+      const geo=new THREE.ShapeGeometry(shape,1);geo.rotateX(Math.PI/2);
+      const mesh=new THREE.Mesh(geo,new THREE.MeshPhongMaterial({color:dark()?'#b7ae79':'#e0d39a',side:THREE.DoubleSide,shininess:15,emissive:dark()?'#302a13':'#13130c',emissiveIntensity:.12}));
+      mesh.position.y=-1.76;mesh.userData.country=country;reverse.add(mesh);state.reverseMeshes.push(mesh);
+      const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geo,8),new THREE.LineBasicMaterial({color:'#f9db7b',transparent:true,opacity:.9}));
+      edge.position.y=-1.8;reverse.add(edge);
+    });
+    state.nationProjection={centerX,centerY,scale,unwrap};
+    state.reverseTowerGroup=new THREE.Group();reverse.add(state.reverseTowerGroup);
+  }
+  function flipToNation(country,selected=null) { if(selected)selectRow(selected); }
+  function flipToWorld() { state.nation=null;state.selected=null;filterRows();window.WarRoomMap.reset(); }
+  function addAtmosphere() {
+    let seed=14031945; const random=()=>((seed=(seed*1664525+1013904223)>>>0)/4294967296),stars=[];
+    for(let i=0;i<1000;i++){const az=random()*Math.PI*2,el=-.28+Math.pow(random(),1.25)*1.15,r=720+random()*120,h=Math.cos(el)*r;stars.push(Math.cos(az)*h,Math.sin(el)*r-60,Math.sin(az)*h);}
+    const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.Float32BufferAttribute(stars,3));
+    state.scene.add(new THREE.Points(sg,new THREE.PointsMaterial({color:'#e4edf5',size:1.8,sizeAttenuation:true,transparent:true,opacity:dark()?.72:.43,depthWrite:false,fog:false})));
+    const vertices=[],spacing=34,h=spacing*Math.sqrt(3)/2,tetra=spacing*Math.sqrt(2/3);
+    const point=(i,j,k)=>[i*spacing+j*spacing/2+k*spacing/2,-120+k*tetra,j*h+k*h/3];
+    for(let k=0;k<=4;k++)for(let i=-9;i<=9;i++)for(let j=-9;j<=9;j++){const p=point(i,j,k);if(i<9)vertices.push(...p,...point(i+1,j,k));if(j<9)vertices.push(...p,...point(i,j+1,k));if(k<4)vertices.push(...p,...point(i,j,k+1));}
+    const lattice=new THREE.BufferGeometry();lattice.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+    state.scene.add(new THREE.LineSegments(lattice,new THREE.LineBasicMaterial({color:'#c9a34b',transparent:true,opacity:dark()?.17:.21,depthWrite:false})));
+  }
+  let taxPatternCanvas=null;
+  function taxPatternTexture(){
+    if(!taxPatternCanvas){taxPatternCanvas=document.createElement('canvas');taxPatternCanvas.width=taxPatternCanvas.height=32;const c=taxPatternCanvas.getContext('2d');c.fillStyle='#f59bdf';c.fillRect(0,0,32,32);c.strokeStyle='#972673';c.lineWidth=6;for(let i=-32;i<64;i+=16){c.beginPath();c.moveTo(i,0);c.lineTo(i+32,32);c.stroke();}}
+    const texture=new THREE.CanvasTexture(taxPatternCanvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,2);return texture;
+  }
+  function drawTowers() {
+    const series=activeFuels().map(fuel=>({name:fuelLabel(fuel),color:fuel==='gasoline'?'#f2c76c':'#7ecdd1',unit:'USD / US gallon',points:state.worldVisible.map(row=>({lon:row.lon,lat:row.lat,value:usdPerGallon(row,fuel),row,label:row.name+' · '+row.date+' · '+taxSummary(row,fuel)}))}));
+    window.WarRoomMap.draw(series,selectRow,state.selected);
+  }
+  function hit(event) {
+    const box=state.renderer.domElement.getBoundingClientRect();
+    state.pointer.set((event.clientX-box.left)/box.width*2-1,-(event.clientY-box.top)/box.height*2+1);
+    state.raycaster.setFromCamera(state.pointer,state.camera);
+    const targets=state.nation?[...state.reverseTowers,...state.reverseMeshes]:[...state.worldTowers,...state.worldMeshes];
+    return state.raycaster.intersectObjects(targets,true).find(hit=>hit.object.userData.row||hit.object.userData.country)?.object || null;
+  }
+  function initScene() { window.WarRoomMap.init('#gas-map',geometry); }
+  function init() {
+    if (!data?.observations?.length) {$('#gas-map').innerHTML='<p class="gas-error">The price snapshot did not load. Reload the page and check the data asset.</p>';return;}
+    const fxDate=$('#gas-fx-date');if(fxDate)fxDate.textContent=data.fx_date;
+    const splitCount=data.observations.filter(row=>['gasoline','diesel'].some(fuel=>taxInfo(row,fuel).known)).length;
+    $('#gas-tax-coverage').textContent=`${splitCount} of ${data.observations.length} places have a full tax split`;
+    $('#gas-refresh-note').textContent=`Refreshed ${data.snapshot}. Observation dates vary by source; FX ${data.fx_date}. New Zealand: last verified ${data.source_updates?.nz?.observation_date||'date unavailable'}; current source retrieval unavailable.`;
+    const sources=[['AAA','aaa'],['EIA','eia'],['EU Oil Bulletin','eu'],['Japan ANRE','japan_original'],['ACCC','accc'],['MBIE','nz'],['PPAC','india'],['Taiwan CPC','taiwan'],['ECB FX','fx'],['CBC FX','taiwan_fx']];
+    $('#gas-source-line').innerHTML=`Sources and methodology: ${sources.map(([name,key])=>`<a href="${esc(data.sources[key])}" target="_blank" rel="noopener noreferrer">${esc(name)} ↗</a>`).join('')}<a href="${esc(data.sources.geonames)}" target="_blank" rel="noopener noreferrer">GeoNames coordinates ↗</a>`;
+    document.querySelectorAll('[data-fuel]').forEach(input=>input.addEventListener('change',event=>{
+      const fuel=event.target.dataset.fuel;
+      if(event.target.checked)state.fuels.add(fuel);else if(state.fuels.size>1)state.fuels.delete(fuel);else event.target.checked=true;
+      if(!state.fuels.has(state.selectedFuel))state.selectedFuel=activeFuels()[0];
+      filterRows();
+    }));
+    $('#gas-region').addEventListener('change',event=>{if(state.nation)flipToWorld();state.region=event.target.value;filterRows();});
+    $('#gas-search').addEventListener('input',event=>{state.search=event.target.value.trim().toLocaleLowerCase();filterRows();});
+    $('#gas-list').addEventListener('click',event=>{const button=event.target.closest('[data-index]');if(button)selectRow(data.observations[Number(button.dataset.index)]);});
+    $('#gas-back').addEventListener('click',flipToWorld);
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&state.nation)flipToWorld();});
+    $('#gas-reset').addEventListener('click',()=>{if(state.nation)flipToWorld();state.fuels=new Set(['gasoline']);state.selectedFuel='gasoline';state.region='All';state.search='';state.selected=null;document.querySelectorAll('[data-fuel]').forEach(input=>{input.checked=input.dataset.fuel==='gasoline';});$('#gas-region').value='All';$('#gas-search').value='';if(state.camera){state.camera.position.set(185,190,285);state.controls.target.set(0,MAP_Y+8,-20);state.controls.update();}filterRows();});
+    $('#theme-toggle').addEventListener('click',()=>{const next=dark()?'light':'dark';document.documentElement.dataset.theme=next;try{localStorage.setItem('war-maps-theme',next);}catch(error){} window.location.reload();});
+    try{initScene();}catch(error){$('#gas-map').innerHTML=`<p class="gas-error">The 3D field could not start: ${esc(error.message)}. The searchable price list remains available below.</p>`;}
+    filterRows();
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();

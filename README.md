@@ -46,6 +46,7 @@ The current release is therefore an operational foundation, not a claim that eve
 
 ## Open the deployed atlas
 
+- [War Room — map table and three live-news screens](https://sjah9.github.io/war-maps-project/outputs/war-room/)
 - [War Maps guided start](https://sjah9.github.io/war-maps-project/)
 - [Conflict network](https://sjah9.github.io/war-maps-project/outputs/web/network.html)
 - [Interactive conflict map](https://sjah9.github.io/war-maps-project/outputs/web/map.html)

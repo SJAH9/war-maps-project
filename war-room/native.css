@@ -1,0 +1,83 @@
+/* Presentation adapter only: native scripts, datasets, controls and calculations remain intact. */
+html{color-scheme:dark}body{min-width:0!important;margin:0!important;background:#080f18!important}body>.site-header,body>.human-cost-clock,body:not(.evidence)>footer,body>.human-cost-page-flash{display:none!important}main{max-width:none!important;margin:0!important;padding:0!important}.explorer,.gas-main,.hormuz-main{padding:0!important}body:not(.evidence) .title-band,body:not(.evidence) .controls,body:not(.evidence) .results,body:not(.evidence) .related-panel,body:not(.evidence) .states-section,body:not(.evidence) .method-section,body:not(.evidence) .sources-section,body:not(.evidence) .gas-heading,body:not(.evidence) .gas-controls,body:not(.evidence) .gas-aside,body:not(.evidence) .gas-method,body:not(.evidence) .hormuz-main>h1,body:not(.evidence) .hormuz-main>p,body:not(.evidence) .hormuz-controls,body:not(.evidence) .hormuz-workspace>aside,body:not(.evidence) .hormuz-history,body:not(.evidence) .hormuz-main>section:not(.hormuz-workspace),body:not(.evidence) .reading-guide,body:not(.evidence) .page-guide,body:not(.evidence) .atlas-reading-guide{display:none!important}
+body:not(.evidence) .map-workspace,body:not(.evidence) .gas-workspace,body:not(.evidence) .hormuz-workspace{display:block!important;height:auto!important;min-height:0!important;margin:0!important}body:not(.evidence) .map-stage,body:not(.evidence) .gas-stage,body:not(.evidence) .hormuz-stage{height:100vh!important;min-height:0!important;border:0!important}body:not(.evidence) #map{height:calc(100vh - 108px)!important;min-height:0!important}body:not(.evidence) #civ-map{height:100vh!important;min-height:0!important}body:not(.evidence) .hormuz-stage canvas{width:100%!important;height:calc(100vh - 85px)!important;min-height:0!important}body:not(.evidence) .hormuz-stage>p{font-size:10px!important;margin:4px 12px!important}body:not(.evidence) .ship-nationality-legend{max-height:26px;overflow:auto;padding:4px 12px!important}body:not(.evidence){overflow:auto}.evidence{overflow:auto!important}.evidence .gas-stage{min-height:500px}.evidence .hormuz-stage{min-height:650px}body .human-cost-disclosure{z-index:100}.war-room-native-note{font-size:11px;padding:8px;border-top:1px solid var(--line);background:var(--paper)}
+
+body:not(.evidence) .view-context{display:none!important}
+
+body:not(.evidence) .hormuz-main>header{display:none!important}
+#freshness{display:block;margin:4px 12px;font-size:11px;color:var(--muted)}
+
+body:not(.evidence) .satellite-toolbar{display:none!important}
+@media(max-width:600px){body:not(.evidence) .human-cost-map-summary{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px;padding:8px!important}body:not(.evidence) .human-cost-map-summary strong{font-size:20px!important}body:not(.evidence) .human-cost-map-summary label{font-size:10px!important}body:not(.evidence) .human-cost-map-summary select{max-width:100px;padding:4px!important}body:not(.evidence) #map{height:calc(100vh - 120px)!important}body:not(.evidence) .map-legend{font-size:9px!important;padding:5px!important}}
+
+/* Satellite controls occupy their own row, outside every geographic plot. */
+.room-satellite-dock{position:static!important;display:block;background:#101d27;border-bottom:1px solid #34444e;padding:4px 10px}
+.room-satellite-dock .satellite-toolbar,.room-satellite-dock .orbit-controls{position:static!important;inset:auto!important;display:flex!important;flex-wrap:wrap;gap:8px;margin:0!important;padding:5px!important;font-size:11px;max-width:none!important}
+body:not(.evidence) .room-satellite-dock .satellite-toolbar{display:flex!important}
+body:not(.evidence) .room-satellite-dock~.map-workspace .map-stage{height:calc(100vh - var(--room-satellite-height,70px))!important;display:flex;flex-direction:column}
+body:not(.evidence) .room-satellite-dock~.map-workspace #map{height:auto!important;flex:1;min-height:100px!important}
+body[data-room-view="human"] .gas-stage,body[data-room-view="fuel"] .gas-stage,body[data-room-view="living"] .mortality-stage{display:flex!important;flex-direction:column}
+.room-flat-map{position:relative!important;inset:auto!important;width:100%!important;flex:1;min-height:360px!important;height:calc(100vh - 45px)!important}
+body:not(.evidence) .room-flat-map{height:calc(100vh - 45px)!important;min-height:150px!important}
+.room-map-boundary{position:static!important;background:#080f18;color:#a6acae;font-size:10px;margin:0;padding:5px 12px}
+body[data-room-view="human"] .gas-stage>div:not(.room-flat-map),body[data-room-view="fuel"] .gas-stage>div:not(.room-flat-map){display:none!important}
+body:not(.evidence) .mortality-title,body:not(.evidence) .mortality-controls,body:not(.evidence) .mortality-inspector,body:not(.evidence) .mortality-legend,body:not(.evidence) .mortality-stage>div:not(.room-flat-map){display:none!important}
+body:not(.evidence) .mortality-workspace{display:block!important;height:auto!important}
+body:not(.evidence) .mortality-stage{height:100vh!important;min-height:0!important}
+
+/* Native 3D labels remain in the DOM for their data updates, outside the plotted ink. */
+.room-flat-map>.gas-stage-label,.room-flat-map>.gas-stage-right,.room-flat-map>.gas-stage-foot,.room-flat-map>.gas-country-labels,.room-flat-map>.gas-tooltip{display:none!important}
+body:not(.evidence) .gas-tax-legend{display:none!important}
+.gas-tax-legend>span:not(#gas-tax-coverage){display:none!important}
+body:not(.evidence)[data-room-view="fuel"] .gas-main{height:100vh;display:flex;flex-direction:column}
+body:not(.evidence)[data-room-view="fuel"] .gas-refresh-note{margin:0;padding:5px 12px;font-size:10px}
+body:not(.evidence)[data-room-view="fuel"] .gas-workspace{flex:1;min-height:0!important}
+body:not(.evidence)[data-room-view="fuel"] .gas-stage{height:100%!important}
+body:not(.evidence) .data-playback{display:none!important}
+.evidence .data-playback{position:static!important}
+
+/* Native nation renderer, timeline and record tabs remain on the room table. */
+body[data-room-view="nation"] .nation-title{padding:8px 14px!important;margin:0!important}
+body[data-room-view="nation"] .nation-title h1{font-size:24px;margin:0}
+body[data-room-view="nation"] .tab-bar{position:static;margin:0;padding:4px 14px}
+body[data-room-view="nation"] .nation-map{height:65vh!important;min-height:240px!important}
+body[data-room-view="nation"] .nation-timeline{padding:8px 14px}
+
+/* Map surfaces use the table's complete viewport; evidence remains an explicit view. */
+body:not(.evidence) main,body:not(.evidence) .explorer,body:not(.evidence) .map-workspace,body:not(.evidence) .map-stage,body:not(.evidence) .gas-workspace,body:not(.evidence) .gas-stage,body:not(.evidence) .mortality-workspace,body:not(.evidence) .mortality-stage{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+body:not(.evidence)[data-room-view="nation"] #nation-main{height:100vh;display:flex;flex-direction:column;overflow:hidden}
+body:not(.evidence)[data-room-view="nation"] .nation-title,body:not(.evidence)[data-room-view="nation"] .nation-data-grid,body:not(.evidence)[data-room-view="nation"] .project-support{display:none!important}
+body:not(.evidence)[data-room-view="nation"] .tab-bar{flex:0 0 auto;padding:3px 8px!important}
+body:not(.evidence)[data-room-view="nation"] .nation-tab:not([hidden]){display:flex;flex:1;min-height:0;flex-direction:column;padding:0!important;overflow:auto}
+body:not(.evidence)[data-room-view="nation"] .nation-map{flex:1;height:auto!important;min-height:0!important;width:100%!important;border:0!important}
+body:not(.evidence)[data-room-view="nation"] .nation-timeline{flex:0 0 auto;padding:2px 10px!important;display:flex;align-items:center;gap:10px}
+body:not(.evidence)[data-room-view="nation"] .nation-timeline .timeline-heading{display:contents}
+body:not(.evidence)[data-room-view="nation"] .nation-timeline .timeline-heading>div,body:not(.evidence)[data-room-view="nation"] .timeline-band{display:none!important}
+body:not(.evidence)[data-room-view="nation"] .nation-timeline input{flex:1;margin:4px 0}
+body:not(.evidence)[data-room-view="nation"] .relation-legend{flex:0 0 auto;margin:0;padding:4px 8px;font-size:10px}
+body:not(.evidence)[data-room-view="nation"] #raw{display:block!important}
+body:not(.evidence)[data-room-view="nation"] #raw[hidden]{display:none!important}
+
+/* Foreground proxies operate these original controls in their native document. */
+body .room-source-controls,body .room-satellite-dock:has(.room-source-controls){display:none!important}
+body:not(.evidence) .room-satellite-dock~.map-workspace .map-stage{height:100vh!important}
+body:not(.evidence) #map{height:auto!important;flex:1;min-height:0!important}
+body:not(.evidence) .map-stage{display:flex;flex-direction:column}
+
+/* Orbit rotates native geographic paths; plot boxes and clipping stay fixed. */
+
+/* World map's own lower corners hold place search and its native summary. */
+body[data-room-view="map"] .room-satellite-dock,body[data-room-view="map"] .satellite-toolbar{display:none!important}
+.room-map-bottom{flex:0 0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:end;gap:10px;padding:6px 10px;background:#080f18;border-top:1px solid #34424a}
+.room-map-place{justify-self:start;min-width:0;max-width:100%;font:11px system-ui,sans-serif;color:#e9e5db}
+.room-map-place label{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.room-map-place input{min-width:0;width:180px;max-width:100%;font:inherit;background:#101d27;color:inherit;border:1px solid #34424a;padding:5px}
+.room-map-place [role="status"]{display:block;color:#a6acae;font-size:10px;margin-top:4px}
+body[data-room-view="map"] .room-map-bottom .human-cost-map-summary{position:static!important;inset:auto!important;display:flex!important;justify-self:end;justify-content:flex-end;flex-wrap:wrap;gap:6px 10px!important;min-width:0;max-width:100%;margin:0;padding:6px!important;box-shadow:none}
+.room-map-bottom .human-cost-map-summary>div{min-width:0}
+body[data-room-view="map"] .room-map-bottom .human-cost-map-summary strong{font-size:22px!important}
+.room-map-bottom .human-cost-map-summary select{min-width:0;max-width:130px;height:26px;padding:3px;font-size:10px}
+
+body[data-room-view="map"] .room-map-bottom .human-cost-map-summary[hidden]{display:none!important}
+
+body[data-room-view="map"] .room-map-bottom:has(.room-source-controls){display:none!important}

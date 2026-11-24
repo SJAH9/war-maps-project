@@ -1,0 +1,14 @@
+// Local War Room controls call the native tuner and playback functions directly.
+window.warRoomNews=Object.freeze({
+ state:()=>({on,index,id:STATIONS[index].id,nation:face(STATIONS[index]),muted,volume:Number(el.vol.value),scan:scanMode,seconds:scanCustomSeconds}),
+ step:direction=>{const next=(index+(direction<0?-1:1)+STATIONS.length)%STATIONS.length;if(on)return go(next);index=next;setPointer(index);setStatus('off','Off');},
+ mute:()=>{muted=!muted;applyVolume();},
+ setMuted:value=>{muted=Boolean(value);applyVolume();},
+ volume:value=>{el.vol.value=String(Math.max(0,Math.min(100,Number(value)||0)));applyVolume();},
+ power:()=>{
+  if(!on){go(index);return;}
+  on=false;token+=1;locked=-1;setScanMode(false);stopHls();stopYt();
+  [...previewPlayers.keys()].forEach(killPreview);hideOffAir();el.veil.classList.remove('hidden');setStatus('off','Off');
+ },
+ scan:(enabled,seconds)=>{scanCustomSeconds=Math.max(1,Math.min(90,Number(seconds)||45));scanType='custom';el.scanCustom.value=String(scanCustomSeconds);setScanMode(enabled&&on);}
+});
