@@ -4,7 +4,8 @@ SLIDES=[
  ('Conflict map','map.html','conflict-map.webp','Locate recorded conflicts and events across places and years. Explore the geography, then open the underlying records.'),
  ('Conflict Network','network.html','conflict-network.webp','Explore the participants, places, and events connected within a conflict. Follow the structure behind the map.'),
  ('Conflict Sides','conflict-sides.html','conflict-sides.webp','One dot represents one death. Compare the losses of each side alongside civilian and unknown deaths, by conflict and year.'),
- ('Satellite estimated distance','satellites.html','satellites.webp','Rotate a 3D Earth and explore the estimated distance between ICEYE-X36 and Kosmos 2612 across a 30-day retrospective orbital model.')]
+ ('Satellite estimated distance','satellites.html','satellites.webp','Rotate a 3D Earth and explore the estimated distance between ICEYE-X36 and Kosmos 2612 across a 30-day retrospective orbital model.'),
+ ('War Room','../war-room/','war-room.webp','Explore the native world atlas on an interactive map table, with three independent news screens, draggable controls, and quick access to five recorded conflicts.')]
 def insert(soup):
     for old in soup.select('#view-carousel'):old.decompose()
     for kind,attr,value in [('link','href','homepage-carousel.css'),('script','src','homepage-carousel.js')]:

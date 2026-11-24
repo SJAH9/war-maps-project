@@ -1,4 +1,4 @@
-const VERSION = 'war-maps-v0.13.1-decades-2026-11-20';
+const VERSION = 'war-maps-v0.14.0-war-room-navigation';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const BASE = new URL('./', self.location.href);

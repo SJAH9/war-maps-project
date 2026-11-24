@@ -14,7 +14,8 @@
     ['newsmedia.html', 'NewsMedia'],
     ['information.html', 'Evidence guide'],
     ['publications.html', 'Print editions'],
-    ['install.html', 'Install']
+    ['install.html', 'Install'],
+    ['../war-room/', 'War Room']
   ];
   const documentationPages = new Set(['information.html', 'about.html', 'method.html', 'data-conflict.html', 'data-governance.html', 'data-health.html', 'data-maps.html', 'coverage.html', 'sources.html', 'color-legend.html']);
   const header = document.querySelector('.site-header');
