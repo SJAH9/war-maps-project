@@ -87,7 +87,7 @@ addEventListener('DOMContentLoaded',()=>{
   const rank=p=>p.key===q?0:p.key.startsWith(q)?1:p.key.split(/[^a-z0-9]+/).some(w=>w.startsWith(q))?2:p.key.includes(q)?3:4;
   const matches=places.filter(p=>rank(p)<4).sort((a,b)=>rank(a)-rank(b)||a.key.length-b.key.length||a.key.localeCompare(b.key)||a.country.localeCompare(b.country));
   if(!matches.length){result.textContent='No matching atlas place';return;}
-  const target=matches[0];clearPose();focus=target;phase=0;last=0;
+  const target=matches[0];enabled=false;toggle.checked=false;clearPose();focus=target;phase=0;last=0;
   result.textContent=target.name+(target.country?' · '+target.country:'')+' · '+target.kind;
   await Promise.all([...plots].filter(p=>p.isConnected).map(plot=>{
    const patch={};Object.keys(plot._fullLayout||{}).filter(k=>/^geo\d*$/.test(k)).forEach(k=>{
@@ -95,9 +95,8 @@ addEventListener('DOMContentLoaded',()=>{
    });return Object.keys(patch).length?Plotly.relayout(plot,patch):Promise.resolve();
   }));
   if(revision!==searchRevision)return;
-  enabled=!matchMedia('(prefers-reduced-motion: reduce)').matches;toggle.checked=enabled;
+  // A selection establishes a still inspection view; Orbit remains an explicit choice.
   plots.forEach(plot=>{plot.dataset.roomOrbitFocus=JSON.stringify(target);});
-  if(enabled)enableOrbit();
  }
  search.addEventListener('input',()=>{clearTimeout(queryTimer);++searchRevision;queryTimer=setTimeout(choosePlace,350);});
  // The main World-map Find field also navigates to its best geographic match.

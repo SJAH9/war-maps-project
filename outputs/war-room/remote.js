@@ -63,166 +63,64 @@ function paintTable(t){requestAnimationFrame(paintTable);if(videoSlot===null||t-
  canvas.dataset.feedState=state?.on?'unavailable':'off';context.fillStyle='#e9e5db';context.font='16px system-ui';context.textAlign='center';context.fillText(nation,w/2,h/2-12);context.fillText(state?.on?'Waiting for the source feed':'Off',w/2,h/2+16);
 }
 requestAnimationFrame(paintTable);
-// Click presets and free dragging share the native table-plane placement.
-const palettePositions=new WeakMap();
-const grip=document.querySelector('#remote-grip');let remoteForeground=false;
-const remoteTable=document.querySelector('#table');
-function alignRemotePlane(panel=remote){
- const css=getComputedStyle(panel);
- panel.style.transformOrigin=(remoteTable.offsetLeft+remoteTable.offsetWidth/2-parseFloat(css.left))+'px '+(remoteTable.offsetTop+remoteTable.offsetHeight-parseFloat(css.top))+'px';
+// Palettes dock as title bars on the table front; open positions belong to the user.
+const mapRemote=document.querySelector('#map-remote'),warsRemote=document.querySelector('#wars-remote');
+const warsGrip=document.querySelector('#wars-grip'),warsButtons=document.querySelector('#wars-buttons');
+const paletteDock=document.querySelector('#palette-dock');
+// Keep table-front tools inside the map palette alongside its native controls.
+const tableTools=document.querySelector('.masthead .tools');if(tableTools)mapRemote.insertBefore(tableTools,document.querySelector('#map-controls'));
+const panels=[mapRemote,warsRemote,remote],palettePositions=new WeakMap();let paletteZ=10,warsSignature='';
+function placePalette(panel,x,y){
+ const viewport=roomViewport();
+ x=Math.max(0,Math.min(viewport.width-panel.offsetWidth,x));
+ y=Math.max(0,Math.min(viewport.height-Math.min(panel.offsetHeight,36),y));
+ panel.style.left=x+'px';panel.style.top=y+'px';palettePositions.set(panel,{x,y});
 }
-function place(x,y,panel=remote){
- const ox=remoteTable.offsetLeft+remoteTable.offsetWidth/2,oy=remoteTable.offsetTop+remoteTable.offsetHeight;
- const edge=roomRect(document.querySelector('.news-wall')).bottom+4;
- const flat=document.body.classList.contains('flat'),sin=Math.sin(43*Math.PI/180),cos=Math.cos(43*Math.PI/180);
- const lens=1500;
- // Size follows screen height; the farthest position retains the original size.
- const sizeAt=y=>1+1.1*Math.max(0,Math.min(1,(y-edge)/Math.max(1,roomViewport().height-edge-panel.offsetHeight)));
- const planeAt=(y,size)=>flat?(y-oy)/size:(y-oy)/(size*(cos+sin*(y-oy)/lens));
- const bottomAt=y=>{const size=sizeAt(y),q=planeAt(y,size)+panel.offsetHeight;return flat?oy+size*q:oy+cos*size*q/(1-sin*size*q/lens);};
- let sy=Math.max(edge,y);
- if(bottomAt(sy)>roomViewport().height-18){let lo=edge,hi=sy;for(let n=0;n<24;n++){const mid=(lo+hi)/2;if(bottomAt(mid)>roomViewport().height-18)hi=mid;else lo=mid;}sy=lo;}
- const enlargement=sizeAt(sy),q=planeAt(sy,enlargement);
- panel.style.setProperty('--remote-size',enlargement);panel.style.right='auto';
- for(let n=0;n<6;n++){
-  const r=roomRect(panel),sx=Math.max(0,Math.min(roomViewport().width-r.width,x));
-  const scale=flat?1/enlargement:(1-sin*enlargement*(q+(sx<ox?panel.offsetHeight:0))/lens)/enlargement;
-  panel.style.left=(ox+(sx-ox)*scale)+'px';panel.style.top=(oy+q)+'px';alignRemotePlane(panel);
- }
+function dockPalette(panel){
+ panel.dataset.position='docked';panel.classList.remove('dragging');
+ paletteDock.append(panel);
+ panels.filter(p=>p.parentElement===paletteDock).forEach(p=>paletteDock.append(p));
+ const grip=panel.firstElementChild;grip.setAttribute('aria-expanded','false');grip.setAttribute('aria-label','Open '+grip.textContent.trim());
+ panel.title='Tap the title to open this palette';
 }
-function refitRemote(){
- const dragged=palettePositions.get(remote);if(dragged){place(dragged.x,dragged.y,remote);remote.dataset.position="dragged";return;}
- const edge=roomRect(document.querySelector('.news-wall')).bottom;
- const y=remoteForeground?roomViewport().height*.75:edge+18;
- for(let n=0;n<5;n++){
-  const r=roomRect(remote);
-  place(remoteForeground?(roomViewport().width-r.width)/2:roomViewport().width-r.width-12,y);
- }
- remote.dataset.position=remoteForeground?'foreground':'side';
- grip.setAttribute('aria-label',remoteForeground?'Return remote to the side':'Bring remote to center foreground');
- grip.setAttribute('aria-expanded',String(remoteForeground));
- remote.title=remoteForeground?'Click the top bar to return to the side':'Click the casing to bring the remote forward';
+function openPalette(panel){
+ if(panel.dataset.position==='floating'){panel.style.zIndex=++paletteZ;return;}
+ const tab=roomRect(panel);panel.dataset.position='floating';document.body.append(panel);panel.style.zIndex=++paletteZ;
+ const position=palettePositions.get(panel)||{x:tab.left,y:tab.top-panel.offsetHeight-12};placePalette(panel,position.x,position.y);
+ const grip=panel.firstElementChild;grip.setAttribute('aria-expanded','true');grip.setAttribute('aria-label','Dock '+grip.textContent.trim()+' on the table front');
+ panel.title='Drag the palette; tap its title to dock';
 }
-function setRemoteForeground(value){if(value&&typeof setWarsForeground==='function')setWarsForeground(false);if(value&&typeof setMapForeground==='function')setMapForeground(false);palettePositions.delete(remote);remoteForeground=value;refitRemote();}
-remote.addEventListener('click',e=>{
- if(e.target.closest('#remote-grip')){setRemoteForeground(palettePositions.has(remote)?false:!remoteForeground);return;}
- if(e.target.closest('button,input,select,label,a'))return;
- setRemoteForeground(true);
-});
-remote.addEventListener('keydown',e=>{if(e.target===remote&&(e.key==='Enter'||e.key===' ')){e.preventDefault();setRemoteForeground(true);}});
-new ResizeObserver(refitRemote).observe(remoteTable);
-new MutationObserver(refitRemote).observe(remoteTable,{attributes:true,attributeFilter:['style']});
-addEventListener('resize',refitRemote);
-requestAnimationFrame(refitRemote);
-document.querySelector('#perspective').addEventListener('click',()=>requestAnimationFrame(refitRemote));
-
-// Map palette retains the native control mirror and uses the opposite side dock.
-const mapRemote=document.querySelector('#map-remote'),mapGrip=document.querySelector('#map-grip');
-let mapForeground=false;
-function refitMapRemote(){
- const dragged=palettePositions.get(mapRemote);if(dragged){place(dragged.x,dragged.y,mapRemote);mapRemote.dataset.position="dragged";return;}
- mapRemote.classList.toggle('map-docked-layout',!mapForeground);mapRemote.style.width=(mapForeground?320:192)+'px';
- const edge=roomRect(document.querySelector('.news-wall')).bottom;
- const y=mapForeground?roomViewport().height*.75:edge+18;
- for(let n=0;n<5;n++){
-  const r=roomRect(mapRemote);
-  place(mapForeground?(roomViewport().width-r.width)/2:12,y,mapRemote);
- }
- mapRemote.dataset.position=mapForeground?'foreground':'side';
- mapGrip.setAttribute('aria-expanded',String(mapForeground));
- mapGrip.setAttribute('aria-label',mapForeground?'Return map controls to the left side':'Bring map controls to center foreground');
- mapRemote.title=mapForeground?'Click the top bar to return to the left side':'Click the casing to bring map controls forward';
-}
-function setMapForeground(value){if(value&&typeof setWarsForeground==='function')setWarsForeground(false);if(value&&remoteForeground){remoteForeground=false;refitRemote();}palettePositions.delete(mapRemote);mapForeground=value;refitMapRemote();}
-mapRemote.addEventListener('click',e=>{
- if(e.target.closest('#map-grip')){setMapForeground(palettePositions.has(mapRemote)?false:!mapForeground);return;}
- if(e.target.closest('button,input,select,textarea,label,a'))return;
- setMapForeground(true);
-});
-mapRemote.addEventListener('keydown',e=>{if(e.target===mapRemote&&(e.key==='Enter'||e.key===' ')){e.preventDefault();setMapForeground(true);}});
-new ResizeObserver(refitMapRemote).observe(mapRemote);
-new ResizeObserver(refitMapRemote).observe(remoteTable);
-new MutationObserver(refitMapRemote).observe(remoteTable,{attributes:true,attributeFilter:['style']});
-addEventListener('resize',refitMapRemote);
-requestAnimationFrame(refitMapRemote);
-document.querySelector('#perspective').addEventListener('click',()=>requestAnimationFrame(refitMapRemote));
-
-// A short press keeps its click action; a drag consumes only its trailing click.
-function enablePaletteDrag(panel,gripSelector){
- let drag=null,suppressUntil=0;
- panel.addEventListener('click',event=>{if(performance.now()<suppressUntil){event.preventDefault();event.stopImmediatePropagation();}},true);
+function enablePalette(panel){
+ const grip=panel.firstElementChild;let drag=null,suppressUntil=0;
+ grip.addEventListener('click',event=>{if(performance.now()<suppressUntil){event.preventDefault();return;}panel.dataset.position==='docked'?openPalette(panel):dockPalette(panel);});
  panel.addEventListener('pointerdown',event=>{
-  if(event.button!==0||!event.isPrimary)return;
-  if(!event.target.closest(gripSelector)&&event.target.closest('button,input,select,textarea,label,a,.control-console'))return;
-  const r=roomRect(panel);drag={id:event.pointerId,startX:event.clientX,startY:event.clientY,x:r.left,y:r.top,moved:false,capture:event.target};event.target.setPointerCapture(event.pointerId);
+  if(event.button!==0||!event.isPrimary||panel.dataset.position!=='floating')return;
+  panel.style.zIndex=++paletteZ;
+  if(event.target!==grip&&event.target.closest('button,input,select,textarea,label,a,.control-console'))return;
+  const r=roomRect(panel);drag={id:event.pointerId,startX:event.clientX,startY:event.clientY,x:r.left,y:r.top,moved:false,capture:event.target};drag.capture.setPointerCapture(event.pointerId);
  });
  panel.addEventListener('pointermove',event=>{
   if(!drag||event.pointerId!==drag.id)return;
-  const dx=event.clientX-drag.startX,dy=event.clientY-drag.startY;
-  if(!drag.moved&&Math.hypot(dx,dy)<5)return;
-  if(!drag.moved){drag.moved=true;panel.classList.add('dragging');}
-  event.preventDefault();
-  const position={x:drag.x+dx/roomScale(),y:drag.y+dy/roomScale()};
-  palettePositions.set(panel,position);place(position.x,position.y,panel);panel.dataset.position='dragged';
+  const dx=(event.clientX-drag.startX)/roomScale(),dy=(event.clientY-drag.startY)/roomScale();if(!drag.moved&&Math.hypot(dx,dy)<5)return;
+  drag.moved=true;panel.classList.add('dragging');event.preventDefault();placePalette(panel,drag.x+dx,drag.y+dy);
  });
- const finish=event=>{
-  if(!drag||event.pointerId!==drag.id)return;
-  if(drag.moved){suppressUntil=performance.now()+400;panel.dataset.paletteClickUntil=String(suppressUntil);}
-  if(drag.capture.hasPointerCapture(event.pointerId))drag.capture.releasePointerCapture(event.pointerId);drag=null;panel.classList.remove('dragging');
- };
+ const finish=event=>{if(!drag||event.pointerId!==drag.id)return;if(drag.moved)suppressUntil=performance.now()+400;if(drag.capture.hasPointerCapture(event.pointerId))drag.capture.releasePointerCapture(event.pointerId);drag=null;panel.classList.remove('dragging');};
  panel.addEventListener('pointerup',finish);panel.addEventListener('pointercancel',finish);
+ dockPalette(panel);
 }
-enablePaletteDrag(remote,'#remote-grip');enablePaletteDrag(mapRemote,'#map-grip');
-
-// Wars uses the same table-plane placement, foreground growth and drag contract.
-const warsRemote=document.querySelector('#wars-remote'),warsGrip=document.querySelector('#wars-grip'),warsButtons=document.querySelector('#wars-buttons');
-let warsForeground=true,warsSignature='',warsDockY=roomRect(mapRemote).bottom+14;
-function refitWarsRemote(){
- if(warsRemote.hidden)return;
- const dragged=palettePositions.get(warsRemote);if(dragged){place(dragged.x,dragged.y,warsRemote);warsRemote.dataset.position='dragged';return;}
- warsRemote.style.width=(warsForeground?144:88)+'px';
- if(!mapForeground&&!palettePositions.has(mapRemote))warsDockY=roomRect(mapRemote).bottom+14;
- const y=warsForeground?roomViewport().height*.75:warsDockY;
- for(let n=0;n<5;n++){const r=roomRect(warsRemote);place(warsForeground?(roomViewport().width-r.width)/2:12,y,warsRemote);}
- warsRemote.dataset.position=warsForeground?'foreground':'side';warsGrip.setAttribute('aria-expanded',String(warsForeground));
- warsGrip.setAttribute('aria-label',warsForeground?'Return wars to the left side':'Bring wars to center foreground');
-}
-function setWarsForeground(value){
- if(value){if(remoteForeground){remoteForeground=false;refitRemote();}if(mapForeground){mapForeground=false;refitMapRemote();}}
- palettePositions.delete(warsRemote);warsForeground=value;refitWarsRemote();
-}
-const warsDismissedClicks=new WeakSet();
-function dismissWars(){if(warsForeground||palettePositions.has(warsRemote))setWarsForeground(false);}
-document.addEventListener('click',event=>{
- if(performance.now()<Number(warsRemote.dataset.paletteClickUntil||0)||event.target.closest('#wars-buttons button'))return;
- if(warsForeground||palettePositions.has(warsRemote)){warsDismissedClicks.add(event);dismissWars();}
-},true);
-// Clicks in same-origin map/news documents do not bubble into the room.
-function watchWarsDismissal(embedded){try{embedded.contentDocument?.addEventListener('click',dismissWars,true);}catch{}}
-document.querySelectorAll('iframe').forEach(embedded=>{embedded.addEventListener('load',()=>watchWarsDismissal(embedded));watchWarsDismissal(embedded);});
-// Embedded players may contain cross-origin media that cannot forward clicks.
-addEventListener('blur',()=>setTimeout(()=>{if(document.activeElement?.tagName==='IFRAME')dismissWars();},0));
-warsRemote.addEventListener('click',event=>{
- if(warsDismissedClicks.has(event)||event.target.closest('#wars-buttons button'))return;
- setWarsForeground(true);
-});
-warsRemote.addEventListener('keydown',event=>{if(event.target===warsRemote&&(event.key==='Enter'||event.key===' ')){event.preventDefault();setWarsForeground(true);}});
+panels.forEach(enablePalette);
+addEventListener('resize',()=>panels.forEach(panel=>{if(panel.dataset.position==='floating'){const pos=palettePositions.get(panel);placePalette(panel,pos.x,pos.y);}}));
 function syncWars(){
  const win=frame.contentWindow,api=win?.warRoomConflicts;
- warsRemote.hidden=!api;if(!api)return;
- const rows=api.top(),signature=JSON.stringify(rows);warsRemote.hidden=!rows.length;if(signature===warsSignature)return;warsSignature=signature;
+ warsRemote.hidden=false;warsGrip.disabled=false;if(!api){if(warsSignature!=='unavailable'){warsSignature='unavailable';const note=document.createElement('p');note.textContent='Choose World map to list conflicts.';warsButtons.replaceChildren(note);}return;}
+ const rows=api.top(),signature=JSON.stringify(rows);warsGrip.disabled=false;if(signature===warsSignature)return;warsSignature=signature;
  warsButtons.replaceChildren(...rows.map((row,index)=>{
   const button=document.createElement('button');button.type='button';button.dataset.conflict=row.id;button.textContent=row.country;
   button.title=`${row.title} · ${index+1}. ${row.events.toLocaleString('en-US')} recorded events · ${row.start}–${row.end} · observed through ${row.through}. Loaded UCDP event observations; incomplete coverage.`;
   button.addEventListener('click',()=>{const selected=api.open(row.id);if(!selected)return;hideTableVideo();
    warsButtons.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===button)));
    const search=win.document.querySelector('#room-place-search');if(search&&selected.country){search.value=selected.country;search.dispatchEvent(new win.Event('input',{bubbles:true}));search.dispatchEvent(new win.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));}
-   setWarsForeground(false);
   });return button;
- }));refitWarsRemote();
+ }));
 }
-new ResizeObserver(refitWarsRemote).observe(mapRemote);new ResizeObserver(refitWarsRemote).observe(remoteTable);
-new MutationObserver(refitWarsRemote).observe(mapRemote,{attributes:true,attributeFilter:['style']});
-addEventListener('resize',refitWarsRemote);document.querySelector('#perspective').addEventListener('click',()=>requestAnimationFrame(refitWarsRemote));
 frame.addEventListener('load',()=>{warsSignature='';syncWars();});setInterval(syncWars,500);syncWars();
-enablePaletteDrag(warsRemote,'#wars-grip');

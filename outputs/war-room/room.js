@@ -24,10 +24,10 @@ const nationRoute=new URLSearchParams(location.hash.replace(/^#nation\?/,''));if
 
 // Keep native controls in their own document: closures and document queries remain intact.
 // The foreground console forwards user actions and mirrors native values/readouts.
-const consoleDock=document.querySelector('#map-controls'),frontDock=document.querySelector('#front-map-controls');
+const consoleDock=document.querySelector('#map-controls');
 let controlTimer;
 function connectControls(){
- clearInterval(controlTimer);consoleDock.replaceChildren();frontDock.replaceChildren();
+ clearInterval(controlTimer);consoleDock.replaceChildren();
  const doc=frame.contentDocument;if(!doc)return;
  const selectors='.controls,.gas-controls,.mortality-controls,.hormuz-controls,.satellite-toolbar,.orbit-controls,.data-playback,.room-map-place,.human-cost-map-summary,.tab-bar,.nation-timeline,.modebar';
  const mirrors=new Map();let serial=0;
@@ -51,7 +51,7 @@ function connectControls(){
   for(const source of doc.querySelectorAll(selectors)){
    if(doc.body.dataset.roomView==='map'&&source.closest('.satellite-toolbar'))continue;
    if(source.parentElement?.closest(selectors))continue;
-   let entry=mirrors.get(source);if(!entry){entry={id:++serial,destination:doc.body.dataset.roomView==='map'&&source.closest('.room-map-bottom')?frontDock:consoleDock};mirrors.set(source,entry);rebuild(source,entry);source.classList.add('room-source-controls');}
+   let entry=mirrors.get(source);if(!entry){entry={id:++serial,destination:consoleDock};mirrors.set(source,entry);rebuild(source,entry);source.classList.add('room-source-controls');}
    if(entry.pairs.some(([a,b])=>a.childNodes.length!==b.childNodes.length||(a.nodeType===1&&a!==source&&!source.contains(a)))){rebuild(source,entry);}
    entry.clone.hidden=!!source.closest('[hidden]');
    for(const [a,b] of entry.pairs){if(a.nodeType===3){if(b.nodeValue!==a.nodeValue)b.nodeValue=a.nodeValue;continue;}if(a.nodeType!==1)continue;

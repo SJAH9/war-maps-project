@@ -23,10 +23,7 @@
   const period = (end - epoch) / annualTotal;
   const displayedRate = Math.round(period / 10000) * 10;
   const disabledKey = 'war-maps-human-cost-flashes-disabled';
-  const explainedKey = 'war-maps-human-cost-explained';
-  let lastCycle = null;
   let flashTimer = null;
-  let disclosureTimer = null;
 
   function stored(storage, key) {
     try { return storage.getItem(key) === 'true'; } catch (_) { return false; }
@@ -55,11 +52,10 @@
   }
 
   function showDisclosure(current) {
-    if (!disclosure || stored(sessionStorage, explainedKey)) return;
-    store(sessionStorage, explainedKey, true);
+    if (!disclosure) return;
     disclosureCount.textContent = current.count.toLocaleString('en-US');
     disclosureRate.textContent = displayedRate.toLocaleString('en-US');
-    disableFlashes.checked = false;
+    disableFlashes.checked = flashesDisabled;
     disclosure.hidden = false;
     document.body.classList.add('human-cost-intro-open');
     disclosure.querySelector('h2').focus({preventScroll: true});
@@ -70,31 +66,36 @@
     pageFlash.classList.add('is-visible');
     clearTimeout(flashTimer);
     flashTimer = setTimeout(() => pageFlash.classList.remove('is-visible'), 180);
-    if (!stored(sessionStorage, explainedKey)) {
-      clearTimeout(disclosureTimer);
-      disclosureTimer = setTimeout(() => showDisclosure(current), 700);
-    }
+
   }
 
   function tick() {
     const current = state(Date.now());
     marks.forEach((mark, index) => mark.classList.toggle('lit', index < current.second));
     count.textContent = current.count.toLocaleString('en-US');
-    if (lastCycle !== null && current.count > lastCycle) flash(current);
-    lastCycle = current.count;
     setTimeout(tick, Math.max(20, 1000 - Date.now() % 1000));
   }
 
   dismissDisclosure?.addEventListener('click', () => {
-    if (disableFlashes.checked) {
-      flashesDisabled = true;
-      store(localStorage, disabledKey, true);
-      clock.classList.add('is-disabled');
-    }
+    flashesDisabled = disableFlashes.checked;
+    store(localStorage, disabledKey, flashesDisabled);
+    clock.classList.toggle('is-disabled', flashesDisabled);
     hideDisclosure();
   });
   disclosure?.addEventListener('keydown', event => {
     if (event.key === 'Escape') hideDisclosure();
+  });
+
+  // The counter remains live; the memorial is opened only by deliberate activation.
+  clock.setAttribute('role', 'button');
+  clock.setAttribute('aria-label', 'Open the global human cost memorial');
+  const openMemorial = () => { flash(state(Date.now())); showDisclosure(state(Date.now())); };
+  clock.addEventListener('click', openMemorial);
+  clock.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openMemorial();
+    }
   });
 
   tick();

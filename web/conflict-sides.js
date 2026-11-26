@@ -73,12 +73,11 @@
     const preview=mode==='detail';
     const graySide=preview&&color==='#484848';
     const solidSide=preview&&(graySide||color==='#ac2529');
-    // Reserve a transparent rim by insetting the fill; a transparent stroke
-    // alone would not remove any fill or increase the visible gap.
+    // Preserve the existing dot inset and geometry; outline both named sides in white.
     if(solidSide)r*=.89;
     const hollow=preview&&!solidSide;
-    const outlined=!graySide&&(preview||color==='#ffffff'||color==='#000000'||color==='#080808');
-    const stroke=solidSide?(color==='#ac2529'?'#000000':'#505050'):(hollow?color:themeColor('--muted'));
+    const outlined=solidSide||(preview||color==='#ffffff'||color==='#000000'||color==='#080808');
+    const stroke=solidSide?'#ffffff':(hollow?color:themeColor('--muted'));
     // Bound path complexity: large all-years series can exceed browser rasterizer limits.
     for(let start=0;start<list.length;start+=2048){
       const chunk=list.slice(start,start+2048),path=chunk.map(([x,y])=>`M${(x+r).toFixed(4)} ${y.toFixed(4)}a${r.toFixed(4)} ${r.toFixed(4)} 0 1 0 ${(-2*r).toFixed(4)} 0a${r.toFixed(4)} ${r.toFixed(4)} 0 1 0 ${(2*r).toFixed(4)} 0`).join('');

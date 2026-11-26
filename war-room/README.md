@@ -31,3 +31,13 @@ Open `http://127.0.0.1:8000/outputs/war-room/`. Keep generated `outputs/war-room
 `src/generate_war_room.py` and `src/war_room_adapters.py` adapt named rendering seams and fail if those contracts disappear. Native aggregation, filtering, inspectors, data sources and calculations are retained. `outputs/war-room/provenance.json` records input and output hashes. Public dependencies remain Plotly 3.1.0, satellite.js 6.0.1, Three.js 0.128/OrbitControls and the maintained native NewsBoob/HLS player. Network access is required for those dependencies, live feeds and external evidence.
 
 No AuthorOS administration, private project data, credentials or local LAN helper is included. War Room does not create new content scores or observations. Existing project and upstream attribution/license terms apply.
+
+## Controller interaction update
+
+Map Controls, Top Five Wars and NewsBoob Remote dock as name-only title tabs on
+the table front. Tap to open, drag freely and tap the title to dock. Reopening
+restores the last floating position; outside clicks and nation selections do
+not move palettes. Place/count and table tools are inside Map Controls, so the
+dock adds no front-panel height. Nation selection now leaves the map still;
+Orbit remains available manually. The memorial opens only from its band, and
+Conflict Sides uses thin white outlines on both named-side dot colors.

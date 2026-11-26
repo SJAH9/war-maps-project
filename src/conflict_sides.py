@@ -32,7 +32,11 @@ def compile_rows(rows,year):
         bucket=m['years'].setdefault(y,dict(counts=Counter(),labels={s:set() for s in 'abcd'},events=0,sources=set()))
         bucket['counts'].update(values);bucket['events']+=1;bucket['sources'].add(r['_source'])
         for s in 'abcd':
-            if r.get('side_'+s):bucket['labels'][s].add(r['side_'+s])
+            if r.get('side_'+s):
+                label = r['side_'+s]
+                if k == '1:13243' and int(y) >= 1992:
+                    label = label.replace('Russia (Soviet Union)', 'Russia')
+                bucket['labels'][s].add(label)
     result=[]
     for m in models.values():
         if not m.pop('active'):continue

@@ -209,6 +209,10 @@ def candidate_location(row: dict[str, str]) -> tuple[str, str]:
 
 
 def conflict_title(latest: dict[str, str]) -> str:
+    # UCDP's continuity label is retained in source rows, not in this modern title.
+    if str(latest.get("conflict_id")) == "13243":
+        latest = {**latest, "side_a": latest["side_a"].replace("Russia (Soviet Union)", "Russia"),
+                  "side_b": latest["side_b"].replace("Russia (Soviet Union)", "Russia")}
     territory = latest.get("territory_name", "").strip()
     location = latest.get("location", "").strip()
     if territory:

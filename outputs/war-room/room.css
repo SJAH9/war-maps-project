@@ -135,3 +135,19 @@ body.flat :is(#news-remote,#map-remote,#wars-remote){transform:scale(var(--remot
 #wars-grip{font-size:8px!important;letter-spacing:0;padding:3px 0!important;white-space:nowrap}
 #wars-buttons{gap:3px;margin-top:4px}
 #wars-buttons button{padding:3px 2px;font-size:10px}
+
+/* Docked palettes expose title bars only, within the existing table-front row. */
+#palette-dock{display:flex;flex:1 1 0;min-width:0;align-items:center;gap:6px;height:32px;max-height:32px;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+.masthead:has(#palette-dock){align-items:center;flex-wrap:nowrap}
+.masthead:has(#palette-dock) #boundary{display:none}
+#palette-dock :is(#news-remote,#map-remote,#wars-remote){position:static!important;transform:none!important;transform-origin:initial!important;flex:0 0 auto;width:auto!important;max-width:none!important;padding:0!important;margin:0;border:0;border-radius:0;background:none;box-shadow:none;font-size:10px;cursor:pointer}
+#palette-dock aside>:not(:first-child){display:none!important}
+#palette-dock :is(#remote-grip,#map-grip,#wars-grip){width:auto!important;min-height:28px;padding:5px 9px!important;font-size:10px!important;white-space:nowrap;touch-action:manipulation;cursor:pointer}
+:is(#news-remote,#map-remote,#wars-remote)[data-position="floating"]{position:absolute;transform:none!important;transform-origin:initial!important;right:auto!important;max-width:calc(100vw / var(--room-scale) - 16px);max-height:calc(100vh / var(--room-scale) - 16px);overflow:auto}
+#map-remote[data-position="floating"]{width:320px}
+#wars-remote[data-position="floating"]{width:144px}
+:is(#remote-grip,#map-grip,#wars-grip){touch-action:none;cursor:grab}
+#palette-dock button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+#map-remote>.tools{display:flex;flex-wrap:wrap;gap:5px;margin:5px 0;width:auto}
+@media(max-width:637.5px){.masthead:has(#palette-dock){gap:6px}.masthead:has(#palette-dock) .identity{gap:5px}.masthead:has(#palette-dock) .identity small{display:none}}
