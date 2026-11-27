@@ -10,7 +10,7 @@ if(views[location.hash.slice(1)])select(location.hash.slice(1));
 
 addEventListener('hashchange',()=>{if(location.hash.startsWith('#nation?'))openRoomNation(new URLSearchParams(location.hash.slice(8)).get('country'));else select(location.hash.slice(1));});
 
-// Layout uses the same virtual pixel space as the former 75% browser zoom.
+// Share the root CSS scale with table fitting and palette dragging.
 function roomScale(){return parseFloat(getComputedStyle(document.documentElement).zoom)||1;}
 function roomViewport(){const z=roomScale();return {width:innerWidth/z,height:innerHeight/z};}
 function roomRect(element){const r=element.getBoundingClientRect(),z=roomScale();return {top:r.top/z,bottom:r.bottom/z,left:r.left/z,right:r.right/z,width:r.width/z,height:r.height/z};}

@@ -41,3 +41,15 @@ not move palettes. Place/count and table tools are inside Map Controls, so the
 dock adds no front-panel height. Nation selection now leaves the map still;
 Orbit remains available manually. The memorial opens only from its band, and
 Conflict Sides uses thin white outlines on both named-side dot colors.
+
+## Map bearing and default display size
+
+In World and nation views, hold Shift and drag down for clockwise rotation,
+or up for counterclockwise. The current centre and zoom stay fixed. Hover
+pauses Orbit at its current bearing; leaving resumes it without resetting.
+Turning Orbit off retains that bearing. Ordinary dragging still pans.
+
+The default interface is now 25% larger, matching the preferred 125% browser
+enlargement at normal 100% zoom. Responsive thresholds follow the same scale;
+the news wall, fitted table and title-only palette dock retain their layout.
+Native source data and calculations are unchanged.

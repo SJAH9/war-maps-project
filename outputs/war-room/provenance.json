@@ -1,6 +1,6 @@
 {
   "edition": "War Room",
-  "built": "2026-11-26T06:46:20.773160+00:00",
+  "built": "2026-11-27T11:26:59.652003+00:00",
   "native_root": "../web/",
   "sources": {
     "data.js": "1e9508364fdb3af1057a1122c8a407c2685759f927014ebbf9be4cdb6d7d5620",
@@ -24,10 +24,10 @@
   "coverage": "Bab el-Mandeb has native terrain reference only; vessel positions and crossing counts cover Hormuz.",
   "output_hashes": {
     "index.html": "40717a6fd46d59ffa66c6b446222895b608d4dec580807964a3647572a0ef867",
-    "room.css": "d9806621670db747610967c3059c844ada972d0ec4c97e6a274a9d1734f76794",
-    "room.js": "0e5063a04bd41b38f3aaf0ff2a0ab7b81a68cb12d0fb1b564ceb13a3219cbf0e",
+    "room.css": "a8772fb2010f529f5fa6bd4ef475916d0aba82d32b98bf5ecb4cec400a4719f8",
+    "room.js": "8d17f43154deb2cab8a8886b8cd259f31e7411e28e6a58c0fd9686537222db96",
     "native.css": "a5fa5f7b3f764a0f7bbbba4fa3b8ab71d6f8fa7c5bff9c4b62fc9770b519b3ee",
-    "native.js": "772aacdf534c3639dcc4e01675c05ffb46aa0d1d2b66d003deca4db0bd072db9",
+    "native.js": "fab6141f76e2a19b581b824d52671af5b406ec09b282cc8cf70a2fa0f2771c47",
     "shared-map.js": "a923f6120b42740e2a597c6705959849f85f56145be690c4cf9eb7cb195bdfd0",
     "news-bridge.js": "647a544b1a943073c68ff7206a4355ea0faa647dc36a8b8680c992f355fd9e3f",
     "remote.js": "25391d1d1d02b1945ba9173ae10f817d81592583ed17a76cb7fbb38bc6412d6d",

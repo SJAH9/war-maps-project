@@ -71,9 +71,9 @@ addEventListener('DOMContentLoaded',()=>{
  if(!['map','human','living','fuel','nation'].includes(document.body.dataset.roomView))return;
  const dock=document.createElement('div');dock.className='orbit-controls';
  const label=document.createElement('label'),toggle=document.createElement('input');toggle.type='checkbox';toggle.id='room-map-orbit';
- label.title='Rotate the map around its current focus beneath a fixed viewport. Pointer over the map pauses for inspection.';
+ label.title='Rotate around the current focus. Hover pauses at the current bearing; Shift-drag down rotates clockwise, up counterclockwise.';
  label.append(toggle,document.createTextNode(' Orbit'));const group=document.querySelector('.controls,.gas-controls,.mortality-controls,.tab-bar');if(group)group.append(label);else{dock.append(label);document.body.append(dock);}
- const plots=new Set(),poses=new Map();let enabled=false,phase=0,last=0,pointerOver=false;
+ const plots=new Set(),poses=new Map();let enabled=false,phase=0,last=0,pointerOver=false,rotationDrag=null;
  const searchLabel=document.createElement('label'),search=document.createElement('input'),result=document.createElement('span');
  search.type='search';search.id='room-place-search';search.placeholder='Partial place name';search.autocomplete='off';search.setAttribute('aria-describedby','room-place-result');
  result.id='room-place-result';result.setAttribute('role','status');result.textContent='Countries and recorded atlas places';
@@ -116,8 +116,27 @@ addEventListener('DOMContentLoaded',()=>{
  }
  function discover(){document.querySelectorAll('.js-plotly-plot').forEach(plot=>{
   if(plots.has(plot))return;plots.add(plot);
-  plot.addEventListener('pointerenter',()=>{pointerOver=true;clearPose();});
+  plot.addEventListener('pointerenter',()=>{pointerOver=true;last=0;});
   plot.addEventListener('pointerleave',()=>{pointerOver=false;last=0;});
+  if(!['map','nation'].includes(document.body.dataset.roomView))return;
+  plot.addEventListener('pointerdown',event=>{
+   if(!event.shiftKey||event.button!==0||!event.target.closest('.geo'))return;
+   const subs=subplots(plot).filter(sub=>typeof sub.projection?.angle==='function'&&typeof sub._render==='function');
+   if(!subs.length)return;
+   event.preventDefault();event.stopImmediatePropagation();defaultPending=false;last=0;
+   rotationDrag={plot,id:event.pointerId,y:event.clientY,subs};
+   plot.setPointerCapture(event.pointerId);
+  },true);
+  // Plotly's geographic drag uses compatibility mouse events as well.
+  plot.addEventListener('mousedown',event=>{
+   if(event.shiftKey&&event.button===0&&event.target.closest('.geo')){
+    event.preventDefault();event.stopImmediatePropagation();
+   }
+  },true);
+  plot.addEventListener('click',event=>{
+   if(performance.now()<(plot._roomRotationClickUntil||0)){event.preventDefault();event.stopImmediatePropagation();}
+  },true);
+
  });}
  new MutationObserver(discover).observe(document.body,{childList:true,subtree:true});discover();
  // World Orbit is allowed only when the entire turn keeps land/water
@@ -135,6 +154,37 @@ addEventListener('DOMContentLoaded',()=>{
   const pr=sub.projection;pr.angle(angle);
   if(focus){const point=pr([focus.lon,focus.lat]),t=pr.translate(),mid=sub.midPt;if(point&&mid)pr.translate([t[0]+mid[0]-point[0],t[1]+mid[1]-point[1]]);}
  }
+ // Capture Shift gestures before Plotly can start a normal geographic pan.
+ // Move the current centre back to the same pixel after changing the bearing.
+ function finishRotation(event){
+  if(!rotationDrag||event&&event.pointerId!==rotationDrag.id)return;
+  const {plot,id}=rotationDrag;rotationDrag=null;last=0;
+  plot._roomRotationClickUntil=performance.now()+400;
+  if(plot.hasPointerCapture(id))plot.releasePointerCapture(id);
+  pointerOver=plot.matches(':hover');
+ }
+ addEventListener('pointermove',event=>{
+  if(!rotationDrag||event.pointerId!==rotationDrag.id)return;
+  event.preventDefault();event.stopImmediatePropagation();
+  const delta=(event.clientY-rotationDrag.y)*.5;rotationDrag.y=event.clientY;
+  rotationDrag.subs.forEach(sub=>{
+   const pr=sub.projection,angle=pr.angle(),translate=pr.translate(),mid=sub.midPt;
+   const centre=pr.invert(mid);
+   // D3 projection angles run counterclockwise, so down subtracts degrees.
+   pr.angle(angle-delta);
+   const point=centre&&pr(centre),t=pr.translate();
+   if(point)pr.translate([t[0]+mid[0]-point[0],t[1]+mid[1]-point[1]]);
+   if(world&&!coversViewport(sub)){pr.angle(angle);pr.translate(translate);return;}
+   if(centre)focus={lon:centre[0],lat:centre[1]};
+   sub._render();
+  });
+  // Orbit continues from the manually chosen angle, without a snap on exit.
+  phase=0;poses.clear();rotationDrag.subs.forEach(sub=>poses.set(sub,sub.projection.angle()));
+  rotationDrag.plot.dataset.roomOrbitAngle=String(rotationDrag.subs[0].projection.angle());
+ },{capture:true,passive:false});
+ addEventListener('pointerup',finishRotation,true);
+ addEventListener('pointercancel',finishRotation,true);
+ addEventListener('blur',()=>finishRotation());
  function fullTurnFits(sub){
   const pr=sub.projection,a=pr.angle(),t=pr.translate();let safe=true;
   try{for(let n=0;n<360;n+=2){setBearing(sub,a+n);if(!coversViewport(sub)){safe=false;break;}}}
@@ -146,7 +196,7 @@ addEventListener('DOMContentLoaded',()=>{
   if(world&&(!visible.length||!visible.every(fullTurnFits))){stopAtEdge();return;}
   enabled=true;toggle.checked=true;last=0;
  }
- toggle.addEventListener('change',()=>{defaultPending=false;last=0;if(!toggle.checked){enabled=false;clearPose();}else enableOrbit();});
+ toggle.addEventListener('change',()=>{defaultPending=false;last=0;if(!toggle.checked){enabled=false;}else{phase=0;poses.clear();enableOrbit();}});
  function orbit(time){requestAnimationFrame(orbit);
   if(defaultPending){
    const ready=[...plots].filter(p=>p.isConnected&&p.clientHeight&&p.dataset.roomGeoViewport==='full-domain'&&!p._roomWaterPending);
@@ -157,7 +207,7 @@ addEventListener('DOMContentLoaded',()=>{
     if(!matchMedia('(prefers-reduced-motion: reduce)').matches)enableOrbit();
    }
   }
-  if(!enabled||pointerOver||document.hidden){last=0;return;}
+  if(!enabled||pointerOver||rotationDrag||document.hidden){last=0;return;}
   if(last&&time-last<1000/20)return;const delta=last?Math.min(150,time-last):0;last=time;phase=(phase+delta*360/36000)%360;
   plots.forEach(plot=>{
    if(!plot.isConnected){plots.delete(plot);return;}if(!plot.clientWidth||!plot.clientHeight)return;
