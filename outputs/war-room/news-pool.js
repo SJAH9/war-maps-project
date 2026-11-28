@@ -41,6 +41,6 @@
    const station=refreshCatalog().find(c=>c.index===index),feed=station&&feeds.get(station.id),off=feed?.frame?.contentDocument?.querySelector('#offair'),message=index===null?'Off':off&&!off.classList.contains('hidden')?'Source unavailable':'Connecting to shared live source…';ctx.fillStyle='#e9e5db';ctx.font=Math.max(12,w/36)+'px system-ui';ctx.textAlign='center';ctx.fillText(message,w/2,h/2);
   });
  }
- window.warRoomPool=Object.freeze({tune,power,setOpen,audio:(slot,muted,volume)=>{audio[slot]={muted,volume};syncAudio();},videoForChannel,videoForSlot:slot=>screens[slot]===null?null:videoForChannel(screens[slot]),snapshot:()=>({open,screens:[...screens],feeds:[...feeds.values()].map(f=>({id:f.id,index:f.index,loaded:!!f.frame}))})});
+ window.warRoomPool=Object.freeze({reloadSlot:slot=>{const station=refreshCatalog().find(c=>c.index===screens[slot]);return station&&ownerAPI(feeds.get(station.id))?.reload();},tune,power,setOpen,audio:(slot,muted,volume)=>{audio[slot]={muted,volume};syncAudio();},videoForChannel,videoForSlot:slot=>screens[slot]===null?null:videoForChannel(screens[slot]),snapshot:()=>({open,screens:[...screens],feeds:[...feeds.values()].map(f=>({id:f.id,index:f.index,loaded:!!f.frame}))})});
  requestAnimationFrame(paint);addEventListener('resize',syncAudio);addEventListener('pagehide',()=>{clearTimeout(releaseTimer);[...feeds.values()].forEach(release);});
 })();

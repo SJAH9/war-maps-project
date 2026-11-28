@@ -57,8 +57,11 @@ Native source data and calculations are unchanged.
 ## Shared live channel grid
 
 The three native video players now sit inside one branded NewsBoob enclosure.
-Their separate bezel, footer and tuner drawers are hidden in this derivative;
-the native tuner, station sources, HLS decoder and remote playback APIs remain.
+The outer bezel is shared; each screen retains native mute/unmute, volume,
+reload and fullscreen controls, plus AUTO, :30, :60 and custom scan controls.
+The native START/STOP interval measurement controls are moved alongside the
+scan modes, retaining their handlers. The native tuner, station sources, HLS
+decoder and remote playback APIs remain. The table grid replaces dial drawers.
 Opening the NewsBoob remote replaces the table surface with a channel grid.
 Docking the remote restores the same map iframe and viewport. Choose one of
 three numbered screen selectors then tap a tile, or drag its numbered colour

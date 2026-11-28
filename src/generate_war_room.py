@@ -21,6 +21,7 @@ def adapt_news_transport(player):
         player = player.replace(old, new, 1)
     swap('    function syncPreviews() {', '    function syncPreviews() {\n      [...previewPlayers.keys()].forEach(killPreview);el.previews.classList.remove("on");return;')
     swap('    async function lock(i) {', '    async function lock(i) {\n      if(!wallOwner){locked=i;el.video.style.display="none";setStatus("shared live source",face(STATIONS[i]));await parent.warRoomPool.tune(wallSlot,i);return;}')
+    swap('    async function reloadStream() {', '    async function reloadStream() {\n      if(!wallOwner)return parent.warRoomPool.reloadSlot(wallSlot);')
     swap('    function applyVolume() {', '    function applyVolume() {\n      if(!wallOwner){el.muteBtn.textContent=muted?"Unmute":"Mute";parent.warRoomPool.audio(wallSlot,muted,Number(el.vol.value));return;}')
     swap('        el.video.playsInline = true;', '        el.video.playsInline = true;el.video.crossOrigin="anonymous";')
     swap('    async function go(i) {', '    async function go(i) {\n      if(Date.now()<wallCooldownUntil){setStatus("cooldown","Source cooling down; retry after one minute");return;}')
@@ -235,9 +236,17 @@ def build():
     compact = """<style>
     html,body.newsboob-page{height:100%;min-height:0;overflow:hidden;padding:0!important}
     /* The room owns one enclosure and channel grid; native videos stay attached. */
-    .plate,.under,.tuner{display:none!important}
+    .tuner{display:none!important}
+    .plate{display:flex!important;flex-wrap:wrap;flex:0 0 auto;gap:2px!important}
+    .wordmark{display:none!important}.model{width:100%;justify-content:space-between;flex-wrap:wrap!important;gap:2px!important}
+    .scan-controls{flex-wrap:wrap;gap:2px}.scan-controls .bezel-btn,.under .bezel-btn,.auto-controls .bezel-btn{padding:3px 5px;font-size:10px}
+    .auto-controls{display:flex;align-items:center;gap:3px}.scan-custom{width:44px!important;padding:3px!important}
+    .under{display:flex!important;flex-wrap:wrap;gap:2px!important;padding:2px 0 0!important}.under .leds,.under .ticker{display:none!important}
+    .bezel-controls{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:3px}.vol{gap:3px!important}.vol input{width:55px!important}
+    .set{gap:2px!important}.screen-frame{height:auto!important}
+
     .set,.tv,.screen-frame{border:0!important;box-shadow:none!important;background:#000!important;padding:0!important;border-radius:0!important}
-    .body{display:flex!important}.tv{flex:1!important}.screen-frame{height:100%!important}
+    .body{display:flex!important}.tv{flex:1!important}
     .desk{padding:0!important;flex:1;min-height:0}.set{width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;border-radius:0!important;padding:3px!important}
     .plate{padding:3px!important;gap:2px!important}.wordmark{font-size:12px!important}.datetime,.model>span{display:none!important}.chan{font-size:9px!important}
     .body{min-height:0!important}.tv{min-height:0!important}.screen-frame{min-height:0!important;border-radius:0!important}
