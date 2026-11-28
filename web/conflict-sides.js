@@ -201,53 +201,21 @@
     $('download-svg').disabled=mode==='detail'&&$('year').value!=='all'&&Number($('year').value)<=2000;
     $('download-svg').title=$('download-svg').disabled?'SVG downloads cover 2001 onward':'Download this view as vector artwork (2001 onward)';
   }
-  let preparedShare=null,shareBusy=false;
   async function shareView(){
-    if(shareBusy)return;
-    const key=[mode,active,$('year').value,document.documentElement.dataset.theme].join('|');
-    const buttons=[$('share-view'),$('share-circle')],status=$('share-status');
-    shareBusy=true;buttons.forEach(b=>b.disabled=true);
+    const url=new URL(location.href);url.search='';url.hash='';
+    if(mode==='detail'){url.searchParams.set('conflict',active);url.searchParams.set('year',$('year').value);}
+    const title=mode==='detail'?`${models.get(active).title} / ${$('year').value==='all'?'All years':$('year').value} · Conflict Sides`:`${d.year} · Conflict Sides`;
+    $('share-status').textContent='';$('share-link-wrap').hidden=true;
+    if(navigator.share){
+      try{await navigator.share({title,url:url.href});$('share-status').textContent='Share opened.';return;}
+      catch(error){if(error.name==='AbortError')return;}
+    }
     try{
-      if(preparedShare?.key!==key){
-        status.textContent='Preparing graphic…';
-        const surface=$('dots').cloneNode(true),title=$('view-title').textContent;
-        surface.removeAttribute('style');surface.setAttribute('xmlns','http://www.w3.org/2000/svg');
-        // Make the shared image self-contained, including the native compass.
-        for(const img of surface.querySelectorAll('image')){
-          const response=await fetch(img.getAttribute('href'));if(!response.ok)throw new Error('Graphic asset unavailable');
-          const root=new DOMParser().parseFromString(await response.text(),'image/svg+xml').documentElement;
-          for(const name of ['x','y','width','height'])root.setAttribute(name,img.getAttribute(name));
-          img.replaceWith(root);
-        }
-        const source=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(surface)],{type:'image/svg+xml'}));
-        let blob;
-        try{
-          const image=new Image();image.src=source;await image.decode();
-          const canvas=document.createElement('canvas'),factor=Math.min(1,3200/Math.max(svgWidth,svgHeight));
-          canvas.width=Math.round(svgWidth*factor);canvas.height=Math.round(svgHeight*factor);
-          canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
-          blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw new Error('Image conversion failed');
-        }finally{URL.revokeObjectURL(source);}
-        const filename=`war-maps-conflict-sides-${active||'all-conflicts'}-${$('year').value}.png`.replace(/[^a-zA-Z0-9._-]/g,'-');
-        preparedShare={key,title,file:new File([blob],filename,{type:'image/png'})};
-      }
-      const data={title:preparedShare.title,files:[preparedShare.file]};
-      if(navigator.share&&navigator.canShare?.({files:data.files})){
-        try{await navigator.share(data);status.textContent='Graphic shared.';}
-        catch(error){
-          if(error.name==='AbortError'){status.textContent='';return;}
-          if(error.name==='NotAllowedError'){
-            buttons.forEach(b=>b.textContent='Share image');status.textContent='Graphic ready. Tap Share image to open sharing.';return;
-          }
-          throw error;
-        }
-      }else{
-        const url=URL.createObjectURL(preparedShare.file),link=document.createElement('a');
-        link.href=url;link.download=preparedShare.file.name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
-        status.textContent='Graphic downloaded as PNG. Attach it in your preferred app to share.';
-      }
-    }catch(error){status.textContent=`Could not share graphic: ${error.message}`;}
-    finally{shareBusy=false;buttons.forEach(b=>b.disabled=false);}
+      if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(url.href);$('share-status').textContent='Permalink copied.';
+    }catch(error){
+      $('share-link').value=url.href;$('share-link-wrap').hidden=false;$('share-link').focus();$('share-link').select();$('share-status').textContent='Copy this permalink to share the view.';
+    }
   }
   $('share-view').onclick=shareView;$('share-circle').onclick=shareView;
   $('download-svg').onclick=async()=>{
