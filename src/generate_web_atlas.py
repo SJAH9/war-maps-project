@@ -43,6 +43,7 @@ def generate() -> Path:
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     shutil.copytree(SOURCE / "newsmedia-player", OUTPUT / "newsmedia-player", dirs_exist_ok=True)
+    shutil.copytree(SOURCE / "vendor", OUTPUT / "vendor", dirs_exist_ok=True)
     shutil.copy2(GEOMETRY, OUTPUT / "assets/world.geojson")
     geometry_payload = GEOMETRY.read_text(encoding="utf-8")
     (OUTPUT / "assets/world-geometry.js").write_text(

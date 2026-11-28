@@ -201,23 +201,47 @@
     $('download-svg').disabled=mode==='detail'&&$('year').value!=='all'&&Number($('year').value)<=2000;
     $('download-svg').title=$('download-svg').disabled?'SVG downloads cover 2001 onward':'Download this view as vector artwork (2001 onward)';
   }
-  async function shareView(){
+  function shareDetails(){
     const url=new URL(location.href);url.search='';url.hash='';
     if(mode==='detail'){url.searchParams.set('conflict',active);url.searchParams.set('year',$('year').value);}
     const title=mode==='detail'?`${models.get(active).title} / ${$('year').value==='all'?'All years':$('year').value} · Conflict Sides`:`${d.year} · Conflict Sides`;
-    $('share-status').textContent='';$('share-link-wrap').hidden=true;
-    if(navigator.share){
-      try{await navigator.share({title,url:url.href});$('share-status').textContent='Share opened.';return;}
-      catch(error){if(error.name==='AbortError')return;}
-    }
+    return {title,url:url.href};
+  }
+  function renderShareQr(url){
+    const host=$('share-qr');host.replaceChildren();
+    if(typeof qrcode!=='function'){host.textContent='QR code unavailable.';return;}
+    const code=qrcode(0,'M');code.addData(url);code.make();
+    host.innerHTML=code.createSvgTag({cellSize:5,margin:16,alt:'QR code for this Conflict Sides permalink',title:'Conflict Sides permalink'});
+    host.querySelector('svg')?.setAttribute('aria-hidden','true');
+  }
+  function openShareDialog(){
+    const share=shareDetails(),dialog=$('share-dialog');
+    $('share-context').textContent=share.title;
+    $('share-link').href=share.url;$('share-link').textContent=share.url;
+    $('share-status').textContent='';$('share-native').hidden=!navigator.share;
+    renderShareQr(share.url);dialog.showModal();
+    requestAnimationFrame(()=>$('share-dialog-title').focus());
+  }
+  async function copyShareLink(){
+    const url=$('share-link').href;
     try{
-      if(!navigator.clipboard?.writeText)throw new Error('Clipboard unavailable');
-      await navigator.clipboard.writeText(url.href);$('share-status').textContent='Permalink copied.';
+      if(navigator.clipboard?.writeText)await navigator.clipboard.writeText(url);
+      else{const field=document.createElement('textarea');field.value=url;field.setAttribute('readonly','');field.style.cssText='position:fixed;opacity:0';document.body.append(field);field.select();document.execCommand('copy');field.remove();}
+      $('share-status').textContent='Permalink copied.';
     }catch(error){
-      $('share-link').value=url.href;$('share-link-wrap').hidden=false;$('share-link').focus();$('share-link').select();$('share-status').textContent='Copy this permalink to share the view.';
+      $('share-status').textContent='Select the permalink above to copy it.';$('share-link').focus();
     }
   }
-  $('share-view').onclick=shareView;$('share-circle').onclick=shareView;
+  async function nativeShareLink(){
+    const share=shareDetails();
+    try{await navigator.share(share);$('share-status').textContent='Share opened.';}
+    catch(error){if(error.name!=='AbortError')$('share-status').textContent='Sharing is unavailable. Copy the permalink instead.';}
+  }
+  $('share-view').onclick=openShareDialog;
+  $('share-copy').onclick=copyShareLink;
+  $('share-native').onclick=nativeShareLink;
+  $('share-close').onclick=()=>$('share-dialog').close();
+  $('share-dialog').addEventListener('click',event=>{if(event.target===$('share-dialog'))$('share-dialog').close();});
   $('download-svg').onclick=async()=>{
     const button=$('download-svg'),isDetail=mode==='detail',model=models.get(active),period=$('year').value;
     button.disabled=true;button.textContent='Preparing SVG…';

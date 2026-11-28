@@ -12,12 +12,26 @@ class ConflictSidesShareTests(unittest.TestCase):
         source = (ROOT / "web/conflict-sides.js").read_text(encoding="utf-8")
 
         self.assertIn('id="share-view"', page)
+        self.assertEqual(page.count('>Share</button>'), 1)
+        self.assertNotIn('id="share-circle"', page)
+        self.assertIn('id="share-dialog"', page)
+        self.assertIn('id="share-qr"', page)
+        self.assertIn('id="share-link"', page)
+        self.assertIn('id="share-copy"', page)
+        self.assertIn('id="share-native"', page)
+        self.assertIn('src="vendor/qrcode.js?v=1"', page)
         self.assertIn('property="og:image"', page)
         self.assertIn("conflict-sides-preview.png", page)
         self.assertIn("navigator.share", source)
         self.assertIn("navigator.clipboard", source)
+        self.assertIn("dialog.showModal()", source)
+        self.assertIn("code.createSvgTag", source)
         self.assertIn("url.searchParams.set('conflict',active)", source)
         self.assertIn("initialParams.get('conflict')", source)
+        self.assertTrue((ROOT / "web/vendor/qrcode.js").exists())
+
+        generator = (ROOT / "src/generate_web_atlas.py").read_text(encoding="utf-8")
+        self.assertIn('SOURCE / "vendor"', generator)
 
     def test_social_preview_is_a_1200_by_630_png(self):
         preview = ROOT / "web/assets/share/conflict-sides-preview.png"
