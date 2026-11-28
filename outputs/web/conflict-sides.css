@@ -13,3 +13,5 @@
 
 /* Keep the reading texture out of clean vector artwork previews. */
 body:has(#stage.clean-circles)::after{display:none}
+
+.sides-share-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px;margin:12px 0}.sides-share-actions button{padding:10px;background:var(--paper);color:var(--ink);border:1px solid var(--line);cursor:pointer}#share-link-wrap:not([hidden]){display:flex;align-items:center;gap:8px;max-width:100%}#share-link{width:min(620px,65vw);padding:8px;background:var(--paper);color:var(--ink);border:1px solid var(--line)}
