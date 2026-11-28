@@ -39,7 +39,7 @@ def generate() -> Path:
         shutil.copy2(SOURCE / name, OUTPUT / name)
     for name in ('brand.css','human-cost-theme.css','pwa.js','sw.js','manifest.webmanifest'):
         shutil.copy2(SOURCE / name, OUTPUT / name)
-    for name in ('conflict-sides.js','conflict-sides.css','conflict-sides-data.js','satellites.js','satellites.css','satellite-proximity-data.js','homepage-carousel.js','homepage-carousel.css'):
+    for name in ('conflict-sides-demo.js','conflict-sides-demo.css','conflict-sides.js','conflict-sides.css','conflict-sides-data.js','satellites.js','satellites.css','satellite-proximity-data.js','homepage-carousel.js','homepage-carousel.css'):
         shutil.copy2(SOURCE / name, OUTPUT / name)
     shutil.copytree(SOURCE / "assets", OUTPUT / "assets", dirs_exist_ok=True)
     shutil.copytree(SOURCE / "newsmedia-player", OUTPUT / "newsmedia-player", dirs_exist_ok=True)

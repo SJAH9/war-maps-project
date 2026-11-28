@@ -17,9 +17,9 @@
   }
   function segmentAt(segments,index){let lo=0,hi=segments.length;while(lo<hi){const m=(lo+hi)>>1;if(segments[m].end<=index)lo=m+1;else hi=m;}return segments[lo]?.start<=index?segments[lo]:null;}
   const sideOrder=counts=>'abcd'.split('').sort((a,b)=>(counts[a]||0)-(counts[b]||0)||a.localeCompare(b));
-  function detailColors(counts){
+  function detailColors(counts,clean=false){
     const colors={...posterColors},smaller=(counts.a||0)<=(counts.b||0)?'a':'b';
-    colors[smaller]='#484848';colors[smaller==='a'?'b':'a']='#ac2529';
+    colors[smaller]=clean?'#000000':'#484848';colors[smaller==='a'?'b':'a']='#ac2529';
     return colors;
   }
   function exteriorLayout(counts,pitch){
@@ -56,20 +56,38 @@
   const api={spiral,circle,segmentAt,sideOrder,detailColors,exteriorLayout,secondaryCircle,centuryBucket};
   if(typeof module!=='undefined')module.exports=api;
   if(typeof document==='undefined')return;
+  window.WarMapsSidesGeometry=api;
+  if(document.body.dataset.sidesDemo==='true')return;
   const d=window.WAR_MAPS_SIDES,$=id=>document.getElementById(id),fmt=n=>n.toLocaleString(),measure=document.createElement('canvas').getContext('2d');
   // Canvas is used only for text metrics; the displayed artwork is SVG.
   const ctx=measure;
   let viewWidth=2400,viewHeight=2400;
   if(!d){$('total').textContent='Conflict data is unavailable. Rebuild the atlas or reload online.';return;}
   const models=new Map(d.conflicts.map(m=>[m.id,m])),names={a:'Side A',b:'Side B',c:'Side C',d:'Side D',civilian:'Civilians',unknown:'Unknown side'};
-  let svgParts=[],svgWidth=0,svgHeight=0;
+  let svgParts=[],svgWidth=0,svgHeight=0,cleanCircles=false,exportCircleElements=false;
   let hit=new Map(),points=[],scale=1,mode='overview',active=null;
   $('coverage').textContent=`${d.year} overview · loaded through ${d.coverage_through} · ${d.conflicts.length} current conflicts`;
   $('method').textContent=d.method;
   for(const m of d.conflicts.filter(m=>m.all.total>0).sort((a,b)=>a.title.localeCompare(b.title))){const o=new Option(m.title,m.id);$('conflict').add(o);}
-  const themeColor=name=>getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const lightArtwork={'--paper':'#080f18','--ink':'#e7e6dc','--muted':'#a7b7bf','--line':'#34444e'};
+  const themeColor=name=>cleanCircles&&lightArtwork[name]||getComputedStyle(document.documentElement).getPropertyValue(name).trim();
   function clear(){svgParts=[];svgWidth=viewWidth;svgHeight=viewHeight;hit=new Map();points=[];}
   function dots(list,color,r){
+    if(cleanCircles){
+      // Hexagonal centres stay one pitch apart; pitch is 66% of its previous value; dot radius stays unchanged.
+      r*=.22/(.31*.66);
+      for(let start=0;start<list.length;start+=2048){
+        const chunk=list.slice(start,start+2048);
+        if(exportCircleElements){
+          svgParts.push(`<g fill="${xml(color)}" stroke="none" shape-rendering="geometricPrecision">${chunk.map(([x,y])=>`<circle data-dot-count="1" cx="${x}" cy="${y}" r="${r}"/>`).join('')}</g>`);
+        }else{
+          const path=chunk.map(([x,y])=>`M${x+r} ${y}a${r} ${r} 0 1 0 ${-2*r} 0a${r} ${r} 0 1 0 ${2*r} 0Z`).join('');
+          svgParts.push(`<path data-dot-count="${chunk.length}" data-dot-radius="${r}" d="${path}" fill="${xml(color)}" stroke="none" shape-rendering="geometricPrecision"/>`);
+        }
+      }
+      return;
+    }
+
     const preview=mode==='detail';
     const graySide=preview&&color==='#484848';
     const solidSide=preview&&(graySide||color==='#ac2529');
@@ -86,11 +104,11 @@
     }
   }
   function legend(counts,labels={}){
-    $('legend').replaceChildren();
-    for(const f of (mode==='overview'?fields.slice(0,4):fields)){if(!counts[f]&&['c','d'].includes(f))continue;const s=document.createElement('span'),i=document.createElement('i');i.style.background=(mode==='detail'?detailColors(counts):d.colors)[f];s.append(i,`${names[f]} / ${fmt(counts[f]||0)}`);if(labels[f]?.length)s.title=labels[f].join('; ');$('legend').append(s);}
+    $('legend').replaceChildren();$('legend').classList.toggle('clean-circles',cleanCircles);
+    for(const f of (mode==='overview'?fields.slice(0,4):fields)){if(!counts[f]&&['c','d'].includes(f))continue;const s=document.createElement('span'),i=document.createElement('i');i.style.background=(mode==='detail'?detailColors(counts,cleanCircles):d.colors)[f];s.append(i,`${names[f]} / ${fmt(counts[f]||0)}`);if(labels[f]?.length)s.title=labels[f].join('; ');$('legend').append(s);}
   }
   function table(items){$('rows').replaceChildren();for(const [title,b,id] of items){const tr=document.createElement('tr'),td=document.createElement('td');if(id){const btn=document.createElement('button');btn.textContent=title;btn.onclick=()=>open(id);td.append(btn);}else td.textContent=title;tr.append(td);for(const f of [...fields,'total']){const c=document.createElement('td');c.textContent=fmt(f==='total'?b.total:b.counts[f]||0);tr.append(c);}$('rows').append(tr);}}
-  function overview(){ $('stage').classList.remove('poster-view');$('stage').classList.add('overview-view');viewWidth=2400;viewHeight=2400;for(const id of ['view-title','total','instructions','legend'])$(id).classList.remove('poster-accessible'); mode='overview';active=null;$('conflict').value='';$('year').replaceChildren(new Option(String(d.year),String(d.year)));$('year').disabled=true;clear();
+  function overview(){ $('stage').classList.remove('poster-view');$('stage').classList.add('overview-view');viewWidth=2400;viewHeight=2400;for(const id of ['view-title','total','instructions','legend'])$(id).classList.remove('poster-accessible'); mode='overview';cleanCircles=false;active=null;$('conflict').value='';$('year').replaceChildren(new Option(String(d.year),String(d.year)));$('year').disabled=true;clear();
     const geom=spiral(d.side_total);scale=1100/geom.extent;points=Array.from({length:d.side_total},(_,i)=>[1200+geom.points[2*i]*scale,1200+geom.points[2*i+1]*scale]);
     const totals=Object.fromEntries(fields.map(f=>[f,0]));
     for(const m of d.conflicts)for(const f of ['civilian','unknown'])totals[f]+=m.years[d.year].counts[f]||0;
@@ -111,11 +129,12 @@
     legend(totals);table(d.conflicts.map(m=>[m.title,m.years[d.year],m.id]));$('table-title').textContent=`${d.year} conflict totals / all categories (spiral shows named sides only)`;updateDownload();renderSvg();}
   function detail(exportBucket=null,exportPeriod=null){
     const m=models.get(active),period=$('year').value,b=exportBucket||(period==='all'?m.all:m.years[period]);
-    const n='abcd'.split('').reduce((sum,f)=>sum+(b.counts[f]||0),0),g=circle(n),order=sideOrder(b.counts),colors=detailColors(b.counts);
+    cleanCircles='abcd'.split('').filter(f=>(b.counts[f]||0)>0).length===2;
+    const n='abcd'.split('').reduce((sum,f)=>sum+(b.counts[f]||0),0),g=circle(n),order=sideOrder(b.counts),colors=detailColors(b.counts,cleanCircles);
     const second=secondaryCircle(b.counts),secondGeometry=second?circle(second.total):null;
     let span=1;for(const [x] of (secondGeometry||g).points)span=Math.max(span,2*Math.abs(x));
     // Master poster coordinates: same circle, same dot pitch in the exterior groups.
-    const pitch=Math.min(1100/span,12),exterior=exteriorLayout(b.counts,pitch),columns=exterior.columns;
+    const basePitch=Math.min(1100/span,12),pitch=basePitch*(cleanCircles?.66:1),exterior=exteriorLayout(b.counts,pitch),columns=exterior.columns;
     const font=getComputedStyle(document.body).fontFamily;
     const wrapped=(value,size,width)=>{ctx.font=`${size}px ${font}`;const lines=[];let line='';for(const word of value.split(/\s+/)){const next=line?line+' '+word:word;if(line&&ctx.measureText(next).width>width){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);return lines;};
     const present=order.filter(f=>b.counts[f]||b.labels[f]?.length);
@@ -163,13 +182,14 @@
     label(second?'Second circle: all deaths; civilians + unknown drawn. Side deaths above occupy the empty portion.':'Civilian and unknown-side deaths appear outside it at the same dot size.',48,height-42,14,false,'--muted');
     $('view-title').textContent=m.title;$('total').textContent=`${fmt(b.total)} deaths / ${period==='all'?'All loaded years':period}`;
     $('instructions').textContent='Sides are ordered by casualties, smallest at the top. '+(second?`The second circle is sized for all ${fmt(second.total)} deaths. Its ${fmt(second.drawn)} civilian and unknown deaths are drawn together. The empty portion represents ${fmt(n)} side deaths already drawn in the first circle. Both circles use the same dot scale; each death is drawn once.`:'Civilians and unknown-side deaths are outside the circle, at the same dot size.');
+    if(cleanCircles)$('instructions').textContent+=' Solid vector circles: same dot size, 34% closer centres. Use 4× or 8× to inspect individual dots; Fit is an overview.';
     $('dots').setAttribute('aria-label',`${m.title}: ${fmt(b.total)} deaths, ${period}. ${$('instructions').textContent}`);
     legend(b.counts,b.labels);for(const id of ['view-title','total','instructions','legend'])$(id).classList.add('poster-accessible');
     const named=Object.entries(b.labels).filter(([s,a])=>a.length).map(([s,a])=>`${names[s]}: ${a.join('; ')}`).join(' | ');
     table([[named||m.title,b,null]]);$('table-title').textContent='Recorded sides and death counts';$('hover').textContent='';updateDownload();renderSvg();
   }
   function renderSvg(){
-    const surface=$('dots');
+    const surface=$('dots');$('stage').classList.toggle('clean-circles',cleanCircles);
     surface.setAttribute('viewBox',`0 0 ${svgWidth} ${svgHeight}`);
     surface.setAttribute('width',svgWidth);surface.setAttribute('height',svgHeight);
     surface.innerHTML=`<title>${xml($('view-title').textContent)}</title><desc>${xml($('dots').getAttribute('aria-label'))}</desc><rect width="100%" height="100%" fill="${xml(themeColor('--paper'))}"/>${svgParts.join('').replace('<!-- compass -->','<image href="assets/compass-rose.svg" x="1190" y="38" width="58" height="68"/>')}`;
@@ -188,11 +208,11 @@
       let bucket=isDetail?(period==='all'?centuryBucket(model):model.years[period]):null;
       const years=isDetail?Object.keys(model.years).filter(y=>Number(y)>2000).sort((a,b)=>a-b):[];
       const range=isDetail&&period==='all'?(years.length?`${years[0]}–${years.at(-1)}`:'2001 onward'):period;
-      if(isDetail&&period==='all')detail(bucket,range);
+      if(isDetail){exportCircleElements=true;detail(bucket,range);}
       const parts=[...svgParts],width=svgWidth,height=svgHeight+(isDetail?0:240),paper=themeColor('--paper');
       const title=isDetail?`${model.title} / ${range}`:`${d.year} / All current conflicts`;
       const description=isDetail?`${bucket.total} deaths. ${bucket.sources.join(', ')}. One dot per death. Coverage: 2001 onward.`:`${d.total} deaths. ${d.sources.join(', ')}. One dot per death. Coverage through ${d.coverage_through}.`;
-      if(isDetail&&period==='all')detail();
+      if(isDetail){exportCircleElements=false;detail();}
       let compassSvg='';
       if(isDetail){
         const response=await fetch('assets/compass-rose.svg');if(!response.ok)throw new Error('Compass asset unavailable');
@@ -209,7 +229,7 @@
       document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
       $('hover').textContent='SVG downloaded.';
     }catch(error){$('hover').textContent=`Could not export SVG: ${error.message}`;}
-    finally{button.textContent='Download SVG';updateDownload();}
+    finally{exportCircleElements=false;button.textContent='Download SVG';updateDownload();}
   };
   function reveal(){ $('zoom').value='1';resize();$('stage').scrollTop=0;$('stage').scrollLeft=0;$('view-title').setAttribute('tabindex','-1');$('view-title').focus({preventScroll:true});(mode==='detail'?$('stage'):$('view-title')).scrollIntoView({block:'start',behavior:'instant'}); }
   function open(id){if(!models.has(id))return;active=id;mode='detail';$('conflict').value=id;$('year').disabled=false;$('year').replaceChildren(new Option('All years','all'));for(const y of Object.keys(models.get(id).years).sort((a,b)=>b-a))$('year').add(new Option(y,y));detail();reveal();}
