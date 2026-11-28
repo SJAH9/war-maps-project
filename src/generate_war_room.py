@@ -12,10 +12,64 @@ from datetime import datetime, timezone
 
 ROOT = Path(__file__).resolve().parents[1]
 
+def adapt_news_transport(player):
+    """War Room transport budget; native tuner, sources and decoder stay in charge."""
+    def swap(old, new):
+        nonlocal player
+        if player.count(old) != 1:
+            raise RuntimeError('Native NewsBoob transport contract changed: ' + old[:70])
+        player = player.replace(old, new, 1)
+    swap('    function syncPreviews() {', '    function syncPreviews() {\n      [...previewPlayers.keys()].forEach(killPreview);el.previews.classList.remove("on");return;')
+    swap('    async function lock(i) {', '    async function lock(i) {\n      if(!wallOwner){locked=i;el.video.style.display="none";setStatus("shared live source",face(STATIONS[i]));await parent.warRoomPool.tune(wallSlot,i);return;}')
+    swap('    function applyVolume() {', '    function applyVolume() {\n      if(!wallOwner){el.muteBtn.textContent=muted?"Unmute":"Mute";parent.warRoomPool.audio(wallSlot,muted,Number(el.vol.value));return;}')
+    swap('        el.video.playsInline = true;', '        el.video.playsInline = true;el.video.crossOrigin="anonymous";')
+    swap('    async function go(i) {', '    async function go(i) {\n      if(Date.now()<wallCooldownUntil){setStatus("cooldown","Source cooling down; retry after one minute");return;}')
+    swap('      for (const url of urls) {', '      for (const url of urls) {\n        if(Date.now()<wallCooldownUntil)throw new Error("Source cooling down");')
+    swap('    function stopHls() {', '    function stopHls() {\n      clearTimeout(wallRecoveryTimer);wallRecoveryTimer=null;')
+    swap('capLevelToPlayerSize: false,', 'capLevelToPlayerSize: true,')
+    swap('abrEwmaDefaultEstimate: 8000000,', 'abrEwmaDefaultEstimate: 1500000,')
+    swap('maxBufferLength: 24,', 'maxBufferLength: 12,')
+    swap('maxMaxBufferLength: 48,', 'maxMaxBufferLength: 24,')
+    swap('manifestLoadingTimeOut: 15000,', 'manifestLoadingTimeOut: 15000,\n            manifestLoadingMaxRetry: 2,manifestLoadingRetryDelay: 3000,manifestLoadingMaxRetryTimeout: 15000,\n            levelLoadingMaxRetry: 2,levelLoadingRetryDelay: 3000,levelLoadingMaxRetryTimeout: 15000,\n            fragLoadingMaxRetry: 2,fragLoadingRetryDelay: 3000,fragLoadingMaxRetryTimeout: 15000,')
+    begin=player.index('            const levels = hls.levels || [];')
+    end=player.index('            ok();',begin)
+    player=player[:begin]+'            // Native adaptive bitrate, capped to the visible screen.\n'+player[end:]
+    begin=player.index('          hls.on(Hls.Events.ERROR, (_, data) => {')
+    end=player.index('          hls.loadSource(url);',begin)
+    player=player[:begin]+'''          hls.on(Hls.Events.ERROR, (_, data) => {
+            if(gen!==token||!hls)return;
+            if(!data.fatal&&data.details!=="bufferStalledError")return;
+            if(wallRecoveryTimer)return;
+            const code=Number(data.response?.code||data.networkDetails?.status||0);
+            if(Date.now()-wallLastRecovery>60000)wallRecoveries=0;
+            wallLastRecovery=Date.now();wallRecoveries+=1;
+            if(code===429||wallRecoveries>3){
+              wallCooldownUntil=Date.now()+60000;
+              if(!settled){fail(new Error("Source unavailable; cooling down"));return;}
+              stopHls();showOffAir(STATIONS[index],"Source unavailable; wait one minute before retrying.");setStatus("cooldown","Source cooling down");return;
+            }
+            const current=hls;
+            wallRecoveryTimer=setTimeout(()=>{
+              wallRecoveryTimer=null;if(gen!==token||hls!==current)return;
+              if(data.type===Hls.ErrorTypes.MEDIA_ERROR)current.recoverMediaError();
+              else current.startLoad();
+            },3000*Math.pow(2,wallRecoveries-1));
+          });
+'''+player[end:]
+    swap('      Promise.resolve(reloadStream()).finally(() => { reloading = false; });', '''      if(Date.now()-wallLastRecovery>60000)wallRecoveries=0;
+      wallLastRecovery=Date.now();wallRecoveries+=1;
+      if(wallRecoveries>2){wallCooldownUntil=Date.now()+60000;showOffAir(STATIONS[index],"Source stalled; wait one minute before retrying.");setStatus("cooldown","Source cooling down");reloading=false;return;}
+      Promise.resolve(reloadStream()).finally(() => { reloading = false; });''')
+    tail='    go(index);'
+    if not player.rstrip().endswith(tail):
+        raise RuntimeError('Native NewsBoob startup contract changed')
+    player=player.rstrip()[:-len(tail)]+'    setTimeout(()=>go(index),wallSlot*1200);\n'
+    return 'const wallOwner=new URLSearchParams(location.search).get("owner");\nlet wallRecoveryTimer=null,wallRecoveries=0,wallLastRecovery=0,wallCooldownUntil=0;\n'+player
+
 def build():
     source = ROOT / 'war-room'
     dest = ROOT / 'outputs/war-room'
-    files = {name: (source / name).read_bytes() for name in ['index.html', 'room.css', 'room.js', 'native.css', 'native.js', 'shared-map.js', 'news-bridge.js', 'remote.js']}
+    files = {name: (source / name).read_bytes() for name in ['index.html', 'room.css', 'room.js', 'native.css', 'native.js', 'shared-map.js', 'news-bridge.js', 'news-pool.js', 'remote.js']}
     manifest = {'edition': 'War Room', 'built': datetime.now(timezone.utc).isoformat(), 'native_root': '../web/', 'sources': {}, 'coverage': 'Bab el-Mandeb has native terrain reference only; vessel positions and crossing counts cover Hormuz.'}
     # Search indexes only existing atlas names and recorded coordinates.
     search_inputs = {}
@@ -165,12 +219,13 @@ def build():
     old_index = 'let index = Number(localStorage.getItem("war-room.newsboob.station." + wallSlot) || String(wallSlot)) % STATIONS.length;'
     if player.count(old_index) != 1:
         raise RuntimeError('Native NewsBoob initial-station contract changed')
-    player = player.replace(old_index, "let index = STATIONS.findIndex(s => s.id === ['cbs','f24','rt'][wallSlot]);")
+    player = player.replace(old_index, "let index = STATIONS.findIndex(s => s.id === (new URLSearchParams(location.search).get('owner')||['cbs','f24','rt'][wallSlot]));")
     player = player.replace('tickerButton.textContent = s.tickerOnly ? s.label : face(s);', 'tickerButton.textContent = face(s);')
     player = player.replace('nation: "Europe"', 'nation: "France"')
     for seam in ['function go(i)', 'function setScanMode(enabled)', 'function applyVolume()', 'function stopHls()', 'function stopYt()']:
         if seam not in player:
             raise RuntimeError('Native NewsBoob remote contract changed: ' + seam)
+    player = adapt_news_transport(player)
     player += '\n' + files['news-bridge.js'].decode()
     files['news-player.js'] = player.encode()
     news = news_html.decode().replace('<head>', '<head><base href="../../web/newsmedia-player/">', 1)
@@ -179,6 +234,10 @@ def build():
         raise RuntimeError('Native NewsBoob script contract changed')
     compact = """<style>
     html,body.newsboob-page{height:100%;min-height:0;overflow:hidden;padding:0!important}
+    /* The room owns one enclosure and channel grid; native videos stay attached. */
+    .plate,.under,.tuner{display:none!important}
+    .set,.tv,.screen-frame{border:0!important;box-shadow:none!important;background:#000!important;padding:0!important;border-radius:0!important}
+    .body{display:flex!important}.tv{flex:1!important}.screen-frame{height:100%!important}
     .desk{padding:0!important;flex:1;min-height:0}.set{width:100%!important;max-width:none!important;height:100%!important;min-height:0!important;border-radius:0!important;padding:3px!important}
     .plate{padding:3px!important;gap:2px!important}.wordmark{font-size:12px!important}.datetime,.model>span{display:none!important}.chan{font-size:9px!important}
     .body{min-height:0!important}.tv{min-height:0!important}.screen-frame{min-height:0!important;border-radius:0!important}
@@ -199,7 +258,7 @@ def build():
     for name, digest in manifest['sources'].items():
         if hashlib.sha256((ROOT / 'outputs/web' / name).read_bytes()).hexdigest() != digest:
             raise RuntimeError('Native source changed during build: ' + name)
-    for name in ['index.html', 'room.css', 'room.js', 'native.css', 'native.js', 'shared-map.js', 'news-bridge.js', 'remote.js']:
+    for name in ['index.html', 'room.css', 'room.js', 'native.css', 'native.js', 'shared-map.js', 'news-bridge.js', 'news-pool.js', 'remote.js']:
         if (source / name).read_bytes() != files[name]:
             raise RuntimeError('Shell source changed during build: ' + name)
     # Snapshot inputs/destinations before writing; refuse a concurrent overwrite.

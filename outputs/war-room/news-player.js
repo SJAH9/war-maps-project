@@ -1,3 +1,5 @@
+const wallOwner=new URLSearchParams(location.search).get("owner");
+let wallRecoveryTimer=null,wallRecoveries=0,wallLastRecovery=0,wallCooldownUntil=0;
 const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.search).get('slot'))||0));
     const STATIONS = [
       {
@@ -140,7 +142,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
     };
 
     let on = false;
-    let index = STATIONS.findIndex(s => s.id === ['cbs','f24','rt'][wallSlot]);
+    let index = STATIONS.findIndex(s => s.id === (new URLSearchParams(location.search).get('owner')||['cbs','f24','rt'][wallSlot]));
     let locked = -1;
     let token = 0;
     let hls = null;
@@ -202,6 +204,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
     }
 
     function stopHls() {
+      clearTimeout(wallRecoveryTimer);wallRecoveryTimer=null;
       if (hls) { hls.destroy(); hls = null; }
       el.video.onloadedmetadata = null;
       el.video.onerror = null;
@@ -332,6 +335,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
     }
 
     function syncPreviews() {
+      [...previewPlayers.keys()].forEach(killPreview);el.previews.classList.remove("on");return;
       if (!on || !panelOpen) {
         [...previewPlayers.keys()].forEach(killPreview);
         el.previews.classList.remove("on");
@@ -370,7 +374,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
         stopYt();
         hideOffAir();
         el.video.style.display = "block";
-        el.video.playsInline = true;
+        el.video.playsInline = true;el.video.crossOrigin="anonymous";
         el.video.autoplay = true;
         el.video.muted = muted;
         el.video.volume = Number(el.vol.value) / 100;
@@ -426,53 +430,45 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
           hls = new Hls({
             enableWorker: true,
             lowLatencyMode: false,
-            capLevelToPlayerSize: false,
+            capLevelToPlayerSize: true,
             startLevel: -1,
-            abrEwmaDefaultEstimate: 8000000,
+            abrEwmaDefaultEstimate: 1500000,
             liveSyncDurationCount: 3,
             liveMaxLatencyDurationCount: 8,
-            maxBufferLength: 24,
-            maxMaxBufferLength: 48,
+            maxBufferLength: 12,
+            maxMaxBufferLength: 24,
             backBufferLength: 12,
             manifestLoadingTimeOut: 15000,
+            manifestLoadingMaxRetry: 2,manifestLoadingRetryDelay: 3000,manifestLoadingMaxRetryTimeout: 15000,
+            levelLoadingMaxRetry: 2,levelLoadingRetryDelay: 3000,levelLoadingMaxRetryTimeout: 15000,
+            fragLoadingMaxRetry: 2,fragLoadingRetryDelay: 3000,fragLoadingMaxRetryTimeout: 15000,
             fragLoadingTimeOut: 20000,
             xhrSetup(xhr) {
               try { xhr.withCredentials = false; } catch (_) {}
             }
           });
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            const levels = hls.levels || [];
-            let best = 0;
-            levels.forEach((lvl, i) => {
-              const h0 = levels[best].height || 0;
-              const h1 = lvl.height || 0;
-              if (h1 > h0 || (h1 === h0 && (lvl.bitrate || 0) > (levels[best].bitrate || 0))) best = i;
-            });
-            hls.autoLevelCapping = -1;
-            hls.startLevel = best;
-            hls.nextLevel = best;
+            // Native adaptive bitrate, capped to the visible screen.
             ok();
           });
           hls.on(Hls.Events.ERROR, (_, data) => {
-            if (!data.fatal) {
-              if (data.details === "bufferStalledError") hls.startLoad();
-              return;
+            if(gen!==token||!hls)return;
+            if(!data.fatal&&data.details!=="bufferStalledError")return;
+            if(wallRecoveryTimer)return;
+            const code=Number(data.response?.code||data.networkDetails?.status||0);
+            if(Date.now()-wallLastRecovery>60000)wallRecoveries=0;
+            wallLastRecovery=Date.now();wallRecoveries+=1;
+            if(code===429||wallRecoveries>3){
+              wallCooldownUntil=Date.now()+60000;
+              if(!settled){fail(new Error("Source unavailable; cooling down"));return;}
+              stopHls();showOffAir(STATIONS[index],"Source unavailable; wait one minute before retrying.");setStatus("cooldown","Source cooling down");return;
             }
-            if (settled) {
-              keepAlive(data);
-              return;
-            }
-            if (recoveries < 3 && data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-              recoveries += 1;
-              hls.startLoad();
-              return;
-            }
-            if (recoveries < 3 && data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-              recoveries += 1;
-              hls.recoverMediaError();
-              return;
-            }
-            fail(data);
+            const current=hls;
+            wallRecoveryTimer=setTimeout(()=>{
+              wallRecoveryTimer=null;if(gen!==token||hls!==current)return;
+              if(data.type===Hls.ErrorTypes.MEDIA_ERROR)current.recoverMediaError();
+              else current.startLoad();
+            },3000*Math.pow(2,wallRecoveries-1));
           });
           hls.loadSource(url);
           hls.attachMedia(el.video);
@@ -486,6 +482,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
       const urls = hlsList(station);
       let last = null;
       for (const url of urls) {
+        if(Date.now()<wallCooldownUntil)throw new Error("Source cooling down");
         if (gen !== token) return;
         try {
           await playHls(url, gen, station.forceHlsJs);
@@ -513,6 +510,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
     }
 
     async function go(i) {
+      if(Date.now()<wallCooldownUntil){setStatus("cooldown","Source cooling down; retry after one minute");return;}
       i = (i + STATIONS.length) % STATIONS.length;
       if (scanMode) resetScanWindow();
       index = i;
@@ -531,6 +529,7 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
     }
 
     async function lock(i) {
+      if(!wallOwner){locked=i;el.video.style.display="none";setStatus("shared live source",face(STATIONS[i]));await parent.warRoomPool.tune(wallSlot,i);return;}
       if (on) syncPreviews();
       if (locked === i && hls && el.offair.classList.contains("hidden")) return;
       const s = STATIONS[i];
@@ -721,10 +720,14 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
       if (stallTicks < 5) return;
       stallTicks = 0;
       reloading = true;
+      if(Date.now()-wallLastRecovery>60000)wallRecoveries=0;
+      wallLastRecovery=Date.now();wallRecoveries+=1;
+      if(wallRecoveries>2){wallCooldownUntil=Date.now()+60000;showOffAir(STATIONS[index],"Source stalled; wait one minute before retrying.");setStatus("cooldown","Source cooling down");reloading=false;return;}
       Promise.resolve(reloadStream()).finally(() => { reloading = false; });
     }, 2000);
 
     function applyVolume() {
+      if(!wallOwner){el.muteBtn.textContent=muted?"Unmute":"Mute";parent.warRoomPool.audio(wallSlot,muted,Number(el.vol.value));return;}
       const v = Number(el.vol.value);
       el.video.volume = v / 100;
       el.video.muted = muted;
@@ -862,10 +865,13 @@ const wallSlot = Math.max(0,Math.min(2,Number(new URLSearchParams(location.searc
     setPanel(panelOpen);
     setPointer(index);
     setStatus("off", "Starting the selected channel…");
-    go(index);
+    setTimeout(()=>go(index),wallSlot*1200);
 
 // Local War Room controls call the native tuner and playback functions directly.
 window.warRoomNews=Object.freeze({
+ shutdown:()=>{on=false;token+=1;stopHls();stopYt();},
+ channels:()=>STATIONS.map((s,i)=>({index:i,id:s.id,label:s.name||s.label,nation:face(s)})),
+ tune:i=>{i=Number(i);if(!Number.isInteger(i)||i<0||i>=STATIONS.length)return;if(on&&index===i)return;return go(i);},
  state:()=>({on,index,id:STATIONS[index].id,nation:face(STATIONS[index]),muted,volume:Number(el.vol.value),scan:scanMode,seconds:scanCustomSeconds}),
  step:direction=>{const next=(index+(direction<0?-1:1)+STATIONS.length)%STATIONS.length;if(on)return go(next);index=next;setPointer(index);setStatus('off','Off');},
  mute:()=>{muted=!muted;applyVolume();},
@@ -874,6 +880,7 @@ window.warRoomNews=Object.freeze({
  power:()=>{
   if(!on){go(index);return;}
   on=false;token+=1;locked=-1;setScanMode(false);stopHls();stopYt();
+  if(!wallOwner)parent.warRoomPool.power(wallSlot,false,index);
   [...previewPlayers.keys()].forEach(killPreview);hideOffAir();el.veil.classList.remove('hidden');setStatus('off','Off');
  },
  scan:(enabled,seconds)=>{scanCustomSeconds=Math.max(1,Math.min(90,Number(seconds)||45));scanType='custom';el.scanCustom.value=String(scanCustomSeconds);setScanMode(enabled&&on);}

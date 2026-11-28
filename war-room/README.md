@@ -53,3 +53,35 @@ The default interface is now 25% larger, matching the preferred 125% browser
 enlargement at normal 100% zoom. Responsive thresholds follow the same scale;
 the news wall, fitted table and title-only palette dock retain their layout.
 Native source data and calculations are unchanged.
+
+## Shared live channel grid
+
+The three native video players now sit inside one branded NewsBoob enclosure.
+Their separate bezel, footer and tuner drawers are hidden in this derivative;
+the native tuner, station sources, HLS decoder and remote playback APIs remain.
+Opening the NewsBoob remote replaces the table surface with a channel grid.
+Docking the remote restores the same map iframe and viewport. Choose one of
+three numbered screen selectors then tap a tile, or drag its numbered colour
+highlight to a tile (mouse or touch), to retune only that screen. Keyboard users
+can select a screen and activate a channel button. The remote remains draggable.
+
+Every channel has a live preview while the grid is open. A pool keyed by
+station ID owns one native player/decoder per station; wall screens and grid
+canvases reuse its decoded frames. Tuning multiple screens to the same station
+does not create additional playback sessions. Native drawer preview decoders
+are disabled in this derivative. The ordinary native NewsBoob is unchanged.
+Unused preview owners are released 30 seconds after docking, allowing quick
+reopening without reconnecting. Selected wall feeds remain active.
+
+Opening and docking the grid preserves the chosen table perspective. The
+Perspective control remains available while the grid is open. Hovering a wall
+screen still selects its audio (the initial deliberate dwell is retained),
+without replacing the channel grid with the enlarged table video.
+
+Native adaptive bitrate is capped to the visible player size; HLS retry and
+recovery budgets remain bounded, with a one-minute cooldown on HTTP 429.
+There is no proxy or attempt to bypass provider limits. The build checks
+native seams, keeps source/output hashes, and backs up generated changes.
+Controlled tests use local moving video fixtures to verify shared ownership,
+live canvas previews, hover audio and perspective controls. They do not
+establish current broadcaster availability.

@@ -22,4 +22,17 @@ class WarRoomAdapters(unittest.TestCase):
   for page in ['map','civilian-casualties','life-death','gas-map']:
    text=(ROOT/'outputs/war-room/views'/(page+'.html')).read_text()
    self.assertIn('../war-room/adapted-',text);self.assertIn('<base href="../../web/">',text)
+ def test_news_transport_budget_and_contract(self):
+  from src.generate_war_room import adapt_news_transport
+  native=(ROOT/'outputs/web/newsmedia-player/player.js').read_text()
+  adapted=adapt_news_transport(native)
+  self.assertIn('el.previews.classList.remove("on");return;',adapted)
+  self.assertIn('wallSlot*1200',adapted)
+  self.assertIn('manifestLoadingMaxRetry: 2',adapted)
+  self.assertIn('wallCooldownUntil=Date.now()+60000',adapted)
+  self.assertIn('if(Date.now()<wallCooldownUntil)throw',adapted)
+  self.assertNotIn('hls.nextLevel = best;',adapted)
+  self.assertEqual(native[native.index('const STATIONS'):native.index('function face')],adapted[adapted.index('const STATIONS'):adapted.index('function face')])
+  with self.assertRaisesRegex(RuntimeError,'transport contract changed'):
+   adapt_news_transport(native.replace('function syncPreviews()', 'function renamedPreviews()'))
 if __name__=='__main__':unittest.main()
