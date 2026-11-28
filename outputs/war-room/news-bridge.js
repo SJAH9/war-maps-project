@@ -19,3 +19,6 @@ window.warRoomNews=Object.freeze({
  },
  scan:(enabled,seconds)=>{scanCustomSeconds=Math.max(1,Math.min(90,Number(seconds)||45));scanType='custom';el.scanCustom.value=String(scanCustomSeconds);setScanMode(enabled&&on);}
 });
+
+// Public integration contract; War Room name remains a compatibility alias.
+window.NewsBoobPlayer=window.warRoomNews;

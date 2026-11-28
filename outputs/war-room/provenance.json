@@ -1,6 +1,6 @@
 {
   "edition": "War Room",
-  "built": "2026-11-28T07:34:09.920098+00:00",
+  "built": "2026-11-28T07:37:49.909340+00:00",
   "native_root": "../web/",
   "sources": {
     "data.js": "1e9508364fdb3af1057a1122c8a407c2685759f927014ebbf9be4cdb6d7d5620",
@@ -29,8 +29,8 @@
     "native.css": "a5fa5f7b3f764a0f7bbbba4fa3b8ab71d6f8fa7c5bff9c4b62fc9770b519b3ee",
     "native.js": "fab6141f76e2a19b581b824d52671af5b406ec09b282cc8cf70a2fa0f2771c47",
     "shared-map.js": "a923f6120b42740e2a597c6705959849f85f56145be690c4cf9eb7cb195bdfd0",
-    "news-bridge.js": "a6a0208cc252439114998de79920af3c6d13afa04d18517ffdd6c1ffbdc36823",
-    "news-pool.js": "752bcdb30994534db2ae6dc9e38f4d000f273267863d6ca011b7fb3cf74cbdad",
+    "news-bridge.js": "56e1e31873d01d3b68cccead28e563fdc05cf8937bf09924c5c4b704dfa4cfbe",
+    "news-pool.js": "6a3bfdf29864f65ca9abb5c2a7783ff251444f2e74b36f7f16951c90b0972c6b",
     "remote.js": "aa877c607748f60d445ed343704951681d7cdae505888c5707e516c357d06d68",
     "search-places.json": "74d7172169f0d9e65a6f3d163ddfc513a42e291c1c7915e4d5c2adb1d2746228",
     "adapted-app.js": "058562cc9f0f2ff4d93aa2e3adec751dad9777a8d9e82fe9572d4c9ba7f1b5bc",
@@ -46,7 +46,7 @@
     "adapted-hormuz-3d.js": "69c71fccce0840f0b3ab88bf897f24a7ac58b50acc2bea54ac19cec1ac95d4d8",
     "views/hormuz.html": "8b7483d58428d76f71fb7f8f7ed67294c25720f25aa736fbf03bed000a6e8ebe",
     "views/bab.html": "ed3bafea8ae255b06bbbbca57ed749c8a86a5390376d311694290d8dd73bb17c",
-    "news-player.js": "4668039752328fccc1e20ee4a12c014b21ee01a28d5188878b021510d072527f",
+    "news-player.js": "d12343b91035ca43ed4b233330d85aececa1ff6733d097a8c8cfbbc1cf722ca1",
     "views/newsboob.html": "6eeb7e9077d4a65fbc467e69998f93990043a6d35639ab716254be5e7cf46239"
   }
 }

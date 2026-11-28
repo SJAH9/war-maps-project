@@ -1,11 +1,12 @@
 // One native decoder per station; thumbnails and wall screens share its decoded frames.
 'use strict';
 (()=>{
- const feeds=new Map(),screens=[null,null,null],audio=[{muted:true,volume:80},{muted:true,volume:80},{muted:true,volume:80}];
+ const config=window.NewsBoobMultiscreenConfig||{},selector=config.playerSelector||'.news-player',playerURL=config.playerURL||'views/newsboob.html';
+ const feeds=new Map(),screens=Array.from(document.querySelectorAll(selector),()=>null),audio=screens.map(()=>({muted:true,volume:80}));
  let catalog=[],open=false,releaseTimer=null,serial=0,lastPaint=0;
- const frames=()=>[...document.querySelectorAll('.news-player')];
- function refreshCatalog(){if(!catalog.length){for(const frame of frames()){const rows=frame.contentWindow?.warRoomNews?.channels();if(rows?.length){catalog=rows;break;}}}return catalog;}
- function ownerAPI(feed){return feed?.frame?.contentWindow?.warRoomNews;}
+ const frames=()=>[...document.querySelectorAll(selector)];
+ function refreshCatalog(){if(!catalog.length){for(const frame of frames()){const rows=(frame.contentWindow?.NewsBoobPlayer||frame.contentWindow?.warRoomNews)?.channels();if(rows?.length){catalog=rows;break;}}}return catalog;}
+ function ownerAPI(feed){return feed?.frame?.contentWindow?.NewsBoobPlayer||feed?.frame?.contentWindow?.warRoomNews;}
  function ensure(index){
   const station=refreshCatalog().find(c=>c.index===index);if(!station)return null;
   let feed=feeds.get(station.id);if(feed)return feed;
@@ -14,7 +15,7 @@
   const delay=Math.max(0,serial-performance.now());serial=Math.max(serial,performance.now())+250;
   feed.timer=setTimeout(()=>{
    feed.timer=null;if(feeds.get(station.id)!==feed)return;
-   const frame=document.createElement('iframe');frame.className='news-feed-owner';frame.title=station.label+' shared live source';frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.allow='autoplay';frame.src='views/newsboob.html?slot=0&owner='+encodeURIComponent(station.id);feed.frame=frame;
+   const frame=document.createElement('iframe');frame.className='news-feed-owner';frame.title=station.label+' shared live source';frame.setAttribute('aria-hidden','true');frame.tabIndex=-1;frame.allow='autoplay';const url=new URL(playerURL,document.baseURI);url.searchParams.set('slot','0');url.searchParams.set('owner',station.id);frame.src=url.href;feed.frame=frame;
    frame.addEventListener('load',()=>{feed.resolve(ownerAPI(feed));syncAudio();},{once:true});document.body.append(frame);
   },delay);return feed;
  }
@@ -41,6 +42,6 @@
    const station=refreshCatalog().find(c=>c.index===index),feed=station&&feeds.get(station.id),off=feed?.frame?.contentDocument?.querySelector('#offair'),message=index===null?'Off':off&&!off.classList.contains('hidden')?'Source unavailable':'Connecting to shared live source…';ctx.fillStyle='#e9e5db';ctx.font=Math.max(12,w/36)+'px system-ui';ctx.textAlign='center';ctx.fillText(message,w/2,h/2);
   });
  }
- window.warRoomPool=Object.freeze({reloadSlot:slot=>{const station=refreshCatalog().find(c=>c.index===screens[slot]);return station&&ownerAPI(feeds.get(station.id))?.reload();},tune,power,setOpen,audio:(slot,muted,volume)=>{audio[slot]={muted,volume};syncAudio();},videoForChannel,videoForSlot:slot=>screens[slot]===null?null:videoForChannel(screens[slot]),snapshot:()=>({open,screens:[...screens],feeds:[...feeds.values()].map(f=>({id:f.id,index:f.index,loaded:!!f.frame}))})});
+ window.NewsBoobMultiscreen=window.warRoomPool=Object.freeze({reloadSlot:slot=>{const station=refreshCatalog().find(c=>c.index===screens[slot]);return station&&ownerAPI(feeds.get(station.id))?.reload();},tune,power,setOpen,audio:(slot,muted,volume)=>{audio[slot]={muted,volume};syncAudio();},videoForChannel,videoForSlot:slot=>screens[slot]===null?null:videoForChannel(screens[slot]),snapshot:()=>({open,screens:[...screens],feeds:[...feeds.values()].map(f=>({id:f.id,index:f.index,loaded:!!f.frame}))})});
  requestAnimationFrame(paint);addEventListener('resize',syncAudio);addEventListener('pagehide',()=>{clearTimeout(releaseTimer);[...feeds.values()].forEach(release);});
 })();

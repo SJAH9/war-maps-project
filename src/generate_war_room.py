@@ -63,7 +63,12 @@ def adapt_news_transport(player):
       Promise.resolve(reloadStream()).finally(() => { reloading = false; });''')
     tail='    go(index);'
     if not player.rstrip().endswith(tail):
-        raise RuntimeError('Native NewsBoob startup contract changed')
+        # Standalone upstream opens idle or via launch=1; hosts own startup.
+        lines=player.rstrip().splitlines()
+        launch=lines[-1]
+        if not launch.strip().startswith("if(new URLSearchParams(location.search).get('launch')==='1'){") or 'requestNewsFullscreen().then' not in launch:
+            raise RuntimeError('Native NewsBoob startup contract changed')
+        player='\n'.join(lines[:-1])+'\n'+tail
     player=player.rstrip()[:-len(tail)]+'    setTimeout(()=>go(index),wallSlot*1200);\n'
     return 'const wallOwner=new URLSearchParams(location.search).get("owner");\nlet wallRecoveryTimer=null,wallRecoveries=0,wallLastRecovery=0,wallCooldownUntil=0;\n'+player
 
